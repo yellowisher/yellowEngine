@@ -26,18 +26,7 @@ private:
 		Vector3 normal;
 		Vector2 uv;
 
-		bool operator<(const Vertex& vertex) const
-		{
-			if (position == vertex.position)
-			{
-				if (normal == vertex.normal)
-				{
-					return uv < vertex.uv;
-				}
-				return normal < vertex.normal;
-			}
-			return position < vertex.position;
-		}
+		bool operator<(const Vertex& vertex) const;
 	};
 
 	static map<string, Mesh*> meshes;

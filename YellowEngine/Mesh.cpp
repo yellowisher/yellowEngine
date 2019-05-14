@@ -9,6 +9,21 @@ using namespace std;
 
 map<string, Mesh*> Mesh::meshes;
 
+
+bool Mesh::Vertex::operator<(const Vertex& vertex) const
+{
+	if (position == vertex.position)
+	{
+		if (normal == vertex.normal)
+		{
+			return uv < vertex.uv;
+		}
+		return normal < vertex.normal;
+	}
+	return position < vertex.position;
+}
+
+
 Mesh::Mesh()
 {
 }

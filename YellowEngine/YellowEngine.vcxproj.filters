@@ -45,6 +45,9 @@
     <ClCompile Include="Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.hpp">
@@ -89,12 +92,21 @@
     <ClInclude Include="VertexLayout.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.ps">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="color.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="texture.vs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="texture.ps">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

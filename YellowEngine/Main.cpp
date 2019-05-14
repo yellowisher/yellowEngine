@@ -6,6 +6,7 @@ using namespace std;
 #include <GLFW/glfw3.h>
 
 #include "Mesh.hpp"
+#include "Texture.hpp"
 #include "MeshRenderer.hpp"
 #include "ShaderProgram.hpp"
 
@@ -42,9 +43,11 @@ int main(void)
 		return -1;
 	}
 
-	ShaderProgram* shader = ShaderProgram::create("../YellowEngine/color.vs", "../YellowEngine/color.ps");
+	ShaderProgram* shader = ShaderProgram::create("../YellowEngine/texture.vs", "../YellowEngine/texture.ps");
 	Mesh* mesh = Mesh::create("../YellowEngine/cube.obj");
+	Texture* texture = Texture::create("../YellowEngine/bszrh-jmmwx.png");
 	MeshRenderer renderer(mesh);
+	renderer.setTexture(texture);
 
 	while (!glfwWindowShouldClose(window))
 	{

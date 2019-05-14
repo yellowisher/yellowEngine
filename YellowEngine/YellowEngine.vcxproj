@@ -125,6 +125,7 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="VertexLayout.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="MeshRenderer.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="System.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
@@ -148,6 +150,8 @@
   <ItemGroup>
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="texture.ps" />
+    <None Include="texture.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
