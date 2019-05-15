@@ -1,8 +1,6 @@
 #ifndef __H_GAMEOBJECT__
 #define __H_GAMEOBJECT__
 
-using namespace std;
-
 #include <list>
 #include <string>
 
@@ -16,13 +14,16 @@ public:
 	~GameObject();
 
 	template <typename T> T* getComponent();
+	template <typename T> T* addComponent();
+
 	void addChild(GameObject* child);
 	void removeChild(GameObject* child);
-	void removeAllChildren();
 
 private:
-	list<Component*> _components;
-	string _name;
+	std::list<Component*> _components;
+	std::list<GameObject*> _children;
+	std::string _name;
+	GameObject* _parent;
 };
 
 #endif

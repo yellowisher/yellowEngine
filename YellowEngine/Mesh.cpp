@@ -176,5 +176,5 @@ unsigned int Mesh::getVertexCount() const
 
 unsigned int Mesh::getElementCount() const
 {
-	return elementCount;
+	return _elementCount;
 }

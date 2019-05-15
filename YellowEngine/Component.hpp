@@ -1,21 +1,24 @@
 #ifndef __H_COMPONENT__
 #define __H_COMPONENT__
 
-#include "GameObject.hpp"
+class GameObject;
 
 class Component
 {
+	friend GameObject;
+
 public:
+	void setActive(bool active);
+	bool getActive();
+
+protected:
+	Component();
 	Component(GameObject* gameObject);
 	virtual ~Component();
 
-	void setActive();
-
 private:
-	Component();
-
 	GameObject* _gameObject;
-	bool _isActive;
+	bool _active;
 };
 
 #endif

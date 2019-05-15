@@ -3,13 +3,14 @@
 
 #include "Component.hpp"
 
-class Renderer : Component
+class Renderer : public Component
 {
 public:
+	virtual void render() = 0;
+
+protected:
 	Renderer();
 	virtual ~Renderer();
-
-	virtual void render() = 0;
 
 private:
 };

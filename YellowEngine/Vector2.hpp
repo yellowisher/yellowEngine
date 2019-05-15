@@ -4,8 +4,15 @@
 class Vector2
 {
 public:
-	float x;
-	float y;
+	union
+	{
+		float v[2];
+		struct
+		{
+			float x;
+			float y;
+		};
+	};
 
 	Vector2();
 	Vector2(float x, float y);
