@@ -5,7 +5,7 @@
 #include "stb_image.h"
 #include "Texture.hpp"
 
-map<string, Texture*> Texture::textures;
+map<string, Texture*> Texture::__textureCache;
 
 Texture::Texture()
 {
@@ -20,8 +20,8 @@ Texture::~Texture()
 
 Texture* Texture::create(const char* path)
 {
-	auto it = textures.find(path);
-	if (it != textures.end())
+	auto it = __textureCache.find(path);
+	if (it != __textureCache.end())
 	{
 		return it->second;
 	}
@@ -37,8 +37,8 @@ Texture* Texture::create(const char* path)
 	}
 
 	Texture* texture = new Texture();
-	glGenTextures(1, &texture->id);
-	glBindTexture(GL_TEXTURE_2D, texture->id);
+	glGenTextures(1, &texture->_id);
+	glBindTexture(GL_TEXTURE_2D, texture->_id);
 
 	// TODO: should be parameters(customizable)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -58,5 +58,5 @@ Texture* Texture::create(const char* path)
 
 void Texture::use()
 {
-	glBindTexture(GL_TEXTURE_2D, id);
+	glBindTexture(GL_TEXTURE_2D, _id);
 }

@@ -21,8 +21,8 @@ public:
 	void removeAllChildren();
 
 private:
-	list<Component*> components;
-	string name;
+	list<Component*> _components;
+	string _name;
 };
 
 #endif

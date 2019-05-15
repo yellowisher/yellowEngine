@@ -29,13 +29,13 @@ private:
 		bool operator<(const Vertex& vertex) const;
 	};
 
-	static map<string, Mesh*> meshes;
+	static map<string, Mesh*> __meshCache;
 
-	unsigned int vertexBufferHandle;
-	unsigned int vertexArrayHandle;
-	unsigned int elementBufferHandle;
-	unsigned int vertexCount;
-	unsigned int elementCount;
+	unsigned int _vertexBufferHandle;
+	unsigned int _vertexArrayHandle;
+	unsigned int _elementBufferHandle;
+	unsigned int _vertexCount;
+	unsigned int _elementCount;
 
 	static Mesh* createFromOBJ(const char* path);
 

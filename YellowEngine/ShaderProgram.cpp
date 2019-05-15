@@ -7,14 +7,14 @@ using namespace std;
 
 #include "ShaderProgram.hpp"
 
-map<string, ShaderProgram*> ShaderProgram::shaderPrograms;
+map<string, ShaderProgram*> ShaderProgram::__shaderCache;
 
 ShaderProgram::ShaderProgram()
 {
 }
 
 
-ShaderProgram::ShaderProgram(int id) :id(id)
+ShaderProgram::ShaderProgram(int id) :_id(id)
 {
 }
 
@@ -29,14 +29,14 @@ ShaderProgram* ShaderProgram::create(const char* vsPath, const char* psPath)
 	string path = vsPath;
 	path += psPath;
 
-	auto it = shaderPrograms.find(path);
-	if (it != shaderPrograms.end())
+	auto it = __shaderCache.find(path);
+	if (it != __shaderCache.end())
 	{
 		return it->second;
 	}
 
 	ShaderProgram* shaderProgram = createFromFile(vsPath, psPath);
-	if (shaderProgram != nullptr)shaderPrograms.insert({ path, shaderProgram });
+	if (shaderProgram != nullptr)__shaderCache.insert({ path, shaderProgram });
 	return shaderProgram;
 }
 
@@ -115,5 +115,5 @@ string ShaderProgram::readSourceFile(const char* path)
 
 void ShaderProgram::use()
 {
-	glUseProgram(id);
+	glUseProgram(_id);
 }

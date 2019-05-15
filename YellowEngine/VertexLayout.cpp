@@ -5,12 +5,12 @@ VertexLayout::Attribute::Attribute(Type type, int size) :type(type), size(size)
 }
 
 
-VertexLayout::VertexLayout(vector<Attribute> attributes) : attributes(attributes)
+VertexLayout::VertexLayout(vector<Attribute> attributes) : _attributes(attributes)
 {
-	vertexSize = 0;
+	_vertexSize = 0;
 	for (auto attribute : attributes)
 	{
-		vertexSize += sizeof(float) * attribute.size;
+		_vertexSize += sizeof(float) * attribute.size;
 	}
 }
 
@@ -22,18 +22,18 @@ VertexLayout::~VertexLayout()
 
 unsigned int VertexLayout::getVertexSize() const
 {
-	return vertexSize;
+	return _vertexSize;
 }
 
 
 unsigned int VertexLayout::getAttrCount() const
 {
-	return attributes.size();
+	return _attributes.size();
 }
 
 
 const VertexLayout::Attribute VertexLayout::getAttr(int index) const
 {
 	// assert?
-	return attributes[index];
+	return _attributes[index];
 }

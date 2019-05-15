@@ -7,7 +7,7 @@ using namespace std;
 
 #include "Mesh.hpp"
 
-map<string, Mesh*> Mesh::meshes;
+map<string, Mesh*> Mesh::__meshCache;
 
 
 bool Mesh::Vertex::operator<(const Vertex& vertex) const
@@ -36,14 +36,14 @@ Mesh::~Mesh()
 
 Mesh* Mesh::create(const char* path)
 {
-	auto it = meshes.find(path);
-	if (it != meshes.end())
+	auto it = __meshCache.find(path);
+	if (it != __meshCache.end())
 	{
 		return it->second;
 	}
 
 	Mesh* mesh = createFromOBJ(path);
-	if (mesh != nullptr)meshes.insert({ path, mesh });
+	if (mesh != nullptr)__meshCache.insert({ path, mesh });
 	return mesh;
 }
 
@@ -132,19 +132,19 @@ Mesh* Mesh::createFromOBJ(const char* path)
 	fin.close();
 
 	Mesh* mesh = new Mesh();
-	mesh->vertexCount = verticesIndex.size();
-	mesh->elementCount = mesh->vertexCount / 3;
+	mesh->_vertexCount = verticesIndex.size();
+	mesh->_elementCount = mesh->_vertexCount / 3;
 
-	glGenVertexArrays(1, &mesh->vertexArrayHandle);
-	glGenBuffers(1, &mesh->vertexBufferHandle);
-	glGenBuffers(1, &mesh->elementBufferHandle);
+	glGenVertexArrays(1, &mesh->_vertexArrayHandle);
+	glGenBuffers(1, &mesh->_vertexBufferHandle);
+	glGenBuffers(1, &mesh->_elementBufferHandle);
 
-	glBindVertexArray(mesh->vertexArrayHandle);
+	glBindVertexArray(mesh->_vertexArrayHandle);
 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBufferHandle);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->_vertexBufferHandle);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->elementBufferHandle);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->_elementBufferHandle);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* verticesIndex.size(), &verticesIndex[0], GL_STATIC_DRAW);
 
 	// TODO: do this in shader?
@@ -164,13 +164,13 @@ Mesh* Mesh::createFromOBJ(const char* path)
 
 unsigned int Mesh::getVertexArrayHandle() const
 {
-	return vertexArrayHandle;
+	return _vertexArrayHandle;
 }
 
 
 unsigned int Mesh::getVertexCount() const
 {
-	return vertexCount;
+	return _vertexCount;
 }
 
 

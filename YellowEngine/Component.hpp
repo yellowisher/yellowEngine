@@ -6,15 +6,16 @@
 class Component
 {
 public:
-	Component();
 	Component(GameObject* gameObject);
 	virtual ~Component();
 
 	void setActive();
 
 private:
-	GameObject* gameObject;
-	bool isActive;
+	Component();
+
+	GameObject* _gameObject;
+	bool _isActive;
 };
 
 #endif

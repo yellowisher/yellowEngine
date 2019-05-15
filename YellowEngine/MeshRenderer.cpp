@@ -4,8 +4,8 @@
 
 MeshRenderer::MeshRenderer(Mesh* mesh)
 {
-	this->mesh = mesh;
-	texture = nullptr;
+	_mesh = mesh;
+	_texture = nullptr;
 }
 
 
@@ -17,14 +17,14 @@ MeshRenderer::~MeshRenderer()
 
 void MeshRenderer::render()
 {
-	if (texture)texture->use();
-	glBindVertexArray(mesh->getVertexArrayHandle());
-	glDrawElements(GL_TRIANGLES, mesh->getElementCount(), GL_UNSIGNED_INT, 0);
+	if (_texture)_texture->use();
+	glBindVertexArray(_mesh->getVertexArrayHandle());
+	glDrawElements(GL_TRIANGLES, _mesh->getElementCount(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(NULL);
 }
 
 
 void MeshRenderer::setTexture(Texture* texture)
 {
-	this->texture = texture;
+	_texture = texture;
 }

@@ -9,7 +9,7 @@ Component::Component()
 
 Component::Component(GameObject* gameObject)
 {
-	this->gameObject = gameObject;
+	_gameObject = gameObject;
 }
 
 

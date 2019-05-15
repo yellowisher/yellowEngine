@@ -15,8 +15,8 @@ public:
 	void setTexture(Texture* texture);
 
 private:
-	Mesh* mesh;
-	Texture* texture;
+	Mesh* _mesh;
+	Texture* _texture;
 };
 
 #endif

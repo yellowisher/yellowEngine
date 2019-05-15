@@ -14,9 +14,9 @@ public:
 	void use();
 
 private:
-	static map<string, Texture*> textures;
+	static map<string, Texture*> __textureCache;
 
-	unsigned int id;
+	unsigned int _id;
 
 	Texture();
 	~Texture();

@@ -12,8 +12,8 @@ public:
 	void use();
 
 private:
-	static map<string, ShaderProgram*> shaderPrograms;
-	unsigned int id;
+	static map<string, ShaderProgram*> __shaderCache;
+	unsigned int _id;
 
 	static ShaderProgram* createFromFile(const char* vsPath, const char* psPath);
 	static string readSourceFile(const char* path);

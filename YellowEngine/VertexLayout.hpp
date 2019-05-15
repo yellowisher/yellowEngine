@@ -34,8 +34,8 @@ public:
 	const Attribute getAttr(int index) const;
 
 private:
-	vector<Attribute> attributes;
-	unsigned int vertexSize;
+	vector<Attribute> _attributes;
+	unsigned int _vertexSize;
 };
 
 #endif
