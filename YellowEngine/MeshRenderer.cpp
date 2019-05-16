@@ -28,7 +28,7 @@ void MeshRenderer::render()
 
 	_shader->use();
 	glBindVertexArray(_binding->getVertexArrayHandle());
-	glDrawElements(GL_TRIANGLES, _mesh->getElementCount(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(NULL);
 }
 

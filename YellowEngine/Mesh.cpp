@@ -156,7 +156,7 @@ Mesh* Mesh::createFromOBJ(const char* path)
 		});
 
 	Mesh* mesh = new Mesh(layout);
-	mesh->_elementCount = verticesIndex.size() / 3;
+	mesh->_vertexCount = verticesIndex.size();
 
 	glGenBuffers(1, &mesh->_vertexBufferHandle);
 	glGenBuffers(1, &mesh->_elementBufferHandle);
@@ -174,7 +174,7 @@ Mesh* Mesh::createFromOBJ(const char* path)
 }
 
 
-unsigned int Mesh::getElementCount() const
+unsigned int Mesh::getVertexCount() const
 {
-	return _elementCount;
+	return _vertexCount;
 }

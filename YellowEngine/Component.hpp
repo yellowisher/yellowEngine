@@ -12,12 +12,13 @@ public:
 	bool getActive();
 
 protected:
+	GameObject* _gameObject;
 	Component();
+
 	Component(GameObject* gameObject);
 	virtual ~Component();
 
 private:
-	GameObject* _gameObject;
 	bool _active;
 };
 

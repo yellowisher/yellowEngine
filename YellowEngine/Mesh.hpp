@@ -23,7 +23,7 @@ public:
 
 	static Mesh* create(const char* path);
 
-	unsigned int getElementCount() const;
+	unsigned int getVertexCount() const;
 	unsigned int getVertexBufferHandle() const;
 	unsigned int getElementBufferHandle() const;
 	const VertexLayout& getVertexLayout() const;
@@ -33,7 +33,7 @@ private:
 
 	unsigned int _vertexBufferHandle;
 	unsigned int _elementBufferHandle;
-	unsigned int _elementCount;
+	unsigned int _vertexCount;
 	const VertexLayout _vertexLayout;
 
 	static Mesh* createFromOBJ(const char* path);

@@ -10,7 +10,15 @@
 class Transform : public Component
 {
 public:
+	void translate(Vector3 vector3);
+	void rotate(Vector3 vector);
+	void rotate(Quaternion quaternion);
+	void setScale(Vector3 scale);
+
 private:
+	Vector3 _position;
+	Vector3 _scale;
+	Quaternion _rotation;
 };
 
 #endif

@@ -61,5 +61,7 @@ void VertexLayoutBinding::bind(Mesh* mesh, ShaderProgram* shader)
 		glEnableVertexAttribArray(i);
 	}
 
+	glBindBuffer(GL_ARRAY_BUFFER, NULL);
+
 	glBindVertexArray(NULL);
 }

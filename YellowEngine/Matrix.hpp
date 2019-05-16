@@ -9,7 +9,10 @@ public:
 	static const Matrix zero;
 	static const Matrix identity;
 
-	const float* m = _m;
+	static Matrix createPerspective(float fieldOfView, float aspectRatio, float zNear, float zFar);
+	static Matrix createOrthographic(float width, float height, float zNear, float zFar);
+
+	const float* const m = _m;
 
 	Matrix();
 	Matrix(

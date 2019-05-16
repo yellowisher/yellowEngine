@@ -1,4 +1,10 @@
+#define DEG_TO_RAD(x) ((x) * 0.0174532925f)
+#define M_PI 3.14159265358979323846
+#define M_EPSILON 0.000001f
+
+#include <iostream>
 #include <cstring>
+#include <cmath>
 
 #include "Matrix.hpp"
 
@@ -15,7 +21,54 @@ const Matrix Matrix::identity(
 	0, 0, 1, 0,
 	0, 0, 0, 1);
 
-const int Matrix::MATRIX_SIZE = sizeof(float) * sizeof(_m);
+const int Matrix::MATRIX_SIZE = sizeof(_m);
+
+
+Matrix Matrix::createPerspective(float fieldOfView, float aspectRatio, float zNear, float zFar)
+{
+	Matrix matrix = Matrix::zero;
+
+	float f_n = 1.0f / (zFar - zNear);
+	float theta = DEG_TO_RAD(fieldOfView) * 0.5f;
+	if (fabs(fmod(theta, M_PI*0.5f)) < M_EPSILON)
+	{
+		std::cout << "Invalid operation in createPerspective()" << std::endl;
+		return matrix;
+	}
+	float divisor = tan(theta);
+	float factor = 1.0f / divisor;
+
+	matrix._m[0] = (1.0f / aspectRatio) * factor;
+	matrix._m[5] = factor;
+	matrix._m[10] = (zFar + zNear) * -f_n;
+	matrix._m[11] = -1.0f;
+	matrix._m[14] = -2.0f * zFar * zNear * f_n;
+
+	return matrix;
+}
+
+
+Matrix Matrix::createOrthographic(float width, float height, float zNear, float zFar)
+{
+	float halfWidth = width * 0.5f;
+	float halfHeight = height * 0.5f;
+
+	float left = -halfWidth;
+	float right = halfWidth;
+	float top = halfHeight;
+	float bottom = -halfHeight;
+
+	Matrix matrix = Matrix::zero;
+	matrix._m[0] = 2.0f / (right - left);
+	matrix._m[5] = 2.0f / (top - bottom);
+	matrix._m[10] = 2.0f / (zNear - zFar);
+	matrix._m[12] = (left + right) / (left - right);
+	matrix._m[13] = (top + bottom) / (bottom - top);
+	matrix._m[14] = zNear / (zNear - zFar);
+	matrix._m[15] = 1.0f;
+
+	return matrix;
+}
 
 
 Matrix::Matrix()
