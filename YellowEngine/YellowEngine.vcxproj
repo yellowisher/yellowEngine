@@ -133,6 +133,7 @@
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Vector4.cpp" />
     <ClCompile Include="VertexLayout.cpp" />
+    <ClCompile Include="VertexLayoutBinding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.hpp" />
@@ -152,11 +153,11 @@
     <ClInclude Include="Vector3.hpp" />
     <ClInclude Include="Vector4.hpp" />
     <ClInclude Include="VertexLayout.hpp" />
+    <ClInclude Include="VertexLayoutBinding.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="color.ps" />
     <None Include="color.vs" />
-    <None Include="cpp.hint" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
   </ItemGroup>

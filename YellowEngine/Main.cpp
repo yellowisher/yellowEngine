@@ -5,6 +5,11 @@ using namespace std;
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+using namespace glm;
+
 #include "Mesh.hpp"
 #include "Texture.hpp"
 #include "MeshRenderer.hpp"
@@ -45,9 +50,15 @@ int main(void)
 
 	ShaderProgram* shader = ShaderProgram::create("../YellowEngine/texture.vs", "../YellowEngine/texture.ps");
 	Mesh* mesh = Mesh::create("../YellowEngine/cube.obj");
-	Texture* texture = Texture::create("../YellowEngine/bszrh-jmmwx.png");
-	MeshRenderer renderer(mesh);
+	Texture* texture = Texture::create("../YellowEngine/wall.jpg");
+	MeshRenderer renderer(mesh, shader);
 	renderer.setTexture(texture);
+
+	vec3 model(0, 0, 0);
+	mat4 view = mat4(1.0f);
+	mat4 projection = mat4(1.0f);
+	projection = perspective(radians(45.0f), (float)1024 / (float)768, 0.1f, 100.0f);
+	view = translate(view, vec3(0, 0, -3.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -56,7 +67,6 @@ int main(void)
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		shader->use();
 		renderer.render();
 
 		glfwSwapBuffers(window);

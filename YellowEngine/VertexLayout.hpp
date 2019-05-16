@@ -1,8 +1,6 @@
 #ifndef __H_VERTEXLAYOUT__
 #define __H_VERTEXLAYOUT__
 
-using namespace std;
-
 #include <vector>
 
 class VertexLayout
@@ -25,7 +23,7 @@ public:
 		Attribute(Type type, int size);
 	};
 
-	VertexLayout(vector<Attribute> attributes);
+	VertexLayout(std::vector<Attribute> attributes);
 	~VertexLayout();
 
 	unsigned int getVertexSize() const;
@@ -34,7 +32,7 @@ public:
 	const Attribute getAttr(int index) const;
 
 private:
-	vector<Attribute> _attributes;
+	std::vector<Attribute> _attributes;
 	unsigned int _vertexSize;
 };
 

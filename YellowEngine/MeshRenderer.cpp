@@ -2,10 +2,17 @@
 
 #include "MeshRenderer.hpp"
 
-MeshRenderer::MeshRenderer(Mesh* mesh)
+#include <iostream>
+
+MeshRenderer::MeshRenderer(Mesh* mesh, ShaderProgram* shader) :_mesh(mesh), _shader(shader)
 {
-	_mesh = mesh;
 	_texture = nullptr;
+	_binding = VertexLayoutBinding::create(mesh, shader);
+
+	if (_binding == nullptr)
+	{
+		std::cout << "Mesh-Shader binding failed" << endl;
+	}
 }
 
 
@@ -18,7 +25,9 @@ MeshRenderer::~MeshRenderer()
 void MeshRenderer::render()
 {
 	if (_texture)_texture->use();
-	glBindVertexArray(_mesh->getVertexArrayHandle());
+
+	_shader->use();
+	glBindVertexArray(_binding->getVertexArrayHandle());
 	glDrawElements(GL_TRIANGLES, _mesh->getElementCount(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(NULL);
 }

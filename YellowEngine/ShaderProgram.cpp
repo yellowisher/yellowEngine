@@ -113,6 +113,58 @@ string ShaderProgram::readSourceFile(const char* path)
 }
 
 
+unsigned int ShaderProgram::getUniformHandle(string uniform)
+{
+	auto it = _uniformHandles.find(uniform);
+	if (it != _uniformHandles.end())
+	{
+		return it->second;
+	}
+
+	unsigned int handle = glGetUniformLocation(_id, uniform.c_str());
+	if (handle != -1)
+	{
+		_uniformHandles.insert({ uniform,handle });
+	}
+	return handle;
+}
+
+
+void ShaderProgram::setUniform(unsigned int handle, int value)
+{
+	glUseProgram(_id);
+	glUniform1i(handle, value);
+}
+
+
+void ShaderProgram::setUniform(unsigned int handle, Vector2& value)
+{
+	glUseProgram(_id);
+	glUniform2f(handle, value.x, value.y);
+}
+
+
+void ShaderProgram::setUniform(unsigned int handle, Vector3& value)
+{
+	glUseProgram(_id);
+	glUniform3f(handle, value.x, value.y, value.z);
+}
+
+
+void ShaderProgram::setUniform(unsigned int handle, Vector4& value)
+{
+	glUseProgram(_id);
+	glUniform4f(handle, value.x, value.y, value.z, value.w);
+}
+
+
+void ShaderProgram::setUniform(unsigned int handle, Matrix& value)
+{
+	glUseProgram(_id);
+	glUniformMatrix4fv(handle, 1, GL_FALSE, value.m);
+}
+
+
 void ShaderProgram::use()
 {
 	glUseProgram(_id);

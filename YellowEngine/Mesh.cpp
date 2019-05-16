@@ -24,13 +24,31 @@ bool Mesh::Vertex::operator<(const Vertex& vertex) const
 }
 
 
-Mesh::Mesh()
+Mesh::Mesh(const VertexLayout& vertexLayout) :_vertexLayout(vertexLayout)
 {
 }
 
 
 Mesh::~Mesh()
 {
+}
+
+
+const VertexLayout& Mesh::getVertexLayout() const
+{
+	return _vertexLayout;
+}
+
+
+unsigned int Mesh::getVertexBufferHandle() const
+{
+	return _vertexBufferHandle;
+}
+
+
+unsigned int Mesh::getElementBufferHandle() const
+{
+	return _elementBufferHandle;
 }
 
 
@@ -131,46 +149,28 @@ Mesh* Mesh::createFromOBJ(const char* path)
 	}
 	fin.close();
 
-	Mesh* mesh = new Mesh();
-	mesh->_vertexCount = verticesIndex.size();
-	mesh->_elementCount = mesh->_vertexCount / 3;
+	VertexLayout layout({
+		VertexLayout::Attribute(VertexLayout::POSITION,3),
+		VertexLayout::Attribute(VertexLayout::NORMAL,3),
+		VertexLayout::Attribute(VertexLayout::TEXCOORD0,2)
+		});
 
-	glGenVertexArrays(1, &mesh->_vertexArrayHandle);
+	Mesh* mesh = new Mesh(layout);
+	mesh->_elementCount = verticesIndex.size() / 3;
+
 	glGenBuffers(1, &mesh->_vertexBufferHandle);
 	glGenBuffers(1, &mesh->_elementBufferHandle);
 
-	glBindVertexArray(mesh->_vertexArrayHandle);
-
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->_vertexBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*vertices.size(), &vertices[0], GL_STATIC_DRAW);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->_elementBufferHandle);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*vertices.size(), &vertices[0], GL_STATIC_DRAW);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* verticesIndex.size(), &verticesIndex[0], GL_STATIC_DRAW);
 
-	// TODO: do this in shader?
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)NULL);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-	glBindVertexArray(NULL);
+	glBindBuffer(GL_ARRAY_BUFFER, NULL);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
 
 	return mesh;
-}
-
-
-unsigned int Mesh::getVertexArrayHandle() const
-{
-	return _vertexArrayHandle;
-}
-
-
-unsigned int Mesh::getVertexCount() const
-{
-	return _vertexCount;
 }
 
 

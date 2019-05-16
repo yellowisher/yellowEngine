@@ -1,25 +1,17 @@
 #ifndef __H_MESH__
 #define __H_MESH__
 
-using namespace std;
-
 #include <string>
 #include <vector>
 #include <map>
 
 #include "Vector2.hpp"
 #include "Vector3.hpp"
+#include "VertexLayout.hpp"
 
 class Mesh
 {
 public:
-	static Mesh* create(const char* path);
-
-	unsigned int getVertexArrayHandle() const;
-	unsigned int getVertexCount() const;
-	unsigned int getElementCount() const;
-
-private:
 	struct Vertex
 	{
 		Vector3 position;
@@ -29,17 +21,24 @@ private:
 		bool operator<(const Vertex& vertex) const;
 	};
 
-	static map<string, Mesh*> __meshCache;
+	static Mesh* create(const char* path);
+
+	unsigned int getElementCount() const;
+	unsigned int getVertexBufferHandle() const;
+	unsigned int getElementBufferHandle() const;
+	const VertexLayout& getVertexLayout() const;
+
+private:
+	static std::map<std::string, Mesh*> __meshCache;
 
 	unsigned int _vertexBufferHandle;
-	unsigned int _vertexArrayHandle;
 	unsigned int _elementBufferHandle;
-	unsigned int _vertexCount;
 	unsigned int _elementCount;
+	const VertexLayout _vertexLayout;
 
 	static Mesh* createFromOBJ(const char* path);
 
-	Mesh();
+	Mesh(const VertexLayout& vertexLayout);
 	~Mesh();
 };
 

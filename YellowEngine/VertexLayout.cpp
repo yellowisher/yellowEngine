@@ -5,7 +5,7 @@ VertexLayout::Attribute::Attribute(Type type, int size) :type(type), size(size)
 }
 
 
-VertexLayout::VertexLayout(vector<Attribute> attributes) : _attributes(attributes)
+VertexLayout::VertexLayout(std::vector<Attribute> attributes) : _attributes(attributes)
 {
 	_vertexSize = 0;
 	for (auto attribute : attributes)

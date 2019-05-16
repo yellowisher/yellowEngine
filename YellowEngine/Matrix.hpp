@@ -9,6 +9,8 @@ public:
 	static const Matrix zero;
 	static const Matrix identity;
 
+	const float* m = _m;
+
 	Matrix();
 	Matrix(
 		float m00, float m01, float m02, float m03,
