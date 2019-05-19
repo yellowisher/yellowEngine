@@ -28,21 +28,21 @@ Matrix Matrix::createPerspective(float fieldOfView, float aspectRatio, float zNe
 {
 	Matrix matrix = Matrix::zero;
 
-	float f_n = 1.0f / (zFar - zNear);
+	float n_f = 1.0f / (zNear - zFar);
 	float theta = DEG_TO_RAD(fieldOfView) * 0.5f;
+
 	if (fabs(fmod(theta, M_PI*0.5f)) < M_EPSILON)
 	{
 		std::cout << "Invalid operation in createPerspective()" << std::endl;
 		return matrix;
 	}
-	float divisor = tan(theta);
-	float factor = 1.0f / divisor;
+	float factor = 1.0f / tan(theta);
 
-	matrix._m[0] = (1.0f / aspectRatio) * factor;
+	matrix._m[0] = (factor / aspectRatio);
 	matrix._m[5] = factor;
-	matrix._m[10] = (zFar + zNear) * -f_n;
+	matrix._m[10] = (zFar + zNear) * n_f;
 	matrix._m[11] = -1.0f;
-	matrix._m[14] = -2.0f * zFar * zNear * f_n;
+	matrix._m[14] = 2.0f * zFar * zNear * n_f;
 
 	return matrix;
 }
@@ -64,7 +64,7 @@ Matrix Matrix::createOrthographic(float width, float height, float zNear, float 
 	matrix._m[10] = 2.0f / (zNear - zFar);
 	matrix._m[12] = (left + right) / (left - right);
 	matrix._m[13] = (top + bottom) / (bottom - top);
-	matrix._m[14] = zNear / (zNear - zFar);
+	matrix._m[14] = (zFar + zNear) / (zNear - zFar);
 	matrix._m[15] = 1.0f;
 
 	return matrix;
@@ -84,10 +84,10 @@ Matrix::Matrix(
 	float m30, float m31, float m32, float m33
 )
 {
-	_m[0] = m00; _m[1] = m01; _m[2] = m02; _m[3] = m03;
-	_m[4] = m10; _m[5] = m11; _m[6] = m12; _m[7] = m13;
-	_m[8] = m20; _m[9] = m21; _m[10] = m22; _m[11] = m23;
-	_m[12] = m30; _m[13] = m31; _m[14] = m32; _m[15] = m33;
+	_m[0] = m00; _m[1] = m10; _m[2] = m20; _m[3] = m30;
+	_m[4] = m01; _m[5] = m11; _m[6] = m21; _m[7] = m31;
+	_m[8] = m02; _m[9] = m12; _m[10] = m22; _m[11] = m32;
+	_m[12] = m03; _m[13] = m13; _m[14] = m23; _m[15] = m33;
 }
 
 
@@ -131,25 +131,26 @@ Matrix Matrix::operator*(const Matrix& matrix) const
 	const float* m1 = matrix._m;
 
 	Matrix result;
-	result._m[0] = m0[0] * m1[0] + m0[1] * m1[4] + m0[2] * m1[8] + m0[3] * m1[12];
-	result._m[1] = m0[0] * m1[1] + m0[1] * m1[5] + m0[2] * m1[9] + m0[3] * m1[13];
-	result._m[2] = m0[0] * m1[2] + m0[1] * m1[6] + m0[2] * m1[10] + m0[3] * m1[14];
-	result._m[3] = m0[0] * m1[3] + m0[1] * m1[7] + m0[2] * m1[11] + m0[3] * m1[15];
 
-	result._m[4] = m0[4] * m1[0] + m0[5] * m1[4] + m0[6] * m1[8] + m0[7] * m1[12];
-	result._m[5] = m0[4] * m1[1] + m0[5] * m1[5] + m0[6] * m1[9] + m0[7] * m1[13];
-	result._m[6] = m0[4] * m1[2] + m0[5] * m1[6] + m0[6] * m1[10] + m0[7] * m1[14];
-	result._m[7] = m0[4] * m1[3] + m0[5] * m1[7] + m0[6] * m1[11] + m0[7] * m1[15];
+	result._m[0] = m0[0] * m1[0] + m0[4] * m1[1] + m0[8] * m1[2] + m0[12] * m1[3];
+	result._m[1] = m0[1] * m1[0] + m0[5] * m1[1] + m0[9] * m1[2] + m0[13] * m1[3];
+	result._m[2] = m0[2] * m1[0] + m0[6] * m1[1] + m0[10] * m1[2] + m0[14] * m1[3];
+	result._m[3] = m0[3] * m1[0] + m0[7] * m1[1] + m0[11] * m1[2] + m0[15] * m1[3];
 
-	result._m[8] = m0[8] * m1[0] + m0[9] * m1[4] + m0[10] * m1[8] + m0[11] * m1[12];
-	result._m[9] = m0[8] * m1[1] + m0[9] * m1[5] + m0[10] * m1[9] + m0[11] * m1[13];
-	result._m[10] = m0[8] * m1[2] + m0[9] * m1[6] + m0[10] * m1[10] + m0[11] * m1[14];
-	result._m[11] = m0[8] * m1[3] + m0[9] * m1[7] + m0[10] * m1[11] + m0[11] * m1[15];
+	result._m[4] = m0[0] * m1[4] + m0[4] * m1[5] + m0[8] * m1[6] + m0[12] * m1[7];
+	result._m[5] = m0[1] * m1[4] + m0[5] * m1[5] + m0[9] * m1[6] + m0[13] * m1[7];
+	result._m[6] = m0[2] * m1[4] + m0[6] * m1[5] + m0[10] * m1[6] + m0[14] * m1[7];
+	result._m[7] = m0[3] * m1[4] + m0[7] * m1[5] + m0[11] * m1[6] + m0[15] * m1[7];
 
-	result._m[12] = m0[12] * m1[0] + m0[13] * m1[4] + m0[14] * m1[8] + m0[15] * m1[12];
-	result._m[13] = m0[12] * m1[1] + m0[13] * m1[5] + m0[14] * m1[9] + m0[15] * m1[13];
-	result._m[14] = m0[12] * m1[2] + m0[13] * m1[6] + m0[14] * m1[10] + m0[15] * m1[14];
-	result._m[15] = m0[12] * m1[3] + m0[13] * m1[7] + m0[14] * m1[11] + m0[15] * m1[15];
+	result._m[8] = m0[0] * m1[8] + m0[4] * m1[9] + m0[8] * m1[10] + m0[12] * m1[11];
+	result._m[9] = m0[1] * m1[8] + m0[5] * m1[9] + m0[9] * m1[10] + m0[13] * m1[11];
+	result._m[10] = m0[2] * m1[8] + m0[6] * m1[9] + m0[10] * m1[10] + m0[14] * m1[11];
+	result._m[11] = m0[3] * m1[8] + m0[7] * m1[9] + m0[11] * m1[10] + m0[15] * m1[11];
+
+	result._m[12] = m0[0] * m1[12] + m0[4] * m1[13] + m0[8] * m1[14] + m0[12] * m1[15];
+	result._m[13] = m0[1] * m1[12] + m0[5] * m1[13] + m0[9] * m1[14] + m0[13] * m1[15];
+	result._m[14] = m0[2] * m1[12] + m0[6] * m1[13] + m0[10] * m1[14] + m0[14] * m1[15];
+	result._m[15] = m0[3] * m1[12] + m0[7] * m1[13] + m0[11] * m1[14] + m0[15] * m1[15];
 
 	return result;
 }

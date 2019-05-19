@@ -15,6 +15,12 @@ public:
 	void rotate(Quaternion quaternion);
 	void setScale(Vector3 scale);
 
+protected:
+	Transform();
+
+	Transform(GameObject* gameObject);
+	virtual ~Transform();
+
 private:
 	Vector3 _position;
 	Vector3 _scale;
