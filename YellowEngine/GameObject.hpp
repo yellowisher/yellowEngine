@@ -21,14 +21,9 @@ public:
 	template <typename T> T* getComponent();
 	template <typename T> T* addComponent();
 
-	void addChild(GameObject* child);
-	void removeChild(GameObject* child);
-
 private:
 	std::list<Component*> _components;
-	std::list<GameObject*> _children;
 	std::string _name;
-	GameObject* _parent;
 };
 
 
@@ -36,7 +31,7 @@ template <typename T> T* GameObject::getComponent()
 {
 	if (!std::is_base_of<Component, T>::value)return nullptr;
 
-	// implementing kind of RTTI would be better
+	// TODO: implement RTTI rather than dynamic_cast
 	for (auto component : _components)
 	{
 		T* target = dynamic_cast<T*>(component);

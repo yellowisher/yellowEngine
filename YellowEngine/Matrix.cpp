@@ -4,6 +4,7 @@
 
 #include "Matrix.hpp"
 #include "Utils.hpp"
+#include "Quaternion.hpp"
 
 
 const Matrix Matrix::zero(
@@ -55,16 +56,59 @@ Matrix Matrix::createOrthographic(float width, float height, float zNear, float 
 	float top = halfHeight;
 	float bottom = -halfHeight;
 
-	Matrix matrix = Matrix::zero;
+	Matrix matrix = Matrix::identity;
 	matrix._m[0] = 2.0f / (right - left);
 	matrix._m[5] = 2.0f / (top - bottom);
 	matrix._m[10] = 2.0f / (zNear - zFar);
 	matrix._m[12] = (left + right) / (left - right);
 	matrix._m[13] = (top + bottom) / (bottom - top);
 	matrix._m[14] = (zFar + zNear) / (zNear - zFar);
-	matrix._m[15] = 1.0f;
 
 	return matrix;
+}
+
+
+Matrix Matrix::createTranslation(Vector3 translation)
+{
+	Matrix t = Matrix::identity;
+	t._m[12] = translation.x;
+	t._m[13] = translation.y;
+	t._m[14] = translation.z;
+	return t;
+}
+
+
+Matrix Matrix::createRotation(Quaternion rotation)
+{
+	return rotation.toMatrix();
+}
+
+
+Matrix Matrix::createScale(Vector3 scale)
+{
+	Matrix s = Matrix::identity;
+	s._m00 = scale.x;
+	s._m11 = scale.y;
+	s._m22 = scale.z;
+	return s;
+}
+
+
+Vector3 Matrix::extractTranslation(const Matrix& tr)
+{
+	return Vector3(tr._m[12], tr._m[13], tr._m[14]);
+}
+
+
+Quaternion Matrix::extractRotation(const Matrix& tr)
+{
+	return Quaternion(tr);
+}
+
+
+Vector3 Matrix::extractScale(const Matrix& s)
+{
+	return Vector3(s._m[0], s._m[5], s._m[10]);
 }
 
 
@@ -150,6 +194,41 @@ Matrix Matrix::operator*(const Matrix& matrix) const
 	result._m[15] = m0[3] * m1[12] + m0[7] * m1[13] + m0[11] * m1[14] + m0[15] * m1[15];
 
 	return result;
+}
+
+
+Matrix Matrix::operator~() const
+{
+	float m3[3][3];
+	float det =
+		_m00 * (_m11 * _m22 - _m21 * _m12) -
+		_m01 * (_m10 * _m22 - _m12 * _m20) +
+		_m02 * (_m10 * _m21 - _m11 * _m20);
+
+	if (det == 0)
+	{
+		std::cout << "Wrong operation in invering Matrix" << std::endl;
+		return Matrix::identity;
+	}
+
+	det = 1.0f / det;
+	m3[0][0] = (_m11 * _m22 - _m21 * _m12) * det;
+	m3[0][1] = (_m02 * _m21 - _m01 * _m22) * det;
+	m3[0][2] = (_m01 * _m12 - _m02 * _m11) * det;
+	m3[1][0] = (_m12 * _m20 - _m10 * _m22) * det;
+	m3[1][1] = (_m00 * _m22 - _m02 * _m20) * det;
+	m3[1][2] = (_m10 * _m02 - _m00 * _m12) * det;
+	m3[2][0] = (_m10 * _m21 - _m20 * _m11) * det;
+	m3[2][1] = (_m20 * _m01 - _m00 * _m21) * det;
+	m3[2][2] = (_m00 * _m11 - _m10 * _m01) * det;
+
+
+	return Matrix(
+		m3[0][0], m3[0][1], m3[0][2], -m3[0][0] * _m[12] - m3[0][1] * _m[13] - m3[0][2] * _m[14],
+		m3[1][0], m3[1][1], m3[1][2], -m3[1][0] * _m[12] - m3[1][1] * _m[13] - m3[1][2] * _m[14],
+		m3[2][0], m3[2][1], m3[2][2], -m3[2][0] * _m[12] - m3[2][1] * _m[13] - m3[2][2] * _m[14],
+		0, 0, 0, 1.0f
+	);
 }
 
 

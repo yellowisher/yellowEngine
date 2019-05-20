@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 
 #include "MeshRenderer.hpp"
+#include "GameObject.hpp"
 
 #include <iostream>
 
@@ -25,6 +26,8 @@ void MeshRenderer::set(Mesh* mesh, ShaderProgram* shader)
 	{
 		std::cout << "Mesh-Shader binding failed" << endl;
 	}
+
+	_modelUniformHandle = _shader->getUniformHandle("model");
 }
 
 
@@ -33,6 +36,7 @@ void MeshRenderer::render()
 	if (_texture)_texture->use();
 
 	_shader->use();
+	_shader->setUniform(_modelUniformHandle, getGameObject()->transform->getMatrix());
 	glBindVertexArray(_binding->getVertexArrayHandle());
 	glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(NULL);

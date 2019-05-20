@@ -1,6 +1,8 @@
 #ifndef __H_TRANSFORM__
 #define __H_TRANSFORM__
 
+#include <list>
+
 #include "Component.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
@@ -9,39 +11,50 @@
 
 class Transform : public Component
 {
-	friend class GameObject;
-
 public:
-	enum Type
-	{
-		World,
-		Local
-	};
-
 	Transform(GameObject* gameObject);
 	virtual ~Transform();
 
-	void translate(Vector3 translation);
-	void setPosition(Vector3 position, Type type = World);
-	void rotate(Vector3 rotation);
-	void rotate(Quaternion rotation);
-	void setRotation(Vector3 rotation, Type type = World);
-	void setRotation(Quaternion rotation, Type type = World);
-	void setScale(Vector3 scale);
+	void addChild(Transform* child);
+	void removeChild(Transform* child);
+
+	void translate(const Vector3& translation);
+	void setPosition(const Vector3& position);
+	void rotate(float x, float y, float z);
+	void rotate(const Vector3& rotation);
+	void rotate(const Quaternion& rotation);
+	void setRotation(float x, float y, float z);
+	void setRotation(const Vector3& rotation);
+	void setRotation(const Quaternion& rotation);
+	void setScale(const Vector3& scale);
 
 	const Matrix& getMatrix();
+	const Vector3 getWorldPosition();
 
 private:
-	bool _dirty;
+	enum NotifyType
+	{
+		Position,
+		Rotation,
+		Scale,
+		Num_Notify
+	};
+
+	Transform* _parent;
+	std::list<Transform*> _children;
+
 	Matrix _matrix;
+	Matrix _trMatrix;
+	Matrix _sMatrix;
+	bool _notify[Num_Notify];
 
 	Vector3 _position;
 	Vector3 _scale;
 	Quaternion _rotation;
 
-	Vector3 _localPosition;
-	Vector3 _localScale;
-	Quaternion _localRotation;
+	Matrix getTRMatrix();
+	Matrix getSMatrix();
+	void notifyChildren(NotifyType type);
 };
 
 #endif

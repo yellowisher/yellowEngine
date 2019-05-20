@@ -18,6 +18,7 @@ using namespace glm;
 #include "Texture.hpp"
 #include "MeshRenderer.hpp"
 #include "ShaderProgram.hpp"
+#include "Matrix.hpp"
 
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "lib/glew32.lib")
@@ -57,11 +58,17 @@ int main(void)
 	Mesh* mesh = Mesh::create("../YellowEngine/c.obj");
 	Texture* texture = Texture::create("../YellowEngine/wall.jpg");
 
-	GameObject* gameObject = new GameObject("GameObject");
-	gameObject->addComponent<MeshRenderer>();
-	MeshRenderer* meshRenderer = gameObject->getComponent<MeshRenderer>();
-	meshRenderer->set(mesh, shader);
-	meshRenderer->setTexture(texture);
+	GameObject* parent = new GameObject("GameObject");
+	parent->addComponent<MeshRenderer>();
+	MeshRenderer* meshRenderer0 = parent->getComponent<MeshRenderer>();
+	meshRenderer0->set(mesh, shader);
+	meshRenderer0->setTexture(texture);
+
+	GameObject* child = new GameObject("GameObject");
+	child->addComponent<MeshRenderer>();
+	MeshRenderer* meshRenderer1 = child->getComponent<MeshRenderer>();
+	meshRenderer1->set(mesh, shader);
+	meshRenderer1->setTexture(texture);
 
 	Matrix view;
 	//Matrix projection = Matrix::createOrthographic(2.0f, 2.0f, -1.0f, 100.0f);
@@ -75,27 +82,45 @@ int main(void)
 	shader->setUniform(projectionHandle, projection);
 
 	int t = 0;
-	gameObject->transform->translate(Vector3(0, 0, -2.0f));
+	parent->transform->translate(Vector3(0, 0, -3.0f));
+	parent->transform->setScale(Vector3(2.0f, 4.0f, 1.0f));
+
+	child->transform->translate(Vector3(2.0f, 0, -3.0f));
+	child->transform->setScale(Vector3(0.7f, 0.7f, 0.7f));
+	child->transform->rotate(Vector3(0, 0, 45.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 
-
-
-		t++;
-		gameObject->transform->rotate(Vector3(0, 0.02f, 0.03f));
-
-		Matrix m = gameObject->transform->getMatrix();
-		shader->setUniform(modelHandle, gameObject->transform->getMatrix());
-
+		if (++t < 100)
+		{
+			parent->transform->rotate(Vector3(0.0002f, 0, 0));
+			child->transform->rotate(Vector3(0.00001f, 0, 0.00003f));
+		}
+		else if (t == 100)
+		{
+			parent->transform->addChild(child->transform);
+			cout << "Attach" << endl;
+		}
+		else if (t < 200)
+		{
+			parent->transform->rotate(Vector3(0, 0, 0.0003f));
+			child->transform->rotate(Vector3(0, 0.0002f, 0));
+		}
+		else
+		{
+			parent->transform->removeChild(child->transform);
+			parent->transform->rotate(Vector3(0.0002f, 0, 0));
+			child->transform->rotate(Vector3(0.00001f, 0, 0.00003f));
+		}
 
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		meshRenderer->render();
-
+		meshRenderer0->render();
+		meshRenderer1->render();
 
 
 

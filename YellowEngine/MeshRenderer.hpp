@@ -22,6 +22,7 @@ private:
 	Mesh* _mesh;
 	ShaderProgram* _shader;
 	VertexLayoutBinding* _binding;
+	unsigned int _modelUniformHandle;
 
 	Texture* _texture;
 };
