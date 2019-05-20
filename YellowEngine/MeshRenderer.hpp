@@ -11,13 +11,12 @@
 class MeshRenderer : public Renderer
 {
 public:
+	MeshRenderer(GameObject* gameObject);
+	~MeshRenderer();
+
+	void set(Mesh* mesh, ShaderProgram* shader);
 	void render();
 	void setTexture(Texture* texture);
-
-	//protected
-public:
-	MeshRenderer(Mesh* mesh, ShaderProgram* shader);
-	~MeshRenderer();
 
 private:
 	Mesh* _mesh;

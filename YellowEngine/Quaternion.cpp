@@ -1,7 +1,7 @@
-#define M_PI 3.14159265358979323846
-
 #include <cmath>
+#include <iostream>
 
+#include "Utils.hpp"
 #include "Quaternion.hpp"
 
 
@@ -28,12 +28,12 @@ Quaternion::Quaternion(const Quaternion& quaternion)
 
 Quaternion::Quaternion(const Vector3& eulerAngle)
 {
-	float cy = cos(eulerAngle.x * 0.5);
-	float sy = sin(eulerAngle.x * 0.5);
-	float cp = cos(eulerAngle.y * 0.5);
-	float sp = sin(eulerAngle.y * 0.5);
-	float cr = cos(eulerAngle.z * 0.5);
-	float sr = sin(eulerAngle.z * 0.5);
+	float cy = cosf(eulerAngle.x * 0.5f);
+	float sy = sinf(eulerAngle.x * 0.5f);
+	float cp = cosf(eulerAngle.y * 0.5f);
+	float sp = sinf(eulerAngle.y * 0.5f);
+	float cr = cosf(eulerAngle.z * 0.5f);
+	float sr = sinf(eulerAngle.z * 0.5f);
 
 	w = cy * cp * cr + sy * sp * sr;
 	x = cy * cp * sr - sy * sp * cr;
@@ -103,14 +103,16 @@ Quaternion& Quaternion::operator=(const Quaternion& quaternion)
 }
 
 
+// Hamilton product
 Quaternion Quaternion::operator*(const Quaternion& quaternion) const
 {
 	const Quaternion& q = quaternion;
-	float x = w * q.x + x * q.w + y * q.z - z * q.y;
-	float y = w * q.y - x * q.z + y * q.w + z * q.x;
-	float z = w * q.z + x * q.y - y * q.x + z * q.w;
-	float w = w * q.w - x * q.x - y * q.y - z * q.z;
-	return Quaternion(x, y, z, w);
+	float nx = w * q.x + x * q.w + y * q.z - z * q.y;
+	float ny = w * q.y - x * q.z + y * q.w + z * q.x;
+	float nz = w * q.z + x * q.y - y * q.x + z * q.w;
+	float nw = w * q.w - x * q.x - y * q.y - z * q.z;
+
+	return Quaternion(nx, ny, nz, nw);
 }
 
 
@@ -121,15 +123,22 @@ Quaternion& Quaternion::operator*=(const Quaternion& quaternion)
 }
 
 
+Quaternion Quaternion::conjugate()
+{
+	return Quaternion(-x, -y, -z, w);
+}
+
+
 Vector3 Quaternion::toEulerAngle()
 {
+	normalize();
 	Vector3 rotation;
 	float sinr_cosp = 2.0f * (w * x + y * z);
 	float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
 	rotation.z = atan2(sinr_cosp, cosr_cosp);
 
 	float sinp = 2.0f * (w * y - z * x);
-	if (fabs(sinp) >= 1.0f) rotation.y = copysign(M_PI / 2.0f, sinp);
+	if (fabs(sinp) >= 1.0f) rotation.y = copysignf(Utils::pi / 2.0f, sinp);
 	else rotation.y = asin(sinp);
 
 	float siny_cosp = 2.0f * (w * z + x * y);
@@ -154,7 +163,8 @@ Matrix Quaternion::toMatrix()
 void Quaternion::normalize()
 {
 	float m = x * x + y * y + z * z + w * w;
-	if (m == 1.0f || m == 0.0f)return;
+	if (fabs(m - 1.0f) < Utils::epsilon || fabs(m) < Utils::epsilon)return;
+	std::cout << "Doing normalize" << std::endl;
 
 	m = sqrt(m);
 	m = 1.0f / m;

@@ -28,13 +28,13 @@ public:
 	Quaternion& operator=(const Quaternion& quaternion);
 	Quaternion operator*(const Quaternion& quaternion) const;
 	Quaternion& operator*=(const Quaternion& quaternion);
+	//Vector3 operator*(const Vector3& point) const;
+	//Vector3& operator*=(const Vector3& point) const;
 
+	Quaternion conjugate();
 	Vector3 toEulerAngle();
 	Matrix toMatrix();
 	void normalize();
-
-
-private:
 };
 
 #endif

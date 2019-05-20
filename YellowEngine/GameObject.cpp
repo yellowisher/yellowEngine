@@ -4,15 +4,21 @@
 #include "GameObject.hpp"
 
 
-GameObject::GameObject() :_name("GameObject")
+GameObject::GameObject() :_name("GameObject"), transform(new Transform(this))
 {
 	_parent = nullptr;
 }
 
 
-GameObject::GameObject(const char* name) : _name(name)
+GameObject::GameObject(const char* name) : _name(name), transform(new Transform(this))
 {
 	_parent = nullptr;
+}
+
+
+GameObject::GameObject(const GameObject& copy) :_name(copy._name + "(clone)"), transform(new Transform(this))
+{
+	// TODO: copy all members
 }
 
 
@@ -32,32 +38,6 @@ GameObject::~GameObject()
 		delete(last);
 	}
 	if (_parent)_parent->removeChild(this);
-}
-
-
-template <typename T> T* GameObject::getComponent()
-{
-	if (!std::is_base_of<Component, T>::value)return nullptr;
-
-	// implementing kind of RTTI would be better
-	for (auto component : _components)
-	{
-		T* target = dynamic_cast<T*>(component);
-		if (target)return target;
-	}
-
-	return nullptr;
-}
-
-
-template <typename T> T* GameObject::addComponent()
-{
-	if (!std::is_base_of<Component, T>::value)return nullptr;
-
-	Component component = new T(this);
-	_components.push_back(component);
-	// add to update list?
-	return component;
 }
 
 

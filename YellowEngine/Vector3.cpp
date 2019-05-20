@@ -4,7 +4,7 @@
 
 Vector3::Vector3()
 {
-
+	set(0, 0, 0);
 }
 
 
@@ -23,6 +23,14 @@ Vector3::Vector3(const Vector3& vector) :x(vector.x), y(vector.y), z(vector.z)
 Vector3::~Vector3()
 {
 
+}
+
+
+void Vector3::set(float x, float y, float z)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
 }
 
 
@@ -63,6 +71,27 @@ Vector3 Vector3::operator/(float value) const
 	result.y /= value;
 	result.z /= value;
 	return result;
+}
+
+
+Vector3& Vector3::operator= (const Vector3& vector)
+{
+	set(vector.x, vector.y, vector.z);
+	return *this;
+}
+
+
+Vector3& Vector3::operator+= (const Vector3& vector)
+{
+	*this = *this + vector;
+	return *this;
+}
+
+
+Vector3& Vector3::operator-= (const Vector3& vector)
+{
+	*this = *this - vector;
+	return *this;
 }
 
 

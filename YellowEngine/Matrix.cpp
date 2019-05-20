@@ -1,12 +1,9 @@
-#define DEG_TO_RAD(x) ((x) * 0.0174532925f)
-#define M_PI 3.14159265358979323846
-#define M_EPSILON 0.000001f
-
 #include <iostream>
 #include <cstring>
 #include <cmath>
 
 #include "Matrix.hpp"
+#include "Utils.hpp"
 
 
 const Matrix Matrix::zero(
@@ -29,9 +26,9 @@ Matrix Matrix::createPerspective(float fieldOfView, float aspectRatio, float zNe
 	Matrix matrix = Matrix::zero;
 
 	float n_f = 1.0f / (zNear - zFar);
-	float theta = DEG_TO_RAD(fieldOfView) * 0.5f;
+	float theta = Utils::deg2rad(fieldOfView) * 0.5f;
 
-	if (fabs(fmod(theta, M_PI*0.5f)) < M_EPSILON)
+	if (fabs(fmod(theta, Utils::pi*0.5f)) < Utils::epsilon)
 	{
 		std::cout << "Invalid operation in createPerspective()" << std::endl;
 		return matrix;

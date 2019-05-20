@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 
 
-Renderer::Renderer()
+Renderer::Renderer(GameObject* gameObject) :Component(gameObject)
 {
 
 }

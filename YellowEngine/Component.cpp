@@ -1,20 +1,21 @@
 #include "Component.hpp"
 
-Component::Component()
-{
-
-}
-
 
 Component::Component(GameObject* gameObject)
 {
 	_gameObject = gameObject;
+	_active = true;
 }
 
 
 Component::~Component()
 {
+}
 
+
+GameObject* Component::getGameObject()
+{
+	return _gameObject;
 }
 
 

@@ -5,6 +5,8 @@
 
 class Matrix
 {
+	friend class Transform;
+
 public:
 	static const Matrix zero;
 	static const Matrix identity;

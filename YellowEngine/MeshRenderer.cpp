@@ -4,21 +4,27 @@
 
 #include <iostream>
 
-MeshRenderer::MeshRenderer(Mesh* mesh, ShaderProgram* shader) :_mesh(mesh), _shader(shader)
+MeshRenderer::MeshRenderer(GameObject* gameObject) :Renderer(gameObject)
 {
 	_texture = nullptr;
+}
+
+
+MeshRenderer::~MeshRenderer()
+{
+}
+
+
+void MeshRenderer::set(Mesh* mesh, ShaderProgram* shader)
+{
+	_mesh = mesh;
+	_shader = shader;
 	_binding = VertexLayoutBinding::create(mesh, shader);
 
 	if (_binding == nullptr)
 	{
 		std::cout << "Mesh-Shader binding failed" << endl;
 	}
-}
-
-
-MeshRenderer::~MeshRenderer()
-{
-
 }
 
 

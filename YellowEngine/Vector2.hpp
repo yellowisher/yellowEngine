@@ -18,11 +18,17 @@ public:
 	Vector2(float x, float y);
 	Vector2(const Vector2& vector);
 	~Vector2();
+	void set(float x, float y);
 
 	Vector2 operator+(const Vector2& vector) const;
 	Vector2 operator-(const Vector2& vector) const;
 	Vector2 operator*(float value) const;
 	Vector2 operator/(float value) const;
+
+	Vector2& operator= (const Vector2& vector);
+	Vector2& operator+= (const Vector2& vector);
+	Vector2& operator-= (const Vector2& vector);
+
 	bool operator<(const Vector2& vector) const;
 	bool operator==(const Vector2& vector) const;
 	bool operator!=(const Vector2& vector) const;

@@ -1,0 +1,8 @@
+revisit:
+	ShaderProgram
+	Components(Renderer, MeshRenderer)
+	GameObject copy constructor
+	Transform class Value to Reference
+	Transform with parent
+	Move Matrix function(in quaternion)
+	Transform functions float3 version

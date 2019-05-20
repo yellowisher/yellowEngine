@@ -6,12 +6,10 @@
 class Renderer : public Component
 {
 public:
-	virtual void render() = 0;
-
-protected:
-	Renderer();
+	Renderer(GameObject* gameObject);
 	virtual ~Renderer();
 
-private:
+	virtual void render() = 0;
+
 };
 #endif

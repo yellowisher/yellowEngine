@@ -19,11 +19,17 @@ public:
 	Vector3(float x, float y, float z);
 	Vector3(const Vector3& vector);
 	~Vector3();
+	void set(float x, float y, float z);
 
 	Vector3 operator+(const Vector3& vector) const;
 	Vector3 operator-(const Vector3& vector) const;
 	Vector3 operator*(float value) const;
 	Vector3 operator/(float value) const;
+
+	Vector3& operator= (const Vector3& vector);
+	Vector3& operator+= (const Vector3& vector);
+	Vector3& operator-= (const Vector3& vector);
+
 	bool operator<(const Vector3& vector) const;
 	bool operator==(const Vector3& vector) const;
 	bool operator!=(const Vector3& vector) const;

@@ -11,6 +11,8 @@ using namespace std;
 using namespace glm;
 
 #include "Matrix.hpp"
+#include "GameObject.hpp"
+#include "Transform.hpp"
 #include "Quaternion.hpp"
 #include "Mesh.hpp"
 #include "Texture.hpp"
@@ -54,41 +56,50 @@ int main(void)
 	ShaderProgram* shader = ShaderProgram::create("../YellowEngine/texture.vs", "../YellowEngine/texture.ps");
 	Mesh* mesh = Mesh::create("../YellowEngine/c.obj");
 	Texture* texture = Texture::create("../YellowEngine/wall.jpg");
-	MeshRenderer renderer(mesh, shader);
-	renderer.setTexture(texture);
 
-	Matrix model;
+	GameObject* gameObject = new GameObject("GameObject");
+	gameObject->addComponent<MeshRenderer>();
+	MeshRenderer* meshRenderer = gameObject->getComponent<MeshRenderer>();
+	meshRenderer->set(mesh, shader);
+	meshRenderer->setTexture(texture);
+
 	Matrix view;
-	Matrix projection = Matrix::createOrthographic(2.0f, 2.0f, -1.0f, 100.0f);
-
-	shader->use();
+	//Matrix projection = Matrix::createOrthographic(2.0f, 2.0f, -1.0f, 100.0f);
+	Matrix projection = Matrix::createPerspective(90.0f, 1024.0f / 768.0f, 0.01f, 100.0f);
 
 	int modelHandle = shader->getUniformHandle("model");
 	int viewHandle = shader->getUniformHandle("view");
 	int projectionHandle = shader->getUniformHandle("projection");
 
-	glUniformMatrix4fv(modelHandle, 1, GL_FALSE, model.m);
-	glUniformMatrix4fv(viewHandle, 1, GL_FALSE, view.m);
-	glUniformMatrix4fv(projectionHandle, 1, GL_FALSE, projection.m);
+	shader->setUniform(viewHandle, view);
+	shader->setUniform(projectionHandle, projection);
 
 	int t = 0;
+	gameObject->transform->translate(Vector3(0, 0, -2.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 
-		float a = 0.015f*t;
-		float angle = 10.0f + 0.005f*t++;
 
-		model = Quaternion(Vector3(0, a, angle)).toMatrix();
-		//model = rotate(model, radians(angle), vec3(1.0f, 0.3f, 0.5f));
-		glUniformMatrix4fv(modelHandle, 1, GL_FALSE, model.m);
+
+		t++;
+		gameObject->transform->rotate(Vector3(0, 0.02f, 0.03f));
+
+		Matrix m = gameObject->transform->getMatrix();
+		shader->setUniform(modelHandle, gameObject->transform->getMatrix());
+
 
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		renderer.render();
+		meshRenderer->render();
+
+
+
+
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

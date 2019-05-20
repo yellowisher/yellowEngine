@@ -137,28 +137,28 @@ void ShaderProgram::setUniform(unsigned int handle, int value)
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, Vector2& value)
+void ShaderProgram::setUniform(unsigned int handle, const Vector2& value)
 {
 	glUseProgram(_id);
 	glUniform2f(handle, value.x, value.y);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, Vector3& value)
+void ShaderProgram::setUniform(unsigned int handle, const Vector3& value)
 {
 	glUseProgram(_id);
 	glUniform3f(handle, value.x, value.y, value.z);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, Vector4& value)
+void ShaderProgram::setUniform(unsigned int handle, const Vector4& value)
 {
 	glUseProgram(_id);
 	glUniform4f(handle, value.x, value.y, value.z, value.w);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, Matrix& value)
+void ShaderProgram::setUniform(unsigned int handle, const Matrix& value)
 {
 	glUseProgram(_id);
 	glUniformMatrix4fv(handle, 1, GL_FALSE, value.m);

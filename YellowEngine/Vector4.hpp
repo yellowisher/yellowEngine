@@ -20,11 +20,17 @@ public:
 	Vector4(float x, float y, float z, float w);
 	Vector4(const Vector4& vector);
 	~Vector4();
+	void set(float x, float y, float z, float w);
 
 	Vector4 operator+(const Vector4& vector) const;
 	Vector4 operator-(const Vector4& vector) const;
 	Vector4 operator*(float value) const;
 	Vector4 operator/(float value) const;
+
+	Vector4& operator= (const Vector4& vector);
+	Vector4& operator+= (const Vector4& vector);
+	Vector4& operator-= (const Vector4& vector);
+
 	bool operator<(const Vector4& vector) const;
 	bool operator==(const Vector4& vector) const;
 	bool operator!=(const Vector4& vector) const;

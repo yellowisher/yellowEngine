@@ -9,22 +9,39 @@
 
 class Transform : public Component
 {
-public:
-	void translate(Vector3 vector3);
-	void rotate(Vector3 vector);
-	void rotate(Quaternion quaternion);
-	void setScale(Vector3 scale);
+	friend class GameObject;
 
-protected:
-	Transform();
+public:
+	enum Type
+	{
+		World,
+		Local
+	};
 
 	Transform(GameObject* gameObject);
 	virtual ~Transform();
 
+	void translate(Vector3 translation);
+	void setPosition(Vector3 position, Type type = World);
+	void rotate(Vector3 rotation);
+	void rotate(Quaternion rotation);
+	void setRotation(Vector3 rotation, Type type = World);
+	void setRotation(Quaternion rotation, Type type = World);
+	void setScale(Vector3 scale);
+
+	const Matrix& getMatrix();
+
 private:
+	bool _dirty;
+	Matrix _matrix;
+
 	Vector3 _position;
 	Vector3 _scale;
 	Quaternion _rotation;
+
+	Vector3 _localPosition;
+	Vector3 _localScale;
+	Quaternion _localRotation;
 };
 
 #endif

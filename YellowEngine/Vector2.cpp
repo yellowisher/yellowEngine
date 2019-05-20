@@ -4,7 +4,7 @@
 
 Vector2::Vector2()
 {
-
+	set(0, 0);
 }
 
 
@@ -23,6 +23,13 @@ Vector2::Vector2(const Vector2& vector) :x(vector.x), y(vector.y)
 Vector2::~Vector2()
 {
 
+}
+
+
+void Vector2::set(float x, float y)
+{
+	this->x = x;
+	this->y = y;
 }
 
 
@@ -59,6 +66,27 @@ Vector2 Vector2::operator/(float value) const
 	result.x /= value;
 	result.y /= value;
 	return result;
+}
+
+
+Vector2& Vector2::operator= (const Vector2& vector)
+{
+	set(vector.x, vector.y);
+	return *this;
+}
+
+
+Vector2& Vector2::operator+= (const Vector2& vector)
+{
+	*this = *this + vector;
+	return *this;
+}
+
+
+Vector2& Vector2::operator-= (const Vector2& vector)
+{
+	*this = *this - vector;
+	return *this;
 }
 
 

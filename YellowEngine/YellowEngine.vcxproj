@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="VertexLayoutBinding.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="Graphics.hpp" />
@@ -150,6 +152,7 @@
     <ClInclude Include="System.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Transform.hpp" />
+    <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Vector2.hpp" />
     <ClInclude Include="Vector3.hpp" />
     <ClInclude Include="Vector4.hpp" />

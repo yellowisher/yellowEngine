@@ -4,7 +4,7 @@
 
 Vector4::Vector4()
 {
-
+	set(0, 0, 0, 0);
 }
 
 
@@ -23,6 +23,15 @@ Vector4::Vector4(const Vector4& vector) :x(vector.x), y(vector.y), z(vector.z), 
 Vector4::~Vector4()
 {
 
+}
+
+
+void Vector4::set(float x, float y, float z, float w)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = w;
 }
 
 
@@ -67,6 +76,27 @@ Vector4 Vector4::operator/(float value) const
 	result.z /= value;
 	result.w /= value;
 	return result;
+}
+
+
+Vector4& Vector4::operator= (const Vector4& vector)
+{
+	set(0, 0, 0, 0);
+	return *this;
+}
+
+
+Vector4& Vector4::operator+= (const Vector4& vector)
+{
+	*this = *this + vector;
+	return *this;
+}
+
+
+Vector4& Vector4::operator-= (const Vector4& vector)
+{
+	*this = *this - vector;
+	return *this;
 }
 
 

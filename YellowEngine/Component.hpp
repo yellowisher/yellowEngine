@@ -5,20 +5,18 @@ class GameObject;
 
 class Component
 {
-	friend GameObject;
+	friend class GameObject;
 
 public:
-	void setActive(bool active);
-	bool getActive();
-
-protected:
-	GameObject* _gameObject;
-	Component();
-
 	Component(GameObject* gameObject);
 	virtual ~Component();
 
+	GameObject* getGameObject();
+	void setActive(bool active);
+	bool getActive();
+
 private:
+	GameObject* _gameObject;
 	bool _active;
 };
 
