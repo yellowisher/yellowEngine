@@ -1,5 +1,4 @@
 #include <cmath>
-#include <iostream>
 
 #include "Utils.hpp"
 #include "Quaternion.hpp"
@@ -103,6 +102,12 @@ Quaternion& Quaternion::operator=(const Quaternion& quaternion)
 }
 
 
+Quaternion Quaternion::operator~() const
+{
+	return this->conjugate();
+}
+
+
 // Hamilton product
 Quaternion Quaternion::operator*(const Quaternion& quaternion) const
 {
@@ -123,7 +128,16 @@ Quaternion& Quaternion::operator*=(const Quaternion& quaternion)
 }
 
 
-Quaternion Quaternion::conjugate()
+Vector3 Quaternion::operator*(const Vector3& point) const
+{
+	Quaternion p(point.x, point.y, point.z, 0);
+	p = *this * p;
+	p *= ~(*this);
+	return Vector3(p.x, p.y, p.z);
+}
+
+
+Quaternion Quaternion::conjugate() const
 {
 	return Quaternion(-x, -y, -z, w);
 }
@@ -164,7 +178,6 @@ void Quaternion::normalize()
 {
 	float m = x * x + y * y + z * z + w * w;
 	if (fabs(m - 1.0f) < Utils::epsilon || fabs(m) < Utils::epsilon)return;
-	std::cout << "Doing normalize" << std::endl;
 
 	m = sqrt(m);
 	m = 1.0f / m;

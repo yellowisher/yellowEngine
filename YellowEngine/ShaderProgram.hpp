@@ -15,6 +15,7 @@ public:
 	static ShaderProgram* create(const char* vsPath, const char* psPath);
 
 	unsigned int getUniformHandle(std::string uniform);
+
 	void setUniform(unsigned int handle, int value);
 	void setUniform(unsigned int handle, const Vector2& value);
 	void setUniform(unsigned int handle, const Vector3& value);

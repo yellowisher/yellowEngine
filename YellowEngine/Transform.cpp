@@ -124,7 +124,7 @@ void Transform::setScale(const Vector3& scale)
 }
 
 
-Matrix Transform::getTRMatrix()
+const Matrix& Transform::getTRMatrix()
 {
 	if (_notify[Position] | _notify[Rotation])
 	{
@@ -143,7 +143,7 @@ Matrix Transform::getTRMatrix()
 }
 
 
-Matrix Transform::getSMatrix()
+const Matrix& Transform::getSMatrix()
 {
 	if (_notify[Scale])
 	{
@@ -176,15 +176,66 @@ void Transform::notifyChildren(NotifyType type)
 	{
 		child->notifyChildren(type);
 	}
+	transformChanged();
 }
 
 
 const Vector3 Transform::getWorldPosition()
 {
-	Vector3 position = _position;
-	if (_parent != nullptr)
+	return Matrix::extractTranslation(getTRMatrix());
+}
+
+
+const Vector3 Transform::getUp()
+{
+	Quaternion rotation = Matrix::extractRotation(getTRMatrix());
+	Vector3 up = rotation * Vector3::up;
+	up.normalize();
+	return up;
+}
+
+
+const Vector3 Transform::getRight()
+{
+	Quaternion rotation = Matrix::extractRotation(getTRMatrix());
+	Vector3 right = rotation * Vector3::right;
+	right.normalize();
+	return right;
+}
+
+
+const Vector3 Transform::getForward()
+{
+	Quaternion rotation = Matrix::extractRotation(getTRMatrix());
+	Vector3 forward = rotation * Vector3::forward;
+	forward.normalize();
+	return forward;
+}
+
+
+void Transform::addListener(Listener* listener)
+{
+	_listeners.push_back(listener);
+}
+
+
+void Transform::removeListener(Listener* listener)
+{
+	for (auto it = _listeners.begin(); it != _listeners.end(); ++it)
 	{
-		position += _parent->getWorldPosition();
+		if (*it == listener)
+		{
+			_listeners.erase(it);
+			return;
+		}
 	}
-	return position;
+}
+
+
+void Transform::transformChanged()
+{
+	for (auto listener : _listeners)
+	{
+		listener->onTransformChanged(this);
+	}
 }

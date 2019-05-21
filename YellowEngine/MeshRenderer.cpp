@@ -31,12 +31,13 @@ void MeshRenderer::set(Mesh* mesh, ShaderProgram* shader)
 }
 
 
-void MeshRenderer::render()
+void MeshRenderer::_render()
 {
-	if (_texture)_texture->use();
-
 	_shader->use();
 	_shader->setUniform(_modelUniformHandle, getGameObject()->transform->getMatrix());
+	_shader->setUniform(_shader->getUniformHandle("projectionView"), _currentCamera->getPVMatrix());
+
+	if (_texture)_texture->use();
 	glBindVertexArray(_binding->getVertexArrayHandle());
 	glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(NULL);

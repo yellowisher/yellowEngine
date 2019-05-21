@@ -25,13 +25,13 @@ public:
 	Quaternion(const Matrix& matrix);
 	~Quaternion();
 
+	Quaternion operator~() const;
 	Quaternion& operator=(const Quaternion& quaternion);
 	Quaternion operator*(const Quaternion& quaternion) const;
 	Quaternion& operator*=(const Quaternion& quaternion);
-	//Vector3 operator*(const Vector3& point) const;
-	//Vector3& operator*=(const Vector3& point) const;
+	Vector3 operator*(const Vector3& point) const;
 
-	Quaternion conjugate();
+	Quaternion conjugate() const;
 	Vector3 toEulerAngle();
 	Matrix toMatrix();
 	void normalize();

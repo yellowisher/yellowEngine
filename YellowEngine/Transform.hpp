@@ -12,6 +12,14 @@
 class Transform : public Component
 {
 public:
+	class Listener
+	{
+	public:
+		virtual ~Listener() {}
+
+		virtual void onTransformChanged(Transform* transform) = 0;
+	};
+
 	Transform(GameObject* gameObject);
 	virtual ~Transform();
 
@@ -28,8 +36,18 @@ public:
 	void setRotation(const Quaternion& rotation);
 	void setScale(const Vector3& scale);
 
+	const Matrix& getTRMatrix();
+	const Matrix& getSMatrix();
 	const Matrix& getMatrix();
+
 	const Vector3 getWorldPosition();
+	const Vector3 getUp();
+	const Vector3 getRight();
+	const Vector3 getForward();
+
+	void addListener(Listener* listener);
+	void removeListener(Listener* listener);
+	void transformChanged();
 
 private:
 	enum NotifyType
@@ -40,6 +58,7 @@ private:
 		Num_Notify
 	};
 
+	std::list<Listener*> _listeners;
 	Transform* _parent;
 	std::list<Transform*> _children;
 
@@ -52,8 +71,6 @@ private:
 	Vector3 _scale;
 	Quaternion _rotation;
 
-	Matrix getTRMatrix();
-	Matrix getSMatrix();
 	void notifyChildren(NotifyType type);
 };
 

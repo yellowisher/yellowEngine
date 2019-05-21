@@ -18,12 +18,16 @@ public:
 	GameObject(const GameObject& copy);
 	~GameObject();
 
+	void setActive(bool active);
+	bool getActive();
+
 	template <typename T> T* getComponent();
 	template <typename T> T* addComponent();
 
 private:
 	std::list<Component*> _components;
 	std::string _name;
+	bool _active;
 };
 
 

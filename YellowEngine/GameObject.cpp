@@ -14,7 +14,7 @@ GameObject::GameObject(const char* name) : _name(name), transform(new Transform(
 }
 
 
-GameObject::GameObject(const GameObject& copy) :_name(copy._name + "(clone)"), transform(new Transform(this))
+GameObject::GameObject(const GameObject& copy) : _name(copy._name + "(clone)"), transform(new Transform(this))
 {
 	// TODO: copy all members
 }
@@ -29,4 +29,16 @@ GameObject::~GameObject()
 		delete(last);
 	}
 	delete(transform);
+}
+
+
+void GameObject::setActive(bool active)
+{
+	_active = active;
+}
+
+
+bool GameObject::getActive()
+{
+	return _active;
 }

@@ -24,6 +24,7 @@ ShaderProgram::~ShaderProgram()
 }
 
 
+// maybe unordered_map would be better
 ShaderProgram* ShaderProgram::create(const char* vsPath, const char* psPath)
 {
 	string path = vsPath;
