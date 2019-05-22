@@ -6,17 +6,17 @@ class System
 public:
 	static System* getInstance();
 
-	int getWidth();
-	int getHeight();
-	void setWidth(int width);
-	void setHeight(int height);
+	float getWidth();
+	float getHeight();
+	void setWidth(float width);
+	void setHeight(float height);
 	float getAspectRatio();
 
 private:
 	static System* _instance;
 
-	int _width;
-	int _height;
+	float _width;
+	float _height;
 
 	System();
 	System(const System& copy);

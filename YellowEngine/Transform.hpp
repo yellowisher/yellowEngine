@@ -38,7 +38,8 @@ public:
 
 	const Matrix& getTRMatrix();
 	const Matrix& getSMatrix();
-	const Matrix& getMatrix();
+	const Matrix& getMatrix(bool pulling = false);
+	bool alreadyPulled();
 
 	const Vector3 getWorldPosition();
 	const Vector3 getUp();
@@ -50,28 +51,30 @@ public:
 	void transformChanged();
 
 private:
-	enum NotifyType
+	enum DirtyBit
 	{
-		Position,
-		Rotation,
-		Scale,
-		Num_Notify
+		Dirty_None = 0,
+		Dirty_Translation = 1,
+		Dirty_Rotation = 2,
+		Dirty_Scale = 4,
+		Dirty_Translation_Rotation = Dirty_Translation | Dirty_Rotation,
 	};
 
-	std::list<Listener*> _listeners;
 	Transform* _parent;
 	std::list<Transform*> _children;
+	std::list<Listener*> _listeners;
 
 	Matrix _matrix;
 	Matrix _trMatrix;
 	Matrix _sMatrix;
-	bool _notify[Num_Notify];
+	char _dirtyBits;
+	bool _pulled;
 
 	Vector3 _position;
 	Vector3 _scale;
 	Quaternion _rotation;
 
-	void notifyChildren(NotifyType type);
+	void dirty(char bit);
 };
 
 #endif

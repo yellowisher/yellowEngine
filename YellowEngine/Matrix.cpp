@@ -22,12 +22,12 @@ const Matrix Matrix::identity(
 const int Matrix::MATRIX_SIZE = sizeof(_m);
 
 
-Matrix Matrix::createPerspective(float fieldOfView, float aspectRatio, float zNear, float zFar)
+Matrix Matrix::createPerspective(float fov, float aspectRatio, float zNear, float zFar)
 {
 	Matrix matrix = Matrix::zero;
 
 	float n_f = 1.0f / (zNear - zFar);
-	float theta = Utils::deg2rad(fieldOfView) * 0.5f;
+	float theta = Utils::deg2rad(fov) * 0.5f;
 
 	if (fabs(fmod(theta, Utils::pi*0.5f)) < Utils::epsilon)
 	{

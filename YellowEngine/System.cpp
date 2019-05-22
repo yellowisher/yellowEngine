@@ -29,25 +29,25 @@ System::~System()
 }
 
 
-int System::getWidth()
+float System::getWidth()
 {
 	return _width;
 }
 
 
-int System::getHeight()
+float System::getHeight()
 {
 	return _height;
 }
 
 
-void System::setWidth(int width)
+void System::setWidth(float width)
 {
 	_width = width;
 }
 
 
-void System::setHeight(int height)
+void System::setHeight(float height)
 {
 	_height = height;
 }
@@ -55,5 +55,5 @@ void System::setHeight(int height)
 
 float System::getAspectRatio()
 {
-	return (float)_width / _height;
+	return _width / _height;
 }

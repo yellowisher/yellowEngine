@@ -36,7 +36,7 @@ void Renderer::renderAll(Camera* camera)
 	_currentCamera = camera;
 	for (auto renderer : _renderers)
 	{
-		if (renderer->getGameObject()->getActive() && renderer->getActive())
+		if (renderer->gameObject->getActive() && renderer->getActive())
 		{
 			renderer->render();
 		}

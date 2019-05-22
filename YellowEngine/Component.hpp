@@ -2,21 +2,23 @@
 #define __H_COMPONENT__
 
 class GameObject;
+class Transform;
 
 class Component
 {
 	friend class GameObject;
 
 public:
+	GameObject* const gameObject;
+	Transform* const transform;
+
 	Component(GameObject* gameObject);
 	virtual ~Component();
 
-	GameObject* getGameObject();
 	void setActive(bool active);
 	bool getActive();
 
 private:
-	GameObject* _gameObject;
 	bool _active;
 };
 

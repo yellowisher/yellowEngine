@@ -5,56 +5,122 @@
 Camera::Camera(GameObject* gameObject) :Component(gameObject), _vMatrix(Matrix::identity)
 {
 	setPerspective(45.0f, 0.01f, 100.0f);
-	getGameObject()->transform->addListener(this);
+	transform->addListener(this);
 }
 
 
 Camera::~Camera()
 {
-	if (getGameObject()->transform)getGameObject()->transform->removeListener(this);
+	if (transform)transform->removeListener(this);
 }
 
 
-void Camera::setPerspective(float fieldOfView, float zNear, float zFar)
+void Camera::setPerspective(float fov, float zNear, float zFar)
 {
-	_type = Perspective;
-	setZRange(zNear, zFar);
-	_pMatrix = Matrix::createPerspective(fieldOfView, System::getInstance()->getAspectRatio(), zNear, zFar);
-	computePVMatrix();
+	_type = Type_Perspective;
+	_zNear = zNear;
+	_zFar = zFar;
+	dirty(Dirty_Projection);
 }
 
 
 void Camera::setOrthographic(float zNear, float zFar)
 {
-	_type = Orthographic;
-	setZRange(zNear, zFar);
-	_pMatrix = Matrix::createOrthographic(System::getInstance()->getWidth(), System::getInstance()->getHeight(), zNear, zFar);
-	computePVMatrix();
+	_type = Type_Orthographic;
+	_zNear = zNear;
+	_zFar = zFar;
+	dirty(Dirty_Projection);
 }
 
 
-void Camera::setZRange(float zNear, float zFar)
+void Camera::setZNear(float zNear)
 {
+	dirty(Dirty_Projection);
 	_zNear = zNear;
+}
+
+
+float Camera::getZNear()
+{
+	return _zNear;
+}
+
+
+void Camera::setZFar(float zFar)
+{
+	dirty(Dirty_Projection);
 	_zFar = zFar;
 }
 
 
-const Matrix& Camera::getPVMatrix()
+float Camera::getZFar()
 {
+	return _zFar;
+}
+
+
+void Camera::setFov(float fov)
+{
+	dirty(Dirty_Projection);
+	_fov = fov;
+}
+
+
+float Camera::getFov()
+{
+	return _fov;
+}
+
+
+const Matrix& Camera::getPMatrix()
+{
+	if (_dirtyBits & Dirty_Projection)
+	{
+		_dirtyBits &= ~Dirty_Projection;
+		if (_type == Type_Perspective)
+		{
+			_pMatrix = Matrix::createPerspective(_fov, System::getInstance()->getAspectRatio(), _zNear, _zFar);
+		}
+		else
+		{
+			_pMatrix = Matrix::createOrthographic(System::getInstance()->getWidth(), System::getInstance()->getHeight(), _zNear, _zFar);
+		}
+	}
+	return _pMatrix;
+}
+
+
+const Matrix& Camera::getVMatrix()
+{
+	if (_dirtyBits & Dirty_View)
+	{
+		_dirtyBits &= ~Dirty_View;
+		_vMatrix = transform->getTRMatrix();
+		_vMatrix = ~_vMatrix;
+	}
+	return _vMatrix;
+}
+
+
+const Matrix& Camera::getMatrix()
+{
+	if (_dirtyBits != Dirty_None)
+	{
+		_pvMatrix = getPMatrix() * getVMatrix();
+	}
 	return _pvMatrix;
 }
 
 
 void Camera::onTransformChanged(Transform* transform)
 {
+	dirty(Dirty_View);
 	_vMatrix = transform->getTRMatrix();
 	_vMatrix = ~_vMatrix;
-	computePVMatrix();
 }
 
 
-void Camera::computePVMatrix()
+void Camera::dirty(char dirtyBits)
 {
-	_pvMatrix = _pMatrix * _vMatrix;
+	_dirtyBits |= dirtyBits;
 }

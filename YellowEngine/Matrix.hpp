@@ -13,7 +13,7 @@ public:
 	static const Matrix identity;
 
 	// should be in MatrixUtils?
-	static Matrix createPerspective(float fieldOfView, float aspectRatio, float zNear, float zFar);
+	static Matrix createPerspective(float fov, float aspectRatio, float zNear, float zFar);
 	static Matrix createOrthographic(float width, float height, float zNear, float zFar);
 	static Matrix createTranslation(Vector3 translation);
 	static Matrix createRotation(Quaternion rotation);

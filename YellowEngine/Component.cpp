@@ -1,21 +1,15 @@
 #include "Component.hpp"
+#include "GameObject.hpp"
 
 
-Component::Component(GameObject* gameObject)
+Component::Component(GameObject* gameObject) :gameObject(gameObject), transform(gameObject->transform)
 {
-	_gameObject = gameObject;
 	_active = true;
 }
 
 
 Component::~Component()
 {
-}
-
-
-GameObject* Component::getGameObject()
-{
-	return _gameObject;
 }
 
 

@@ -34,8 +34,8 @@ void MeshRenderer::set(Mesh* mesh, ShaderProgram* shader)
 void MeshRenderer::_render()
 {
 	_shader->use();
-	_shader->setUniform(_modelUniformHandle, getGameObject()->transform->getMatrix());
-	_shader->setUniform(_shader->getUniformHandle("projectionView"), _currentCamera->getPVMatrix());
+	_shader->setUniform(_modelUniformHandle, transform->getMatrix(true));
+	_shader->setUniform(_shader->getUniformHandle("projectionView"), _currentCamera->getMatrix());
 
 	if (_texture)_texture->use();
 	glBindVertexArray(_binding->getVertexArrayHandle());

@@ -5,12 +5,9 @@ Transform::Transform(GameObject* gameObject) :
 	Component(gameObject),
 	_parent(nullptr),
 	_matrix(Matrix::identity),
-	_scale(1.0f, 1.0f, 1.0f)
+	_scale(1.0f, 1.0f, 1.0f),
+	_dirtyBits(Dirty_None)
 {
-	for (int i = 0; i < Num_Notify; i++)
-	{
-		_notify[i] = false;
-	}
 }
 
 
@@ -67,14 +64,14 @@ void Transform::removeChild(Transform* child)
 
 void Transform::translate(const Vector3& translation)
 {
-	notifyChildren(Position);
+	dirty(Dirty_Translation);
 	_position += translation;
 }
 
 
 void Transform::setPosition(const Vector3& position)
 {
-	notifyChildren(Position);
+	dirty(Dirty_Translation);
 	_position = position;
 }
 
@@ -93,7 +90,7 @@ void Transform::rotate(const Vector3& rotation)
 
 void Transform::rotate(const Quaternion& rotation)
 {
-	notifyChildren(Rotation);
+	dirty(Dirty_Rotation);
 	_rotation = rotation * _rotation;
 }
 
@@ -112,23 +109,23 @@ void Transform::setRotation(const Vector3& rotation)
 
 void Transform::setRotation(const Quaternion& rotation)
 {
-	notifyChildren(Rotation);
+	dirty(Dirty_Rotation);
 	_rotation = rotation;
 }
 
 
 void Transform::setScale(const Vector3& scale)
 {
-	notifyChildren(Scale);
+	dirty(Dirty_Scale);
 	_scale = scale;
 }
 
 
 const Matrix& Transform::getTRMatrix()
 {
-	if (_notify[Position] | _notify[Rotation])
+	if (_dirtyBits | Dirty_Translation_Rotation)
 	{
-		_notify[Position] = _notify[Rotation] = false;
+		_dirtyBits &= ~Dirty_Translation_Rotation;
 
 		Matrix t = Matrix::createTranslation(_position);
 		Matrix r = Matrix::createRotation(_rotation);
@@ -145,10 +142,9 @@ const Matrix& Transform::getTRMatrix()
 
 const Matrix& Transform::getSMatrix()
 {
-	if (_notify[Scale])
+	if (_dirtyBits & Dirty_Scale)
 	{
-		_notify[Scale] = false;
-
+		_dirtyBits &= ~Dirty_Scale;
 		_sMatrix = Matrix::createScale(_scale);
 		if (_parent != nullptr)
 		{
@@ -159,9 +155,10 @@ const Matrix& Transform::getSMatrix()
 }
 
 
-const Matrix& Transform::getMatrix()
+const Matrix& Transform::getMatrix(bool pulling)
 {
-	if (_notify[Position] | _notify[Rotation] | _notify[Scale])
+	if (pulling)_pulled = true;
+	if (_dirtyBits != Dirty_None)
 	{
 		_matrix = getTRMatrix() * getSMatrix();
 	}
@@ -169,12 +166,19 @@ const Matrix& Transform::getMatrix()
 }
 
 
-void Transform::notifyChildren(NotifyType type)
+bool Transform::alreadyPulled()
 {
-	_notify[type] = true;
+	return _pulled;
+}
+
+
+void Transform::dirty(char dirtyBits)
+{
+	_pulled = false;
+	_dirtyBits |= dirtyBits;
 	for (auto child : _children)
 	{
-		child->notifyChildren(type);
+		child->dirty(dirtyBits);
 	}
 	transformChanged();
 }
