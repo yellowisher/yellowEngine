@@ -10,6 +10,7 @@ class Renderer : public Component
 {
 public:
 	static void renderAll(Camera* camera);
+	static Camera* getCurrentCamera();
 
 	Renderer(GameObject* gameObject);
 	virtual ~Renderer();

@@ -72,6 +72,9 @@
     <ClCompile Include="System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AutoUniformBinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.hpp">
@@ -134,18 +137,27 @@
     <ClInclude Include="Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AutoUniformBinding.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="color.ps">
+    <None Include="color.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="color.vs">
+    <None Include="color.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="texture.vs">
+    <None Include="light.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="texture.ps">
+    <None Include="light.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="texture.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="texture.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

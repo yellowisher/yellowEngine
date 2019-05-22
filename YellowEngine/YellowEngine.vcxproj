@@ -129,6 +129,7 @@
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="AutoUniformBinding.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
+    <ClInclude Include="AutoUniformBinding.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="System.hpp" />
     <ClInclude Include="Texture.hpp" />
@@ -161,10 +163,12 @@
     <ClInclude Include="VertexLayoutBinding.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="color.ps" />
-    <None Include="color.vs" />
-    <None Include="texture.ps" />
-    <None Include="texture.vs" />
+    <None Include="color.frag" />
+    <None Include="color.vert" />
+    <None Include="light.frag" />
+    <None Include="light.vert" />
+    <None Include="texture.frag" />
+    <None Include="texture.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

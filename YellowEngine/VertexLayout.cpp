@@ -26,7 +26,7 @@ unsigned int VertexLayout::getVertexSize() const
 }
 
 
-unsigned int VertexLayout::getAttrCount() const
+int VertexLayout::getAttrCount() const
 {
 	return _attributes.size();
 }

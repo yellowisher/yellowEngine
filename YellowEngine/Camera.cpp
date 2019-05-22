@@ -102,8 +102,15 @@ const Matrix& Camera::getVMatrix()
 }
 
 
-const Matrix& Camera::getMatrix()
+bool Camera::matrixChanged()
 {
+	return _matrixChanged;
+}
+
+
+const Matrix& Camera::getMatrix(bool pulling)
+{
+	if (pulling)_matrixChanged = false;
 	if (_dirtyBits != Dirty_None)
 	{
 		_pvMatrix = getPMatrix() * getVMatrix();
@@ -122,5 +129,6 @@ void Camera::onTransformChanged(Transform* transform)
 
 void Camera::dirty(char dirtyBits)
 {
+	_matrixChanged = true;
 	_dirtyBits |= dirtyBits;
 }

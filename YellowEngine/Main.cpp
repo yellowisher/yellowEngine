@@ -86,67 +86,62 @@ int main(void)
 		return -1;
 	}
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
 	glfwSetCursorPosCallback(window, mouse_callback);
 
-	ShaderProgram* shader = ShaderProgram::create("../YellowEngine/texture.vs", "../YellowEngine/texture.ps");
-	Mesh* mesh = Mesh::create("../YellowEngine/c.obj");
-	Texture* texture = Texture::create("../YellowEngine/wall.jpg");
+	//ShaderProgram* shader = ShaderProgram::create("../YellowEngine/texture.vs", "../YellowEngine/texture.ps");
+	//Mesh* mesh = Mesh::create("../YellowEngine/c.obj");
+	//Texture* texture = Texture::create("../YellowEngine/wall.jpg");
 
-	GameObject* parent = new GameObject("GameObject");
-	parent->addComponent<MeshRenderer>();
-	MeshRenderer* meshRenderer0 = parent->getComponent<MeshRenderer>();
-	meshRenderer0->set(mesh, shader);
-	meshRenderer0->setTexture(texture);
+	//GameObject* parent = new GameObject("GameObject");
+	//parent->addComponent<MeshRenderer>();
+	//MeshRenderer* meshRenderer0 = parent->getComponent<MeshRenderer>();
+	//meshRenderer0->set(mesh, shader);
+	//meshRenderer0->setTexture(texture);
 
-	GameObject* child = new GameObject("GameObject");
-	child->addComponent<MeshRenderer>();
-	MeshRenderer* meshRenderer1 = child->getComponent<MeshRenderer>();
-	meshRenderer1->set(mesh, shader);
-	meshRenderer1->setTexture(texture);
+	//GameObject* child = new GameObject("GameObject");
+	//child->addComponent<MeshRenderer>();
+	//MeshRenderer* meshRenderer1 = child->getComponent<MeshRenderer>();
+	//meshRenderer1->set(mesh, shader);
+	//meshRenderer1->setTexture(texture);
 
-	GameObject* cameraObject = new GameObject();
-	cameraObject->addComponent<Camera>();
-	Camera* camera = cameraObject->getComponent<Camera>();
-	camera->setPerspective(90.0f, 0.01f, 100.0f);
-	cameraTransform = cameraObject->transform;
+	//GameObject* cameraObject = new GameObject();
+	//cameraObject->addComponent<Camera>();
+	//Camera* camera = cameraObject->getComponent<Camera>();
+	//camera->setPerspective(90.0f, 0.01f, 100.0f);
+	//cameraTransform = cameraObject->transform;
 
-	//Matrix projection = Matrix::createOrthographic(2.0f, 2.0f, -1.0f, 100.0f);
-	//Matrix projection = Matrix::createPerspective(90.0f, 1024.0f / 768.0f, 0.01f, 100.0f);
+	//int t = 0;
+	//parent->transform->translate(Vector3(0, 0, -3.0f));
+	//parent->transform->setScale(Vector3(2.0f, 4.0f, 1.0f));
 
-	int t = 0;
-	parent->transform->translate(Vector3(0, 0, -3.0f));
-	parent->transform->setScale(Vector3(2.0f, 4.0f, 1.0f));
+	//child->transform->translate(Vector3(2.0f, 0, -3.0f));
+	//child->transform->setScale(Vector3(0.7f, 0.7f, 0.7f));
+	//child->transform->rotate(Vector3(0, 0, 45.0f));
 
-	child->transform->translate(Vector3(2.0f, 0, -3.0f));
-	child->transform->setScale(Vector3(0.7f, 0.7f, 0.7f));
-	child->transform->rotate(Vector3(0, 0, 45.0f));
+	Mesh* cubeMesh = Mesh::create("../YellowEngine/c.obj");
+
+	//GameObject* cubeGo = new GameObject();
+	//ShaderProgram* colorShader = ShaderProgram::create("../YellowEngine/color.vert", "../YellowEngine/color.frag");
+	//cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+
+	GameObject* lightGo = new GameObject();
+	ShaderProgram* lightShader = ShaderProgram::create("../YellowEngine/light.vert", "../YellowEngine/light.frag");
+	lightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
+
+	lightGo->transform->setScale(0.2f, 0.2f, 0.2f);
+	lightGo->transform->setPosition(1.2f, 1.0f, 2.0f);
+
+	GameObject* cameraGo = new GameObject();
+	Camera* camera = cameraGo->addComponent<Camera>();
+	cameraTransform = cameraGo->transform;
+
 
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 
-		//if (++t < 100)
-		//{
-		//	parent->transform->rotate(Vector3(0.0002f, 0, 0));
-		//	child->transform->rotate(Vector3(0.00001f, 0, 0.00003f));
-		//}
-		//else if (t == 100)
-		//{
-		//	parent->transform->addChild(child->transform);
-		//}
-		//else if (t < 300)
-		//{
-		//	parent->transform->rotate(Vector3(0, 0, 0.0003f));
-		//	child->transform->rotate(Vector3(0, 0.0002f, 0));
-		//}
-		//else
-		//{
-		//	parent->transform->removeChild(child->transform);
-		//	parent->transform->rotate(Vector3(0.0002f, 0, 0));
-		//	child->transform->rotate(Vector3(0.00001f, 0, 0.00003f));
-		//}
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 

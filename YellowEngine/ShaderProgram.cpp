@@ -3,19 +3,27 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <GL/glew.h>
 
 #include "ShaderProgram.hpp"
 
 map<string, ShaderProgram*> ShaderProgram::__shaderCache;
 
-ShaderProgram::ShaderProgram()
+ShaderProgram::ShaderProgram(int id) :_id(id), _autoBinding(this)
 {
-}
+	int count, size, length, handle;
+	const int bufferSize = 32;
+	char name[bufferSize];
+	GLenum type;
 
+	glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &count);
+	for (int i = 0; i < count; i++)
+	{
+		glGetActiveUniform(_id, i, bufferSize, &length, &size, &type, name);
+		handle = glGetUniformLocation(_id, name);
+		_uniforms.insert({ name, Uniform(name, i, type, size, handle) });
+	}
 
-ShaderProgram::ShaderProgram(int id) :_id(id)
-{
+	_autoBinding.initialize();
 }
 
 
@@ -25,10 +33,10 @@ ShaderProgram::~ShaderProgram()
 
 
 // maybe unordered_map would be better
-ShaderProgram* ShaderProgram::create(const char* vsPath, const char* psPath)
+ShaderProgram* ShaderProgram::create(const char* vsPath, const char* fsPath)
 {
 	string path = vsPath;
-	path += psPath;
+	path += fsPath;
 
 	auto it = __shaderCache.find(path);
 	if (it != __shaderCache.end())
@@ -36,15 +44,15 @@ ShaderProgram* ShaderProgram::create(const char* vsPath, const char* psPath)
 		return it->second;
 	}
 
-	ShaderProgram* shaderProgram = createFromFile(vsPath, psPath);
+	ShaderProgram* shaderProgram = createFromFile(vsPath, fsPath);
 	if (shaderProgram != nullptr)__shaderCache.insert({ path, shaderProgram });
 	return shaderProgram;
 }
 
 
-ShaderProgram* ShaderProgram::createFromFile(const char* vsPath, const char* psPath)
+ShaderProgram* ShaderProgram::createFromFile(const char* vsPath, const char* fsPath)
 {
-	unsigned int vs, ps;
+	unsigned int vs, fs;
 	int success;
 	char log[512];
 	string shader;
@@ -64,16 +72,16 @@ ShaderProgram* ShaderProgram::createFromFile(const char* vsPath, const char* psP
 		return nullptr;
 	}
 
-	shader = readSourceFile(psPath);
+	shader = readSourceFile(fsPath);
 	shaderCode = shader.c_str();
-	ps = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(ps, 1, &shaderCode, NULL);
-	glCompileShader(ps);
+	fs = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs, 1, &shaderCode, NULL);
+	glCompileShader(fs);
 
-	glGetShaderiv(ps, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(ps, 512, NULL, log);
+		glGetShaderInfoLog(fs, 512, NULL, log);
 		cout << "Pixel shader compile error\n" << log << endl;
 		return nullptr;
 	}
@@ -81,7 +89,7 @@ ShaderProgram* ShaderProgram::createFromFile(const char* vsPath, const char* psP
 	// linking shader program
 	int id = glCreateProgram();
 	glAttachShader(id, vs);
-	glAttachShader(id, ps);
+	glAttachShader(id, fs);
 	glLinkProgram(id);
 
 	glGetProgramiv(id, GL_LINK_STATUS, &success);
@@ -92,7 +100,7 @@ ShaderProgram* ShaderProgram::createFromFile(const char* vsPath, const char* psP
 	}
 
 	glDeleteShader(vs);
-	glDeleteShader(ps);
+	glDeleteShader(fs);
 	return new ShaderProgram(id);
 }
 
@@ -114,59 +122,64 @@ string ShaderProgram::readSourceFile(const char* path)
 }
 
 
-unsigned int ShaderProgram::getUniformHandle(string uniform)
+const Uniform* ShaderProgram::getUniform(string name)
 {
-	auto it = _uniformHandles.find(uniform);
-	if (it != _uniformHandles.end())
+	auto it = _uniforms.find(name);
+	if (it != _uniforms.end())
 	{
-		return it->second;
+		return &it->second;
 	}
-
-	unsigned int handle = glGetUniformLocation(_id, uniform.c_str());
-	if (handle != -1)
-	{
-		_uniformHandles.insert({ uniform,handle });
-	}
-	return handle;
+	return nullptr;
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, int value)
+void ShaderProgram::setUniform(const Uniform* uniform, int value)
 {
 	glUseProgram(_id);
-	glUniform1i(handle, value);
+	glUniform1i(uniform->handle, value);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, const Vector2& value)
+void ShaderProgram::setUniform(const Uniform* uniform, const Vector2& value)
 {
 	glUseProgram(_id);
-	glUniform2f(handle, value.x, value.y);
+	glUniform2f(uniform->handle, value.x, value.y);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, const Vector3& value)
+void ShaderProgram::setUniform(const Uniform* uniform, const Vector3& value)
 {
 	glUseProgram(_id);
-	glUniform3f(handle, value.x, value.y, value.z);
+	glUniform3f(uniform->handle, value.x, value.y, value.z);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, const Vector4& value)
+void ShaderProgram::setUniform(const Uniform* uniform, const Vector4& value)
 {
 	glUseProgram(_id);
-	glUniform4f(handle, value.x, value.y, value.z, value.w);
+	glUniform4f(uniform->handle, value.x, value.y, value.z, value.w);
 }
 
 
-void ShaderProgram::setUniform(unsigned int handle, const Matrix& value)
+void ShaderProgram::setUniform(const Uniform* uniform, const Matrix& value)
 {
 	glUseProgram(_id);
-	glUniformMatrix4fv(handle, 1, GL_FALSE, value.m);
+	glUniformMatrix4fv(uniform->handle, 1, GL_FALSE, value.m);
 }
 
 
-void ShaderProgram::use()
+void ShaderProgram::use(GameObject* user)
 {
 	glUseProgram(_id);
+	_autoBinding.bind(user);
+}
+
+
+Uniform::Uniform(std::string name, int index, GLenum type, int size, unsigned int handle) :
+	name(name),
+	index(index),
+	type(type),
+	size(size),
+	handle(handle)
+{
 }

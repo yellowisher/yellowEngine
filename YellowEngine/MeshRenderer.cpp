@@ -26,17 +26,12 @@ void MeshRenderer::set(Mesh* mesh, ShaderProgram* shader)
 	{
 		std::cout << "Mesh-Shader binding failed" << endl;
 	}
-
-	_modelUniformHandle = _shader->getUniformHandle("model");
 }
 
 
 void MeshRenderer::_render()
 {
-	_shader->use();
-	_shader->setUniform(_modelUniformHandle, transform->getMatrix(true));
-	_shader->setUniform(_shader->getUniformHandle("projectionView"), _currentCamera->getMatrix());
-
+	_shader->use(gameObject);
 	if (_texture)_texture->use();
 	glBindVertexArray(_binding->getVertexArrayHandle());
 	glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);

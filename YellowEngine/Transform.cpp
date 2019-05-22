@@ -76,6 +76,12 @@ void Transform::setPosition(const Vector3& position)
 }
 
 
+void Transform::setPosition(float x, float y, float z)
+{
+	setPosition(Vector3(x, y, z));
+}
+
+
 void Transform::rotate(float x, float y, float z)
 {
 	rotate(Quaternion(Vector3(x, y, z)));
@@ -121,6 +127,12 @@ void Transform::setScale(const Vector3& scale)
 }
 
 
+void Transform::setScale(float x, float y, float z)
+{
+	setScale(Vector3(x, y, z));
+}
+
+
 const Matrix& Transform::getTRMatrix()
 {
 	if (_dirtyBits | Dirty_Translation_Rotation)
@@ -157,7 +169,9 @@ const Matrix& Transform::getSMatrix()
 
 const Matrix& Transform::getMatrix(bool pulling)
 {
-	if (pulling)_pulled = true;
+	// if matrix is pulling for rendering, (is going to be copied to GPU)
+	// set _matrixChanged as false to notify it is already up to date
+	if (pulling)_matrixChanged = false;
 	if (_dirtyBits != Dirty_None)
 	{
 		_matrix = getTRMatrix() * getSMatrix();
@@ -166,15 +180,15 @@ const Matrix& Transform::getMatrix(bool pulling)
 }
 
 
-bool Transform::alreadyPulled()
+bool Transform::matrixChanged()
 {
-	return _pulled;
+	return _matrixChanged;
 }
 
 
 void Transform::dirty(char dirtyBits)
 {
-	_pulled = false;
+	_matrixChanged = true;
 	_dirtyBits |= dirtyBits;
 	for (auto child : _children)
 	{

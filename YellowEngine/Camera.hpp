@@ -27,7 +27,8 @@ public:
 	float getZFar();
 	float getFov();
 
-	const Matrix& getMatrix();
+	const Matrix& getMatrix(bool pulling = false);
+	bool matrixChanged();
 	void onTransformChanged(Transform* transform);
 
 private:
@@ -47,6 +48,7 @@ private:
 	Matrix _pMatrix;
 	Matrix _vMatrix;
 	Matrix _pvMatrix;
+	bool _matrixChanged;
 
 	void dirty(char dirtyBits);
 	const Matrix& getPMatrix();

@@ -1,2 +1,5 @@
 revisit:
 	GameObject copy constructor
+
+new:
+	Seperate setting uniforms from renderer(current: MeshRenderer)

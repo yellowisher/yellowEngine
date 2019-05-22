@@ -28,6 +28,7 @@ public:
 
 	void translate(const Vector3& translation);
 	void setPosition(const Vector3& position);
+	void setPosition(float x, float y, float z);
 	void rotate(float x, float y, float z);
 	void rotate(const Vector3& rotation);
 	void rotate(const Quaternion& rotation);
@@ -35,11 +36,12 @@ public:
 	void setRotation(const Vector3& rotation);
 	void setRotation(const Quaternion& rotation);
 	void setScale(const Vector3& scale);
+	void setScale(float x, float y, float z);
 
 	const Matrix& getTRMatrix();
 	const Matrix& getSMatrix();
 	const Matrix& getMatrix(bool pulling = false);
-	bool alreadyPulled();
+	bool matrixChanged();
 
 	const Vector3 getWorldPosition();
 	const Vector3 getUp();
@@ -68,7 +70,7 @@ private:
 	Matrix _trMatrix;
 	Matrix _sMatrix;
 	char _dirtyBits;
-	bool _pulled;
+	bool _matrixChanged;
 
 	Vector3 _position;
 	Vector3 _scale;

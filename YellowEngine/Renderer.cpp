@@ -42,3 +42,10 @@ void Renderer::renderAll(Camera* camera)
 		}
 	}
 }
+
+
+Camera* Renderer::getCurrentCamera()
+{
+	return _currentCamera;
+}
+
