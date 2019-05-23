@@ -1,28 +1,28 @@
-#ifndef __H_AUTOUNIFORMBINDING__
-#define __H_AUTOUNIFORMBINDING__
+#ifndef __H_UNIFORMUPDATER__
+#define __H_UNIFORMUPDATER__
 
 #include <vector>
 
 class ShaderProgram;
 struct Uniform;
 
-class AutoUniformBinding
+class UniformUpdater
 {
 	friend class StaticConstructor;
 
 public:
-	AutoUniformBinding(ShaderProgram* shader);
-	~AutoUniformBinding();
+	UniformUpdater(ShaderProgram* shader);
+	~UniformUpdater();
 
-	void bind(GameObject* user) const;
+	void initialize();
+	void update(GameObject* user) const;
 
 private:
 	enum UniformType
 	{
 		Uniform_Model,
 		Uniform_ProjectionView,
-		Uniform_ModelColor,
-		Uniform_LightColor,
+		Uniform_CameraPosition,
 		Num_Uniforms
 	};
 
@@ -39,8 +39,7 @@ private:
 		{
 			__uniformStrings[Uniform_Model] = "u_Model";
 			__uniformStrings[Uniform_ProjectionView] = "u_ProjectionView";
-			__uniformStrings[Uniform_ModelColor] = "u_ModelColor";
-			__uniformStrings[Uniform_LightColor] = "u_LightColor";
+			__uniformStrings[Uniform_CameraPosition] = "u_CameraPosition";
 		}
 	};
 

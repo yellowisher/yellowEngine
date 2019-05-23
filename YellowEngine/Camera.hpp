@@ -28,7 +28,7 @@ public:
 	float getFov();
 
 	const Matrix& getMatrix(bool pulling = false);
-	bool matrixChanged();
+	bool matrixPulled();
 	void onTransformChanged(Transform* transform);
 
 private:
@@ -36,7 +36,8 @@ private:
 	{
 		Dirty_None = 0,
 		Dirty_View = 1,
-		Dirty_Projection = 2
+		Dirty_Projection = 2,
+		Dirty_Matrix = 4
 	};
 	char _dirtyBits;
 
@@ -48,7 +49,7 @@ private:
 	Matrix _pMatrix;
 	Matrix _vMatrix;
 	Matrix _pvMatrix;
-	bool _matrixChanged;
+	bool _matrixPulled;
 
 	void dirty(char dirtyBits);
 	const Matrix& getPMatrix();

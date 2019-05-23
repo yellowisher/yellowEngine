@@ -13,10 +13,11 @@ public:
 
 	void use();
 
+	unsigned int _id;
+
 private:
 	static map<string, Texture*> __textureCache;
 
-	unsigned int _id;
 
 	Texture();
 	~Texture();

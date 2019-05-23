@@ -1,5 +1,7 @@
 revisit:
 	GameObject copy constructor
+	Texture changed _id access modifier
+	Chagned currentCamera of Renderer as protected
 
 new:
 	Seperate setting uniforms from renderer(current: MeshRenderer)

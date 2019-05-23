@@ -31,7 +31,9 @@ void MeshRenderer::set(Mesh* mesh, ShaderProgram* shader)
 
 void MeshRenderer::_render()
 {
-	_shader->use(gameObject);
+	_shader->use();
+	_shader->updateUniforms(gameObject);
+
 	if (_texture)_texture->use();
 	glBindVertexArray(_binding->getVertexArrayHandle());
 	glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);

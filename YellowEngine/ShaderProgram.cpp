@@ -8,7 +8,7 @@ using namespace std;
 
 map<string, ShaderProgram*> ShaderProgram::__shaderCache;
 
-ShaderProgram::ShaderProgram(int id) :_id(id), _autoBinding(this)
+ShaderProgram::ShaderProgram(int id) :_id(id), _uniformUpdater(this)
 {
 	int count, size, length, handle;
 	const int bufferSize = 32;
@@ -23,7 +23,7 @@ ShaderProgram::ShaderProgram(int id) :_id(id), _autoBinding(this)
 		_uniforms.insert({ name, Uniform(name, i, type, size, handle) });
 	}
 
-	_autoBinding.initialize();
+	_uniformUpdater.initialize();
 }
 
 
@@ -140,6 +140,13 @@ void ShaderProgram::setUniform(const Uniform* uniform, int value)
 }
 
 
+void ShaderProgram::setUniform(const Uniform* uniform, float value)
+{
+	glUseProgram(_id);
+	glUniform1f(uniform->handle, value);
+}
+
+
 void ShaderProgram::setUniform(const Uniform* uniform, const Vector2& value)
 {
 	glUseProgram(_id);
@@ -168,10 +175,16 @@ void ShaderProgram::setUniform(const Uniform* uniform, const Matrix& value)
 }
 
 
-void ShaderProgram::use(GameObject* user)
+void ShaderProgram::use()
 {
 	glUseProgram(_id);
-	_autoBinding.bind(user);
+}
+
+
+void ShaderProgram::updateUniforms(GameObject* target)
+{
+	glUseProgram(_id);
+	_uniformUpdater.update(target);
 }
 
 

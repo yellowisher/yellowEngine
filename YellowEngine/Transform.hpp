@@ -27,6 +27,7 @@ public:
 	void removeChild(Transform* child);
 
 	void translate(const Vector3& translation);
+	void translate(float x, float y, float z);
 	void setPosition(const Vector3& position);
 	void setPosition(float x, float y, float z);
 	void rotate(float x, float y, float z);
@@ -41,7 +42,7 @@ public:
 	const Matrix& getTRMatrix();
 	const Matrix& getSMatrix();
 	const Matrix& getMatrix(bool pulling = false);
-	bool matrixChanged();
+	bool matrixPulled();
 
 	const Vector3 getWorldPosition();
 	const Vector3 getUp();
@@ -59,6 +60,7 @@ private:
 		Dirty_Translation = 1,
 		Dirty_Rotation = 2,
 		Dirty_Scale = 4,
+		Dirty_Matrix = 8,
 		Dirty_Translation_Rotation = Dirty_Translation | Dirty_Rotation,
 	};
 
@@ -70,7 +72,7 @@ private:
 	Matrix _trMatrix;
 	Matrix _sMatrix;
 	char _dirtyBits;
-	bool _matrixChanged;
+	bool _matrixPulled;
 
 	Vector3 _position;
 	Vector3 _scale;

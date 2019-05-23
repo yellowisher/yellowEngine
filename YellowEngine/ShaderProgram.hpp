@@ -11,7 +11,7 @@
 #include "Vector4.hpp"
 #include "Matrix.hpp"
 #include "GameObject.hpp"
-#include "AutoUniformBinding.hpp"
+#include "UniformUpdater.hpp"
 
 struct Uniform;
 
@@ -22,19 +22,21 @@ public:
 
 	const Uniform* getUniform(std::string name);
 	void setUniform(const Uniform* uniform, int value);
+	void setUniform(const Uniform* uniform, float value);
 	void setUniform(const Uniform* uniform, const Vector2& value);
 	void setUniform(const Uniform* uniform, const Vector3& value);
 	void setUniform(const Uniform* uniform, const Vector4& value);
 	void setUniform(const Uniform* uniform, const Matrix& value);
 
-	void use(GameObject* user);
+	void use();
+	void updateUniforms(GameObject* target);
 
 private:
 	static std::map<std::string, ShaderProgram*> __shaderCache;
 
 	unsigned int _id;
 	std::map<std::string, Uniform> _uniforms;
-	AutoUniformBinding _autoBinding;
+	UniformUpdater _uniformUpdater;
 
 	static ShaderProgram* createFromFile(const char* vsPath, const char* fsPath);
 	static std::string readSourceFile(const char* path);

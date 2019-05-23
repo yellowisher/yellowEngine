@@ -17,8 +17,8 @@ public:
 
 	void render();
 
-protected:
 	static Camera* _currentCamera;
+protected:
 
 	virtual void _render() = 0;
 

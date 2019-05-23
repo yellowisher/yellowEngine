@@ -1,24 +1,24 @@
 #include "Renderer.hpp"
 #include "GameObject.hpp"
 #include "ShaderProgram.hpp"
-#include "AutoUniformBinding.hpp"
+#include "UniformUpdater.hpp"
 
 
-AutoUniformBinding::StaticConstructor AutoUniformBinding::__staticConstructor;
-const char* AutoUniformBinding::__uniformStrings[Num_Uniforms];
+UniformUpdater::StaticConstructor UniformUpdater::__staticConstructor;
+const char* UniformUpdater::__uniformStrings[Num_Uniforms];
 
 
-AutoUniformBinding::AutoUniformBinding(ShaderProgram* shader) :_shader(shader)
+UniformUpdater::UniformUpdater(ShaderProgram* shader) :_shader(shader)
 {
 }
 
 
-AutoUniformBinding::~AutoUniformBinding()
+UniformUpdater::~UniformUpdater()
 {
 }
 
 
-void AutoUniformBinding::initialize()
+void UniformUpdater::initialize()
 {
 	for (int i = 0; i < Num_Uniforms; i++)
 	{
@@ -31,27 +31,28 @@ void AutoUniformBinding::initialize()
 }
 
 
-void AutoUniformBinding::bind(GameObject* user) const
+void UniformUpdater::update(GameObject* user) const
 {
 	for (auto pair : _uniformPairs)
 	{
 		switch (pair.type)
 		{
 			case Uniform_Model:
-				if (user->transform->matrixChanged())
+				if (!user->transform->matrixPulled())
 				{
 					_shader->setUniform(pair.uniform, user->transform->getMatrix(true));
 				}
 				break;
+
 			case Uniform_ProjectionView:
-				if (Renderer::getCurrentCamera()->matrixChanged())
+				if (!Renderer::getCurrentCamera()->matrixPulled())
 				{
 					_shader->setUniform(pair.uniform, Renderer::getCurrentCamera()->getMatrix());
 				}
 				break;
-			case Uniform_ModelColor:
-				break;
-			case Uniform_LightColor:
+
+			case Uniform_CameraPosition:
+				_shader->setUniform(pair.uniform, Renderer::getCurrentCamera()->transform->getWorldPosition());
 				break;
 		}
 	}

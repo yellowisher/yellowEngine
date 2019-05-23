@@ -129,7 +129,7 @@
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="AutoUniformBinding.cpp" />
+    <ClCompile Include="UniformUpdater.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -150,7 +150,7 @@
     <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
-    <ClInclude Include="AutoUniformBinding.hpp" />
+    <ClInclude Include="UniformUpdater.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="System.hpp" />
     <ClInclude Include="Texture.hpp" />

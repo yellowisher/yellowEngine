@@ -2,9 +2,11 @@
 #include "System.hpp"
 #include "GameObject.hpp"
 
-Camera::Camera(GameObject* gameObject) :Component(gameObject), _vMatrix(Matrix::identity)
+Camera::Camera(GameObject* gameObject) :
+	Component(gameObject),
+	_matrixPulled(false)
 {
-	setPerspective(45.0f, 0.01f, 100.0f);
+	setPerspective(60.0f, 0.01f, 100.0f);
 	transform->addListener(this);
 }
 
@@ -18,6 +20,7 @@ Camera::~Camera()
 void Camera::setPerspective(float fov, float zNear, float zFar)
 {
 	_type = Type_Perspective;
+	_fov = fov;
 	_zNear = zNear;
 	_zFar = zFar;
 	dirty(Dirty_Projection);
@@ -102,17 +105,18 @@ const Matrix& Camera::getVMatrix()
 }
 
 
-bool Camera::matrixChanged()
+bool Camera::matrixPulled()
 {
-	return _matrixChanged;
+	return _matrixPulled;
 }
 
 
 const Matrix& Camera::getMatrix(bool pulling)
 {
-	if (pulling)_matrixChanged = false;
+	if (pulling)_matrixPulled = true;
 	if (_dirtyBits != Dirty_None)
 	{
+		_dirtyBits &= ~Dirty_Matrix;
 		_pvMatrix = getPMatrix() * getVMatrix();
 	}
 	return _pvMatrix;
@@ -129,6 +133,6 @@ void Camera::onTransformChanged(Transform* transform)
 
 void Camera::dirty(char dirtyBits)
 {
-	_matrixChanged = true;
-	_dirtyBits |= dirtyBits;
+	_matrixPulled = false;
+	_dirtyBits |= dirtyBits | Dirty_Matrix;
 }

@@ -144,7 +144,14 @@ Mesh* Mesh::createFromOBJ(const char* path)
 				}
 			}
 		}
-		while (input != '\n')fin.get(input);
+		while (input != '\n')
+		{
+			fin.get(input);
+		}
+		if (fin.eof())
+		{
+			break;
+		}
 		fin.get(input);
 	}
 	fin.close();
