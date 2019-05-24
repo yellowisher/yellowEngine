@@ -41,8 +41,7 @@ public:
 
 	const Matrix& getTRMatrix();
 	const Matrix& getSMatrix();
-	const Matrix& getMatrix(bool pulling = false);
-	bool matrixPulled();
+	const Matrix& getMatrix();
 
 	const Vector3 getWorldPosition();
 	const Vector3 getUp();
@@ -72,7 +71,6 @@ private:
 	Matrix _trMatrix;
 	Matrix _sMatrix;
 	char _dirtyBits;
-	bool _matrixPulled;
 
 	Vector3 _position;
 	Vector3 _scale;

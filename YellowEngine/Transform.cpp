@@ -5,7 +5,6 @@ Transform::Transform(GameObject* gameObject) :
 	Component(gameObject),
 	_parent(nullptr),
 	_scale(1.0f, 1.0f, 1.0f),
-	_matrixPulled(false),
 	_dirtyBits(Dirty_None)
 {
 }
@@ -173,11 +172,8 @@ const Matrix& Transform::getSMatrix()
 }
 
 
-const Matrix& Transform::getMatrix(bool pulling)
+const Matrix& Transform::getMatrix()
 {
-	// if matrix is pulling for rendering, (is going to be copied to GPU)
-	// set _matrixPulled as true to notify that current version of matrix on GPU is already up to date
-	if (pulling)_matrixPulled = true;
 	if (_dirtyBits != Dirty_None)
 	{
 		_dirtyBits &= ~Dirty_Matrix;
@@ -187,15 +183,8 @@ const Matrix& Transform::getMatrix(bool pulling)
 }
 
 
-bool Transform::matrixPulled()
-{
-	return _matrixPulled;
-}
-
-
 void Transform::dirty(char dirtyBits)
 {
-	_matrixPulled = false;
 	_dirtyBits |= dirtyBits | Dirty_Matrix;
 	for (auto child : _children)
 	{

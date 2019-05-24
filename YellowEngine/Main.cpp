@@ -85,7 +85,7 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "Yellow engine", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1024, 768, "yellow engine", NULL, NULL);
 	if (window == NULL)
 	{
 		cout << "Failed to create GLFW window" << endl;
@@ -106,9 +106,9 @@ int main(void)
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-	//ShaderProgram* shader = ShaderProgram::create("../YellowEngine/texture.vs", "../YellowEngine/texture.ps");
-	//Mesh* mesh = Mesh::create("../YellowEngine/c.obj");
-	//Texture* texture = Texture::create("../YellowEngine/wall.jpg");
+	//ShaderProgram* shader = ShaderProgram::create("../yellowEngine/texture.vs", "../yellowEngine/texture.ps");
+	//Mesh* mesh = Mesh::create("../yellowEngine/c.obj");
+	//Texture* texture = Texture::create("../yellowEngine/wall.jpg");
 
 	//GameObject* parent = new GameObject("GameObject");
 	//parent->addComponent<MeshRenderer>();
@@ -136,16 +136,20 @@ int main(void)
 	//child->transform->setScale(Vector3(0.7f, 0.7f, 0.7f));
 	//child->transform->rotate(Vector3(0, 0, 45.0f));
 
-	Mesh* cubeMesh = Mesh::create("../YellowEngine/cube.obj");
-	Texture* diffuseMap = Texture::create("../YellowEngine/container2.png");
-	Texture* specularMap = Texture::create("../YellowEngine/container2_specular.png");
+	Mesh* cubeMesh = Mesh::create("../yellowEngine/cube.obj");
+	ShaderProgram* colorShader = ShaderProgram::create("../yellowEngine/texture.vert", "../yellowEngine/texture.frag");
+	Texture* diffuseMap = Texture::create("../yellowEngine/container2.png");
+	Texture* specularMap = Texture::create("../yellowEngine/container2_specular.png");
 
 	GameObject* cubeGo = new GameObject("Cube");
-	ShaderProgram* colorShader = ShaderProgram::create("../YellowEngine/texture.vert", "../YellowEngine/texture.frag");
-	cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* cubeRenderer = cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+
+	GameObject* cubeGo2 = new GameObject("Cube2");
+	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	cubeGo2->transform->translate(5.0f, 0, 0);
 
 	GameObject* lightGo = new GameObject("Light");
-	ShaderProgram* lightShader = ShaderProgram::create("../YellowEngine/light.vert", "../YellowEngine/light.frag");
+	ShaderProgram* lightShader = ShaderProgram::create("../yellowEngine/light.vert", "../yellowEngine/light.frag");
 	lightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
 
 	lightTransform = lightGo->transform;
@@ -159,9 +163,11 @@ int main(void)
 
 	Renderer::_currentCamera = camera;
 
-	colorShader->use();
-	colorShader->setUniform(colorShader->getUniform("u_Material.diffuse"), 0);
-	colorShader->setUniform(colorShader->getUniform("u_Material.specular"), 1);
+	cubeRenderer->addTexture(diffuseMap, "u_Material.diffuse");
+	cubeRenderer->addTexture(specularMap, "u_Material.specular");
+
+	cubeRenderer2->addTexture(diffuseMap, "u_Material.diffuse");
+	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -177,21 +183,13 @@ int main(void)
 		colorShader->setUniform(colorShader->getUniform("u_Light.diffuse"), Vector3(0.5f, 0.5f, 0.5f));
 		colorShader->setUniform(colorShader->getUniform("u_Light.specular"), Vector3(1.0f, 1.0f, 1.0f));
 
+		colorShader->setUniform(colorShader->getUniform("u_Light.constant"), 1.0f);
+		colorShader->setUniform(colorShader->getUniform("u_Light.linear"), 0.14f);
+		colorShader->setUniform(colorShader->getUniform("u_Light.quadratic"), 0.07f);
+
 		colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 32.0f);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap->_id);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap->_id);
-
 		Renderer::renderAll(camera);
-
-
-		//Renderer::renderAll(camera);
-
-
-
 
 
 		glfwSwapBuffers(window);

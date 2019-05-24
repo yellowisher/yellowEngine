@@ -1,6 +1,8 @@
 #ifndef __H_MESHRENDERER__
 #define __H_MESHRENDERER__
 
+#include <vector>
+
 #include "Component.hpp"
 #include "Renderer.hpp"
 #include "Mesh.hpp"
@@ -14,15 +16,15 @@ public:
 	MeshRenderer(GameObject* gameObject);
 	~MeshRenderer();
 
-	void set(Mesh* mesh, ShaderProgram* shader);
+	MeshRenderer* set(Mesh* mesh, ShaderProgram* shader);
 	void _render();
-	void setTexture(Texture* texture);
+	void addTexture(Texture* texture, const char* usage);
 
 private:
 	Mesh* _mesh;
 	ShaderProgram* _shader;
 	VertexLayoutBinding* _binding;
-	Texture* _texture;
+	std::vector<Texture*> _textures;
 };
 
 #endif

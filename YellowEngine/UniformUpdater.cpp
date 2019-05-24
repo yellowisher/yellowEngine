@@ -38,10 +38,7 @@ void UniformUpdater::update(GameObject* user) const
 		switch (pair.type)
 		{
 			case Uniform_Model:
-				if (!user->transform->matrixPulled())
-				{
-					_shader->setUniform(pair.uniform, user->transform->getMatrix(true));
-				}
+				_shader->setUniform(pair.uniform, user->transform->getMatrix());
 				break;
 
 			case Uniform_ProjectionView:
