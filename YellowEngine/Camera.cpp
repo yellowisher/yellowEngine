@@ -7,13 +7,13 @@ Camera::Camera(GameObject* gameObject) :
 	_matrixPulled(false)
 {
 	setPerspective(60.0f, 0.01f, 100.0f);
-	transform->addListener(this);
+	transformChangeListener.setParent(this);
+	transform->transformChangeNotifier.addListener(&transformChangeListener);
 }
 
 
 Camera::~Camera()
 {
-	if (transform)transform->removeListener(this);
 }
 
 
@@ -123,11 +123,14 @@ const Matrix& Camera::getMatrix(bool pulling)
 }
 
 
-void Camera::onTransformChanged(Transform* transform)
+void Camera::notify(Event event, void* sender)
 {
-	dirty(Dirty_View);
-	_vMatrix = transform->getTRMatrix();
-	_vMatrix = ~_vMatrix;
+	switch (event)
+	{
+		case Event_TransformChanged:
+			dirty(Dirty_View);
+			break;
+	}
 }
 
 

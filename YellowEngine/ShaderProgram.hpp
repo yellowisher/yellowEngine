@@ -30,6 +30,7 @@ public:
 
 	void use();
 	void updateUniforms(GameObject* target);
+	int getId();
 
 private:
 	static std::map<std::string, ShaderProgram*> __shaderCache;

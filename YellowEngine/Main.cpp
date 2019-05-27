@@ -21,6 +21,7 @@ using namespace glm;
 #include "Matrix.hpp"
 #include "Camera.hpp"
 #include "System.hpp"
+#include "Light.hpp"
 
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "lib/glew32.lib")
@@ -54,7 +55,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	_yaw += xoffset * 0.00002f;
 	_pitch += yoffset * 0.00004f;
 
-	cameraTransform->setRotation(0, _yaw, _pitch);
+	cameraTransform->setRotation(_pitch, _yaw, 0);
 }
 
 void processInput(GLFWwindow *window)
@@ -106,40 +107,16 @@ int main(void)
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-	//ShaderProgram* shader = ShaderProgram::create("../yellowEngine/texture.vs", "../yellowEngine/texture.ps");
-	//Mesh* mesh = Mesh::create("../yellowEngine/c.obj");
-	//Texture* texture = Texture::create("../yellowEngine/wall.jpg");
-
-	//GameObject* parent = new GameObject("GameObject");
-	//parent->addComponent<MeshRenderer>();
-	//MeshRenderer* meshRenderer0 = parent->getComponent<MeshRenderer>();
-	//meshRenderer0->set(mesh, shader);
-	//meshRenderer0->setTexture(texture);
-
-	//GameObject* child = new GameObject("GameObject");
-	//child->addComponent<MeshRenderer>();
-	//MeshRenderer* meshRenderer1 = child->getComponent<MeshRenderer>();
-	//meshRenderer1->set(mesh, shader);
-	//meshRenderer1->setTexture(texture);
-
-	//GameObject* cameraObject = new GameObject();
-	//cameraObject->addComponent<Camera>();
-	//Camera* camera = cameraObject->getComponent<Camera>();
-	//camera->setPerspective(90.0f, 0.01f, 100.0f);
-	//cameraTransform = cameraObject->transform;
-
-	//int t = 0;
-	//parent->transform->translate(Vector3(0, 0, -3.0f));
-	//parent->transform->setScale(Vector3(2.0f, 4.0f, 1.0f));
-
-	//child->transform->translate(Vector3(2.0f, 0, -3.0f));
-	//child->transform->setScale(Vector3(0.7f, 0.7f, 0.7f));
-	//child->transform->rotate(Vector3(0, 0, 45.0f));
-
 	Mesh* cubeMesh = Mesh::create("../yellowEngine/cube.obj");
 	ShaderProgram* colorShader = ShaderProgram::create("../yellowEngine/texture.vert", "../yellowEngine/texture.frag");
 	Texture* diffuseMap = Texture::create("../yellowEngine/container2.png");
 	Texture* specularMap = Texture::create("../yellowEngine/container2_specular.png");
+
+	unsigned int lightsIndex = glGetUniformBlockIndex(colorShader->getId(), "LightBlock");
+	glUniformBlockBinding(colorShader->getId(), lightsIndex, 0);
+
+	//unsigned int cameraIndex = glGetUniformBlockIndex(colorShader->getId(), "CameraBlock");
+	//glUniformBlockBinding(colorShader->getId(), cameraIndex, 1);
 
 	GameObject* cubeGo = new GameObject("Cube");
 	MeshRenderer* cubeRenderer = cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
@@ -148,16 +125,24 @@ int main(void)
 	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
 	cubeGo2->transform->translate(5.0f, 0, 0);
 
-	GameObject* lightGo = new GameObject("Light");
-	ShaderProgram* lightShader = ShaderProgram::create("../yellowEngine/light.vert", "../yellowEngine/light.frag");
-	lightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
+	GameObject* dl = new GameObject();
+	Light* l = dl->addComponent<Light>()->setDirectional();
+	l->transform->rotate(45.0f, 0, 0);
 
-	lightTransform = lightGo->transform;
-	lightGo->transform->setScale(0.2f, 0.2f, 0.2f);
-	lightGo->transform->setPosition(1.2f, 1.0f, 2.0f);
+	GameObject* dirLightGo = new GameObject("dirLight");
+	lightTransform = dirLightGo->transform;
+	ShaderProgram* lightShader = ShaderProgram::create("../yellowEngine/light.vert", "../yellowEngine/light.frag");
+	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
+	//Light* light = dirLightGo->addComponent<Light>()->setDirectional();
+	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
+
+	light->transform->rotate(45.0f, 0, 0);
+	light->transform->setScale(0.2f, 0.2f, 0.2f);
+	light->transform->setPosition(1.2f, 1.0f, 2.0f);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
+	camera->setPerspective(60.0f, 0.01f, 100.0f);
 	cameraTransform = cameraGo->transform;
 	cameraTransform->translate(0, 0, 2.0f);
 
@@ -168,6 +153,8 @@ int main(void)
 
 	cubeRenderer2->addTexture(diffuseMap, "u_Material.diffuse");
 	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
+	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -176,7 +163,7 @@ int main(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		colorShader->use();
+		/*colorShader->use();
 		colorShader->setUniform(colorShader->getUniform("u_Light.position"), lightTransform->getWorldPosition());
 
 		colorShader->setUniform(colorShader->getUniform("u_Light.ambient"), Vector3(0.1f, 0.1f, 0.1f));
@@ -187,8 +174,8 @@ int main(void)
 		colorShader->setUniform(colorShader->getUniform("u_Light.linear"), 0.14f);
 		colorShader->setUniform(colorShader->getUniform("u_Light.quadratic"), 0.07f);
 
-		colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 32.0f);
-
+		colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 32.0f);*/
+		Light::updateUniformBuffer();
 		Renderer::renderAll(camera);
 
 

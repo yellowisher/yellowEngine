@@ -27,12 +27,12 @@ Quaternion::Quaternion(const Quaternion& quaternion)
 
 Quaternion::Quaternion(const Vector3& eulerAngle)
 {
-	float cy = cosf(Utils::rad2deg(eulerAngle.x * 0.5f));
-	float sy = sinf(Utils::rad2deg(eulerAngle.x * 0.5f));
+	float cr = cosf(Utils::rad2deg(eulerAngle.x * 0.5f));
+	float sr = sinf(Utils::rad2deg(eulerAngle.x * 0.5f));
+	float cy = cosf(Utils::rad2deg(eulerAngle.z * 0.5f));
+	float sy = sinf(Utils::rad2deg(eulerAngle.z * 0.5f));
 	float cp = cosf(Utils::rad2deg(eulerAngle.y * 0.5f));
 	float sp = sinf(Utils::rad2deg(eulerAngle.y * 0.5f));
-	float cr = cosf(Utils::rad2deg(eulerAngle.z * 0.5f));
-	float sr = sinf(Utils::rad2deg(eulerAngle.z * 0.5f));
 
 	w = cy * cp * cr + sy * sp * sr;
 	x = cy * cp * sr - sy * sp * cr;
@@ -149,7 +149,7 @@ Vector3 Quaternion::toEulerAngle()
 	Vector3 rotation;
 	float sinr_cosp = 2.0f * (w * x + y * z);
 	float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
-	rotation.z = atan2(sinr_cosp, cosr_cosp);
+	rotation.x = atan2(sinr_cosp, cosr_cosp);
 
 	float sinp = 2.0f * (w * y - z * x);
 	if (fabs(sinp) >= 1.0f) rotation.y = copysignf(Utils::pi / 2.0f, sinp);
@@ -157,7 +157,7 @@ Vector3 Quaternion::toEulerAngle()
 
 	float siny_cosp = 2.0f * (w * z + x * y);
 	float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
-	rotation.x = atan2(siny_cosp, cosy_cosp);
+	rotation.z = atan2(siny_cosp, cosy_cosp);
 
 	return rotation;
 }

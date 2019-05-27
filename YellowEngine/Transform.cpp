@@ -3,7 +3,11 @@
 
 Transform::Transform(GameObject* gameObject) :
 	Component(gameObject),
+	position(_position),
+	scale(_scale),
+	rotation(_rotation),
 	_parent(nullptr),
+	transformChangeNotifier(this),
 	_scale(1.0f, 1.0f, 1.0f),
 	_dirtyBits(Dirty_None)
 {
@@ -200,6 +204,12 @@ const Vector3 Transform::getWorldPosition()
 }
 
 
+const Vector3 Transform::getWorldRotation()
+{
+	return Matrix::extractRotation(getTRMatrix()).toEulerAngle();
+}
+
+
 const Vector3 Transform::getUp()
 {
 	Quaternion rotation = Matrix::extractRotation(getTRMatrix());
@@ -227,29 +237,7 @@ const Vector3 Transform::getForward()
 }
 
 
-void Transform::addListener(Listener* listener)
-{
-	_listeners.push_back(listener);
-}
-
-
-void Transform::removeListener(Listener* listener)
-{
-	for (auto it = _listeners.begin(); it != _listeners.end(); ++it)
-	{
-		if (*it == listener)
-		{
-			_listeners.erase(it);
-			return;
-		}
-	}
-}
-
-
 void Transform::transformChanged()
 {
-	for (auto listener : _listeners)
-	{
-		listener->onTransformChanged(this);
-	}
+	transformChangeNotifier.notify(Event_TransformChanged);
 }

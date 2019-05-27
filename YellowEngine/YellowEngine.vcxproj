@@ -122,7 +122,9 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -130,6 +132,7 @@
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Event.hpp" />
     <ClCompile Include="UniformUpdater.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -145,6 +148,7 @@
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="Graphics.hpp" />
+    <ClInclude Include="Light.hpp" />
     <ClInclude Include="Matrix.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="MeshRenderer.hpp" />

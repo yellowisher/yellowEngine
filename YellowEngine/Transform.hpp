@@ -8,17 +8,16 @@
 #include "Vector4.hpp"
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
+#include "Event.hpp"
 
 class Transform : public Component
 {
 public:
-	class Listener
-	{
-	public:
-		virtual ~Listener() {}
+	const Vector3& position;
+	const Vector3& scale;
+	const Quaternion& rotation;
 
-		virtual void onTransformChanged(Transform* transform) = 0;
-	};
+	EventNotifier transformChangeNotifier;
 
 	Transform(GameObject* gameObject);
 	virtual ~Transform();
@@ -44,13 +43,10 @@ public:
 	const Matrix& getMatrix();
 
 	const Vector3 getWorldPosition();
+	const Vector3 getWorldRotation();
 	const Vector3 getUp();
 	const Vector3 getRight();
 	const Vector3 getForward();
-
-	void addListener(Listener* listener);
-	void removeListener(Listener* listener);
-	void transformChanged();
 
 private:
 	enum DirtyBit
@@ -65,7 +61,6 @@ private:
 
 	Transform* _parent;
 	std::list<Transform*> _children;
-	std::list<Listener*> _listeners;
 
 	Matrix _matrix;
 	Matrix _trMatrix;
@@ -77,6 +72,7 @@ private:
 	Quaternion _rotation;
 
 	void dirty(char bit);
+	void transformChanged();
 };
 
 #endif

@@ -4,8 +4,9 @@
 #include "Component.hpp"
 #include "Transform.hpp"
 #include "Matrix.hpp"
+#include "Event.hpp"
 
-class Camera : public Component, public Transform::Listener
+class Camera : public Component, public INotifiable
 {
 public:
 	enum Type
@@ -14,8 +15,10 @@ public:
 		Type_Orthographic
 	};
 
+	EventListener transformChangeListener;
+
 	Camera(GameObject* gameObject);
-	~Camera();
+	virtual ~Camera();
 
 	void setPerspective(float fov, float zNear, float zFar);
 	void setOrthographic(float zNear, float zFar);
@@ -29,7 +32,7 @@ public:
 
 	const Matrix& getMatrix(bool pulling = false);
 	bool matrixPulled();
-	void onTransformChanged(Transform* transform);
+	virtual void notify(Event event, void* sender);
 
 private:
 	enum DirtyBit

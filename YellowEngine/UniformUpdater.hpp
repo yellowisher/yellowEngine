@@ -23,6 +23,7 @@ private:
 		Uniform_Model,
 		Uniform_ProjectionView,
 		Uniform_CameraPosition,
+
 		Num_Uniforms
 	};
 

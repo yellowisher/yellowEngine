@@ -188,6 +188,12 @@ void ShaderProgram::updateUniforms(GameObject* target)
 }
 
 
+int ShaderProgram::getId()
+{
+	return _id;
+}
+
+
 Uniform::Uniform(std::string name, int index, GLenum type, int size, unsigned int handle) :
 	name(name),
 	index(index),
