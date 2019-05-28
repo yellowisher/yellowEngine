@@ -1,7 +1,10 @@
+#include <limits>
+
 namespace Utils
 {
 	const float pi = 3.1415926535f;
 	const float epsilon = 0.00001f;
+	const float inf = std::numeric_limits<float>::infinity();
 
 	constexpr float deg2rad(float deg)
 	{

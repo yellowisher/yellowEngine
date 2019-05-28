@@ -44,6 +44,8 @@ public:
 	Matrix& operator-=(const Matrix& matrix);
 	Matrix& operator*=(const Matrix& matrix);
 
+	Vector3 operator*(const Vector3& vector) const;
+	Vector3& operator*=(Vector3& vector) const;
 	Vector4 operator*(const Vector4& vector) const;
 	Vector4& operator*=(Vector4& vector) const;
 

@@ -260,6 +260,21 @@ Matrix& Matrix::operator*=(const Matrix& matrix)
 }
 
 
+Vector3 Matrix::operator*(const Vector3& vector) const
+{
+	Vector4 result = *this * Vector4(vector.x, vector.y, vector.z, 1.0f);
+	return Vector3(result.x, result.y, result.z);
+}
+
+
+Vector3& Matrix::operator*=(Vector3& vector) const
+{
+	Vector4 result = *this * Vector4(vector.x, vector.y, vector.z, 1.0f);
+	vector.set(result.x, result.y, result.z);
+	return vector;
+}
+
+
 Vector4 Matrix::operator*(const Vector4& vector) const
 {
 	const float* v = vector.v;

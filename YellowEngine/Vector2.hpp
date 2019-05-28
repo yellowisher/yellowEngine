@@ -12,6 +12,11 @@ public:
 			float x;
 			float y;
 		};
+		struct
+		{
+			float min;
+			float max;
+		};
 	};
 
 	Vector2();

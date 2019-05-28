@@ -41,6 +41,7 @@ class EventListener
 {
 public:
 	EventListener();
+	EventListener(INotifiable* parent);
 	~EventListener();
 
 	void setParent(INotifiable* parent);

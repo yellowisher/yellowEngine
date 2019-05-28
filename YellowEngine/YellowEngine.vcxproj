@@ -120,7 +120,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -133,6 +135,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Event.hpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="UniformUpdater.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -144,7 +147,9 @@
     <ClCompile Include="VertexLayoutBinding.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Collider.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="Graphics.hpp" />
@@ -155,6 +160,7 @@
     <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
+    <ClInclude Include="SphereCollider.hpp" />
     <ClInclude Include="UniformUpdater.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="System.hpp" />

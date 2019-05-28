@@ -34,6 +34,8 @@ public:
 	Vector3& operator+= (const Vector3& vector);
 	Vector3& operator-= (const Vector3& vector);
 
+	float operator*(const Vector3& vector) const;
+
 	bool operator<(const Vector3& vector) const;
 	bool operator==(const Vector3& vector) const;
 	bool operator!=(const Vector3& vector) const;

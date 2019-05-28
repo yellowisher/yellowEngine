@@ -63,6 +63,12 @@ EventListener::EventListener() :_notifier(nullptr)
 }
 
 
+EventListener::EventListener(INotifiable* parent) : _notifier(nullptr), _parent(parent)
+{
+}
+
+
+
 EventListener::~EventListener()
 {
 	if (_notifier)

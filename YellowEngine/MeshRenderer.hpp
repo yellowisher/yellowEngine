@@ -17,7 +17,7 @@ public:
 	~MeshRenderer();
 
 	MeshRenderer* set(Mesh* mesh, ShaderProgram* shader);
-	void _render();
+	void _render() override;
 	void addTexture(Texture* texture, const char* usage);
 
 private:

@@ -15,8 +15,6 @@ public:
 		Type_Orthographic
 	};
 
-	EventListener transformChangeListener;
-
 	Camera(GameObject* gameObject);
 	virtual ~Camera();
 
@@ -32,7 +30,7 @@ public:
 
 	const Matrix& getMatrix(bool pulling = false);
 	bool matrixPulled();
-	virtual void notify(Event event, void* sender);
+	void notify(Event event, void* sender) override;
 
 private:
 	enum DirtyBit
@@ -43,6 +41,8 @@ private:
 		Dirty_Matrix = 4
 	};
 	char _dirtyBits;
+
+	EventListener transformChangeListener;
 
 	Type _type;
 	float _zNear;
