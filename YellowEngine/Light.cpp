@@ -5,7 +5,8 @@
 
 
 std::vector<Light*> Light::lights[Num_Type];
-unsigned int Light::__ubo = -1;
+unsigned int Light::__ubo;
+bool Light::__initialized = false;
 
 
 Light::Light(GameObject* gameObject) :
@@ -104,8 +105,9 @@ void Light::setDirection(float x, float y, float z)
 
 void Light::updateUniformBuffer()
 {
-	if (__ubo == -1)
+	if (!__initialized)
 	{
+		__initialized = true;
 		glGenBuffers(1, &__ubo);
 		glBindBuffer(GL_UNIFORM_BUFFER, __ubo);
 		glBufferData(GL_UNIFORM_BUFFER, 1680, NULL, GL_STATIC_DRAW);

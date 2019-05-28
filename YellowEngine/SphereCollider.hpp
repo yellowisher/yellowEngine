@@ -11,6 +11,11 @@ public:
 
 	Type getType() override;
 	bool isCollide(Collider* other) override;
+
+	float radius;
+
+private:
+	void onTransformChange() override {}
 };
 
 #endif

@@ -9,7 +9,7 @@ Transform::Transform(GameObject* gameObject) :
 	_parent(nullptr),
 	transformChangeNotifier(this),
 	_scale(1.0f, 1.0f, 1.0f),
-	_dirtyBits(Dirty_None)
+	_dirtyBits(Dirty_All)
 {
 }
 
@@ -31,8 +31,9 @@ void Transform::addChild(Transform* child)
 	if (child->_parent == this)return;
 	if (child->_parent)child->_parent->removeChild(child);
 
-	Matrix tr = ~getTRMatrix()*child->getTRMatrix();
-	Matrix s = ~getSMatrix()*child->getSMatrix();
+	// test needed
+	Matrix tr = getInverseTRMatrix() * child->getTRMatrix();
+	Matrix s = ~getSMatrix() * child->getSMatrix();
 
 	child->setPosition(Matrix::extractTranslation(tr));
 	child->setRotation(Matrix::extractRotation(tr));
@@ -161,6 +162,18 @@ const Matrix& Transform::getTRMatrix()
 }
 
 
+const Matrix& Transform::getInverseTRMatrix()
+{
+	if (_dirtyBits | Dirty_Inverse_Translation_Rotation)
+	{
+		_dirtyBits &= ~Dirty_Inverse_Translation_Rotation;
+
+		_itrMatrix = ~getTRMatrix();
+	}
+	return _itrMatrix;
+}
+
+
 const Matrix& Transform::getSMatrix()
 {
 	if (_dirtyBits & Dirty_Scale)
@@ -190,6 +203,8 @@ const Matrix& Transform::getMatrix()
 void Transform::dirty(char dirtyBits)
 {
 	_dirtyBits |= dirtyBits | Dirty_Matrix;
+	if (dirtyBits & Dirty_Translation_Rotation)_dirtyBits |= Dirty_Inverse_Translation_Rotation;
+
 	for (auto child : _children)
 	{
 		child->dirty(dirtyBits);

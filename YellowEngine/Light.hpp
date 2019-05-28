@@ -35,6 +35,7 @@ public:
 private:
 	static float* addPadding(const Vector3& vector, float* arr);
 
+	static bool __initialized;
 	static unsigned int __ubo;
 
 	Type _type;

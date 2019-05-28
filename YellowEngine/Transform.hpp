@@ -39,6 +39,7 @@ public:
 	void setScale(float x, float y, float z);
 
 	const Matrix& getTRMatrix();
+	const Matrix& getInverseTRMatrix();
 	const Matrix& getSMatrix();
 	const Matrix& getMatrix();
 
@@ -54,9 +55,11 @@ private:
 		Dirty_None = 0,
 		Dirty_Translation = 1,
 		Dirty_Rotation = 2,
-		Dirty_Scale = 4,
-		Dirty_Matrix = 8,
+		Dirty_Inverse_Translation_Rotation = 4,
+		Dirty_Scale = 8,
+		Dirty_Matrix = 16,
 		Dirty_Translation_Rotation = Dirty_Translation | Dirty_Rotation,
+		Dirty_All = Dirty_Translation | Dirty_Rotation | Dirty_Inverse_Translation_Rotation | Dirty_Scale | Dirty_Matrix
 	};
 
 	Transform* _parent;
@@ -64,6 +67,7 @@ private:
 
 	Matrix _matrix;
 	Matrix _trMatrix;
+	Matrix _itrMatrix;
 	Matrix _sMatrix;
 	char _dirtyBits;
 

@@ -22,13 +22,15 @@ using namespace glm;
 #include "Camera.hpp"
 #include "System.hpp"
 #include "Light.hpp"
+#include "BoxCollider.hpp"
+#include "SphereCollider.hpp"
 
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "lib/glew32.lib")
 #pragma comment(lib, "lib/glfw3.lib")
 
 Transform* cameraTransform;
-Transform* lightTransform;
+Transform* boxTransform;
 
 float lastX = 1024.0f / 2.0f;
 float lastY = 768.0f / 2.0f;
@@ -52,8 +54,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	_yaw += xoffset * 0.00002f;
-	_pitch += yoffset * 0.00004f;
+	_yaw += xoffset * 0.08f;
+	_pitch += yoffset * 0.16f;
 
 	cameraTransform->setRotation(_pitch, _yaw, 0);
 }
@@ -61,17 +63,63 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)glfwSetWindowShouldClose(window, true);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)cameraTransform->translate(cameraTransform->getForward() * -0.06f);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)cameraTransform->translate(cameraTransform->getForward() * 0.06f);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)cameraTransform->translate(cameraTransform->getRight() * -0.06f);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)cameraTransform->translate(cameraTransform->getRight() * 0.06f);
 
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)lightTransform->translate(0, 0.06f, 0);
-	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS)lightTransform->translate(0, -0.06f, 0);
-	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)lightTransform->translate(-0.06f, 0, 0);
-	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)lightTransform->translate(0.06f, 0, 0);
-	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)lightTransform->translate(0, 0, -0.06f);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)lightTransform->translate(0, 0, 0.06f);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		Vector3 forward = cameraTransform->getForward();
+		forward.y = 0;
+		forward.normalize();
+		cameraTransform->translate(forward * -0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		Vector3 forward = cameraTransform->getForward();
+		forward.y = 0;
+		forward.normalize();
+		cameraTransform->translate(forward * 0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		cameraTransform->translate(cameraTransform->getRight() * -0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		cameraTransform->translate(cameraTransform->getRight() * 0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	{
+		cameraTransform->translate(0, -0.06f, 0);
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		cameraTransform->translate(0, 0.06f, 0);
+	}
+
+
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		boxTransform->translate(boxTransform->getForward()*-0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS)
+	{
+		boxTransform->translate(boxTransform->getForward()*0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		boxTransform->translate(boxTransform->getRight()*-0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
+	{
+		boxTransform->translate(boxTransform->getRight()*0.06f);
+	}
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+	{
+		boxTransform->rotate(0, 3.0f, 0);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
+	{
+		boxTransform->rotate(0, -3.0f, 0);
+	}
 }
 
 
@@ -119,9 +167,12 @@ int main(void)
 	//glUniformBlockBinding(colorShader->getId(), cameraIndex, 1);
 
 	GameObject* cubeGo = new GameObject("Cube");
+	BoxCollider* boxMove = cubeGo->addComponent<BoxCollider>();
 	MeshRenderer* cubeRenderer = cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	boxTransform = cubeGo->transform;
 
 	GameObject* cubeGo2 = new GameObject("Cube2");
+	SphereCollider* boxStatic = cubeGo2->addComponent<SphereCollider>();
 	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
 	cubeGo2->transform->translate(5.0f, 0, 0);
 
@@ -130,10 +181,8 @@ int main(void)
 	l->transform->rotate(45.0f, 0, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
-	lightTransform = dirLightGo->transform;
 	ShaderProgram* lightShader = ShaderProgram::create("../yellowEngine/light.vert", "../yellowEngine/light.frag");
 	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
-	//Light* light = dirLightGo->addComponent<Light>()->setDirectional();
 	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
 
 	light->transform->rotate(45.0f, 0, 0);
@@ -155,6 +204,7 @@ int main(void)
 	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
 	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -163,18 +213,14 @@ int main(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*colorShader->use();
-		colorShader->setUniform(colorShader->getUniform("u_Light.position"), lightTransform->getWorldPosition());
-
-		colorShader->setUniform(colorShader->getUniform("u_Light.ambient"), Vector3(0.1f, 0.1f, 0.1f));
-		colorShader->setUniform(colorShader->getUniform("u_Light.diffuse"), Vector3(0.5f, 0.5f, 0.5f));
-		colorShader->setUniform(colorShader->getUniform("u_Light.specular"), Vector3(1.0f, 1.0f, 1.0f));
-
-		colorShader->setUniform(colorShader->getUniform("u_Light.constant"), 1.0f);
-		colorShader->setUniform(colorShader->getUniform("u_Light.linear"), 0.14f);
-		colorShader->setUniform(colorShader->getUniform("u_Light.quadratic"), 0.07f);
-
-		colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 32.0f);*/
+		if (boxStatic->isCollide(boxMove))
+		{
+			cout << "Collide\n";
+		}
+		else
+		{
+			cout << "Not Collide\n";
+		}
 		Light::updateUniformBuffer();
 		Renderer::renderAll(camera);
 

@@ -27,12 +27,12 @@ Quaternion::Quaternion(const Quaternion& quaternion)
 
 Quaternion::Quaternion(const Vector3& eulerAngle)
 {
-	float cr = cosf(Utils::rad2deg(eulerAngle.x * 0.5f));
-	float sr = sinf(Utils::rad2deg(eulerAngle.x * 0.5f));
-	float cy = cosf(Utils::rad2deg(eulerAngle.z * 0.5f));
-	float sy = sinf(Utils::rad2deg(eulerAngle.z * 0.5f));
-	float cp = cosf(Utils::rad2deg(eulerAngle.y * 0.5f));
-	float sp = sinf(Utils::rad2deg(eulerAngle.y * 0.5f));
+	float cr = cosf(Utils::deg2rad(eulerAngle.x * 0.5f));
+	float sr = sinf(Utils::deg2rad(eulerAngle.x * 0.5f));
+	float cy = cosf(Utils::deg2rad(eulerAngle.z * 0.5f));
+	float sy = sinf(Utils::deg2rad(eulerAngle.z * 0.5f));
+	float cp = cosf(Utils::deg2rad(eulerAngle.y * 0.5f));
+	float sp = sinf(Utils::deg2rad(eulerAngle.y * 0.5f));
 
 	w = cy * cp * cr + sy * sp * sr;
 	x = cy * cp * sr - sy * sp * cr;

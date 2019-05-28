@@ -280,10 +280,10 @@ Vector4 Matrix::operator*(const Vector4& vector) const
 	const float* v = vector.v;
 
 	Vector4 result;
-	result.v[0] = _m[0] * v[0] + _m[1] * v[1] + _m[2] * v[2] + _m[3] * v[3];
-	result.v[1] = _m[4] * v[0] + _m[5] * v[1] + _m[6] * v[2] + _m[7] * v[3];
-	result.v[2] = _m[8] * v[0] + _m[9] * v[1] + _m[10] * v[2] + _m[11] * v[3];
-	result.v[3] = _m[12] * v[0] + _m[13] * v[1] + _m[14] * v[2] + _m[15] * v[3];
+	result.v[0] = _m00 * v[0] + _m01 * v[1] + _m02 * v[2] + _m03 * v[3];
+	result.v[1] = _m10 * v[0] + _m11 * v[1] + _m12 * v[2] + _m13 * v[3];
+	result.v[2] = _m20 * v[0] + _m21 * v[1] + _m22 * v[2] + _m23 * v[3];
+	result.v[3] = _m30 * v[0] + _m31 * v[1] + _m32 * v[2] + _m33 * v[3];
 
 	return result;
 }

@@ -1,6 +1,7 @@
 #include "Utils.hpp"
 #include "Transform.hpp"
 #include "Matrix.hpp"
+#include "SphereCollider.hpp"
 #include "BoxCollider.hpp"
 
 
@@ -15,22 +16,38 @@ BoxCollider::~BoxCollider()
 }
 
 
+void BoxCollider::set(float minx, float miny, float minz, float maxx, float maxy, float maxz)
+{
+	_points[Left_Top_Front]     = Vector3(minx, maxy, maxz);
+	_points[Left_Top_Back]      = Vector3(minx, maxy, minz);
+	_points[Left_Bottom_Front]  = Vector3(minx, miny, maxz);
+	_points[Left_Bottom_Back]   = Vector3(minx, miny, minz);
+	_points[Right_Top_Front]    = Vector3(maxx, maxy, maxz);
+	_points[Right_Top_Back]     = Vector3(maxx, maxy, minz);
+	_points[Right_Bottom_Front] = Vector3(maxx, miny, maxz);
+	_points[Right_Bottom_Back]  = Vector3(maxx, miny, minz);
+
+	_pointsChanged = true;
+}
+
+
 void BoxCollider::setSize(float x, float y, float z)
 {
 	float hx = x / 2.0f;
 	float hy = y / 2.0f;
 	float hz = z / 2.0f;
 
-	_points[Left][Top][Front]     = Vector3(-hx, hy, hz);
-	_points[Left][Top][Back]      = Vector3(-hx, hy, -hz);
-	_points[Left][Bottom][Front]  = Vector3(-hx, -hy, hz);
-	_points[Left][Bottom][Back]   = Vector3(-hx, -hy, -hz);
-	_points[Right][Top][Front]    = Vector3(hx, hy, hz);
-	_points[Right][Top][Back]     = Vector3(hx, hy, -hz);
-	_points[Right][Bottom][Front] = Vector3(hx, -hy, hz);
-	_points[Right][Bottom][Back]  = Vector3(hx, -hy, -hz);
+	set(-hx, -hy, -hz, hx, hy, hz);
+}
 
-	_pointsChanged = true;
+
+void BoxCollider::setSize(Mesh* mesh)
+{
+	Mesh::Bounds bounds = mesh->getBounds();
+	Vector3& min = bounds.min;
+	Vector3& max = bounds.max;
+
+	set(min.x, min.y, min.z, max.x, max.y, max.z);
 }
 
 
@@ -41,18 +58,62 @@ Collider::Type BoxCollider::getType()
 }
 
 
+void BoxCollider::updatePoints()
+{
+	// if points changed, re-calculate bounding box first
+	if (_pointsChanged)
+	{
+		_pointsChanged = false;
+		Matrix matrix = transform->getMatrix();
+		Matrix sMatrix = transform->getSMatrix();
+
+		for (int i = 0; i < Num_Points; i++)
+		{
+			_worldPoints[i] = matrix * _points[i];
+			_scalePoints[i] = sMatrix * _points[i];
+		}
+	}
+}
+
+
 bool BoxCollider::isCollide(Collider* other)
 {
 	if (other->getType() == Type_Box)
 	{
-		BoxCollider* bOther = (BoxCollider*)other;
-		if (!isCollideWith(bOther))return false;
-		if (!bOther->isCollideWith(this))return false;
+		BoxCollider* otherBox = (BoxCollider*)other;
+		updatePoints();
+		otherBox->updatePoints();
+
+		if (!isCollideWith(otherBox))return false;
+		if (!otherBox->isCollideWith(this))return false;
 		return true;
 	}
 	else if (other->getType() == Type_Sphere)
 	{
+		SphereCollider* otherSphere = (SphereCollider*)other;
+		updatePoints();
 
+		Vector3 center = other->transform->getWorldPosition();
+		center = transform->getInverseTRMatrix() * center;
+
+		Vector3& max = _scalePoints[Right_Top_Front];
+		Vector3& min = _scalePoints[Left_Bottom_Back];
+		Vector3 closestPoint;
+
+		if (center.x < min.x)closestPoint.x = min.x;
+		else if (center.x > max.x)closestPoint.x = max.x;
+		else closestPoint.x = center.x;
+
+		if (center.y < min.y)closestPoint.y = min.y;
+		else if (center.y > max.y)closestPoint.y = max.y;
+		else closestPoint.y = center.y;
+
+		if (center.z < min.z)closestPoint.z = min.z;
+		else if (center.z > max.z)closestPoint.z = max.z;
+		else closestPoint.z = center.z;
+
+		Vector3 v = (center - closestPoint);
+		return (center - closestPoint).magnitude() < otherSphere->radius * otherSphere->radius;
 	}
 	return false;
 }
@@ -60,36 +121,18 @@ bool BoxCollider::isCollide(Collider* other)
 
 bool BoxCollider::isCollideWith(BoxCollider* other)
 {
-	// if points changed, re-calculate bounding box first
-	if (_pointsChanged)
-	{
-		_pointsChanged = false;
-		Matrix matrix = transform->getMatrix();
-
-		for (int i = 0; i < Num_TotalPoint; i++)
-		{
-			_worldPoints[i] = matrix * _p[i];
-		}
-	}
-
-
 	// check for 3 axis
 	for (int i = 0; i < 3; i++)
 	{
-		Vector3 a = _worldPoints[2 * i];
-		Vector3 b = _worldPoints[2 * i + 1];
+		Vector3 a = _worldPoints[0];
+		Vector3 b = _worldPoints[1 << i];
 
 		Vector3 ab = b - a;
 		float min = 0;
-		float max = b.magnitude();
-		if (max < 0)
-		{
-			min = max;
-			max = 0;
-		}
+		float max = ab.magnitude();
 
 		Vector2 bounds = other->getProjectedBounds(a, ab);
-		if (bounds.min < max || bounds.max > min)return false;
+		if (bounds.min > max || bounds.max < min)return false;
 	}
 	return true;
 }
@@ -99,7 +142,7 @@ Vector2 BoxCollider::getProjectedBounds(Vector3& a, Vector3& ab)
 {
 	Vector2 bounds = Vector2(Utils::inf, -Utils::inf);
 
-	for (int i = 0; i < Num_TotalPoint; i++)
+	for (int i = 0; i < Num_Points; i++)
 	{
 		Vector3 ap = _worldPoints[i] - a;
 		float value = ab * ap;

@@ -5,6 +5,7 @@ using namespace std;
 #include <map>
 #include <GL/glew.h>
 
+#include "Utils.hpp"
 #include "Mesh.hpp"
 
 map<string, Mesh*> Mesh::__meshCache;
@@ -34,12 +35,6 @@ Mesh::~Mesh()
 }
 
 
-const VertexLayout& Mesh::getVertexLayout() const
-{
-	return _vertexLayout;
-}
-
-
 unsigned int Mesh::getVertexBufferHandle() const
 {
 	return _vertexBufferHandle;
@@ -49,6 +44,18 @@ unsigned int Mesh::getVertexBufferHandle() const
 unsigned int Mesh::getElementBufferHandle() const
 {
 	return _elementBufferHandle;
+}
+
+
+const VertexLayout& Mesh::getVertexLayout() const
+{
+	return _vertexLayout;
+}
+
+
+const Mesh::Bounds& Mesh::getBounds() const
+{
+	return _bounds;
 }
 
 
@@ -79,6 +86,9 @@ Mesh* Mesh::createFromOBJ(const char* path)
 	Vector3 vec3;
 	Vector2 vec2;
 	unsigned int pi[3], ni[3], uvi[3];
+
+	Vector3 max = Vector3(-Utils::inf, -Utils::inf, -Utils::inf);
+	Vector3 min = Vector3(Utils::inf, Utils::inf, Utils::inf);
 
 	ifstream fin;
 	char input, c;
@@ -134,7 +144,15 @@ Mesh* Mesh::createFromOBJ(const char* path)
 						index = uniqueVertices.size();
 						vertices.push_back(vertex);
 						verticesIndex.push_back(index);
-						uniqueVertices.insert({ vertex,index });
+						uniqueVertices.insert({ vertex, index });
+
+						max.x = Utils::max(max.x, vertex.position.x);
+						max.y = Utils::max(max.y, vertex.position.y);
+						max.z = Utils::max(max.z, vertex.position.z);
+
+						min.x = Utils::min(min.x, vertex.position.x);
+						min.y = Utils::min(min.y, vertex.position.y);
+						min.z = Utils::min(min.z, vertex.position.z);
 					}
 					else
 					{
@@ -164,6 +182,8 @@ Mesh* Mesh::createFromOBJ(const char* path)
 
 	Mesh* mesh = new Mesh(layout);
 	mesh->_vertexCount = verticesIndex.size();
+	mesh->_bounds.max = max;
+	mesh->_bounds.min = min;
 
 	glGenBuffers(1, &mesh->_vertexBufferHandle);
 	glGenBuffers(1, &mesh->_elementBufferHandle);

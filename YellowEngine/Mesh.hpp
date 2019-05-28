@@ -21,12 +21,19 @@ public:
 		bool operator<(const Vertex& vertex) const;
 	};
 
+	struct Bounds
+	{
+		Vector3 min;
+		Vector3 max;
+	};
+
 	static Mesh* create(const char* path);
 
 	unsigned int getVertexCount() const;
 	unsigned int getVertexBufferHandle() const;
 	unsigned int getElementBufferHandle() const;
 	const VertexLayout& getVertexLayout() const;
+	const Bounds& getBounds() const;
 
 private:
 	static std::map<std::string, Mesh*> __meshCache;
@@ -35,6 +42,7 @@ private:
 	unsigned int _elementBufferHandle;
 	unsigned int _vertexCount;
 	const VertexLayout _vertexLayout;
+	Bounds _bounds;
 
 	static Mesh* createFromOBJ(const char* path);
 
