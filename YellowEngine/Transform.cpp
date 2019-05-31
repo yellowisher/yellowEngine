@@ -68,8 +68,8 @@ void Transform::removeChild(Transform* child)
 
 void Transform::translate(const Vector3& translation)
 {
-	dirty(Dirty_Translation);
 	_position += translation;
+	dirty(Dirty_Translation);
 }
 
 
@@ -81,8 +81,8 @@ void Transform::translate(float x, float y, float z)
 
 void Transform::setPosition(const Vector3& position)
 {
-	dirty(Dirty_Translation);
 	_position = position;
+	dirty(Dirty_Translation);
 }
 
 
@@ -106,8 +106,8 @@ void Transform::rotate(const Vector3& rotation)
 
 void Transform::rotate(const Quaternion& rotation)
 {
-	dirty(Dirty_Rotation);
 	_rotation = rotation * _rotation;
+	dirty(Dirty_Rotation);
 }
 
 
@@ -125,15 +125,15 @@ void Transform::setRotation(const Vector3& rotation)
 
 void Transform::setRotation(const Quaternion& rotation)
 {
-	dirty(Dirty_Rotation);
 	_rotation = rotation;
+	dirty(Dirty_Rotation);
 }
 
 
 void Transform::setScale(const Vector3& scale)
 {
-	dirty(Dirty_Scale);
 	_scale = scale;
+	dirty(Dirty_Scale);
 }
 
 

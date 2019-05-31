@@ -25,7 +25,10 @@ bool Mesh::Vertex::operator<(const Vertex& vertex) const
 }
 
 
-Mesh::Mesh(const VertexLayout& vertexLayout) :_vertexLayout(vertexLayout)
+Mesh::Mesh(const VertexLayout& vertexLayout) :
+	_vertexLayout(vertexLayout),
+	_vertexBufferHandle(-1),
+	_elementBufferHandle(-1)
 {
 }
 
@@ -70,6 +73,22 @@ Mesh* Mesh::create(const char* path)
 	Mesh* mesh = createFromOBJ(path);
 	if (mesh != nullptr)__meshCache.insert({ path, mesh });
 	return mesh;
+}
+
+
+Mesh* Mesh::create(const VertexLayout& layout)
+{
+	Mesh* mesh = new Mesh(layout);
+	glGenBuffers(1, &mesh->_vertexBufferHandle);
+	return mesh;
+}
+
+
+void Mesh::updateData(const std::vector<Vector3>& vertices)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferHandle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 }
 
 
@@ -175,9 +194,9 @@ Mesh* Mesh::createFromOBJ(const char* path)
 	fin.close();
 
 	VertexLayout layout({
-		VertexLayout::Attribute(VertexLayout::POSITION,3),
-		VertexLayout::Attribute(VertexLayout::NORMAL,3),
-		VertexLayout::Attribute(VertexLayout::TEXCOORD0,2)
+		VertexLayout::Attribute(VertexLayout::Attr_Position,3),
+		VertexLayout::Attribute(VertexLayout::Attr_Normal,3),
+		VertexLayout::Attribute(VertexLayout::Attr_TexCoord0,2)
 		});
 
 	Mesh* mesh = new Mesh(layout);
@@ -191,8 +210,8 @@ Mesh* Mesh::createFromOBJ(const char* path)
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->_vertexBufferHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->_elementBufferHandle);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*vertices.size(), &vertices[0], GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* verticesIndex.size(), &verticesIndex[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * verticesIndex.size(), &verticesIndex[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);

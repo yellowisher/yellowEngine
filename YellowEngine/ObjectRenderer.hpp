@@ -1,19 +1,19 @@
-#ifndef __H_RENDERER__
-#define __H_RENDERER__
+#ifndef __H_OBJECTRENDERER__
+#define __H_OBJECTRENDERER__
 
 #include <list>
 
 #include "Component.hpp"
 #include "Camera.hpp"
 
-class Renderer : public Component
+class ObjectRenderer : public Component
 {
 public:
 	static void renderAll(Camera* camera);
 	static Camera* getCurrentCamera();
 
-	Renderer(GameObject* gameObject);
-	virtual ~Renderer();
+	ObjectRenderer(GameObject* gameObject);
+	virtual ~ObjectRenderer();
 
 	void render();
 
@@ -23,7 +23,7 @@ protected:
 	virtual void _render() = 0;
 
 private:
-	static std::list<Renderer*> _renderers;
+	static std::list<ObjectRenderer*> _renderers;
 
 };
 #endif

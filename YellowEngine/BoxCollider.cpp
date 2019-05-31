@@ -1,3 +1,5 @@
+#include <gl/glew.h>
+
 #include "Utils.hpp"
 #include "Transform.hpp"
 #include "Matrix.hpp"
@@ -5,7 +7,9 @@
 #include "BoxCollider.hpp"
 
 
-BoxCollider::BoxCollider(GameObject* gameObject) :Collider(gameObject), _pointsChanged(true)
+BoxCollider::BoxCollider(GameObject* gameObject) :
+	Collider(gameObject),
+	_pointsChanged(true)
 {
 	setSize(1.0f, 1.0f, 1.0f);
 }
@@ -58,6 +62,47 @@ Collider::Type BoxCollider::getType()
 }
 
 
+const AABB BoxCollider::getAABB()
+{
+	updatePoints();
+
+	Vector3 min = Vector3(Utils::inf, Utils::inf, Utils::inf);
+	Vector3 max = Vector3(-Utils::inf, -Utils::inf, -Utils::inf);
+
+	for (int i = 0; i < Num_Points; i++)
+	{
+		min.x = Utils::min(min.x, _worldPoints[i].x);
+		min.y = Utils::min(min.y, _worldPoints[i].y);
+		min.z = Utils::min(min.z, _worldPoints[i].z);
+
+		max.x = Utils::max(max.x, _worldPoints[i].x);
+		max.y = Utils::max(max.y, _worldPoints[i].y);
+		max.z = Utils::max(max.z, _worldPoints[i].z);
+	}
+
+	return AABB(min, max);
+}
+
+
+// if any bit is 0, pair original point with original point | bit
+void BoxCollider::calcRenderingData()
+{
+	_renderPoints.clear();
+	for (int i = 0; i < Num_Points; i++)
+	{
+		for (int b = 0; b < 3; b++)
+		{
+			int bit = 1 << b;
+			if (!(i & bit))
+			{
+				_renderPoints.push_back(_points[i]);
+				_renderPoints.push_back(_points[i | bit]);
+			}
+		}
+	}
+}
+
+
 void BoxCollider::updatePoints()
 {
 	// if points changed, re-calculate bounding box first
@@ -76,7 +121,7 @@ void BoxCollider::updatePoints()
 }
 
 
-bool BoxCollider::isCollide(Collider* other)
+bool BoxCollider::isCollideWith(Collider* other)
 {
 	if (other->getType() == Type_Box)
 	{
@@ -84,8 +129,8 @@ bool BoxCollider::isCollide(Collider* other)
 		updatePoints();
 		otherBox->updatePoints();
 
-		if (!isCollideWith(otherBox))return false;
-		if (!otherBox->isCollideWith(this))return false;
+		if (!projectionOverlap(otherBox))return false;
+		if (!otherBox->projectionOverlap(this))return false;
 		return true;
 	}
 	else if (other->getType() == Type_Sphere)
@@ -119,9 +164,9 @@ bool BoxCollider::isCollide(Collider* other)
 }
 
 
-bool BoxCollider::isCollideWith(BoxCollider* other)
+bool BoxCollider::projectionOverlap(BoxCollider* other)
 {
-	// check for 3 axis
+	// check for 3 axis (x, y, z)
 	for (int i = 0; i < 3; i++)
 	{
 		Vector3 a = _worldPoints[0];

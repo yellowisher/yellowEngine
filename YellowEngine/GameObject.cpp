@@ -25,9 +25,11 @@ GameObject::~GameObject()
 	while (!_components.empty())
 	{
 		Component* last = _components.back();
+		last->onDestroy();
 		_components.pop_back();
 		delete(last);
 	}
+	transform->onDestroy();
 	delete(transform);
 }
 
@@ -41,4 +43,10 @@ void GameObject::setActive(bool active)
 bool GameObject::getActive()
 {
 	return _active;
+}
+
+
+std::string GameObject::getName()
+{
+	return _name;
 }

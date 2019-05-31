@@ -13,6 +13,16 @@ Component::~Component()
 }
 
 
+void Component::onCreate()
+{
+}
+
+
+void Component::onDestroy()
+{
+}
+
+
 void Component::setActive(bool active)
 {
 	_active = active;

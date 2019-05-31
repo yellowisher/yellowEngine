@@ -42,7 +42,7 @@ private:
 	};
 	char _dirtyBits;
 
-	EventListener transformChangeListener;
+	EventListener _transformChangeListener;
 
 	Type _type;
 	float _zNear;

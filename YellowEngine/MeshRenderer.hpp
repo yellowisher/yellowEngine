@@ -4,13 +4,13 @@
 #include <vector>
 
 #include "Component.hpp"
-#include "Renderer.hpp"
+#include "ObjectRenderer.hpp"
 #include "Mesh.hpp"
 #include "ShaderProgram.hpp"
 #include "VertexLayoutBinding.hpp"
 #include "Texture.hpp"
 
-class MeshRenderer : public Renderer
+class MeshRenderer : public ObjectRenderer
 {
 public:
 	MeshRenderer(GameObject* gameObject);

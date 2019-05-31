@@ -4,12 +4,12 @@
 
 Camera::Camera(GameObject* gameObject) :
 	Component(gameObject),
-	transformChangeListener(this),
+	_transformChangeListener(this),
 	_matrixPulled(false)
 {
 	setPerspective(60.0f, 0.01f, 100.0f);
 	//transformChangeListener.setParent(this);
-	transform->transformChangeNotifier.addListener(&transformChangeListener);
+	transform->transformChangeNotifier.addListener(&_transformChangeListener);
 }
 
 

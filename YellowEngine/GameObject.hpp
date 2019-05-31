@@ -20,6 +20,7 @@ public:
 
 	void setActive(bool active);
 	bool getActive();
+	std::string getName();
 
 	template <typename T> T* getComponent();
 	template <typename T> T* addComponent();
@@ -51,7 +52,9 @@ template <typename T> T* GameObject::addComponent()
 	if (!std::is_base_of<Component, T>::value)return nullptr;
 
 	T* component = new T(this);
-	_components.push_back(static_cast<Component*>(component));
+	Component* comp = static_cast<Component*>(component);
+	comp->onCreate();
+	_components.push_back(comp);
 	// add to update list?
 	return component;
 }

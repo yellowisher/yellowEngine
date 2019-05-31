@@ -10,6 +10,7 @@ using namespace std;
 #include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
+#include "ColliderManagerr.hpp"
 #include "Matrix.hpp"
 #include "GameObject.hpp"
 #include "Transform.hpp"
@@ -59,6 +60,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	cameraTransform->setRotation(_pitch, _yaw, 0);
 }
+
+GameObject* g = nullptr;
 
 void processInput(GLFWwindow *window)
 {
@@ -120,6 +123,20 @@ void processInput(GLFWwindow *window)
 	{
 		boxTransform->rotate(0, -3.0f, 0);
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+	{
+		if (g == nullptr)
+		{
+			g = new GameObject("New");
+			g->addComponent<BoxCollider>();
+		}
+		else
+		{
+			delete(g);
+			g = nullptr;
+		}
+	}
 }
 
 
@@ -155,6 +172,8 @@ int main(void)
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
+	ColliderManager* colManager = new ColliderManager(ColliderManager::BroadPhaseType_SAP);
+
 	Mesh* cubeMesh = Mesh::create("../yellowEngine/cube.obj");
 	ShaderProgram* colorShader = ShaderProgram::create("../yellowEngine/texture.vert", "../yellowEngine/texture.frag");
 	Texture* diffuseMap = Texture::create("../yellowEngine/container2.png");
@@ -166,13 +185,18 @@ int main(void)
 	//unsigned int cameraIndex = glGetUniformBlockIndex(colorShader->getId(), "CameraBlock");
 	//glUniformBlockBinding(colorShader->getId(), cameraIndex, 1);
 
-	GameObject* cubeGo = new GameObject("Cube");
+	GameObject* cubeGo = new GameObject("MovingCube");
 	BoxCollider* boxMove = cubeGo->addComponent<BoxCollider>();
 	MeshRenderer* cubeRenderer = cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
 	boxTransform = cubeGo->transform;
+	boxTransform->setScale(2.0f, 1.0f, 4.0f);
+	//boxTransform->rotate(45.0f, 0, 90.0f);
 
-	GameObject* cubeGo2 = new GameObject("Cube2");
-	SphereCollider* boxStatic = cubeGo2->addComponent<SphereCollider>();
+	GameObject* cb = new GameObject("InitialStay");
+	cb->addComponent<BoxCollider>();
+
+	GameObject* cubeGo2 = new GameObject("StayCube");
+	BoxCollider* boxStatic = cubeGo2->addComponent<BoxCollider>();
 	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
 	cubeGo2->transform->translate(5.0f, 0, 0);
 
@@ -195,7 +219,7 @@ int main(void)
 	cameraTransform = cameraGo->transform;
 	cameraTransform->translate(0, 0, 2.0f);
 
-	Renderer::_currentCamera = camera;
+	ObjectRenderer::_currentCamera = camera;
 
 	cubeRenderer->addTexture(diffuseMap, "u_Material.diffuse");
 	cubeRenderer->addTexture(specularMap, "u_Material.specular");
@@ -204,7 +228,9 @@ int main(void)
 	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
 	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
 
+
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -213,16 +239,11 @@ int main(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (boxStatic->isCollide(boxMove))
-		{
-			cout << "Collide\n";
-		}
-		else
-		{
-			cout << "Not Collide\n";
-		}
+		colManager->detect();
 		Light::updateUniformBuffer();
-		Renderer::renderAll(camera);
+		ObjectRenderer::renderAll(camera);
+
+		colManager->renderColliders();
 
 
 		glfwSwapBuffers(window);

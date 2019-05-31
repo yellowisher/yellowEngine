@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-MeshRenderer::MeshRenderer(GameObject* gameObject) :Renderer(gameObject)
+MeshRenderer::MeshRenderer(GameObject* gameObject) :ObjectRenderer(gameObject)
 {
 }
 

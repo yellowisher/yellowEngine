@@ -120,9 +120,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="BroadPhase.cpp" />
+    <ClCompile Include="BroadPhase_SAP.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -132,7 +136,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Quaternion.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="ObjectRenderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Event.hpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -147,9 +151,14 @@
     <ClCompile Include="VertexLayoutBinding.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.hpp" />
     <ClInclude Include="BoxCollider.hpp" />
+    <ClInclude Include="BroadPhase.hpp" />
+    <ClInclude Include="BroadPhase_BVH.hpp" />
+    <ClInclude Include="BroadPhase_SAP.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Collider.hpp" />
+    <ClInclude Include="ColliderManagerr.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="Graphics.hpp" />
@@ -158,7 +167,7 @@
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="MeshRenderer.hpp" />
     <ClInclude Include="Quaternion.hpp" />
-    <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="ObjectRenderer.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="SphereCollider.hpp" />
     <ClInclude Include="UniformUpdater.hpp" />
@@ -174,6 +183,8 @@
     <ClInclude Include="VertexLayoutBinding.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="collider.frag" />
+    <None Include="collider.vert" />
     <None Include="color.frag" />
     <None Include="color.vert" />
     <None Include="light.frag" />

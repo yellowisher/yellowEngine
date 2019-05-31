@@ -22,11 +22,27 @@ Collider::Type SphereCollider::getType()
 }
 
 
-bool SphereCollider::isCollide(Collider* other)
+void SphereCollider::calcRenderingData()
+{
+
+}
+
+
+const AABB SphereCollider::getAABB()
+{
+	Vector3 center = transform->getWorldPosition();
+	Vector3 min = center - Vector3(radius, radius, radius);
+	Vector3 max = center + Vector3(radius, radius, radius);
+
+	return AABB(min, max);
+}
+
+
+bool SphereCollider::isCollideWith(Collider* other)
 {
 	if (other->getType() == Type_Box)
 	{
-		return other->isCollide(this);
+		return other->isCollideWith(this);
 	}
 	else if (other->getType() == Type_Sphere)
 	{
@@ -35,4 +51,9 @@ bool SphereCollider::isCollide(Collider* other)
 		return  dist < (otherSphere->radius + radius)*(otherSphere->radius + radius);
 	}
 	return false;
+}
+
+
+void SphereCollider::onTransformChange()
+{
 }

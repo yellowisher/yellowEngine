@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "ObjectRenderer.hpp"
 #include "GameObject.hpp"
 #include "ShaderProgram.hpp"
 #include "UniformUpdater.hpp"
@@ -42,14 +42,14 @@ void UniformUpdater::update(GameObject* user) const
 				break;
 
 			case Uniform_ProjectionView:
-				if (!Renderer::getCurrentCamera()->matrixPulled())
+				if (!ObjectRenderer::getCurrentCamera()->matrixPulled())
 				{
-					_shader->setUniform(pair.uniform, Renderer::getCurrentCamera()->getMatrix());
+					_shader->setUniform(pair.uniform, ObjectRenderer::getCurrentCamera()->getMatrix());
 				}
 				break;
 
 			case Uniform_CameraPosition:
-				_shader->setUniform(pair.uniform, Renderer::getCurrentCamera()->transform->getWorldPosition());
+				_shader->setUniform(pair.uniform, ObjectRenderer::getCurrentCamera()->transform->getWorldPosition());
 				break;
 		}
 	}

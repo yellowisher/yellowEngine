@@ -10,12 +10,14 @@ public:
 	~SphereCollider();
 
 	Type getType() override;
-	bool isCollide(Collider* other) override;
+	bool isCollideWith(Collider* other) override;
+	void calcRenderingData() override;
+	const AABB getAABB() override;
 
 	float radius;
 
 private:
-	void onTransformChange() override {}
+	void onTransformChange();
 };
 
 #endif

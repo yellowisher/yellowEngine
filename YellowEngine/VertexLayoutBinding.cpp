@@ -49,19 +49,10 @@ void VertexLayoutBinding::bind(Mesh* mesh, ShaderProgram* shader)
 	glBindVertexArray(_vertexArrayHandle);
 
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBufferHandle());
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getElementBufferHandle());
+	if (mesh->getElementBufferHandle() != -1)glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getElementBufferHandle());
 
-	VertexLayout layout = mesh->getVertexLayout();
-	unsigned int offset = 0;
-	for (int i = 0; i < layout.getAttrCount(); i++)
-	{
-		auto attr = layout.getAttr(i);
-		glVertexAttribPointer(i, attr.size, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offset);
-		offset += sizeof(float)*attr.size;
-		glEnableVertexAttribArray(i);
-	}
+	mesh->getVertexLayout().bind();
 
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
-
 	glBindVertexArray(NULL);
 }

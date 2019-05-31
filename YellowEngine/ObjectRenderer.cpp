@@ -1,18 +1,18 @@
-#include "Renderer.hpp"
+#include "ObjectRenderer.hpp"
 #include "GameObject.hpp"
 
 
-std::list<Renderer*> Renderer::_renderers;
-Camera* Renderer::_currentCamera;
+std::list<ObjectRenderer*> ObjectRenderer::_renderers;
+Camera* ObjectRenderer::_currentCamera;
 
 
-Renderer::Renderer(GameObject* gameObject) :Component(gameObject)
+ObjectRenderer::ObjectRenderer(GameObject* gameObject) :Component(gameObject)
 {
 	_renderers.push_back(this);
 }
 
 
-Renderer::~Renderer()
+ObjectRenderer::~ObjectRenderer()
 {
 	for (auto it = _renderers.begin(); it != _renderers.end(); ++it)
 	{
@@ -25,13 +25,13 @@ Renderer::~Renderer()
 }
 
 
-void Renderer::render()
+void ObjectRenderer::render()
 {
 	_render();
 }
 
 
-void Renderer::renderAll(Camera* camera)
+void ObjectRenderer::renderAll(Camera* camera)
 {
 	_currentCamera = camera;
 	for (auto renderer : _renderers)
@@ -44,8 +44,7 @@ void Renderer::renderAll(Camera* camera)
 }
 
 
-Camera* Renderer::getCurrentCamera()
+Camera* ObjectRenderer::getCurrentCamera()
 {
 	return _currentCamera;
 }
-

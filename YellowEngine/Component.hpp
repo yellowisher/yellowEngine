@@ -15,6 +15,9 @@ public:
 	Component(GameObject* gameObject);
 	virtual ~Component();
 
+	virtual void onCreate();
+	virtual void onDestroy();
+
 	void setActive(bool active);
 	bool getActive();
 

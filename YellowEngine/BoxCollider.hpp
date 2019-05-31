@@ -13,7 +13,9 @@ public:
 	~BoxCollider();
 
 	Type getType() override;
-	bool isCollide(Collider* other) override;
+	bool isCollideWith(Collider* other) override;
+	void calcRenderingData() override;
+	const AABB getAABB() override;
 
 	void setSize(float x, float y, float z);
 	void setSize(Mesh* mesh);
@@ -32,13 +34,13 @@ private:
 		Num_Points
 	};
 
+	bool _pointsChanged;
 	Vector3 _points[Num_Points];
 	Vector3 _scalePoints[Num_Points];
 	Vector3 _worldPoints[Num_Points];
-	bool _pointsChanged;
 
 	void set(float minx, float miny, float minz, float maxx, float maxy, float maxz);
-	bool isCollideWith(BoxCollider* other);
+	bool projectionOverlap(BoxCollider* other);
 	void updatePoints();
 	Vector2 getProjectedBounds(Vector3& a, Vector3& ab);
 	void onTransformChange() override;
