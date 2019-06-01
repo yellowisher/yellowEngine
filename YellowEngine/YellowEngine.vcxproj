@@ -183,14 +183,15 @@
     <ClInclude Include="VertexLayoutBinding.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="collider.frag" />
-    <None Include="collider.vert" />
+    <None Include="wireframe.frag" />
+    <None Include="wireframe.vert" />
     <None Include="color.frag" />
     <None Include="color.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
     <None Include="texture.frag" />
     <None Include="texture.vert" />
+    <None Include="wireframe_world.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

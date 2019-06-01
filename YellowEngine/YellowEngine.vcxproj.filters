@@ -217,10 +217,13 @@
     <None Include="texture.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="collider.vert">
+    <None Include="wireframe.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="collider.frag">
+    <None Include="wireframe.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="wireframe_world.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

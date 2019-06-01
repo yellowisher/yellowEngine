@@ -29,61 +29,10 @@ void BroadPhase_SAP::updateObject(Collider* target)
 }
 
 
-//void BroadPhase_SAP::addObjcet(Collider* target)
-//{
-//	_proxies.insert({ target, Proxy(target) });
-//	Proxy* proxy = &_proxies[target];
-//
-//	const AABB aabb = target->getAABB();
-//	bool grow = false;
-//
-//	for (int axis = 0; axis < Num_Axis; axis++)
-//	{
-//		auto& endPoints = _endPoints[axis];
-//		if (endPoints.capacity() == endPoints.size())
-//		{
-//			grow = true;
-//		}
-//		int i = endPoints.size() - 1;
-//		endPoints.resize(endPoints.size() + 2);
-//
-//		for (int m = Max; m >= Min; m--)
-//		{
-//			for (; i >= 0; i--)
-//			{
-//				if (endPoints[i].value > aabb.m(m).v[axis])
-//				{
-//					endPoints[i + m + 1] = endPoints[i];
-//				}
-//				else
-//				{
-//					break;
-//				}
-//			}
-//			endPoints[i + m + 1] = EndPoint(proxy, aabb.m(m).v[axis], (MinMax)m);
-//		}
-//
-//		// if vector did not grow, re-link only some part
-//		if (!grow)
-//		{
-//			reLinkAxisFrom(axis, i + 1);
-//		}
-//	}
-//	// if vector did grow, re-link all of points
-//	if (grow)
-//	{
-//		reLinkAllAxis();
-//	}
-//
-//	// add new potential pairs
-//	for (EndPoint* ep = proxy->points[X][Min] + 1; ep < proxy->points[X][Max]; ep++)
-//	{
-//		if (overlap(proxy, ep->proxy))
-//		{
-//			addPair(proxy, ep->proxy);
-//		}
-//	}
-//}
+// another version of adding object
+// find right place and update proxy link
+// but cannot figure out how to detect newly created pair; any idea?
+
 
 void BroadPhase_SAP::addObjcet(Collider* target)
 {
@@ -96,19 +45,33 @@ void BroadPhase_SAP::addObjcet(Collider* target)
 	for (int axis = 0; axis < Num_Axis; axis++)
 	{
 		auto& endPoints = _endPoints[axis];
-		if (endPoints.capacity() == endPoints.size())
+		if (endPoints.size() + 2 > endPoints.capacity())
 		{
 			grow = true;
 		}
 		int i = endPoints.size() - 1;
-		endPoints.push_back(EndPoint(proxy, aabb.min.v[axis], Min));
-		endPoints.push_back(EndPoint(proxy, aabb.max.v[axis], Max));
+		endPoints.resize(endPoints.size() + 2);
+
+		for (int m = Max; m >= Min; m--)
+		{
+			for (; i >= 0; i--)
+			{
+				if (endPoints[i].value > aabb.m(m).v[axis])
+				{
+					endPoints[i + m + 1] = endPoints[i];
+				}
+				else
+				{
+					break;
+				}
+			}
+			endPoints[i + m + 1] = EndPoint(proxy, aabb.m(m).v[axis], (MinMax)m);
+		}
 
 		// if vector did not grow, re-link only some part
 		if (!grow)
 		{
-			reLinkPoint(axis, endPoints[endPoints.size() - 1]);
-			reLinkPoint(axis, endPoints[endPoints.size() - 2]);
+			reLinkAxisFrom(axis, i + 1);
 		}
 	}
 	// if vector did grow, re-link all of points
@@ -116,7 +79,66 @@ void BroadPhase_SAP::addObjcet(Collider* target)
 	{
 		reLinkAllAxis();
 	}
+
+	// add new potential pairs;
+	int bi = proxy->points[X][Min] - &_endPoints[X][0];
+	int ei = proxy->points[X][Max] - &_endPoints[X][0];
+
+	vector<bool> opens = vector<bool>(ei, false);
+	for (int i = 0; i < bi; i++)
+	{
+		if (_endPoints[X][i].type == Min)opens[i] = true;
+		else opens[i] = false;
+	}
+	for (int i = bi + 1; i < ei; i++)
+	{
+		if (_endPoints[X][i].type == Min)opens[i] = true;
+	}
+
+	for (int i = 0; i < ei; i++)
+	{
+		if (opens[i])
+		{
+			if (isOverlap(proxy, _endPoints[X][i].proxy))
+			{
+				addPair(proxy, _endPoints[X][i].proxy);
+			}
+		}
+	}
 }
+
+//void BroadPhase_SAP::addObjcet(Collider* target)
+//{
+//	_proxies.insert({ target, Proxy(target) });
+//	Proxy* proxy = &_proxies[target];
+//
+//	const AABB aabb = target->getAABB();
+//	bool grow = false;
+//
+//	for (int axis = 0; axis < Num_Axis; axis++)
+//	{
+//		auto& endPoints = _endPoints[axis];
+//		if (endPoints.size() + 2 > endPoints.capacity())
+//		{
+//			grow = true;
+//		}
+//		int i = endPoints.size() - 1;
+//		endPoints.push_back(EndPoint(proxy, aabb.min.v[axis], Min));
+//		endPoints.push_back(EndPoint(proxy, aabb.max.v[axis], Max));
+//
+//		// if vector did not grow, re-link only two point
+//		if (!grow)
+//		{
+//			reLinkPoint(axis, endPoints[endPoints.size() - 1]);
+//			reLinkPoint(axis, endPoints[endPoints.size() - 2]);
+//		}
+//	}
+//	// if vector did grow, re-link all of points
+//	if (grow)
+//	{
+//		reLinkAllAxis();
+//	}
+//}
 
 
 void BroadPhase_SAP::removeObject(Collider* target)
@@ -166,7 +188,7 @@ void BroadPhase_SAP::removeObject(Collider* target)
 }
 
 
-bool BroadPhase_SAP::overlap(Proxy* pa, Proxy* pb)
+bool BroadPhase_SAP::isOverlap(Proxy* pa, Proxy* pb)
 {
 	if (pa->points[X][Min]->value > pb->points[X][Max]->value || pb->points[X][Min]->value > pa->points[X][Max]->value)return false;
 	if (pa->points[Y][Min]->value > pb->points[Y][Max]->value || pb->points[Y][Min]->value > pa->points[Y][Max]->value)return false;
@@ -218,8 +240,8 @@ void BroadPhase_SAP::detect()
 				{
 					if (target.type == Min && endPoints[i].type == Max)
 					{
-						cout << "One Axis Overlapped" << endl;
-						if (overlap(target.proxy, endPoints[i].proxy))
+						cout << "One Axis isOverlapped" << endl;
+						if (isOverlap(target.proxy, endPoints[i].proxy))
 						{
 							// new potential collision detected
 							addPair(target.proxy, endPoints[i].proxy);

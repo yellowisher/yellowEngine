@@ -59,7 +59,7 @@ private:
 
 	// batch?
 	void addPair(Proxy* pa, Proxy* pb);
-	bool overlap(Proxy* pa, Proxy* pb);
+	bool isOverlap(Proxy* pa, Proxy* pb);
 	void removePair(Proxy* pa, Proxy* pb, bool check = true);
 	
 	void reLinkPoint(int axis, EndPoint& endPoint);

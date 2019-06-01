@@ -23,14 +23,14 @@ public:
 private:
 	enum Point
 	{
-		Right_Top_Front,
 		Right_Top_Back,
-		Right_Bottom_Front,
+		Right_Top_Front,
 		Right_Bottom_Back,
-		Left_Top_Front,
+		Right_Bottom_Front,
 		Left_Top_Back,
-		Left_Bottom_Front,
+		Left_Top_Front,
 		Left_Bottom_Back,
+		Left_Bottom_Front,
 		Num_Points
 	};
 

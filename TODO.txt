@@ -1,7 +1,8 @@
 revisit:
 	GameObject copy constructor
 	Texture changed _id access modifier
-	Chagned currentCamera of Renderer as protected
+	Remove _currentCamera on Renderer class; use UBO instead
+	Rendering collider code should be removed or moved to proper position; not collider class
 
 new:
 	Seperate setting uniforms from renderer(current: MeshRenderer)

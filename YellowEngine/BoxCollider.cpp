@@ -22,14 +22,14 @@ BoxCollider::~BoxCollider()
 
 void BoxCollider::set(float minx, float miny, float minz, float maxx, float maxy, float maxz)
 {
-	_points[Left_Top_Front]     = Vector3(minx, maxy, maxz);
-	_points[Left_Top_Back]      = Vector3(minx, maxy, minz);
-	_points[Left_Bottom_Front]  = Vector3(minx, miny, maxz);
-	_points[Left_Bottom_Back]   = Vector3(minx, miny, minz);
-	_points[Right_Top_Front]    = Vector3(maxx, maxy, maxz);
-	_points[Right_Top_Back]     = Vector3(maxx, maxy, minz);
-	_points[Right_Bottom_Front] = Vector3(maxx, miny, maxz);
-	_points[Right_Bottom_Back]  = Vector3(maxx, miny, minz);
+	_points[Right_Top_Back]     = Vector3(maxx, maxy, maxz);
+	_points[Right_Top_Front]    = Vector3(maxx, maxy, minz);
+	_points[Right_Bottom_Back]  = Vector3(maxx, miny, maxz);
+	_points[Right_Bottom_Front] = Vector3(maxx, miny, minz);
+	_points[Left_Top_Back]      = Vector3(minx, maxy, maxz);
+	_points[Left_Top_Front]     = Vector3(minx, maxy, minz);
+	_points[Left_Bottom_Back]   = Vector3(minx, miny, maxz);
+	_points[Left_Bottom_Front]  = Vector3(minx, miny, minz);
 
 	_pointsChanged = true;
 }
@@ -141,8 +141,8 @@ bool BoxCollider::isCollideWith(Collider* other)
 		Vector3 center = other->transform->getWorldPosition();
 		center = transform->getInverseTRMatrix() * center;
 
-		Vector3& max = _scalePoints[Right_Top_Front];
-		Vector3& min = _scalePoints[Left_Bottom_Back];
+		Vector3& max = _scalePoints[Right_Top_Back];
+		Vector3& min = _scalePoints[Left_Bottom_Front];
 		Vector3 closestPoint;
 
 		if (center.x < min.x)closestPoint.x = min.x;

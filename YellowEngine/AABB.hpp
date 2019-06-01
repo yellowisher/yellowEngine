@@ -5,6 +5,7 @@
 
 class AABB
 {
+	friend class Collider;
 public:
 	AABB(Vector3 min, Vector3 max);
 	AABB(const AABB& copy);

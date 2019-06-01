@@ -35,24 +35,36 @@ public:
 	virtual void onCreate() override;
 	virtual void onDestroy() override;
 
-	void renderCollider();
-
 protected:
 	EventListener _transformChangeListener;
 
 	virtual void onTransformChange() = 0;
+
+private:
+	void notify(Event event, void* sender) override;
+
+// For collider & bounding box rendering; should be removed?
+public:
+	void renderCollider();
+
+protected:
 	virtual void calcRenderingData() = 0;
+	void calcBoundingBox();
 
 	std::vector<Vector3> _renderPoints;
+	std::vector<Vector3> _boundingBoxPoints;
 	bool _renderPointsChanged;
 
 private:
-	static ShaderProgram* __colliderShader;
+	static ShaderProgram* __wireFrameShader;
+	static ShaderProgram* __wireFrameWorldShader;
+	static Vector3 __colliderColor;
+	static Vector3 __boundingBoxColor;
 
-	void notify(Event event, void* sender) override;
-
-	Mesh* _mesh;
-	VertexLayoutBinding* _binding;
+	Mesh* _colliderMesh;
+	Mesh* _boundingBoxMesh;
+	VertexLayoutBinding* _colliderBinding;
+	VertexLayoutBinding* _boundingBoxBinding;
 };
 
 #endif
