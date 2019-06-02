@@ -1,10 +1,11 @@
 #ifndef __H_CAMERA__
 #define __H_CAMERA__
 
+#include "Event.hpp"
+#include "EventListener.hpp"
 #include "Component.hpp"
 #include "Transform.hpp"
 #include "Matrix.hpp"
-#include "Event.hpp"
 
 class Camera : public Component, public INotifiable
 {
@@ -17,6 +18,9 @@ public:
 
 	Camera(GameObject* gameObject);
 	virtual ~Camera();
+
+	void onCreate() override;
+	void onDestroy() override;
 
 	void setPerspective(float fov, float zNear, float zFar);
 	void setOrthographic(float zNear, float zFar);

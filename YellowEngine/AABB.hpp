@@ -7,34 +7,33 @@ class AABB
 {
 	friend class Collider;
 public:
+	static AABB combine(const AABB& a, const AABB& b);
+
+	AABB();
 	AABB(Vector3 min, Vector3 max);
 	AABB(const AABB& copy);
 	~AABB();
 
+	AABB& operator=(const AABB& other);
+
 	bool isCollideWith(const AABB& other);
-	const Vector3& min;
-	const Vector3& max;
+	bool contains(const AABB& other);
+
+	float perimeter();
+	float volume();
+	AABB& expand(float factor);
+
+	inline const Vector3& min() { return _min; }
+	inline const Vector3& max() { return _max; }
 	const Vector3& m(int i) const
 	{
-		if (i == 0)return min;
-		else return max;
+		if (i == 0)return _min;
+		else return _max;
 	}
 
 private:
-	enum Point
-	{
-		Right_Top_Back,
-		Right_Top_Front,
-		Right_Bottom_Back,
-		Right_Bottom_Front,
-		Left_Top_Back,
-		Left_Top_Front,
-		Left_Bottom_Back,
-		Left_Bottom_Front,
-		Num_Points
-	};
-
-	Vector3 _points[Num_Points];
+	Vector3 _min;
+	Vector3 _max;
 };
 
 #endif

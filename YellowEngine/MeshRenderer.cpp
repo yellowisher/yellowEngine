@@ -37,7 +37,7 @@ void MeshRenderer::_render()
 	_shader->updateUniforms(gameObject);
 
 	// active all textures
-	for (int i = 0; i < _textures.size(); i++)
+	for (size_t i = 0; i < _textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 		_textures[i]->use();

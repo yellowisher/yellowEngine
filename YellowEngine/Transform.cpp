@@ -7,9 +7,19 @@ Transform::Transform(GameObject* gameObject) :
 	scale(_scale),
 	rotation(_rotation),
 	_parent(nullptr),
-	transformChangeNotifier(this),
 	_scale(1.0f, 1.0f, 1.0f),
 	_dirtyBits(Dirty_All)
+{
+}
+
+
+void Transform::onCreate()
+{
+	transformChangeNotifier.setSender(this);
+}
+
+
+void Transform::onDestroy()
 {
 }
 

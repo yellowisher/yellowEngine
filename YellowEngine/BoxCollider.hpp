@@ -14,8 +14,8 @@ public:
 
 	Type getType() override;
 	bool isCollideWith(Collider* other) override;
-	void calcRenderingData() override;
-	const AABB getAABB() override;
+	void setColliderRenderingData() override;
+	AABB getBoundingBox() override;
 
 	void setSize(float x, float y, float z);
 	void setSize(Mesh* mesh);

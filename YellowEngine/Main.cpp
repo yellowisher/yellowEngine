@@ -44,16 +44,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		lastX = (float)xpos;
+		lastY = (float)ypos;
 		firstMouse = false;
 	}
 
-	float xoffset = lastX - xpos;
-	float yoffset = lastY - ypos;
+	float xoffset = lastX - (float)xpos;
+	float yoffset = lastY - (float)ypos;
 
-	lastX = xpos;
-	lastY = ypos;
+	lastX = (float)xpos;
+	lastY = (float)ypos;
 
 	_yaw += xoffset * 0.08f;
 	_pitch += yoffset * 0.16f;
@@ -171,8 +171,7 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
-	ColliderManager* colManager = new ColliderManager(ColliderManager::BroadPhaseType_SAP);
+	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_BVH);
 
 	Mesh* cubeMesh = Mesh::create("../yellowEngine/cube.obj");
 	ShaderProgram* colorShader = ShaderProgram::create("../yellowEngine/texture.vert", "../yellowEngine/texture.frag");

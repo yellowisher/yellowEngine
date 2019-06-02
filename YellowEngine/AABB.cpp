@@ -1,24 +1,21 @@
 #include <string>
 
+#include "Utils.hpp"
 #include "AABB.hpp"
 
 
-AABB::AABB(Vector3 min, Vector3 max): min(_points[Left_Bottom_Front]), max(_points[Right_Top_Back])
+AABB::AABB()
 {
-	_points[Right_Top_Back]     = Vector3(max.x, max.y, max.z);
-	_points[Right_Top_Front]    = Vector3(max.x, max.y, min.z);
-	_points[Right_Bottom_Back]  = Vector3(max.x, min.y, max.z);
-	_points[Right_Bottom_Front] = Vector3(max.x, min.y, min.z);
-	_points[Left_Top_Back]      = Vector3(min.x, max.y, max.z);
-	_points[Left_Top_Front]     = Vector3(min.x, max.y, min.z);
-	_points[Left_Bottom_Back]   = Vector3(min.x, min.y, max.z);
-	_points[Left_Bottom_Front]  = Vector3(min.x, min.y, min.z);
 }
 
 
-AABB::AABB(const AABB& copy) : min(_points[Left_Bottom_Front]), max(_points[Right_Top_Back])
+AABB::AABB(Vector3 min, Vector3 max) : _min(min), _max(max)
 {
-	memcpy(_points, copy._points, sizeof(_points));
+}
+
+
+AABB::AABB(const AABB& copy) : _min(copy._min), _max(copy._max)
+{
 }
 
 
@@ -27,10 +24,57 @@ AABB::~AABB()
 }
 
 
+AABB AABB::combine(const AABB& a, const AABB& b)
+{
+	Vector3 cmin = Vector3(Utils::min(a._min.x, b._min.x), Utils::min(a._min.y, b._min.y), Utils::min(a._min.z, b._min.z));
+	Vector3 cmax = Vector3(Utils::max(a._max.x, b._max.x), Utils::max(a._max.y, b._max.y), Utils::max(a._max.z, b._max.z));
+	return AABB(cmin, cmax);
+}
+
+
+AABB& AABB::operator=(const AABB& other)
+{
+	_min = other._min;
+	_max = other._max;
+
+	return *this;
+}
+
+
 bool AABB::isCollideWith(const AABB& other)
 {
-	if (max.x < other.min.x || min.x > other.max.x) return false;
-	if (max.y < other.min.y || min.y > other.max.y) return false;
-	if (max.z < other.min.z || min.z > other.max.z) return false;
+	if (_max.x < other._min.x || _min.x > other._max.x) return false;
+	if (_max.y < other._min.y || _min.y > other._max.y) return false;
+	if (_max.z < other._min.z || _min.z > other._max.z) return false;
 	return true;
+}
+
+
+bool AABB::contains(const AABB& other)
+{
+	return
+		_min.x <= other._min.x && _min.y <= other._min.y && _min.z <= other._min.z &&
+		_max.x >= other._max.x && _max.y >= other._max.y && _max.z >= other._max.z;
+}
+
+
+float AABB::perimeter()
+{
+	return (_max.x - _min.x) + (_max.y - _min.y) + (_max.z - _min.z) * 4.0f;
+}
+
+
+float AABB::volume()
+{
+	return (_max.x - _min.x) * (_max.y - _min.y) * (_max.z - _min.z);
+}
+
+
+AABB& AABB::expand(float factor)
+{
+	Vector3 amount = (_max - _min) * factor * 0.5f;
+	_max += amount;
+	_min -= amount;
+
+	return *this;
 }

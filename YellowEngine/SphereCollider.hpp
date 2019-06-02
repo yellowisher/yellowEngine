@@ -11,8 +11,8 @@ public:
 
 	Type getType() override;
 	bool isCollideWith(Collider* other) override;
-	void calcRenderingData() override;
-	const AABB getAABB() override;
+	void setColliderRenderingData() override;
+	AABB getBoundingBox() override;
 
 	float radius;
 

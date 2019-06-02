@@ -1,15 +1,24 @@
-#include "Camera.hpp"
 #include "System.hpp"
 #include "GameObject.hpp"
+#include "Camera.hpp"
 
 Camera::Camera(GameObject* gameObject) :
 	Component(gameObject),
-	_transformChangeListener(this),
 	_matrixPulled(false)
 {
 	setPerspective(60.0f, 0.01f, 100.0f);
-	//transformChangeListener.setParent(this);
+}
+
+
+void Camera::onCreate()
+{
+	_transformChangeListener.setParent(this);
 	transform->transformChangeNotifier.addListener(&_transformChangeListener);
+}
+
+
+void Camera::onDestroy()
+{
 }
 
 

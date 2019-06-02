@@ -5,13 +5,29 @@
 #include <iostream>
 using namespace std;
 
+
+ColliderManager* ColliderManager::_instance = nullptr;
+
+
+ColliderManager* ColliderManager::create(BroadPhaseType type)
+{
+	if (_instance != nullptr) return nullptr;
+	_instance = new ColliderManager(type);
+	return _instance;
+}
+
+
+ColliderManager* ColliderManager::getInstance()
+{
+	return _instance;
+}
+
+
 ColliderManager::ColliderManager(BroadPhaseType type)
 {
-	Collider::manager = this;
-
 	_broadPhase = nullptr;
 	if (type == BroadPhaseType_SAP)_broadPhase = new BroadPhase_SAP();
-	//if (type == BroadPhaseType_BVH)_broadPhase = new BroadPhase_BVH();
+	else if (type == BroadPhaseType_BVH)_broadPhase = new BroadPhase_BVH();
 }
 
 

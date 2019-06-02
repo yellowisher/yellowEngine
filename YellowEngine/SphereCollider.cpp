@@ -22,13 +22,13 @@ Collider::Type SphereCollider::getType()
 }
 
 
-void SphereCollider::calcRenderingData()
+void SphereCollider::setColliderRenderingData()
 {
 
 }
 
 
-const AABB SphereCollider::getAABB()
+AABB SphereCollider::getBoundingBox()
 {
 	Vector3 center = transform->getWorldPosition();
 	Vector3 min = center - Vector3(radius, radius, radius);

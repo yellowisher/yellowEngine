@@ -6,8 +6,10 @@
 #include "Component.hpp"
 #include "Vector3.hpp"
 #include "Event.hpp"
+#include "EventListener.hpp"
 #include "Mesh.hpp"
 #include "AABB.hpp"
+#include "Renderer.hpp"
 #include "ShaderProgram.hpp"
 #include "VertexLayoutBinding.hpp"
 
@@ -23,14 +25,12 @@ public:
 		Type_Sphere
 	};
 
-	static ColliderManager* manager;
-
 	Collider(GameObject* gameObject);
 	virtual ~Collider();
 
 	virtual bool isCollideWith(Collider* other) = 0;
-	virtual Type getType();
-	virtual const AABB getAABB() = 0;
+	virtual Type getType() = 0;
+	virtual AABB getBoundingBox() = 0;
 
 	virtual void onCreate() override;
 	virtual void onDestroy() override;
@@ -48,23 +48,16 @@ public:
 	void renderCollider();
 
 protected:
-	virtual void calcRenderingData() = 0;
-	void calcBoundingBox();
+	virtual void setColliderRenderingData() = 0;
 
-	std::vector<Vector3> _renderPoints;
-	std::vector<Vector3> _boundingBoxPoints;
+	Renderer _colRenderer;
+	Renderer _bbRenderer;
+
 	bool _renderPointsChanged;
 
 private:
-	static ShaderProgram* __wireFrameShader;
-	static ShaderProgram* __wireFrameWorldShader;
-	static Vector3 __colliderColor;
-	static Vector3 __boundingBoxColor;
-
-	Mesh* _colliderMesh;
-	Mesh* _boundingBoxMesh;
-	VertexLayoutBinding* _colliderBinding;
-	VertexLayoutBinding* _boundingBoxBinding;
+	static ShaderProgram* __colliderShader;
+	static ShaderProgram* __boundingBoxShader;
 };
 
 #endif

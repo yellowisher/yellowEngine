@@ -9,6 +9,7 @@
 #include "Matrix.hpp"
 #include "Quaternion.hpp"
 #include "Event.hpp"
+#include "EventNotifier.hpp"
 
 class Transform : public Component
 {
@@ -21,6 +22,9 @@ public:
 
 	Transform(GameObject* gameObject);
 	virtual ~Transform();
+
+	void onCreate() override;
+	void onDestroy() override;
 
 	void addChild(Transform* child);
 	void removeChild(Transform* child);

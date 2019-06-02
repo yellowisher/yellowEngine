@@ -72,12 +72,6 @@
     <ClCompile Include="UniformUpdater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Event.hpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,6 +98,21 @@
     </ClCompile>
     <ClCompile Include="ObjectRenderer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BroadPhase_BVH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventNotifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.hpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +206,18 @@
     <ClInclude Include="ColliderManagerr.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventNotifier.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventListener.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.frag">
@@ -217,13 +238,16 @@
     <None Include="texture.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe.vert">
+    <None Include="wireframe_collider.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe.frag">
+    <None Include="wireframe_collider.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe_world.vert">
+    <None Include="wireframe_boundingbox.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="wireframe_boundingbox.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

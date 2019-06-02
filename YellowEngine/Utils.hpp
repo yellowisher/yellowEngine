@@ -1,4 +1,10 @@
+#ifndef __H_UTILS__
+#define __H_UTILS__
+
 #include <limits>
+
+// for debugging code
+#include <cassert>
 
 namespace Utils
 {
@@ -21,8 +27,20 @@ namespace Utils
 		return a > b ? a : b;
 	}
 
+	constexpr int max(int a, int b)
+	{
+		return a > b ? a : b;
+	}
+
 	constexpr float min(float a, float b)
 	{
 		return a > b ? b : a;
 	}
+
+	constexpr int min(int a, int b)
+	{
+		return a > b ? b : a;
+	}
 }
+
+#endif

@@ -17,8 +17,8 @@ public:
 		BroadPhaseType_BVH
 	};
 
-	ColliderManager(BroadPhaseType type);
-	~ColliderManager();
+	static ColliderManager* create(BroadPhaseType type);
+	static ColliderManager* getInstance();
 
 	void detect();
 	void colliderCreated(Collider* collider);
@@ -33,6 +33,11 @@ private:
 		PairType_Continuous,
 		PairType_Delete
 	};
+
+	ColliderManager(BroadPhaseType type);
+	~ColliderManager();
+
+	static ColliderManager* _instance;
 
 	BroadPhase* _broadPhase;
 	std::unordered_map<ColliderPair, PairType> _collidingPairs;

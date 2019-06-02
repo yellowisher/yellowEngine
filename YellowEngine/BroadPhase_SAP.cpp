@@ -17,15 +17,15 @@ BroadPhase_SAP::~BroadPhase_SAP()
 
 void BroadPhase_SAP::updateObject(Collider* target)
 {
-	const AABB& aabb = target->getAABB();
+	AABB aabb = target->getBoundingBox();
 
 	Proxy* proxy = &_proxies[target];
-	proxy->points[X][Min]->value = aabb.min.x;
-	proxy->points[Y][Min]->value = aabb.min.y;
-	proxy->points[Z][Min]->value = aabb.min.z;
-	proxy->points[X][Max]->value = aabb.max.x;
-	proxy->points[Y][Max]->value = aabb.max.y;
-	proxy->points[Z][Max]->value = aabb.max.z;
+	proxy->points[X][Min]->value = aabb.min().x;
+	proxy->points[Y][Min]->value = aabb.min().y;
+	proxy->points[Z][Min]->value = aabb.min().z;
+	proxy->points[X][Max]->value = aabb.max().x;
+	proxy->points[Y][Max]->value = aabb.max().y;
+	proxy->points[Z][Max]->value = aabb.max().z;
 }
 
 
@@ -33,13 +33,12 @@ void BroadPhase_SAP::updateObject(Collider* target)
 // find right place and update proxy link
 // but cannot figure out how to detect newly created pair; any idea?
 
-
 void BroadPhase_SAP::addObjcet(Collider* target)
 {
 	_proxies.insert({ target, Proxy(target) });
 	Proxy* proxy = &_proxies[target];
 
-	const AABB aabb = target->getAABB();
+	AABB aabb = target->getBoundingBox();
 	bool grow = false;
 
 	for (int axis = 0; axis < Num_Axis; axis++)

@@ -78,6 +78,7 @@
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\YellowEngine\YellowEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -123,12 +124,14 @@
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="BroadPhase.cpp" />
+    <ClCompile Include="BroadPhase_BVH.cpp" />
     <ClCompile Include="BroadPhase_SAP.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="Component.cpp" />
-    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventListener.cpp" />
+    <ClCompile Include="EventNotifier.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -137,6 +140,7 @@
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="ObjectRenderer.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Event.hpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -160,14 +164,18 @@
     <ClInclude Include="Collider.hpp" />
     <ClInclude Include="ColliderManagerr.hpp" />
     <ClInclude Include="Component.hpp" />
+    <ClInclude Include="EventListener.hpp" />
+    <ClInclude Include="EventNotifier.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="Graphics.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="Matrix.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="MeshRenderer.hpp" />
+    <ClInclude Include="ObjectPool.hpp" />
     <ClInclude Include="Quaternion.hpp" />
     <ClInclude Include="ObjectRenderer.hpp" />
+    <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="SphereCollider.hpp" />
     <ClInclude Include="UniformUpdater.hpp" />
@@ -183,15 +191,16 @@
     <ClInclude Include="VertexLayoutBinding.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="wireframe.frag" />
-    <None Include="wireframe.vert" />
+    <None Include="wireframe_boundingbox.frag" />
+    <None Include="wireframe_collider.frag" />
+    <None Include="wireframe_collider.vert" />
     <None Include="color.frag" />
     <None Include="color.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
     <None Include="texture.frag" />
     <None Include="texture.vert" />
-    <None Include="wireframe_world.vert" />
+    <None Include="wireframe_boundingbox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -30,8 +30,6 @@ public:
 	static Mesh* create(const char* path);
 	static Mesh* create(const VertexLayout& layout);
 
-	void updateData(const std::vector<Vector3>& vertices);
-
 	unsigned int getVertexCount() const;
 	unsigned int getVertexBufferHandle() const;
 	unsigned int getElementBufferHandle() const;

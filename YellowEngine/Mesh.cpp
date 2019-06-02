@@ -84,14 +84,6 @@ Mesh* Mesh::create(const VertexLayout& layout)
 }
 
 
-void Mesh::updateData(const std::vector<Vector3>& vertices)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, NULL);
-}
-
-
 Mesh* Mesh::createFromOBJ(const char* path)
 {
 	unsigned int index;
