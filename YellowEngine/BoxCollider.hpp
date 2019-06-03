@@ -14,7 +14,7 @@ public:
 
 	Type getType() override;
 	bool isCollideWith(Collider* other) override;
-	void setColliderRenderingData() override;
+	void fillRenderingPoints(std::vector<Vector3>& lines) override;
 	AABB getBoundingBox() override;
 
 	void setSize(float x, float y, float z);

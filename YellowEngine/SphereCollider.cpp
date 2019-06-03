@@ -22,10 +22,11 @@ Collider::Type SphereCollider::getType()
 }
 
 
-void SphereCollider::setColliderRenderingData()
+void SphereCollider::fillRenderingPoints(std::vector<Vector3>& lines)
 {
 
 }
+
 
 
 AABB SphereCollider::getBoundingBox()

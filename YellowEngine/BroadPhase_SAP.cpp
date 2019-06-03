@@ -1,5 +1,5 @@
+#include "GameObject.hpp"
 #include "BroadPhase_SAP.hpp"
-
 
 #include <iostream>
 using namespace std;
@@ -55,7 +55,7 @@ void BroadPhase_SAP::addObjcet(Collider* target)
 		{
 			for (; i >= 0; i--)
 			{
-				if (endPoints[i].value > aabb.m(m).v[axis])
+				if (endPoints[i].value > aabb[m].v[axis])
 				{
 					endPoints[i + m + 1] = endPoints[i];
 				}
@@ -64,7 +64,7 @@ void BroadPhase_SAP::addObjcet(Collider* target)
 					break;
 				}
 			}
-			endPoints[i + m + 1] = EndPoint(proxy, aabb.m(m).v[axis], (MinMax)m);
+			endPoints[i + m + 1] = EndPoint(proxy, aabb[m].v[axis], (MinMax)m);
 		}
 
 		// if vector did not grow, re-link only some part

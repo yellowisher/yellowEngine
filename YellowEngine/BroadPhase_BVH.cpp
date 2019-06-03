@@ -1,4 +1,5 @@
 #include <stack>
+#include <queue>
 
 #include "Utils.hpp"
 #include "BroadPhase_BVH.hpp"
@@ -72,8 +73,36 @@ void BroadPhase_BVH::removeObject(Collider* target)
 }
 
 
+void BroadPhase_BVH::render(Renderer& renderer, ShaderProgram* shader, const Uniform* colorUniform)
+{
+	std::queue<ObjectId> visitQueue;
+	visitQueue.push(_root);
+
+	shader->setUniform(colorUniform, Vector3(1.0f, 1.0f, 1.0f));
+
+	while (!visitQueue.empty())
+	{
+		ObjectId visit = visitQueue.front();
+		visitQueue.pop();
+
+		// render only branch nodes
+		if (visit == NullObject)break;
+
+		Node& visitNode = _nodePool[visit];
+		if (visitNode.isLeaf())continue;
+
+		renderer.setData(visitNode.aabb);
+		renderer.render();
+
+		visitQueue.push(visitNode.leftChild);
+		visitQueue.push(visitNode.rightChild);
+	}
+}
+
+
 void BroadPhase_BVH::detect()
 {
+	_pairs.clear();
 	std::stack<ObjectId> visitStack;
 	for (auto pair : _nodeMap)
 	{
@@ -122,6 +151,9 @@ void BroadPhase_BVH::insertNode(ObjectId id)
 		// find the best sibling for new inserted node
 		// I assumed the best sibling as when combined, sibling node that produces least empty volume
 		// calculating 'real' empty volume might be too expansive so just using approximate value
+
+		// ok... I just figured out why box2d uses surface area as cost rather than volume
+		// http://box2d.org/files/GDC2019/ErinCatto_DynamicBVH_Full.pdf
 
 		Node& siblingNode = _nodePool[cursor];
 		Node& leftChildNode = _nodePool[siblingNode.leftChild];

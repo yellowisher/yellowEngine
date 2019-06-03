@@ -25,10 +25,10 @@ public:
 
 	inline const Vector3& min() { return _min; }
 	inline const Vector3& max() { return _max; }
-	const Vector3& m(int i) const
+	const Vector3& operator[](int i) const
 	{
 		if (i == 0)return _min;
-		else return _max;
+		return _max;
 	}
 
 private:

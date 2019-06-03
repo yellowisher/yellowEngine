@@ -84,10 +84,24 @@ AABB BoxCollider::getBoundingBox()
 }
 
 
-// if any bit is 0, pair original point with original point | bit
-void BoxCollider::setColliderRenderingData()
+void BoxCollider::fillRenderingPoints(std::vector<Vector3>& lines)
 {
-	_colRenderer.setData(Renderer::Box(_points[Left_Bottom_Front], _points[Right_Top_Back]));
+	updatePoints();
+
+	// if any bit is 0, pair original point with original point | bit
+	lines.clear();
+	for (int i = 0; i < Num_Points; i++)
+	{
+		for (int b = 0; b < 3; b++)
+		{
+			int bit = 1 << b;
+			if (!(i & bit))
+			{
+				lines.push_back(_worldPoints[i]);
+				lines.push_back(_worldPoints[i | bit]);
+			}
+		}
+	}
 }
 
 

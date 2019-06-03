@@ -1,6 +1,9 @@
+#include "VertexLayout.hpp"
+
+#include "BroadPhase_NUL.hpp"
 #include "BroadPhase_SAP.hpp"
 #include "BroadPhase_BVH.hpp"
-#include "ColliderManagerr.hpp"
+#include "ColliderManager.hpp"
 
 #include <iostream>
 using namespace std;
@@ -9,6 +12,27 @@ using namespace std;
 ColliderManager* ColliderManager::_instance = nullptr;
 
 
+ColliderManager::ColliderManager(BroadPhaseType type)
+{
+	_type = type;
+
+	if (type == BroadPhaseType_NUL)_broadPhase = new BroadPhase_NUL();
+	else if (type == BroadPhaseType_SAP)_broadPhase = new BroadPhase_SAP();
+	else if (type == BroadPhaseType_BVH)_broadPhase = new BroadPhase_BVH();
+
+	_wireFrameShader = ShaderProgram::create("wireframe.vert", "wireframe.frag");
+	_colorUniform = _wireFrameShader->getUniform("u_LineColor");
+	VertexLayout layout = VertexLayout({ VertexLayout::Attribute(VertexLayout::Attr_Position, 3) });
+	_renderer = Renderer(layout, _wireFrameShader);
+}
+
+
+ColliderManager::~ColliderManager()
+{
+}
+
+
+// should be called only once
 ColliderManager* ColliderManager::create(BroadPhaseType type)
 {
 	if (_instance != nullptr) return nullptr;
@@ -23,36 +47,16 @@ ColliderManager* ColliderManager::getInstance()
 }
 
 
-ColliderManager::ColliderManager(BroadPhaseType type)
-{
-	_broadPhase = nullptr;
-	if (type == BroadPhaseType_SAP)_broadPhase = new BroadPhase_SAP();
-	else if (type == BroadPhaseType_BVH)_broadPhase = new BroadPhase_BVH();
-}
-
-
-ColliderManager::~ColliderManager()
-{
-}
-
-
 void ColliderManager::colliderCreated(Collider* collider)
 {
-	if (_broadPhase)
-	{
-		_broadPhase->addObjcet(collider);
-	}
-
+	_broadPhase->addObjcet(collider);
 	_colliders.push_back(collider);
 }
 
 
 void ColliderManager::colliderDestroyed(Collider* collider)
 {
-	if (_broadPhase)
-	{
-		_broadPhase->removeObject(collider);
-	}
+	_broadPhase->removeObject(collider);
 
 	for (auto it = _colliders.begin(); it != _colliders.end(); ++it)
 	{
@@ -67,7 +71,7 @@ void ColliderManager::colliderDestroyed(Collider* collider)
 	{
 		if (it->first.ca == collider || it->first.cb == collider)
 		{
-			cout << "Exit: " << it->first.ca->gameObject->getName() << " and " << it->first.cb->gameObject->getName() << endl;
+			collisionExit(it->first);
 			it = _collidingPairs.erase(it);
 		}
 		else
@@ -80,71 +84,55 @@ void ColliderManager::colliderDestroyed(Collider* collider)
 
 void ColliderManager::colliderUpdated(Collider* collider)
 {
-	if (_broadPhase)
-	{
-		_broadPhase->updateObject(collider);
-	}
+	_broadPhase->updateObject(collider);
 }
 
 
 void ColliderManager::renderColliders()
 {
+	// render colliders
+	_wireFrameShader->setUniform(_colorUniform, _colliderColor);
 	for (auto collider : _colliders)
 	{
-		collider->renderCollider();
+		collider->fillRenderingPoints(_renderer.lines);
+		_renderer.bufferData();
+		_renderer.render();
 	}
-}
 
+	// render bounding boxies
+	_wireFrameShader->setUniform(_colorUniform, _boundingBoxColor);
+	for (auto collider : _colliders)
+	{
+		_renderer.setData(collider->getBoundingBox());
+		_renderer.render();
+	}
+
+	// render other stuff
+	_broadPhase->render(_renderer, _wireFrameShader, _colorUniform);
+}
 
 
 void ColliderManager::detect()
 {
-	if (_broadPhase == nullptr)
+	auto& potentialPairs = _broadPhase->getPotentialPairs();
+	for (auto pair : potentialPairs)
 	{
-		for (size_t i = 0; i < _colliders.size() - 1; i++)
+		if (pair.ca->isCollideWith(pair.cb))
 		{
-			for (size_t j = i + 1; j < _colliders.size(); j++)
+			auto it = _collidingPairs.find(pair);
+			if (it != _collidingPairs.end())
 			{
-				if (_colliders[i]->isCollideWith(_colliders[j]))
-				{
-					auto pair = ColliderPair(_colliders[i], _colliders[j]);
-					auto it = _collidingPairs.find(pair);
-					if (it != _collidingPairs.end())
-					{
-						it->second = PairType_Continuous;
-					}
-					else
-					{
-						cout << "Enter: " << pair.ca->gameObject->getName() << " and " << pair.cb->gameObject->getName() << endl;
-						_collidingPairs.insert({ pair, PairType_New });
-					}
-				}
+				// is collide but isn't new
+				// OnColliderStay
+				it->second = PairType_Continuous;
+				collisionStay(pair);
 			}
-		}
-	}
-	else
-	{
-		auto& potentialPairs = _broadPhase->getPotentialPairs();
-		for (auto pair : potentialPairs)
-		{
-			if (pair.ca->isCollideWith(pair.cb))
+			else
 			{
-				auto it = _collidingPairs.find(pair);
-				if (it != _collidingPairs.end())
-				{
-					// is collide but isn't new
-					// OnColliderStay
-
-					it->second = PairType_Continuous;
-				}
-				else
-				{
-					// is collide and is new; add to collding list
-					// OnColliderEnter
-
-					cout << "Enter: " << pair.ca->gameObject->getName() << " and " << pair.cb->gameObject->getName() << endl;
-					_collidingPairs.insert({ pair, PairType_New });
-				}
+				// is collide and is new; add to collding list
+				// OnColliderEnter
+				_collidingPairs.insert({ pair, PairType_New });
+				collisionEnter(pair);
 			}
 		}
 	}
@@ -153,8 +141,9 @@ void ColliderManager::detect()
 	{
 		if (it->second == PairType_Delete)
 		{
+			// the pair is not continuous or newly created
 			// OnColliderExit
-			cout << "Exit: " << it->first.ca->gameObject->getName() << " and " << it->first.cb->gameObject->getName() << endl;
+			collisionExit(it->first);
 			it = _collidingPairs.erase(it);
 		}
 		else
@@ -163,4 +152,22 @@ void ColliderManager::detect()
 			++it;
 		}
 	}
+}
+
+
+void ColliderManager::collisionEnter(const ColliderPair& pair)
+{
+	cout << "Enter: " << pair.ca->gameObject->getName() << " and " << pair.cb->gameObject->getName() << endl;
+}
+
+
+void ColliderManager::collisionStay(const ColliderPair& pair)
+{
+
+}
+
+
+void ColliderManager::collisionExit(const ColliderPair& pair)
+{
+	cout << "Exit: " << pair.ca->gameObject->getName() << " and " << pair.cb->gameObject->getName() << endl;
 }

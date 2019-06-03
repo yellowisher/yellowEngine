@@ -10,7 +10,7 @@ using namespace std;
 #include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
-#include "ColliderManagerr.hpp"
+#include "ColliderManager.hpp"
 #include "Matrix.hpp"
 #include "GameObject.hpp"
 #include "Transform.hpp"
@@ -197,7 +197,7 @@ int main(void)
 	GameObject* cubeGo2 = new GameObject("StayCube");
 	BoxCollider* boxStatic = cubeGo2->addComponent<BoxCollider>();
 	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
-	cubeGo2->transform->translate(5.0f, 0, 0);
+	cubeGo2->transform->translate(20.0f, 0, 0);
 
 	GameObject* dl = new GameObject();
 	Light* l = dl->addComponent<Light>()->setDirectional();

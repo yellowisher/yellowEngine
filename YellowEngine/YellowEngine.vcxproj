@@ -125,6 +125,7 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="BroadPhase.cpp" />
     <ClCompile Include="BroadPhase_BVH.cpp" />
+    <ClCompile Include="BroadPhase_NUL.cpp" />
     <ClCompile Include="BroadPhase_SAP.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -159,10 +160,11 @@
     <ClInclude Include="BoxCollider.hpp" />
     <ClInclude Include="BroadPhase.hpp" />
     <ClInclude Include="BroadPhase_BVH.hpp" />
+    <ClInclude Include="BroadPhase_NUL.hpp" />
     <ClInclude Include="BroadPhase_SAP.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Collider.hpp" />
-    <ClInclude Include="ColliderManagerr.hpp" />
+    <ClInclude Include="ColliderManager.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="EventListener.hpp" />
     <ClInclude Include="EventNotifier.hpp" />
@@ -191,16 +193,14 @@
     <ClInclude Include="VertexLayoutBinding.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="wireframe_boundingbox.frag" />
-    <None Include="wireframe_collider.frag" />
-    <None Include="wireframe_collider.vert" />
+    <None Include="wireframe.frag" />
+    <None Include="wireframe.vert" />
     <None Include="color.frag" />
     <None Include="color.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
     <None Include="texture.frag" />
     <None Include="texture.vert" />
-    <None Include="wireframe_boundingbox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

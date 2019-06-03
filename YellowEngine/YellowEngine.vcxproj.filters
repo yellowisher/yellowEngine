@@ -114,6 +114,9 @@
     <ClCompile Include="Event.hpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="BroadPhase_NUL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.hpp">
@@ -203,9 +206,6 @@
     <ClInclude Include="AABB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderManagerr.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -216,6 +216,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventListener.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BroadPhase_NUL.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -238,16 +244,10 @@
     <None Include="texture.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe_collider.frag">
+    <None Include="wireframe.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe_collider.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="wireframe_boundingbox.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="wireframe_boundingbox.frag">
+    <None Include="wireframe.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

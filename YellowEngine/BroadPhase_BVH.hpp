@@ -55,6 +55,7 @@ public:
 	void updateObject(Collider* target) override;
 	void addObjcet(Collider* target) override;
 	void removeObject(Collider* target) override;
+	void render(Renderer& renderer, ShaderProgram* shader, const Uniform* colorUniform) override;
 
 	float expandFactor;
 

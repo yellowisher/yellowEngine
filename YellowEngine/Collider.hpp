@@ -9,9 +9,6 @@
 #include "EventListener.hpp"
 #include "Mesh.hpp"
 #include "AABB.hpp"
-#include "Renderer.hpp"
-#include "ShaderProgram.hpp"
-#include "VertexLayoutBinding.hpp"
 
 class ColliderManager;
 
@@ -31,6 +28,7 @@ public:
 	virtual bool isCollideWith(Collider* other) = 0;
 	virtual Type getType() = 0;
 	virtual AABB getBoundingBox() = 0;
+	virtual void fillRenderingPoints(std::vector<Vector3>& lines) = 0;
 
 	virtual void onCreate() override;
 	virtual void onDestroy() override;
@@ -42,22 +40,6 @@ protected:
 
 private:
 	void notify(Event event, void* sender) override;
-
-// For collider & bounding box rendering; should be removed?
-public:
-	void renderCollider();
-
-protected:
-	virtual void setColliderRenderingData() = 0;
-
-	Renderer _colRenderer;
-	Renderer _bbRenderer;
-
-	bool _renderPointsChanged;
-
-private:
-	static ShaderProgram* __colliderShader;
-	static ShaderProgram* __boundingBoxShader;
 };
 
 #endif

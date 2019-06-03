@@ -4,6 +4,7 @@
 #include <unordered_set>
 
 #include "Collider.hpp"
+#include "Renderer.hpp"
 
 struct ColliderPair
 {
@@ -53,6 +54,7 @@ public:
 	virtual void updateObject(Collider* target) = 0;
 	virtual void addObjcet(Collider* target) = 0;
 	virtual void removeObject(Collider* target) = 0;
+	virtual void render(Renderer& renderer, ShaderProgram* shader, const Uniform* colorUniform) = 0;
 
 protected:
 	virtual void detect() = 0;

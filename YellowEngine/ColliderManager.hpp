@@ -5,14 +5,17 @@
 #include <unordered_map>
 
 #include "Collider.hpp"
+#include "Renderer.hpp"
 #include "BroadPhase.hpp"
 
 class ColliderManager
 {
+	friend class BroadPhase_NUL;
+
 public:
 	enum BroadPhaseType
 	{
-		BroadPhaseType_None,
+		BroadPhaseType_NUL,
 		BroadPhaseType_SAP,
 		BroadPhaseType_BVH
 	};
@@ -37,11 +40,24 @@ private:
 	ColliderManager(BroadPhaseType type);
 	~ColliderManager();
 
+	void collisionEnter(const ColliderPair& pair);
+	void collisionStay(const ColliderPair& pair);
+	void collisionExit(const ColliderPair& pair);
+
 	static ColliderManager* _instance;
 
+	BroadPhaseType _type;
 	BroadPhase* _broadPhase;
 	std::unordered_map<ColliderPair, PairType> _collidingPairs;
 	std::vector<Collider*> _colliders;
+
+	// for rendering colliders
+	ShaderProgram* _wireFrameShader;
+	const Uniform* _colorUniform;
+	Renderer _renderer;
+
+	const Vector3 _colliderColor = Vector3(0, 0.8f, 0);
+	const Vector3 _boundingBoxColor = Vector3(0.8f, 0.8f, 0);
 };
 
 #endif
