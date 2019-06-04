@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,10 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{7031AE11-501A-4690-84B0-7BFB2CDD3514}</ProjectGuid>
-    <RootNamespace>YellowEngine</RootNamespace>
+    <ProjectGuid>{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}</ProjectGuid>
+    <RootNamespace>yellowEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
-    <ProjectName>yellowEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,14 +74,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\YellowEngine\YellowEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -121,86 +115,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Math\AABB.cpp" />
-    <ClCompile Include="src\Component\BoxCollider.cpp" />
-    <ClCompile Include="src\Collision\BroadPhase.cpp" />
-    <ClCompile Include="src\Collision\BroadPhase_BVH.cpp" />
-    <ClCompile Include="src\Collision\BroadPhase_NUL.cpp" />
-    <ClCompile Include="src\Collision\BroadPhase_SAP.cpp" />
-    <ClCompile Include="src\Component\Camera.cpp" />
-    <ClCompile Include="src\Component\Collider.cpp" />
-    <ClCompile Include="src\Collision\ColliderManager.cpp" />
-    <ClCompile Include="src\Component\Component.cpp" />
-    <ClCompile Include="src\System\EventListener.cpp" />
-    <ClCompile Include="src\System\EventNotifier.cpp" />
-    <ClCompile Include="src\System\GameObject.cpp" />
-    <ClCompile Include="src\Component\Light.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="src\Math\Matrix.cpp" />
-    <ClCompile Include="src\Rendering\Mesh.cpp" />
-    <ClCompile Include="src\Component\MeshRenderer.cpp" />
-    <ClCompile Include="src\Math\Quaternion.cpp" />
-    <ClCompile Include="src\Component\ObjectRenderer.cpp" />
-    <ClCompile Include="src\Rendering\Renderer.cpp" />
-    <ClCompile Include="src\Rendering\ShaderProgram.cpp" />
-    <ClCompile Include="src\Component\SphereCollider.cpp" />
-    <ClCompile Include="src\Rendering\UniformUpdater.cpp" />
-    <ClCompile Include="src\System\System.cpp" />
-    <ClCompile Include="src\Rendering\Texture.cpp" />
-    <ClCompile Include="src\Component\Transform.cpp" />
-    <ClCompile Include="src\Math\Vector2.cpp" />
-    <ClCompile Include="src\Math\Vector3.cpp" />
-    <ClCompile Include="src\Math\Vector4.cpp" />
-    <ClCompile Include="src\Rendering\VertexLayout.cpp" />
-    <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp" />
-    <ClInclude Include="include\yellowEngine\Collision\BroadPhase_BVH.hpp" />
-    <ClInclude Include="include\yellowEngine\Collision\BroadPhase_NUL.hpp" />
-    <ClInclude Include="include\yellowEngine\Collision\BroadPhase_SAP.hpp" />
-    <ClInclude Include="include\yellowEngine\Collision\ColliderManager.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\BoxCollider.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\Camera.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\Collider.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\Component.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\Light.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\MeshRenderer.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\ObjectRenderer.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\SphereCollider.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\Transform.hpp" />
-    <ClInclude Include="include\yellowEngine\Math\AABB.hpp" />
-    <ClInclude Include="include\yellowEngine\Math\Matrix.hpp" />
-    <ClInclude Include="include\yellowEngine\Math\Quaternion.hpp" />
-    <ClInclude Include="include\yellowEngine\Math\Vector2.hpp" />
-    <ClInclude Include="include\yellowEngine\Math\Vector3.hpp" />
-    <ClInclude Include="include\yellowEngine\Math\Vector4.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\Mesh.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\Renderer.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\ShaderProgram.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\Texture.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\UniformUpdater.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\VertexLayout.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\VertexLayoutBinding.hpp" />
-    <ClInclude Include="include\yellowEngine\System\Event.hpp" />
-    <ClInclude Include="include\yellowEngine\System\EventListener.hpp" />
-    <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp" />
-    <ClInclude Include="include\yellowEngine\System\GameObject.hpp" />
-    <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp" />
-    <ClInclude Include="include\yellowEngine\System\System.hpp" />
-    <ClInclude Include="include\yellowEngine\Utility\stb_image.h" />
-    <ClInclude Include="include\yellowEngine\Utility\Utils.hpp" />
-    <ClInclude Include="Graphics.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\Shader\wireframe.frag" />
-    <None Include="res\Shader\wireframe.vert" />
-    <None Include="res\Shader\color.frag" />
-    <None Include="res\Shader\color.vert" />
-    <None Include="res\Shader\light.frag" />
-    <None Include="res\Shader\light.vert" />
-    <None Include="res\Shader\texture.frag" />
-    <None Include="res\Shader\texture.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

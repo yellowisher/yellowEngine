@@ -5,26 +5,23 @@ using namespace std;
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-using namespace glm;
+#include "yellowEngine/Collision/ColliderManager.hpp"
+#include "yellowEngine/Math/Matrix.hpp"
+#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/Transform.hpp"
+#include "yellowEngine/Math/Quaternion.hpp"
+#include "yellowEngine/Rendering/Mesh.hpp"
+#include "yellowEngine/Rendering/Texture.hpp"
+#include "yellowEngine/Component/MeshRenderer.hpp"
+#include "yellowEngine/Rendering/ShaderProgram.hpp"
+#include "yellowEngine/Math/Matrix.hpp"
+#include "yellowEngine/Component/Camera.hpp"
+#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/Component/Light.hpp"
+#include "yellowEngine/Component/BoxCollider.hpp"
+#include "yellowEngine/Component/Collider.hpp"
 
-#include "ColliderManager.hpp"
-#include "Matrix.hpp"
-#include "GameObject.hpp"
-#include "Transform.hpp"
-#include "Quaternion.hpp"
-#include "Mesh.hpp"
-#include "Texture.hpp"
-#include "MeshRenderer.hpp"
-#include "ShaderProgram.hpp"
-#include "Matrix.hpp"
-#include "Camera.hpp"
-#include "System.hpp"
-#include "Light.hpp"
-#include "BoxCollider.hpp"
-#include "SphereCollider.hpp"
+#include <Windows.h>
 
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "lib/glew32.lib")
@@ -171,12 +168,17 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	char buffer[512];
+	GetModuleFileName(NULL, buffer, 512);
+	cout << buffer << endl;
+
+
 	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_BVH);
 
-	Mesh* cubeMesh = Mesh::create("../yellowEngine/cube.obj");
-	ShaderProgram* colorShader = ShaderProgram::create("../yellowEngine/texture.vert", "../yellowEngine/texture.frag");
-	Texture* diffuseMap = Texture::create("../yellowEngine/container2.png");
-	Texture* specularMap = Texture::create("../yellowEngine/container2_specular.png");
+	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
+	ShaderProgram* colorShader = ShaderProgram::create("Shader/texture.vert", "Shader/texture.frag");
+	Texture* diffuseMap = Texture::create("Texture/container2.png");
+	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
 	unsigned int lightsIndex = glGetUniformBlockIndex(colorShader->getId(), "LightBlock");
 	glUniformBlockBinding(colorShader->getId(), lightsIndex, 0);
@@ -204,7 +206,7 @@ int main(void)
 	l->transform->rotate(45.0f, 0, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
-	ShaderProgram* lightShader = ShaderProgram::create("../yellowEngine/light.vert", "../yellowEngine/light.frag");
+	ShaderProgram* lightShader = ShaderProgram::create("Shader/light.vert", "Shader/light.frag");
 	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
 	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
 

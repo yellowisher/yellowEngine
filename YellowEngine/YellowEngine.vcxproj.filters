@@ -21,233 +21,233 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="src\Math\AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vector2.cpp">
+    <ClCompile Include="src\Collision\BroadPhase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vector3.cpp">
+    <ClCompile Include="src\Collision\BroadPhase_BVH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderProgram.cpp">
+    <ClCompile Include="src\Collision\BroadPhase_NUL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
+    <ClCompile Include="src\Collision\BroadPhase_SAP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VertexLayout.cpp">
+    <ClCompile Include="src\Component\BoxCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
+    <ClCompile Include="src\Component\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="src\Component\Collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.cpp">
+    <ClCompile Include="src\Collision\ColliderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vector4.cpp">
+    <ClCompile Include="src\Component\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="src\System\EventListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Quaternion.cpp">
+    <ClCompile Include="src\System\EventNotifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VertexLayoutBinding.cpp">
+    <ClCompile Include="src\System\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
+    <ClCompile Include="src\Component\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="src\Math\Matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="System.cpp">
+    <ClCompile Include="src\Rendering\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UniformUpdater.cpp">
+    <ClCompile Include="src\Component\MeshRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
+    <ClCompile Include="src\Component\ObjectRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
+    <ClCompile Include="src\Rendering\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
+    <ClCompile Include="src\Rendering\ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SphereCollider.cpp">
+    <ClCompile Include="src\Component\SphereCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AABB.cpp">
+    <ClCompile Include="src\Component\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BroadPhase_SAP.cpp">
+    <ClCompile Include="src\Rendering\VertexLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BroadPhase.cpp">
+    <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderManager.cpp">
+    <ClCompile Include="src\Math\Vector2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectRenderer.cpp">
+    <ClCompile Include="src\Math\Vector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="src\Math\Vector4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BroadPhase_BVH.cpp">
+    <ClCompile Include="src\Math\Quaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventNotifier.cpp">
+    <ClCompile Include="src\Rendering\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventListener.cpp">
+    <ClCompile Include="src\Rendering\UniformUpdater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Event.hpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BroadPhase_NUL.cpp">
+    <ClCompile Include="src\System\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.hpp">
+    <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="System.hpp">
+    <ClInclude Include="include\yellowEngine\Collision\BroadPhase_BVH.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.hpp">
+    <ClInclude Include="include\yellowEngine\Collision\BroadPhase_NUL.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.hpp">
+    <ClInclude Include="include\yellowEngine\Collision\BroadPhase_SAP.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.hpp">
+    <ClInclude Include="include\yellowEngine\Collision\ColliderManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.hpp">
+    <ClInclude Include="include\yellowEngine\Component\BoxCollider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.hpp">
+    <ClInclude Include="include\yellowEngine\Component\Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRenderer.hpp">
+    <ClInclude Include="include\yellowEngine\Component\Collider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderProgram.hpp">
+    <ClInclude Include="include\yellowEngine\Component\Component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexLayout.hpp">
+    <ClInclude Include="include\yellowEngine\Component\Light.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
+    <ClInclude Include="include\yellowEngine\Component\MeshRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.hpp">
+    <ClInclude Include="include\yellowEngine\Component\ObjectRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quaternion.hpp">
+    <ClInclude Include="include\yellowEngine\Component\SphereCollider.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexLayoutBinding.hpp">
+    <ClInclude Include="include\yellowEngine\Component\Transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.hpp">
+    <ClInclude Include="include\yellowEngine\Math\AABB.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.hpp">
+    <ClInclude Include="include\yellowEngine\Math\Matrix.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UniformUpdater.hpp">
+    <ClInclude Include="include\yellowEngine\Math\Quaternion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Light.hpp">
+    <ClInclude Include="include\yellowEngine\Math\Vector2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.hpp">
+    <ClInclude Include="include\yellowEngine\Math\Vector3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider.hpp">
+    <ClInclude Include="include\yellowEngine\Math\Vector4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SphereCollider.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\Mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectRenderer.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\Renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BroadPhase_SAP.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\ShaderProgram.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BroadPhase.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\Texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BroadPhase_BVH.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\UniformUpdater.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AABB.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\VertexLayout.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\VertexLayoutBinding.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectPool.hpp">
+    <ClInclude Include="include\yellowEngine\System\Event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventNotifier.hpp">
+    <ClInclude Include="include\yellowEngine\System\EventListener.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventListener.hpp">
+    <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BroadPhase_NUL.hpp">
+    <ClInclude Include="include\yellowEngine\System\GameObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderManager.hpp">
+    <ClInclude Include="include\yellowEngine\System\System.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Utility\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Utility\Utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="color.frag">
+    <None Include="res\Shader\color.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="color.vert">
+    <None Include="res\Shader\color.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="light.frag">
+    <None Include="res\Shader\light.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="light.vert">
+    <None Include="res\Shader\light.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="texture.frag">
+    <None Include="res\Shader\wireframe.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="texture.vert">
+    <None Include="res\Shader\wireframe.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe.vert">
+    <None Include="res\Shader\texture.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="wireframe.frag">
+    <None Include="res\Shader\texture.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
