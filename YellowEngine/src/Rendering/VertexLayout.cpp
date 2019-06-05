@@ -1,4 +1,4 @@
-#include <gl/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/Rendering/VertexLayout.hpp"
 
@@ -29,7 +29,7 @@ unsigned int VertexLayout::getVertexSize() const
 }
 
 
-int VertexLayout::getAttrCount() const
+size_t VertexLayout::getAttrCount() const
 {
 	return _attributes.size();
 }
@@ -44,7 +44,7 @@ const VertexLayout::Attribute VertexLayout::getAttr(int index) const
 
 void VertexLayout::bind() const
 {
-	unsigned int offset = 0;
+	size_t offset = 0;
 	for (int i = 0; i < getAttrCount(); i++)
 	{
 		auto attr = getAttr(i);

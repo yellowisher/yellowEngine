@@ -48,7 +48,7 @@ void BroadPhase_SAP::addObjcet(Collider* target)
 		{
 			grow = true;
 		}
-		int i = endPoints.size() - 1;
+		int i = (int)endPoints.size() - 1;
 		endPoints.resize(endPoints.size() + 2);
 
 		for (int m = Max; m >= Min; m--)
@@ -80,8 +80,8 @@ void BroadPhase_SAP::addObjcet(Collider* target)
 	}
 
 	// add new potential pairs;
-	int bi = proxy->points[X][Min] - &_endPoints[X][0];
-	int ei = proxy->points[X][Max] - &_endPoints[X][0];
+	int bi = (int)(proxy->points[X][Min] - &_endPoints[X][0]);
+	int ei = (int)(proxy->points[X][Max] - &_endPoints[X][0]);
 
 	vector<bool> opens = vector<bool>(ei, false);
 	for (int i = 0; i < bi; i++)
@@ -164,8 +164,8 @@ void BroadPhase_SAP::removeObject(Collider* target)
 	{
 		auto& endPoints = _endPoints[axis];
 
-		int begin = proxy->points[axis][Min] - &endPoints[0];
-		int end = proxy->points[axis][Max] - &endPoints[0];
+		int begin = (int)(proxy->points[axis][Min] - &endPoints[0]);
+		int end = (int)(proxy->points[axis][Max] - &endPoints[0]);
 
 		for (int i = begin + 1; i < end; i++)
 		{
@@ -232,7 +232,7 @@ void BroadPhase_SAP::detect()
 		for (size_t t = 1; t < endPoints.size(); t++)
 		{
 			EndPoint target = endPoints[t];
-			int i = t - 1;
+			size_t i = t - 1;
 			for (; i >= 0; i--)
 			{
 				if (target.value < endPoints[i].value)

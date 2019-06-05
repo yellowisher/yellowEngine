@@ -4,12 +4,18 @@
 #include "yellowEngine/System/GameObject.hpp"
 
 
-GameObject::GameObject() :_name("GameObject"), transform(new Transform(this))
+GameObject::GameObject() :
+	_name("GameObject"), 
+	transform(new Transform(this)),
+	_active(true)
 {
 }
 
 
-GameObject::GameObject(const char* name) : _name(name), transform(new Transform(this))
+GameObject::GameObject(const char* name) : 
+	_name(name), 
+	transform(new Transform(this)),
+	_active(true)
 {
 }
 

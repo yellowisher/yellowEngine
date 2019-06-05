@@ -2,30 +2,10 @@ using namespace std;
 
 #include <iostream>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "yellowEngine/Collision/ColliderManager.hpp"
-#include "yellowEngine/Math/Matrix.hpp"
-#include "yellowEngine/System/GameObject.hpp"
-#include "yellowEngine/Component/Transform.hpp"
-#include "yellowEngine/Math/Quaternion.hpp"
-#include "yellowEngine/Rendering/Mesh.hpp"
-#include "yellowEngine/Rendering/Texture.hpp"
-#include "yellowEngine/Component/MeshRenderer.hpp"
-#include "yellowEngine/Rendering/ShaderProgram.hpp"
-#include "yellowEngine/Math/Matrix.hpp"
-#include "yellowEngine/Component/Camera.hpp"
-#include "yellowEngine/System/System.hpp"
-#include "yellowEngine/Component/Light.hpp"
-#include "yellowEngine/Component/BoxCollider.hpp"
-#include "yellowEngine/Component/Collider.hpp"
-
-#include <Windows.h>
-
-#pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "lib/glew32.lib")
-#pragma comment(lib, "lib/glfw3.lib")
+#include "yellowEngine/yellowEngine.hpp"
 
 Transform* cameraTransform;
 Transform* boxTransform;
@@ -157,21 +137,16 @@ int main(void)
 	}
 	glfwMakeContextCurrent(window);
 
-	if (glewInit() != GLEW_OK)
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		cout << "Failed to initialize GLEW" << endl;
-		glfwTerminate();
+		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
+
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	char buffer[512];
-	GetModuleFileName(NULL, buffer, 512);
-	cout << buffer << endl;
-
 
 	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_BVH);
 
@@ -228,7 +203,6 @@ int main(void)
 	cubeRenderer2->addTexture(diffuseMap, "u_Material.diffuse");
 	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
 	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
-
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

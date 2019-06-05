@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/Math/Vector2.hpp"
 #include "yellowEngine/Math/Vector3.hpp"

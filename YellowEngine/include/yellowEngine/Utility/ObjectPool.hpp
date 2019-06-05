@@ -1,8 +1,6 @@
 #ifndef __H_OBJECTPOOL__
 #define __H_OBJECTPOOL__
 
-#include "yellowEngine/Utility/Utils.hpp"
-
 #include <string>
 
 typedef int ObjectId;
@@ -24,7 +22,6 @@ public:
 
 	ObjectId createObject();
 	void returnObject(ObjectId id);
-	inline bool isActive(ObjectId id);
 
 	// should not store T&
 	inline T& getObject(ObjectId id);
@@ -111,15 +108,7 @@ T& ObjectPool<T>::operator[](ObjectId id)
 template <class T>
 T& ObjectPool<T>::getObject(ObjectId id)
 {
-	assert(isActive(id));
 	return _data[id];
-}
-
-
-template <class T>
-bool ObjectPool<T>::isActive(ObjectId id)
-{
-	return _data[id].state != NullObject;
 }
 
 #endif

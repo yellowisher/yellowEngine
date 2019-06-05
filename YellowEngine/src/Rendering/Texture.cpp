@@ -1,8 +1,8 @@
 #include <iostream>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "yellowEngine/Utility/stb_image.h"
+#include "stb_image.h"
 #include "yellowEngine/System/System.hpp"
 #include "yellowEngine/Rendering/Texture.hpp"
 

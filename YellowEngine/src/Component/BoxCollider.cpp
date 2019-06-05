@@ -1,4 +1,4 @@
-#include <gl/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Component/Transform.hpp"
@@ -172,7 +172,7 @@ bool BoxCollider::projectionOverlap(BoxCollider* other)
 	for (int i = 0; i < 3; i++)
 	{
 		Vector3 a = _worldPoints[0];
-		Vector3 b = _worldPoints[1 << i];
+		Vector3 b = _worldPoints[1LL << i];
 
 		Vector3 ab = b - a;
 		float min = 0;

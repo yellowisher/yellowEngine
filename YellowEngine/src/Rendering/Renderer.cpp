@@ -1,4 +1,4 @@
-#include <gl/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/Rendering/Renderer.hpp"
 
@@ -66,6 +66,6 @@ void Renderer::render()
 	_shader->updateUniforms(nullptr);
 
 	glBindVertexArray(_vao);
-	glDrawArrays(GL_LINES, 0, lines.size());
+	glDrawArrays(GL_LINES, 0, (GLsizei)lines.size());
 	glBindVertexArray(NULL);
 }

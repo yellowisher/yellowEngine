@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yellowEngine", "YellowEngine\YellowEngine.vcxproj", "{7031AE11-501A-4690-84B0-7BFB2CDD3514}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yellowEngine", "YellowEngine\yellowEngine.vcxproj", "{7031AE11-501A-4690-84B0-7BFB2CDD3514}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yellowEditor", "yellowEditor\yellowEditor.vcxproj", "{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yellowEditor", "yellowEditor\yellowEditor.vcxproj", "{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,14 @@ Global
 		{7031AE11-501A-4690-84B0-7BFB2CDD3514}.Release|x64.Build.0 = Release|x64
 		{7031AE11-501A-4690-84B0-7BFB2CDD3514}.Release|x86.ActiveCfg = Release|Win32
 		{7031AE11-501A-4690-84B0-7BFB2CDD3514}.Release|x86.Build.0 = Release|Win32
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Debug|x64.ActiveCfg = Debug|x64
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Debug|x64.Build.0 = Debug|x64
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Debug|x86.ActiveCfg = Debug|Win32
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Debug|x86.Build.0 = Debug|Win32
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Release|x64.ActiveCfg = Release|x64
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Release|x64.Build.0 = Release|x64
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Release|x86.ActiveCfg = Release|Win32
-		{1960FEFB-DEC0-4C7A-8DA1-D300FB758F5D}.Release|x86.Build.0 = Release|Win32
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Debug|x64.ActiveCfg = Debug|x64
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Debug|x64.Build.0 = Debug|x64
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Debug|x86.ActiveCfg = Debug|Win32
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Debug|x86.Build.0 = Debug|Win32
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x64.ActiveCfg = Release|x64
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x64.Build.0 = Release|x64
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x86.ActiveCfg = Release|Win32
+		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

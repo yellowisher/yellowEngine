@@ -27,7 +27,7 @@ public:
 	~VertexLayout();
 
 	unsigned int getVertexSize() const;
-	int getAttrCount() const;
+	size_t getAttrCount() const;
 	// mutable structure is always evil!
 	const Attribute getAttr(int index) const;
 	void bind() const;

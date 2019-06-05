@@ -18,11 +18,7 @@ public:
 
 	inline bool isLeaf() { return rightChild == NullObject; }
 
-	union
-	{
-		int height;
-		int state;
-	};
+	int height;
 	union
 	{
 		int parent;
@@ -34,6 +30,7 @@ public:
 		struct
 		{
 			int leftChild;
+			int PADDING_FOR_64BIT;
 			int rightChild;
 		};
 		Collider* collider;
@@ -66,7 +63,6 @@ private:
 	void insertNode(ObjectId id);
 	void deleteNode(ObjectId id);
 	void updateNode(ObjectId id, AABB aabb);
-	void adjustAscending(ObjectId target);
 	ObjectId adjust(ObjectId target);
 	ObjectId balance(ObjectId target);
 

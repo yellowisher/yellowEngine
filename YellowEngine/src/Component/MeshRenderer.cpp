@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/System/GameObject.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
@@ -39,7 +39,7 @@ void MeshRenderer::_render()
 	// active all textures
 	for (size_t i = 0; i < _textures.size(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
+		glActiveTexture((GLenum)(GL_TEXTURE0 + i));
 		_textures[i]->use();
 	}
 

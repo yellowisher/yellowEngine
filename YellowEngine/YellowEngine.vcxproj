@@ -22,33 +22,33 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{7031AE11-501A-4690-84B0-7BFB2CDD3514}</ProjectGuid>
     <RootNamespace>YellowEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>yellowEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -77,11 +77,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb_image\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\YellowEngine\YellowEngine\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -90,7 +92,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Development\x64\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb_image\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Development\x64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -135,7 +142,7 @@
     <ClCompile Include="src\System\EventNotifier.cpp" />
     <ClCompile Include="src\System\GameObject.cpp" />
     <ClCompile Include="src\Component\Light.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Math\Matrix.cpp" />
     <ClCompile Include="src\Rendering\Mesh.cpp" />
     <ClCompile Include="src\Component\MeshRenderer.cpp" />
@@ -153,6 +160,7 @@
     <ClCompile Include="src\Math\Vector4.cpp" />
     <ClCompile Include="src\Rendering\VertexLayout.cpp" />
     <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp" />
+    <ClCompile Include="vendor\glad\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp" />
@@ -188,9 +196,11 @@
     <ClInclude Include="include\yellowEngine\System\GameObject.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp" />
     <ClInclude Include="include\yellowEngine\System\System.hpp" />
-    <ClInclude Include="include\yellowEngine\Utility\stb_image.h" />
     <ClInclude Include="include\yellowEngine\Utility\Utils.hpp" />
-    <ClInclude Include="Graphics.hpp" />
+    <ClInclude Include="include\yellowEngine\yellowEngine.hpp" />
+    <ClInclude Include="vendor\glad\include\glad\glad.h" />
+    <ClInclude Include="vendor\glad\include\KHR\khrplatform.h" />
+    <ClInclude Include="vendor\stb_image\include\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\wireframe.frag" />

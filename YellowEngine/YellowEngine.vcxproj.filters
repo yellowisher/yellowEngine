@@ -18,9 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Math\AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -114,11 +111,14 @@
     <ClCompile Include="src\System\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\glad\src\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Graphics.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -215,13 +215,22 @@
     <ClInclude Include="include\yellowEngine\System\System.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Utility\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\yellowEngine\Utility\Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glad\include\glad\glad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glad\include\KHR\khrplatform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image\include\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\yellowEngine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

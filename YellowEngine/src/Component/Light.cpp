@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/Component/Light.hpp"
 #include "yellowEngine/Component/Transform.hpp"
@@ -164,7 +164,7 @@ void Light::updateUniformBuffer()
 
 	for (int i = 0; i < Num_Type; i++)
 	{
-		int count = lights[i].size();
+		size_t count = lights[i].size();
 		glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &count); offset += 4;
 	}
 

@@ -3,7 +3,7 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 #include <map>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/System/System.hpp"
@@ -87,7 +87,7 @@ Mesh* Mesh::create(const VertexLayout& layout)
 
 Mesh* Mesh::createFromOBJ(const char* path)
 {
-	unsigned int index;
+	int index;
 	vector<Vertex> vertices;
 	vector<unsigned int> verticesIndex;
 	map<Vertex, unsigned int> uniqueVertices;
@@ -154,7 +154,7 @@ Mesh* Mesh::createFromOBJ(const char* path)
 					auto it = uniqueVertices.find(vertex);
 					if (it == uniqueVertices.end())
 					{
-						index = uniqueVertices.size();
+						index = (int)uniqueVertices.size();
 						vertices.push_back(vertex);
 						verticesIndex.push_back(index);
 						uniqueVertices.insert({ vertex, index });
@@ -192,9 +192,8 @@ Mesh* Mesh::createFromOBJ(const char* path)
 		VertexLayout::Attribute(VertexLayout::Attr_Normal,3),
 		VertexLayout::Attribute(VertexLayout::Attr_TexCoord0,2)
 		});
-
 	Mesh* mesh = new Mesh(layout);
-	mesh->_vertexCount = verticesIndex.size();
+	mesh->_vertexCount = (unsigned int)verticesIndex.size();
 	mesh->_bounds.max = max;
 	mesh->_bounds.min = min;
 

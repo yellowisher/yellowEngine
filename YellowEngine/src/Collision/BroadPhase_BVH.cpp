@@ -8,14 +8,14 @@
 // Node
 void Node::constructor()
 {
-	state = 0;
+	height = 0;
 	parent = rightChild = leftChild = NullObject;
 }
 
 
 void Node::destructor()
 {
-	state = NullObject;
+	height = -1;
 }
 
 
@@ -266,7 +266,15 @@ void BroadPhase_BVH::deleteNode(ObjectId id)
 		}
 	}
 	siblingNode.parent = parentNode.parent;
-	adjustAscending(siblingNode.parent);
+
+	ObjectId cur = siblingNode.parent;
+	while (cur != NullObject)
+	{
+		adjust(cur);
+
+		cur = balance(cur);
+		cur = _nodePool[cur].parent;
+	}
 
 	// return only parent node; target node handled outside
 	// because updateNode() function uses this function while updating
@@ -295,16 +303,6 @@ ObjectId BroadPhase_BVH::adjust(ObjectId target)
 	targetNode.height = 1 + Utils::max(leftChildNode.height, rightChildNode.height);
 	targetNode.aabb = AABB::combine(leftChildNode.aabb, rightChildNode.aabb);
 	return targetNode.parent;
-}
-
-
-void BroadPhase_BVH::adjustAscending(ObjectId target)
-{
-	int cursor = target;
-	while (cursor != NullObject)
-	{
-		cursor = adjust(cursor);
-	}
 }
 
 
