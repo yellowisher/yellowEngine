@@ -1,30 +1,4 @@
-/*
-	src/example3.cpp -- C++ version of an example application that shows
-	how to use nanogui in an application with an already created and managed
-	glfw context.
-	NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-	The widget drawing code is based on the NanoVG demo application
-	by Mikko Mononen.
-	All rights reserved. Use of this source code is governed by a
-	BSD-style license that can be found in the LICENSE.txt file.
-*/
-
-// GLFW
-//
-#if defined(NANOGUI_GLAD)
-#if defined(NANOGUI_SHARED) && !defined(GLAD_GLAPI_EXPORT)
-#define GLAD_GLAPI_EXPORT
-#endif
-
 #include <glad/glad.h>
-#else
-#if defined(__APPLE__)
-#define GLFW_INCLUDE_GLCOREARB
-#else
-#define GL_GLEXT_PROTOTYPES
-#endif
-#endif
-
 #include <GLFW/glfw3.h>
 
 #include <nanogui/nanogui.h>
@@ -80,11 +54,9 @@ int main(int /* argc */, char ** /* argv */)
 	}
 	glfwMakeContextCurrent(window);
 
-#if defined(NANOGUI_GLAD)
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		throw std::runtime_error("Could not initialize GLAD!");
 	glGetError(); // pull and ignore unhandled errors like GL_INVALID_ENUM
-#endif
 
 	glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);

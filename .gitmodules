@@ -1,9 +1,3 @@
-[submodule "yellowEngine/vendor/glfw/glfw"]
-	path = yellowEngine/vendor/glfw/glfw
-	url = https://github.com/glfw/glfw
 [submodule "yellowEditor/vendor/nanogui"]
 	path = yellowEditor/vendor/nanogui
-	url = https://github.com/wjakob/nanogui
-[submodule "yellowEditor/vendor/--recursive"]
-	path = yellowEditor/vendor/--recursive
 	url = https://github.com/wjakob/nanogui
