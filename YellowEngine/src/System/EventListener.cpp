@@ -2,45 +2,48 @@
 #include "yellowEngine/System/EventListener.hpp"
 
 
-EventListener::EventListener() :_notifier(nullptr)
+namespace yellowEngine
 {
-}
-
-
-EventListener::EventListener(INotifiable* parent) : _parent(parent)
-{
-}
-
-
-
-EventListener::~EventListener()
-{
-	if (_notifier)
+	EventListener::EventListener() :_notifier(nullptr)
 	{
-		_notifier->removeListener(this);
 	}
-}
 
 
-void EventListener::setParent(INotifiable* parent)
-{
-	_parent = parent;
-}
+	EventListener::EventListener(INotifiable* parent) : _parent(parent)
+	{
+	}
 
 
-void EventListener::onListen(EventNotifier* notifier)
-{
-	_notifier = notifier;
-}
+
+	EventListener::~EventListener()
+	{
+		if (_notifier)
+		{
+			_notifier->removeListener(this);
+		}
+	}
 
 
-void EventListener::onStopListen(EventNotifier* notifier)
-{
-	_notifier = nullptr;
-}
+	void EventListener::setParent(INotifiable* parent)
+	{
+		_parent = parent;
+	}
 
 
-void EventListener::onNotify(Event event, void* sender)
-{
-	_parent->notify(event, sender);
+	void EventListener::onListen(EventNotifier* notifier)
+	{
+		_notifier = notifier;
+	}
+
+
+	void EventListener::onStopListen(EventNotifier* notifier)
+	{
+		_notifier = nullptr;
+	}
+
+
+	void EventListener::onNotify(Event event, void* sender)
+	{
+		_parent->notify(event, sender);
+	}
 }

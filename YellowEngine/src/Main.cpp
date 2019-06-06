@@ -6,6 +6,7 @@ using namespace std;
 #include <GLFW/glfw3.h>
 
 #include "yellowEngine/yellowEngine.hpp"
+using namespace yellowEngine;
 
 Transform* cameraTransform;
 Transform* boxTransform;
@@ -122,6 +123,7 @@ int main(void)
 	System* system = System::getInstance();
 	system->setWidth(1024);
 	system->setHeight(768);
+	system->setResourcePath("./res/");
 
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

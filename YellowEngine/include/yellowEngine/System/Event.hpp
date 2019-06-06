@@ -3,18 +3,21 @@
 
 #include <vector>
 
-enum Event
+namespace yellowEngine
 {
-	Event_TransformChanged,
-};
+	enum Event
+	{
+		Event_TransformChanged,
+	};
 
-// use template rather than void*?
-class INotifiable
-{
-public:
-	INotifiable() {};
-	virtual ~INotifiable() {};
-	virtual void notify(Event event, void* sender) = 0;
-};
+	// use template rather than void*?
+	class INotifiable
+	{
+	public:
+		INotifiable() {};
+		virtual ~INotifiable() {};
+		virtual void notify(Event event, void* sender) = 0;
+	};
+}
 
 #endif

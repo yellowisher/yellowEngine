@@ -5,22 +5,25 @@
 
 #include "yellowEngine/System/Event.hpp"
 
-class EventListener;
-
-class EventNotifier
+namespace yellowEngine
 {
-public:
-	EventNotifier();
-	~EventNotifier();
+	class EventListener;
 
-	void setSender(void* sender);
-	void addListener(EventListener* listener);
-	void removeListener(EventListener* listener);
-	void notify(Event event);
+	class EventNotifier
+	{
+	public:
+		EventNotifier();
+		~EventNotifier();
 
-private:
-	std::vector<EventListener*> _listeners;
-	void* _sender;
-};
+		void setSender(void* sender);
+		void addListener(EventListener* listener);
+		void removeListener(EventListener* listener);
+		void notify(Event event);
+
+	private:
+		std::vector<EventListener*> _listeners;
+		void* _sender;
+	};
+}
 
 #endif

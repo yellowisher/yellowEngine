@@ -1,42 +1,45 @@
 #ifndef __H_VECTOR4__
 #define __H_VECTOR4__
 
-class Vector4
+namespace yellowEngine
 {
-public:
-	union
+	class Vector4
 	{
-		float v[4];
-		struct
+	public:
+		union
 		{
-			float x;
-			float y;
-			float z;
-			float w;
+			float v[4];
+			struct
+			{
+				float x;
+				float y;
+				float z;
+				float w;
+			};
 		};
+
+		Vector4();
+		Vector4(float x, float y, float z, float w);
+		Vector4(const Vector4& vector);
+		~Vector4();
+		void set(float x, float y, float z, float w);
+
+		Vector4 operator+(const Vector4& vector) const;
+		Vector4 operator-(const Vector4& vector) const;
+		Vector4 operator*(float value) const;
+		Vector4 operator/(float value) const;
+
+		Vector4& operator= (const Vector4& vector);
+		Vector4& operator+= (const Vector4& vector);
+		Vector4& operator-= (const Vector4& vector);
+
+		bool operator<(const Vector4& vector) const;
+		bool operator==(const Vector4& vector) const;
+		bool operator!=(const Vector4& vector) const;
+
+		void normalize();
+		float magnitude();
 	};
-
-	Vector4();
-	Vector4(float x, float y, float z, float w);
-	Vector4(const Vector4& vector);
-	~Vector4();
-	void set(float x, float y, float z, float w);
-
-	Vector4 operator+(const Vector4& vector) const;
-	Vector4 operator-(const Vector4& vector) const;
-	Vector4 operator*(float value) const;
-	Vector4 operator/(float value) const;
-
-	Vector4& operator= (const Vector4& vector);
-	Vector4& operator+= (const Vector4& vector);
-	Vector4& operator-= (const Vector4& vector);
-
-	bool operator<(const Vector4& vector) const;
-	bool operator==(const Vector4& vector) const;
-	bool operator!=(const Vector4& vector) const;
-
-	void normalize();
-	float magnitude();
-};
+}
 
 #endif

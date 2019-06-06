@@ -4,55 +4,58 @@
 #include "yellowEngine/System/GameObject.hpp"
 
 
-GameObject::GameObject() :
-	_name("GameObject"), 
-	transform(new Transform(this)),
-	_active(true)
+namespace yellowEngine
 {
-}
-
-
-GameObject::GameObject(const char* name) : 
-	_name(name), 
-	transform(new Transform(this)),
-	_active(true)
-{
-}
-
-
-GameObject::GameObject(const GameObject& copy) : _name(copy._name + "(clone)"), transform(new Transform(this))
-{
-	// TODO: copy all members
-}
-
-
-GameObject::~GameObject()
-{
-	while (!_components.empty())
+	GameObject::GameObject() :
+		_name("GameObject"),
+		transform(new Transform(this)),
+		_active(true)
 	{
-		Component* last = _components.back();
-		last->onDestroy();
-		_components.pop_back();
-		delete(last);
 	}
-	transform->onDestroy();
-	delete(transform);
-}
 
 
-void GameObject::setActive(bool active)
-{
-	_active = active;
-}
+	GameObject::GameObject(const char* name) :
+		_name(name),
+		transform(new Transform(this)),
+		_active(true)
+	{
+	}
 
 
-bool GameObject::getActive()
-{
-	return _active;
-}
+	GameObject::GameObject(const GameObject& copy) : _name(copy._name + "(clone)"), transform(new Transform(this))
+	{
+		// TODO: copy all members
+	}
 
 
-std::string GameObject::getName()
-{
-	return _name;
+	GameObject::~GameObject()
+	{
+		while (!_components.empty())
+		{
+			Component* last = _components.back();
+			last->onDestroy();
+			_components.pop_back();
+			delete(last);
+		}
+		transform->onDestroy();
+		delete(transform);
+	}
+
+
+	void GameObject::setActive(bool active)
+	{
+		_active = active;
+	}
+
+
+	bool GameObject::getActive()
+	{
+		return _active;
+	}
+
+
+	std::string GameObject::getName()
+	{
+		return _name;
+	}
 }

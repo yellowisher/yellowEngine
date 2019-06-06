@@ -13,48 +13,51 @@
 #include "yellowEngine/System/GameObject.hpp"
 #include "yellowEngine/Rendering/UniformUpdater.hpp"
 
-struct Uniform;
-
-class ShaderProgram
+namespace yellowEngine
 {
-public:
-	static ShaderProgram* create(const char* vsPath, const char* fsPath);
+	struct Uniform;
 
-	const Uniform* getUniform(std::string name);
-	void setUniform(const Uniform* uniform, int value);
-	void setUniform(const Uniform* uniform, float value);
-	void setUniform(const Uniform* uniform, const Vector2& value);
-	void setUniform(const Uniform* uniform, const Vector3& value);
-	void setUniform(const Uniform* uniform, const Vector4& value);
-	void setUniform(const Uniform* uniform, const Matrix& value);
+	class ShaderProgram
+	{
+	public:
+		static ShaderProgram* create(const char* vsPath, const char* fsPath);
 
-	void use();
-	void updateUniforms(GameObject* target);
-	int getId();
+		const Uniform* getUniform(std::string name);
+		void setUniform(const Uniform* uniform, int value);
+		void setUniform(const Uniform* uniform, float value);
+		void setUniform(const Uniform* uniform, const Vector2& value);
+		void setUniform(const Uniform* uniform, const Vector3& value);
+		void setUniform(const Uniform* uniform, const Vector4& value);
+		void setUniform(const Uniform* uniform, const Matrix& value);
 
-private:
-	static std::map<std::string, ShaderProgram*> __shaderCache;
+		void use();
+		void updateUniforms(GameObject* target);
+		int getId();
 
-	unsigned int _id;
-	std::map<std::string, Uniform> _uniforms;
-	UniformUpdater _uniformUpdater;
+	private:
+		static std::map<std::string, ShaderProgram*> __shaderCache;
 
-	static ShaderProgram* createFromFile(const char* vsPath, const char* fsPath);
-	static std::string readSourceFile(const char* path);
+		unsigned int _id;
+		std::map<std::string, Uniform> _uniforms;
+		UniformUpdater _uniformUpdater;
 
-	ShaderProgram(int id);
-	~ShaderProgram();
-};
+		static ShaderProgram* createFromFile(const char* vsPath, const char* fsPath);
+		static std::string readSourceFile(const char* path);
 
-struct Uniform
-{
-	Uniform(std::string name, int index, GLenum type, int size, unsigned int handle);
+		ShaderProgram(int id);
+		~ShaderProgram();
+	};
 
-	const std::string name;
-	const int index;
-	const GLenum type;
-	const int size;
-	const unsigned int handle;
-};
+	struct Uniform
+	{
+		Uniform(std::string name, int index, GLenum type, int size, unsigned int handle);
+
+		const std::string name;
+		const int index;
+		const GLenum type;
+		const int size;
+		const unsigned int handle;
+	};
+}
 
 #endif

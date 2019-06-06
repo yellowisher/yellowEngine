@@ -6,24 +6,28 @@
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Component/Camera.hpp"
 
-class ObjectRenderer : public Component
+namespace yellowEngine
 {
-public:
-	static void renderAll(Camera* camera);
-	static Camera* getCurrentCamera();
+	class ObjectRenderer : public Component
+	{
+	public:
+		static void renderAll(Camera* camera);
+		static Camera* getCurrentCamera();
 
-	ObjectRenderer(GameObject* gameObject);
-	virtual ~ObjectRenderer();
+		ObjectRenderer(GameObject* gameObject);
+		virtual ~ObjectRenderer();
 
-	void render();
+		void render();
 
-	static Camera* _currentCamera;
-protected:
+		static Camera* _currentCamera;
+	protected:
 
-	virtual void _render() = 0;
+		virtual void _render() = 0;
 
-private:
-	static std::list<ObjectRenderer*> _renderers;
+	private:
+		static std::list<ObjectRenderer*> _renderers;
 
-};
+	};
+}
+
 #endif

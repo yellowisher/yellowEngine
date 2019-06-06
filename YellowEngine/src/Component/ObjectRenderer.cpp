@@ -2,49 +2,52 @@
 #include "yellowEngine/System/GameObject.hpp"
 
 
-std::list<ObjectRenderer*> ObjectRenderer::_renderers;
-Camera* ObjectRenderer::_currentCamera;
-
-
-ObjectRenderer::ObjectRenderer(GameObject* gameObject) :Component(gameObject)
+namespace yellowEngine
 {
-	_renderers.push_back(this);
-}
+	std::list<ObjectRenderer*> ObjectRenderer::_renderers;
+	Camera* ObjectRenderer::_currentCamera;
 
 
-ObjectRenderer::~ObjectRenderer()
-{
-	for (auto it = _renderers.begin(); it != _renderers.end(); ++it)
+	ObjectRenderer::ObjectRenderer(GameObject* gameObject) :Component(gameObject)
 	{
-		if (*it == this)
+		_renderers.push_back(this);
+	}
+
+
+	ObjectRenderer::~ObjectRenderer()
+	{
+		for (auto it = _renderers.begin(); it != _renderers.end(); ++it)
 		{
-			_renderers.erase(it);
-			return;
+			if (*it == this)
+			{
+				_renderers.erase(it);
+				return;
+			}
 		}
 	}
-}
 
 
-void ObjectRenderer::render()
-{
-	_render();
-}
-
-
-void ObjectRenderer::renderAll(Camera* camera)
-{
-	_currentCamera = camera;
-	for (auto renderer : _renderers)
+	void ObjectRenderer::render()
 	{
-		if (renderer->gameObject->getActive() && renderer->getActive())
+		_render();
+	}
+
+
+	void ObjectRenderer::renderAll(Camera* camera)
+	{
+		_currentCamera = camera;
+		for (auto renderer : _renderers)
 		{
-			renderer->render();
+			if (renderer->gameObject->getActive() && renderer->getActive())
+			{
+				renderer->render();
+			}
 		}
 	}
-}
 
 
-Camera* ObjectRenderer::getCurrentCamera()
-{
-	return _currentCamera;
+	Camera* ObjectRenderer::getCurrentCamera()
+	{
+		return _currentCamera;
+	}
 }

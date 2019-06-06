@@ -1,61 +1,71 @@
 #include "yellowEngine/System/System.hpp"
 
 
-System* System::_instance = nullptr;
-
-
-System* System::getInstance()
+namespace yellowEngine
 {
-	if (!_instance)
+	System* System::_instance = nullptr;
+
+
+	System* System::getInstance()
 	{
-		_instance = new System();
+		if (!_instance)
+		{
+			_instance = new System();
+		}
+		return _instance;
 	}
-	return _instance;
-}
 
 
-System::System()
-{
-}
+	System::System()
+	{
+	}
 
 
-System::~System()
-{
-}
+	System::~System()
+	{
+	}
 
 
-float System::getWidth()
-{
-	return _width;
-}
+	float System::getWidth()
+	{
+		return _width;
+	}
 
 
-float System::getHeight()
-{
-	return _height;
-}
+	float System::getHeight()
+	{
+		return _height;
+	}
 
 
-void System::setWidth(float width)
-{
-	_width = width;
-}
+	void System::setWidth(float width)
+	{
+		_width = width;
+	}
 
 
-void System::setHeight(float height)
-{
-	_height = height;
-}
+	void System::setHeight(float height)
+	{
+		_height = height;
+	}
 
 
-float System::getAspectRatio()
-{
-	return _width / _height;
-}
+	float System::getAspectRatio()
+	{
+		return _width / _height;
+	}
 
-const std::string System::getResourcePath(const char* fileName)
-{
-	std::string path = "./res/";
-	path += fileName;
-	return path;
+
+	void System::setResourcePath(const char* path)
+	{
+		_resourcePath = path;
+	}
+
+
+	const std::string System::getResourcePath(const char* fileName)
+	{
+		std::string path = _resourcePath;
+		path += fileName;
+		return path;
+	}
 }

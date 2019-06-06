@@ -1,28 +1,31 @@
 #ifndef __H_COMPONENT__
 #define __H_COMPONENT__
 
-class GameObject;
-class Transform;
-
-class Component
+namespace yellowEngine
 {
-	friend class GameObject;
+	class GameObject;
+	class Transform;
 
-public:
-	GameObject* const gameObject;
-	Transform* const transform;
+	class Component
+	{
+		friend class GameObject;
 
-	Component(GameObject* gameObject);
-	virtual ~Component();
+	public:
+		GameObject* const gameObject;
+		Transform* const transform;
 
-	virtual void onCreate();
-	virtual void onDestroy();
+		Component(GameObject* gameObject);
+		virtual ~Component();
 
-	void setActive(bool active);
-	bool getActive();
+		virtual void onCreate();
+		virtual void onDestroy();
 
-private:
-	bool _active;
-};
+		void setActive(bool active);
+		bool getActive();
+
+	private:
+		bool _active;
+	};
+}
 
 #endif

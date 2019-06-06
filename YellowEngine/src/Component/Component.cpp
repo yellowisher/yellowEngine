@@ -2,34 +2,37 @@
 #include "yellowEngine/System/GameObject.hpp"
 
 
-Component::Component(GameObject* gameObject) :gameObject(gameObject), transform(gameObject->transform)
+namespace yellowEngine
 {
-	_active = true;
-}
+	Component::Component(GameObject* gameObject) :gameObject(gameObject), transform(gameObject->transform)
+	{
+		_active = true;
+	}
 
 
-Component::~Component()
-{
-}
+	Component::~Component()
+	{
+	}
 
 
-void Component::onCreate()
-{
-}
+	void Component::onCreate()
+	{
+	}
 
 
-void Component::onDestroy()
-{
-}
+	void Component::onDestroy()
+	{
+	}
 
 
-void Component::setActive(bool active)
-{
-	_active = active;
-}
+	void Component::setActive(bool active)
+	{
+		_active = active;
+	}
 
 
-bool Component::getActive()
-{
-	return _active;
+	bool Component::getActive()
+	{
+		return _active;
+	}
 }

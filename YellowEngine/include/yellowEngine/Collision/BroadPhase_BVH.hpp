@@ -7,69 +7,71 @@
 #include "yellowEngine/Utility/ObjectPool.hpp"
 #include "yellowEngine/Math/AABB.hpp"
 
-
-class Node : Poolable
+namespace yellowEngine
 {
-	friend class ObjectPool<Node>;
-
-public:
-	void constructor() override;
-	void destructor() override;
-
-	inline bool isLeaf() { return rightChild == NullObject; }
-
-	int height;
-	union
+	class Node : Poolable
 	{
-		int parent;
-		int next;
-	};
-	union
-	{
-		// only leaf node contains collider data; user leftChild as collider pointer
-		struct
+		friend class ObjectPool<Node>;
+
+	public:
+		void constructor() override;
+		void destructor() override;
+
+		inline bool isLeaf() { return rightChild == NullObject; }
+
+		int height;
+		union
 		{
-			int leftChild;
-			int PADDING_FOR_64BIT;
-			int rightChild;
+			int parent;
+			int next;
 		};
-		Collider* collider;
+		union
+		{
+			// only leaf node contains collider data; user leftChild as collider pointer
+			struct
+			{
+				int leftChild;
+				int PADDING_FOR_64BIT;
+				int rightChild;
+			};
+			Collider* collider;
+		};
+		AABB aabb;
+
+	private:
+		Node() {}
+		~Node() {}
 	};
-	AABB aabb;
-
-private:
-	Node() {}
-	~Node() {}
-};
 
 
-class BroadPhase_BVH : public BroadPhase
-{
-public:
-	BroadPhase_BVH();
-	~BroadPhase_BVH();
+	class BroadPhase_BVH : public BroadPhase
+	{
+	public:
+		BroadPhase_BVH();
+		~BroadPhase_BVH();
 
-	void updateObject(Collider* target) override;
-	void addObjcet(Collider* target) override;
-	void removeObject(Collider* target) override;
-	void render(Renderer& renderer, ShaderProgram* shader, const Uniform* colorUniform) override;
+		void updateObject(Collider* target) override;
+		void addObjcet(Collider* target) override;
+		void removeObject(Collider* target) override;
+		void render(Renderer& renderer, ShaderProgram* shader, const Uniform* colorUniform) override;
 
-	float expandFactor;
+		float expandFactor;
 
-protected:
-	void detect() override;
+	protected:
+		void detect() override;
 
-private:
-	void insertNode(ObjectId id);
-	void deleteNode(ObjectId id);
-	void updateNode(ObjectId id, AABB aabb);
-	ObjectId adjust(ObjectId target);
-	ObjectId balance(ObjectId target);
+	private:
+		void insertNode(ObjectId id);
+		void deleteNode(ObjectId id);
+		void updateNode(ObjectId id, AABB aabb);
+		ObjectId adjust(ObjectId target);
+		ObjectId balance(ObjectId target);
 
-	ObjectPool<Node> _nodePool;
-	ObjectId _root;
+		ObjectPool<Node> _nodePool;
+		ObjectId _root;
 
-	std::map<Collider*, ObjectId> _nodeMap;
-};
+		std::map<Collider*, ObjectId> _nodeMap;
+	};
+}
 
 #endif

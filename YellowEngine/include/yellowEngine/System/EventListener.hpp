@@ -3,24 +3,27 @@
 
 #include "yellowEngine/System/Event.hpp"
 
-class EventNotifier;
-
-// change _notifier as vector<EventNotifier*> to listen multiple events
-class EventListener
+namespace yellowEngine
 {
-public:
-	EventListener();
-	EventListener(INotifiable* parent);
-	~EventListener();
+	class EventNotifier;
 
-	void setParent(INotifiable* parent);
-	void onListen(EventNotifier* notifier);
-	void onStopListen(EventNotifier* notifier);
-	void onNotify(Event event, void* sender);
+	// change _notifier as vector<EventNotifier*> to listen multiple events
+	class EventListener
+	{
+	public:
+		EventListener();
+		EventListener(INotifiable* parent);
+		~EventListener();
 
-private:
-	EventNotifier* _notifier;
-	INotifiable* _parent;
-};
+		void setParent(INotifiable* parent);
+		void onListen(EventNotifier* notifier);
+		void onStopListen(EventNotifier* notifier);
+		void onNotify(Event event, void* sender);
+
+	private:
+		EventNotifier* _notifier;
+		INotifiable* _parent;
+	};
+}
 
 #endif

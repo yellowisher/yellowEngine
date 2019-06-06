@@ -6,21 +6,24 @@ using namespace std;
 #include <string>
 #include <map>
 
-class Texture
+namespace yellowEngine
 {
-public:
-	static Texture* create(const char* path);
+	class Texture
+	{
+	public:
+		static Texture* create(const char* path);
 
-	void use();
+		void use();
 
-	unsigned int _id;
+		unsigned int _id;
 
-private:
-	static map<string, Texture*> __textureCache;
+	private:
+		static map<string, Texture*> __textureCache;
 
 
-	Texture();
-	~Texture();
-};
+		Texture();
+		~Texture();
+	};
+}
 
 #endif

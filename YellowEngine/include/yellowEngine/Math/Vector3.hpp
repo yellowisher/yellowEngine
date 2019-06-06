@@ -1,47 +1,50 @@
 #ifndef __H_VECTOR3__
 #define __H_VECTOR3__
 
-class Vector3
+namespace yellowEngine
 {
-public:
-	union
+	class Vector3
 	{
-		float v[3];
-		struct
+	public:
+		union
 		{
-			float x;
-			float y;
-			float z;
+			float v[3];
+			struct
+			{
+				float x;
+				float y;
+				float z;
+			};
 		};
+
+		static const Vector3& up;
+		static const Vector3& right;
+		static const Vector3& forward;
+
+		Vector3();
+		Vector3(float x, float y, float z);
+		Vector3(const Vector3& vector);
+		~Vector3();
+		void set(float x, float y, float z);
+
+		Vector3 operator+(const Vector3& vector) const;
+		Vector3 operator-(const Vector3& vector) const;
+		Vector3 operator*(float value) const;
+		Vector3 operator/(float value) const;
+
+		Vector3& operator= (const Vector3& vector);
+		Vector3& operator+= (const Vector3& vector);
+		Vector3& operator-= (const Vector3& vector);
+
+		float operator*(const Vector3& vector) const;
+
+		bool operator<(const Vector3& vector) const;
+		bool operator==(const Vector3& vector) const;
+		bool operator!=(const Vector3& vector) const;
+
+		void normalize();
+		float magnitude();
 	};
-
-	static const Vector3& up;
-	static const Vector3& right;
-	static const Vector3& forward;
-
-	Vector3();
-	Vector3(float x, float y, float z);
-	Vector3(const Vector3& vector);
-	~Vector3();
-	void set(float x, float y, float z);
-
-	Vector3 operator+(const Vector3& vector) const;
-	Vector3 operator-(const Vector3& vector) const;
-	Vector3 operator*(float value) const;
-	Vector3 operator/(float value) const;
-
-	Vector3& operator= (const Vector3& vector);
-	Vector3& operator+= (const Vector3& vector);
-	Vector3& operator-= (const Vector3& vector);
-
-	float operator*(const Vector3& vector) const;
-
-	bool operator<(const Vector3& vector) const;
-	bool operator==(const Vector3& vector) const;
-	bool operator!=(const Vector3& vector) const;
-
-	void normalize();
-	float magnitude();
-};
+}
 
 #endif

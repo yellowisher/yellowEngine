@@ -3,38 +3,41 @@
 
 #include <vector>
 
-class VertexLayout
+namespace yellowEngine
 {
-public:
-	enum Type
-	{
-		Attr_Position,
-		Attr_Normal,
-		Attr_Color,
-		Attr_TexCoord0,
-	};
-
-	class Attribute
+	class VertexLayout
 	{
 	public:
-		Type type;
-		unsigned int size;
+		enum Type
+		{
+			Attr_Position,
+			Attr_Normal,
+			Attr_Color,
+			Attr_TexCoord0,
+		};
 
-		Attribute(Type type, int size);
+		class Attribute
+		{
+		public:
+			Type type;
+			unsigned int size;
+
+			Attribute(Type type, int size);
+		};
+
+		VertexLayout(std::vector<Attribute> attributes);
+		~VertexLayout();
+
+		unsigned int getVertexSize() const;
+		size_t getAttrCount() const;
+		// mutable structure is always evil!
+		const Attribute getAttr(int index) const;
+		void bind() const;
+
+	private:
+		std::vector<Attribute> _attributes;
+		unsigned int _vertexSize;
 	};
-
-	VertexLayout(std::vector<Attribute> attributes);
-	~VertexLayout();
-
-	unsigned int getVertexSize() const;
-	size_t getAttrCount() const;
-	// mutable structure is always evil!
-	const Attribute getAttr(int index) const;
-	void bind() const;
-
-private:
-	std::vector<Attribute> _attributes;
-	unsigned int _vertexSize;
-};
+}
 
 #endif

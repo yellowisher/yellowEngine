@@ -3,28 +3,33 @@
 
 #include <string>
 
-class System
+namespace yellowEngine
 {
-public:
-	static System* getInstance();
+	class System
+	{
+	public:
+		static System* getInstance();
 
-	float getWidth();
-	float getHeight();
-	void setWidth(float width);
-	void setHeight(float height);
-	float getAspectRatio();
+		float getWidth();
+		float getHeight();
+		void setWidth(float width);
+		void setHeight(float height);
+		float getAspectRatio();
 
-	const std::string getResourcePath(const char* fileName);
+		void setResourcePath(const char* path);
+		const std::string getResourcePath(const char* fileName);
 
-private:
-	static System* _instance;
+	private:
+		static System* _instance;
 
-	float _width;
-	float _height;
+		std::string _resourcePath;
+		float _width;
+		float _height;
 
-	System();
-	System(const System& copy);
-	~System();
-};
+		System();
+		System(const System& copy);
+		~System();
+	};
+}
 
 #endif

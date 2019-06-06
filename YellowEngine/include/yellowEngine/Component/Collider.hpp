@@ -10,38 +10,41 @@
 #include "yellowEngine/Rendering/Mesh.hpp"
 #include "yellowEngine/Math/AABB.hpp"
 
-class ColliderManager;
-
-class Collider : public Component, public INotifiable
+namespace yellowEngine
 {
-public:
-	enum Type
+	class ColliderManager;
+
+	class Collider : public Component, public INotifiable
 	{
-		Type_None = -1,
-		Type_Box,
-		Type_Sphere
+	public:
+		enum Type
+		{
+			Type_None = -1,
+			Type_Box,
+			Type_Sphere
+		};
+
+		Collider(GameObject* gameObject);
+		virtual ~Collider();
+
+		virtual bool isCollideWith(Collider* other) = 0;
+		virtual Type getType() = 0;
+		virtual AABB getBoundingBox() = 0;
+
+		// for passing rendering data
+		virtual void fillRenderingPoints(std::vector<Vector3>& lines) = 0;
+
+		virtual void onCreate() override;
+		virtual void onDestroy() override;
+
+	protected:
+		EventListener _transformChangeListener;
+
+		virtual void onTransformChange() = 0;
+
+	private:
+		void notify(Event event, void* sender) override;
 	};
-
-	Collider(GameObject* gameObject);
-	virtual ~Collider();
-
-	virtual bool isCollideWith(Collider* other) = 0;
-	virtual Type getType() = 0;
-	virtual AABB getBoundingBox() = 0;
-
-	// for passing rendering data
-	virtual void fillRenderingPoints(std::vector<Vector3>& lines) = 0;
-
-	virtual void onCreate() override;
-	virtual void onDestroy() override;
-
-protected:
-	EventListener _transformChangeListener;
-
-	virtual void onTransformChange() = 0;
-
-private:
-	void notify(Event event, void* sender) override;
-};
+}
 
 #endif

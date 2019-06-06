@@ -10,24 +10,27 @@
 
 // non-component generic renderer
 
-class Renderer
+namespace yellowEngine
 {
-public:
-	Renderer();
-	Renderer(VertexLayout& layout, ShaderProgram* shader);
-	~Renderer();
+	class Renderer
+	{
+	public:
+		Renderer();
+		Renderer(VertexLayout& layout, ShaderProgram* shader);
+		~Renderer();
 
-	void setData(const AABB& aabb);
-	void bufferData();
-	void render();
+		void setData(const AABB& aabb);
+		void bufferData();
+		void render();
 
-	std::vector<Vector3> lines;
+		std::vector<Vector3> lines;
 
-private:
-	unsigned int _vbo;
-	unsigned int _vao;
+	private:
+		unsigned int _vbo;
+		unsigned int _vao;
 
-	ShaderProgram* _shader;
-};
+		ShaderProgram* _shader;
+	};
+}
 
 #endif

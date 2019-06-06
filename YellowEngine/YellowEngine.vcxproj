@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{7031AE11-501A-4690-84B0-7BFB2CDD3514}</ProjectGuid>
     <RootNamespace>YellowEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>yellowEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -168,6 +168,7 @@
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase_NUL.hpp" />
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase_SAP.hpp" />
     <ClInclude Include="include\yellowEngine\Collision\ColliderManager.hpp" />
+    <ClInclude Include="include\yellowEngine\Collision\ColliderPair.hpp" />
     <ClInclude Include="include\yellowEngine\Component\BoxCollider.hpp" />
     <ClInclude Include="include\yellowEngine\Component\Camera.hpp" />
     <ClInclude Include="include\yellowEngine\Component\Collider.hpp" />

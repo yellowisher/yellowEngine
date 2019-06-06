@@ -6,6 +6,10 @@
 
 using namespace nanogui;
 
+#include "yellowEngine/yellowEngine.hpp"
+
+using namespace yellowEngine;
+
 enum test_enum
 {
 	Item1 = 0,
@@ -74,7 +78,7 @@ int main(int /* argc */, char ** /* argv */)
 	// Create nanogui gui
 	bool enabled = true;
 	FormHelper *gui = new FormHelper(screen);
-	ref<Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(10, 10), "Form helper example");
+	nanogui::ref<Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(10, 10), "Form helper example");
 	gui->addGroup("Basic types");
 	gui->addVariable("bool", bvar)->setTooltip("Test tooltip.");
 	gui->addVariable("string", strval);
@@ -152,18 +156,83 @@ int main(int /* argc */, char ** /* argv */)
 	}
 	);
 
+	System* system = System::getInstance();
+	system->setWidth(1024);
+	system->setHeight(768);
+	system->setResourcePath("./res/");
+	
+	glEnable(GL_DEPTH_TEST);
+	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_BVH);
+
+	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
+	ShaderProgram* colorShader = ShaderProgram::create("Shader/texture.vert", "Shader/texture.frag");
+	Texture* diffuseMap = Texture::create("Texture/container2.png");
+	Texture* specularMap = Texture::create("Texture/container2_specular.png");
+
+	unsigned int lightsIndex = glGetUniformBlockIndex(colorShader->getId(), "LightBlock");
+	glUniformBlockBinding(colorShader->getId(), lightsIndex, 0);
+
+	//unsigned int cameraIndex = glGetUniformBlockIndex(colorShader->getId(), "CameraBlock");
+	//glUniformBlockBinding(colorShader->getId(), cameraIndex, 1);
+
+	GameObject* cubeGo = new GameObject("MovingCube");
+	BoxCollider* boxMove = cubeGo->addComponent<BoxCollider>();
+	MeshRenderer* cubeRenderer = cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	//boxTransform = cubeGo->transform;
+	//boxTransform->setScale(2.0f, 1.0f, 4.0f);
+
+	GameObject* cb = new GameObject("InitialStay");
+	cb->addComponent<BoxCollider>();
+
+	GameObject* cubeGo2 = new GameObject("StayCube");
+	BoxCollider* boxStatic = cubeGo2->addComponent<BoxCollider>();
+	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	cubeGo2->transform->translate(20.0f, 0, 0);
+
+	GameObject* dl = new GameObject();
+	Light* l = dl->addComponent<Light>()->setDirectional();
+	l->transform->rotate(45.0f, 0, 0);
+
+	GameObject* dirLightGo = new GameObject("dirLight");
+	ShaderProgram* lightShader = ShaderProgram::create("Shader/light.vert", "Shader/light.frag");
+	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
+	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
+
+	light->transform->rotate(45.0f, 0, 0);
+	light->transform->setScale(0.2f, 0.2f, 0.2f);
+	light->transform->setPosition(1.2f, 1.0f, 2.0f);
+
+	GameObject* cameraGo = new GameObject();
+	Camera* camera = cameraGo->addComponent<Camera>();
+	camera->setPerspective(60.0f, 0.01f, 100.0f);
+	//cameraTransform = cameraGo->transform;
+	//cameraTransform->translate(0, 0, 2.0f);
+
+	ObjectRenderer::_currentCamera = camera;
+
+	cubeRenderer->addTexture(diffuseMap, "u_Material.diffuse");
+	cubeRenderer->addTexture(specularMap, "u_Material.specular");
+
+	cubeRenderer2->addTexture(diffuseMap, "u_Material.diffuse");
+	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
+	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
 		// Check if any events have been activated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 
-		glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Draw nanogui
-		screen->drawContents();
-		screen->drawWidgets();
+		colManager->detect();
+		Light::updateUniformBuffer();
+		ObjectRenderer::renderAll(camera);
+
+		colManager->renderColliders();
+
 
 		glfwSwapBuffers(window);
 	}
