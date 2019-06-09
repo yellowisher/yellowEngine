@@ -1,3 +1,4 @@
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 #include "yellowEngine/Animation/Animator.hpp"
 
@@ -32,51 +33,259 @@ namespace yellowEngine
 	{
 		for (auto animator : __animators)
 		{
-			if (!animator->pause)animator->proceed();
+			if (animator->_state == State_Playing ||
+				animator->_state == State_Transitioning)
+			{
+				if (!animator->_paused)animator->proceed();
+			}
 		}
 	}
 
 
 	void Animator::proceed()
 	{
-		for (auto channel : _currentClip->_channels)
+		if (++_frame > _currentClip->_frameCount)
 		{
-			Transform* target = getTransform(channel.first.first);
-			PropertyType type = channel.first.second;
-
-			KeyFrame begin;
-			KeyFrame end;
-
-			int ei = _ends[channel.first];
-			int bi = ei - 1;
-
-			end = channel.second[];
-			if (bi < 0)
+			if (_currentClip->_isLooping)
 			{
-
+				// stop and play?
+				auto clip = _currentClip;
+				_currentClip = nullptr;
+				play(clip);
 			}
-
-			switch (type)
+			else
 			{
-				case AnimationClip::Property_PositionX:
-				case AnimationClip::Property_PositionY:
-				case AnimationClip::Property_PositionZ:
-					break;
-
-				case AnimationClip::Property_RotationX:
-				case AnimationClip::Property_RotationY:
-				case AnimationClip::Property_RotationZ:
-					break;
-
-				case AnimationClip::Property_ScaleX:
-				case AnimationClip::Property_ScaleY:
-				case AnimationClip::Property_ScaleZ:
-					break;
-
-				case AnimationClip::Property_Sprite:
-					break;
+				stop();
 			}
 		}
+
+		if (_state == State_Playing)
+		{
+			for (auto channel : _currentClip->_channels)
+			{
+				if (_frame > channel.second[_ends[channel.first]].frame)
+				{
+					_ends[channel.first]++;
+				}
+
+				int ei = _ends[channel.first];
+				int bi = ei - 1;
+
+				KeyFrame& begin = channel.second[bi];
+				KeyFrame& end = channel.second[ei];
+
+				float factor = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
+				apply(channel.first, Utils::lerp(begin.value, end.value, factor));
+			}
+		}
+		else if (_state == State_Transitioning)
+		{
+			// frozen,	clip
+			// Yes		Yes
+			// Yes		No
+			// No		Yes
+
+			float factor = (float)_frame / (float)_transitionDelay;
+			for (auto channel : _currentClip->_channels)
+			{
+				if (_frame > channel.second[_ends[channel.first]].frame)
+				{
+					_ends[channel.first]++;
+				}
+				int ei = _ends[channel.first];
+				int bi = ei - 1;
+
+				KeyFrame& begin = channel.second[bi];
+				KeyFrame& end = channel.second[ei];
+
+				float factor_ = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
+				float targetValue = Utils::lerp(begin.value, end.value, factor_);
+
+				auto fit = _frozenValues.find(channel.first);
+				if (fit != _frozenValues.end())
+				{
+					apply(channel.first, Utils::lerp(fit->second, targetValue, factor));
+				}
+				else
+				{
+					apply(channel.first, targetValue);
+				}
+			}
+
+			for (auto frozen : _frozenValues)
+			{
+				if (_currentClip->_channels.find(frozen.first) == _currentClip->_channels.end())
+				{
+					apply(frozen.first, Utils::lerp(_initialValues[frozen.first], frozen.second, factor));
+				}
+			}
+
+			// transition ended
+			if (_frame == _transitionDelay)
+			{
+				_state = State_Playing;
+				_frozenValues.clear();
+			}
+		}
+	}
+
+
+	void Animator::play(AnimationClip* clip, int delay)
+	{
+		_paused = false;
+		if (_currentClip == nullptr)
+		{
+			// play request while clean state (after terminate or first playing)
+			_state = State_Playing;
+			_frame = 0;
+			_currentClip = clip;
+
+			for (auto channel : _currentClip->_channels)
+			{
+				_ends[channel.first] = 1;
+			}
+		}
+		else
+		{
+			_state = State_Transitioning;
+			_transitionDelay = delay;
+			_frame = 0;
+
+			if (_state == State_Playing)
+			{
+				// play request while playing
+				_frozenValues.clear();
+				for (auto channel : _currentClip->_channels)
+				{
+					_frozenValues.insert({ channel.first, getValue(channel.first) });
+					_initialValues.insert({ channel.first, channel.second[0].value });
+				}
+			}
+			else if (_state == State_Transitioning)
+			{
+				// play request while transitioning
+
+				// update all frozen values to current value
+				for (auto frozen : _frozenValues)
+				{
+					_frozenValues[frozen.first] = getValue(frozen.first);
+				}
+
+				// insert new frozen values
+				for (auto channel : _currentClip->_channels)
+				{
+					if (_frozenValues.find(channel.first) == _frozenValues.end())
+					{
+						_frozenValues.insert({ channel.first, getValue(channel.first) });
+						_initialValues.insert({ channel.first, channel.second[0].value });
+					}
+				}
+			}
+
+			_currentClip = clip;
+		}
+	}
+
+
+	void Animator::pause()
+	{
+		_paused = true;
+	}
+
+
+	void Animator::resume()
+	{
+		_paused = false;
+	}
+
+
+	void Animator::stop()
+	{
+		_state = State_Stopped;
+		if (_currentClip != nullptr)
+		{
+			for (auto channel : _initialValues)
+			{
+				apply(channel.first, channel.second);
+			}
+			_currentClip = nullptr;
+			//_initialValues.clear();
+		}
+	}
+
+
+	void Animator::apply(std::pair<std::string, PropertyType> pair, float value)
+	{
+		Transform* target = getTransform(pair.first);
+		PropertyType type = pair.second;
+
+		switch (type)
+		{
+			case AnimationClip::Property_PositionX:
+			case AnimationClip::Property_PositionY:
+			case AnimationClip::Property_PositionZ:
+			{
+				Vector3 position = target->position;
+				int v = AnimationClip::Property_Position - type;
+				position.v[v] = value;
+				target->setPosition(position);
+				break;
+			}
+
+			case AnimationClip::Property_RotationX:
+			case AnimationClip::Property_RotationY:
+			case AnimationClip::Property_RotationZ:
+			{
+				Vector3 rotation = target->rotation.toEulerAngle();
+				int v = AnimationClip::Property_Rotation - type;
+				rotation.v[v] = value;
+				target->setRotation(rotation);
+				break;
+			}
+
+			case AnimationClip::Property_ScaleX:
+			case AnimationClip::Property_ScaleY:
+			case AnimationClip::Property_ScaleZ:
+			{
+				Vector3 scale = target->scale;
+				int v = AnimationClip::Property_Scale - type;
+				scale.v[v] = value;
+				target->setScale(scale);
+				break;
+			}
+		}
+	}
+
+
+	float Animator::getValue(std::pair<std::string, PropertyType> pair)
+	{
+		Transform* target = getTransform(pair.first);
+		PropertyType type = pair.second;
+
+		switch (type)
+		{
+			case AnimationClip::Property_PositionX:
+			case AnimationClip::Property_PositionY:
+			case AnimationClip::Property_PositionZ:
+			{
+				return target->position.v[AnimationClip::Property_Position - type];
+			}
+
+			case AnimationClip::Property_RotationX:
+			case AnimationClip::Property_RotationY:
+			case AnimationClip::Property_RotationZ:
+			{
+				return target->rotation.toEulerAngle().v[AnimationClip::Property_Rotation - type];
+			}
+
+			case AnimationClip::Property_ScaleX:
+			case AnimationClip::Property_ScaleY:
+			case AnimationClip::Property_ScaleZ:
+			{
+				target->scale.v[AnimationClip::Property_Scale - type];
+			}
+		}
+		return 0;
 	}
 
 
@@ -97,28 +306,5 @@ namespace yellowEngine
 			_transformCache.insert({ target, cursor });
 		}
 		return _transformCache[target];
-	}
-
-
-	void Animator::play(AnimationClip* clip, int delay)
-	{
-		_paused = false;
-	}
-
-
-	void Animator::pause()
-	{
-		_paused = true;
-	}
-
-
-	void Animator::resume()
-	{
-		_paused = false;
-	}
-
-
-	void Animator::stop()
-	{
 	}
 }

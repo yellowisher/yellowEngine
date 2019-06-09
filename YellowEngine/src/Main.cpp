@@ -150,8 +150,6 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_BVH);
-
 	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
 	ShaderProgram* colorShader = ShaderProgram::create("Shader/texture.vert", "Shader/texture.frag");
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
@@ -160,23 +158,36 @@ int main(void)
 	unsigned int lightsIndex = glGetUniformBlockIndex(colorShader->getId(), "LightBlock");
 	glUniformBlockBinding(colorShader->getId(), lightsIndex, 0);
 
-	//unsigned int cameraIndex = glGetUniformBlockIndex(colorShader->getId(), "CameraBlock");
-	//glUniformBlockBinding(colorShader->getId(), cameraIndex, 1);
+	GameObject* body = new GameObject("MovingCube");
+	MeshRenderer* cubeRenderer = body->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	boxTransform = body->transform;
+	boxTransform->setScale(2.0f, 4.0f, 1.0f);
 
-	GameObject* cubeGo = new GameObject("MovingCube");
-	BoxCollider* boxMove = cubeGo->addComponent<BoxCollider>();
-	MeshRenderer* cubeRenderer = cubeGo->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
-	boxTransform = cubeGo->transform;
-	boxTransform->setScale(2.0f, 1.0f, 4.0f);
-	//boxTransform->rotate(45.0f, 0, 90.0f);
+	GameObject* ls = new GameObject("leftShoulder");
+	MeshRenderer* lsm = ls->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	ls->transform->translate(-1.5f, 1.5f, 0);
 
-	GameObject* cb = new GameObject("InitialStay");
-	cb->addComponent<BoxCollider>();
+	GameObject* rs = new GameObject("rightShoulder");
+	MeshRenderer* rsm = rs->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	rs->transform->translate(1.5f, 1.5f, 0);
 
-	GameObject* cubeGo2 = new GameObject("StayCube");
-	BoxCollider* boxStatic = cubeGo2->addComponent<BoxCollider>();
-	MeshRenderer* cubeRenderer2 = cubeGo2->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
-	cubeGo2->transform->translate(20.0f, 0, 0);
+	GameObject* la = new GameObject("leftShoulder");
+	MeshRenderer* lam = la->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	ls->transform->addChild(la->transform);
+	la->transform->setPosition(0, -1.5f, 0);
+	la->transform->setScale(1.0f, 2.0f, 1.0f);
+
+	GameObject* ra = new GameObject("rightShoulder");
+	MeshRenderer* ram = ra->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	rs->transform->addChild(ra->transform);
+	ra->transform->setPosition(0, -1.5f, 0);
+	ra->transform->setScale(1.0f, 2.0f, 1.0f);
+
+	body->transform->addChild(ls->transform);
+	body->transform->addChild(rs->transform);
+	Animator* anim = body->addComponent<Animator>();
+	AnimationClip* clip = AnimationClip::create("Animation/temp.json");
+	anim->play(clip);
 
 	GameObject* dl = new GameObject();
 	Light* l = dl->addComponent<Light>()->setDirectional();
@@ -195,19 +206,19 @@ int main(void)
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 100.0f);
 	cameraTransform = cameraGo->transform;
-	cameraTransform->translate(0, 0, 2.0f);
+	cameraTransform->translate(0, 0, 4.0f);
 
 	ObjectRenderer::_currentCamera = camera;
 
+	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
 	cubeRenderer->addTexture(diffuseMap, "u_Material.diffuse");
 	cubeRenderer->addTexture(specularMap, "u_Material.specular");
 
-	cubeRenderer2->addTexture(diffuseMap, "u_Material.diffuse");
-	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
-	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
+	lsm->addTexture(diffuseMap, "u_Material.diffuse");
+	lsm->addTexture(specularMap, "u_Material.specular");
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+	rsm->addTexture(diffuseMap, "u_Material.diffuse");
+	rsm->addTexture(specularMap, "u_Material.specular");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -216,12 +227,9 @@ int main(void)
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		colManager->detect();
 		Light::updateUniformBuffer();
+		Animator::proceedAll();
 		ObjectRenderer::renderAll(camera);
-
-		colManager->renderColliders();
-
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -145,9 +145,9 @@ namespace yellowEngine
 	}
 
 
-	Vector3 Quaternion::toEulerAngle()
+	Vector3 Quaternion::toEulerAngle() const
 	{
-		normalize();
+		//normalize();
 		Vector3 rotation;
 		float sinr_cosp = 2.0f * (w * x + y * z);
 		float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);

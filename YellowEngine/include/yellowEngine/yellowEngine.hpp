@@ -1,6 +1,9 @@
 #ifndef __H_YELLOWENGINE__
 #define __H_YELLOWENGINE__
 
+#include "Animation/AnimationClip.hpp"
+#include "Animation/Animator.hpp"
+
 #include "Collision/BroadPhase.hpp"
 #include "Collision/BroadPhase_BVH.hpp"
 #include "Collision/BroadPhase_NUL.hpp"

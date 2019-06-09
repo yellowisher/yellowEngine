@@ -123,6 +123,9 @@
     <ClCompile Include="src\Animation\Animator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">
@@ -246,6 +249,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\yellowEngine\Animation\Animator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\jsoncpp\include\json\json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\jsoncpp\include\json\json-forwards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

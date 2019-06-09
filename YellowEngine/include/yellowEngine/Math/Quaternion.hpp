@@ -34,7 +34,7 @@ namespace yellowEngine
 		Vector3 operator*(const Vector3& point) const;
 
 		Quaternion conjugate() const;
-		Vector3 toEulerAngle();
+		Vector3 toEulerAngle() const;
 		Matrix toMatrix();
 		Quaternion& normalize();
 	};

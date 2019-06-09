@@ -43,6 +43,11 @@ namespace yellowEngine
 		{
 			return a > b ? b : a;
 		}
+
+		constexpr float lerp(float a, float b, float f)
+		{
+			return (1.0f - f) * a + f * b;
+		}
 	}
 }
 

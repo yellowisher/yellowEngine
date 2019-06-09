@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+
 #include "json/json.h"
 #include "yellowEngine/System/System.hpp"
 #include "yellowEngine/Animation/AnimationClip.hpp"
@@ -5,6 +8,9 @@
 
 namespace yellowEngine
 {
+	std::map<std::string, AnimationClip*> AnimationClip::__clipCache;
+
+
 	AnimationClip::AnimationClip()
 	{
 	}
@@ -24,32 +30,33 @@ namespace yellowEngine
 		}
 
 		std::string fullPath = System::getInstance()->getResourcePath(path);
+		std::ifstream document(fullPath, std::ifstream::binary);
+
 		Json::Reader reader;
 		Json::Value root;
-		if (!reader.parse(fullPath, root))
+		if (!reader.parse(document, root))
 		{
-			// cannot read json file
+			std::cout << "Json parseing failed" << std::endl;
 			return nullptr;
 		}
 
 		AnimationClip* clip = new AnimationClip();
-		clip->_frameRate = root["frame_rate"].asInt();
+		clip->_frameCount = root["frame_count"].asInt();
 		clip->_isLooping = root["is_looping"].asBool();
 		for (auto channel : root["channels"])
 		{
 			std::string fullTarget = channel["target"].asString();
 			size_t pos = fullTarget.find_last_of('/');
 
-			std::string target = fullTarget.substr(0, pos);
-			auto propertyValue = getPropertyPair(fullTarget.substr(pos + 1));
+			std::string target = fullTarget.substr(0, pos + 1);
+			auto prop = getProperty(fullTarget.substr(pos + 1));
 
-			std::vector<KeyFrame>& frames = clip->_channels.insert({ {target, propertyValue.first}, {} }).first->second;
+			std::vector<KeyFrame>& frames = clip->_channels.insert({ {target, prop}, {} }).first->second;
 
 			for (auto keyFrame : channel["key_frames"])
 			{
 				int frame = keyFrame["frame"].asInt();
-				if (propertyValue.second == Value_Float) frames.push_back(KeyFrame(frame, keyFrame["value"].asFloat()));
-				else if (propertyValue.second == Value_String) frames.push_back(KeyFrame(frame, keyFrame["value"].asString()));
+				frames.push_back(KeyFrame(frame, keyFrame["value"].asFloat()));
 			}
 		}
 

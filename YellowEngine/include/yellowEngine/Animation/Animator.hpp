@@ -12,7 +12,6 @@ namespace yellowEngine
 {
 	class Animator : public Component
 	{
-		using Value = AnimationClip::Value;
 		using KeyFrame = AnimationClip::KeyFrame;
 		using PropertyType = AnimationClip::PropertyType;
 
@@ -28,22 +27,36 @@ namespace yellowEngine
 		void stop();
 
 	private:
+		enum State
+		{
+			State_Stopped,
+			State_Playing,
+			State_Transitioning
+		};
+
 		static std::vector<Animator*> __animators;
 
 		void proceed();
+		void apply(std::pair<std::string, PropertyType> pair, float value);
+		float getValue(std::pair<std::string, PropertyType> pair);
 		Transform* getTransform(const std::string& target);
 
-		int _frame;
+		State _state;
 		bool _paused;
+		int _frame;
+		int _transitionDelay;
 		AnimationClip* _currentClip;
 
 		// cache for child transform; finding transform by name in every frame might be expansive
 		std::map<std::string, Transform*> _transformCache;
 		
-		// store base value of {target, property}
-		std::map<std::pair<std::string, PropertyType>, Value> _baseValues;
-
+		// current end points
 		std::map<std::pair<std::string, PropertyType>, int> _ends;
+
+		// frozen value for transition
+		std::map<std::pair<std::string, PropertyType>, float> _frozenValues;
+
+		std::map<std::pair<std::string, PropertyType>, float> _initialValues;
 	};
 }
 
