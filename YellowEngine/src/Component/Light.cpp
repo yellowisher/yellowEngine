@@ -112,9 +112,10 @@ namespace yellowEngine
 			__initialized = true;
 			glGenBuffers(1, &__ubo);
 			glBindBuffer(GL_UNIFORM_BUFFER, __ubo);
-			glBufferData(GL_UNIFORM_BUFFER, 1680, NULL, GL_STATIC_DRAW);
+			glBufferData(GL_UNIFORM_BUFFER, 1680, NULL, GL_DYNAMIC_DRAW);
 			glBindBufferBase(GL_UNIFORM_BUFFER, 0, __ubo);
 		}
+
 		glBindBuffer(GL_UNIFORM_BUFFER, __ubo);
 
 		int offset = 0;
@@ -170,7 +171,7 @@ namespace yellowEngine
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &count); offset += 4;
 		}
 
-		glBindBuffer(GL_UNIFORM_BUFFER, NULL);
+		//glBindBuffer(GL_UNIFORM_BUFFER, NULL);
 	}
 
 

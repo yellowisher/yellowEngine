@@ -9,6 +9,13 @@ namespace yellowEngine
 	const Vector3& Vector3::right = Vector3(1.0f, 0, 0);
 	const Vector3& Vector3::forward = Vector3(0, 0, 1.0f);
 
+
+	Vector3 Vector3::lerp(const Vector3 & v0, const Vector3 & v1, float delta)
+	{
+		return v0 * delta + v1 * (1.0f - delta);
+	}
+
+
 	Vector3::Vector3()
 	{
 		set(0, 0, 0);

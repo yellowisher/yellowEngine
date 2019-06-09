@@ -1,7 +1,8 @@
 #ifndef __H_TRANSFORM__
 #define __H_TRANSFORM__
 
-#include <list>
+#include <string>
+#include <vector>
 
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Math/Vector3.hpp"
@@ -30,6 +31,8 @@ namespace yellowEngine
 
 		void addChild(Transform* child);
 		void removeChild(Transform* child);
+		Transform* findChild(const std::string& name);
+		Transform* getChild(int index);
 
 		void translate(const Vector3& translation);
 		void translate(float x, float y, float z);
@@ -69,7 +72,7 @@ namespace yellowEngine
 		};
 
 		Transform* _parent;
-		std::list<Transform*> _children;
+		std::vector<Transform*> _children;
 
 		Matrix _matrix;
 		Matrix _trMatrix;

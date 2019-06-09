@@ -21,6 +21,8 @@ namespace yellowEngine
 		static const Vector3& right;
 		static const Vector3& forward;
 
+		static Vector3 lerp(const Vector3& v0, const Vector3& v1, float delta);
+
 		Vector3();
 		Vector3(float x, float y, float z);
 		Vector3(const Vector3& vector);

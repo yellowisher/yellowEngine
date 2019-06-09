@@ -1,3 +1,4 @@
+#include "yellowEngine/System/GameObject.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 
 
@@ -75,6 +76,26 @@ namespace yellowEngine
 				return;
 			}
 		}
+	}
+
+
+	Transform* Transform::findChild(const std::string& name)
+	{
+		for (auto child : _children)
+		{
+			if (child->gameObject->getName() == name)
+			{
+				return child;
+			}
+		}
+		return nullptr;
+	}
+
+
+	Transform* Transform::getChild(int index)
+	{
+		// assert index?
+		return _children[index];
 	}
 
 

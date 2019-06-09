@@ -13,12 +13,12 @@ namespace yellowEngine
 		static const Quaternion identity;
 		static const Quaternion zero;
 
+		static Quaternion lerp(Quaternion& q0, Quaternion& q1, float delta);
+
 		float x;
 		float y;
 		float z;
 		float w;
-
-		static Quaternion lerp(Quaternion& q0, Quaternion& q1, float delta);
 
 		Quaternion();
 		Quaternion(float x, float y, float z, float w);
@@ -36,7 +36,7 @@ namespace yellowEngine
 		Quaternion conjugate() const;
 		Vector3 toEulerAngle();
 		Matrix toMatrix();
-		void normalize();
+		Quaternion& normalize();
 	};
 }
 

@@ -39,14 +39,14 @@ int main(int /* argc */, char ** /* argv */)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwWindowHint(GLFW_SAMPLES, 0);
-	glfwWindowHint(GLFW_RED_BITS, 8);
-	glfwWindowHint(GLFW_GREEN_BITS, 8);
-	glfwWindowHint(GLFW_BLUE_BITS, 8);
-	glfwWindowHint(GLFW_ALPHA_BITS, 8);
-	glfwWindowHint(GLFW_STENCIL_BITS, 8);
-	glfwWindowHint(GLFW_DEPTH_BITS, 24);
-	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	//glfwWindowHint(GLFW_SAMPLES, 0);
+	//glfwWindowHint(GLFW_RED_BITS, 8);
+	//glfwWindowHint(GLFW_GREEN_BITS, 8);
+	//glfwWindowHint(GLFW_BLUE_BITS, 8);
+	//glfwWindowHint(GLFW_ALPHA_BITS, 8);
+	//glfwWindowHint(GLFW_STENCIL_BITS, 8);
+	//glfwWindowHint(GLFW_DEPTH_BITS, 24);
+	//glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 	// Create a GLFWwindow object
 	GLFWwindow* window = glfwCreateWindow(800, 800, "example3", nullptr, nullptr);
@@ -62,18 +62,15 @@ int main(int /* argc */, char ** /* argv */)
 		throw std::runtime_error("Could not initialize GLAD!");
 	glGetError(); // pull and ignore unhandled errors like GL_INVALID_ENUM
 
-	glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	// Create a nanogui screen and pass the glfw pointer to initialize
 	screen = new Screen();
 	screen->initialize(window, true);
 
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height);
-	glfwSwapInterval(0);
-	glfwSwapBuffers(window);
+	//int width, height;
+	//glfwGetFramebufferSize(window, &width, &height);
+	//glViewport(0, 0, width, height);
+	//glfwSwapInterval(0);
+	//glfwSwapBuffers(window);
 
 	// Create nanogui gui
 	bool enabled = true;
@@ -161,8 +158,7 @@ int main(int /* argc */, char ** /* argv */)
 	system->setHeight(768);
 	system->setResourcePath("./res/");
 	
-	glEnable(GL_DEPTH_TEST);
-	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_BVH);
+	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_SAP);
 
 	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
 	ShaderProgram* colorShader = ShaderProgram::create("Shader/texture.vert", "Shader/texture.frag");
@@ -205,6 +201,7 @@ int main(int /* argc */, char ** /* argv */)
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 100.0f);
+	camera->transform->setPosition(0, 0, 3.0f);
 	//cameraTransform = cameraGo->transform;
 	//cameraTransform->translate(0, 0, 2.0f);
 
@@ -217,6 +214,7 @@ int main(int /* argc */, char ** /* argv */)
 	cubeRenderer2->addTexture(specularMap, "u_Material.specular");
 	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
 
+	glEnable(GL_DEPTH_TEST);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -224,15 +222,16 @@ int main(int /* argc */, char ** /* argv */)
 		// Check if any events have been activated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		colManager->detect();
 		Light::updateUniformBuffer();
+		//colManager->detect();
 		ObjectRenderer::renderAll(camera);
+		//colManager->renderColliders();
 
-		colManager->renderColliders();
-
+		screen->drawContents();
+		screen->drawWidgets();
 
 		glfwSwapBuffers(window);
 	}

@@ -176,10 +176,10 @@ namespace yellowEngine
 	}
 
 
-	void Quaternion::normalize()
+	Quaternion& Quaternion::normalize()
 	{
 		float m = x * x + y * y + z * z + w * w;
-		if (fabs(m - 1.0f) < Utils::epsilon || fabs(m) < Utils::epsilon)return;
+		if (fabs(m - 1.0f) < Utils::epsilon || fabs(m) < Utils::epsilon)return *this;
 
 		m = sqrt(m);
 		m = 1.0f / m;
@@ -187,11 +187,19 @@ namespace yellowEngine
 		y *= m;
 		z *= m;
 		w *= m;
+
+		return *this;
 	}
 
 
 	Quaternion Quaternion::lerp(Quaternion& q0, Quaternion& q1, float delta)
 	{
-		return identity;
+		Quaternion result;
+		float _delta = 1.0f - delta;
+		result.x = delta * q0.x + _delta * q1.x;
+		result.y = delta * q0.y + _delta * q1.y;
+		result.z = delta * q0.z + _delta * q1.z;
+		result.w = delta * q0.w + _delta * q1.w;
+		return result;
 	}
 }
