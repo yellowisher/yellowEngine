@@ -22,7 +22,7 @@ namespace yellowEngine
 			Property_PositionY,
 			Property_PositionZ,
 
-			Property_Rotation=3,
+			Property_Rotation = 3,
 			Property_RotationX = 3,
 			Property_RotationY,
 			Property_RotationZ,

@@ -53,7 +53,7 @@ namespace yellowEngine
 		const Matrix& getMatrix();
 
 		const Vector3 getWorldPosition();
-		const Vector3 getWorldRotation();
+		const Quaternion getWorldRotation();
 		const Vector3 getUp();
 		const Vector3 getRight();
 		const Vector3 getForward();

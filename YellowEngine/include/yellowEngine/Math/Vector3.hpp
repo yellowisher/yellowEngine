@@ -17,6 +17,7 @@ namespace yellowEngine
 			};
 		};
 
+		static const Vector3& zero;
 		static const Vector3& up;
 		static const Vector3& right;
 		static const Vector3& forward;

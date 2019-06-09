@@ -29,17 +29,17 @@ namespace yellowEngine
 
 	Quaternion::Quaternion(const Vector3& eulerAngle)
 	{
-		float cr = cosf(Utils::deg2rad(eulerAngle.x * 0.5f));
-		float sr = sinf(Utils::deg2rad(eulerAngle.x * 0.5f));
-		float cy = cosf(Utils::deg2rad(eulerAngle.z * 0.5f));
-		float sy = sinf(Utils::deg2rad(eulerAngle.z * 0.5f));
-		float cp = cosf(Utils::deg2rad(eulerAngle.y * 0.5f));
-		float sp = sinf(Utils::deg2rad(eulerAngle.y * 0.5f));
+		float cosr = cosf(Utils::deg2rad(eulerAngle.z * 0.5f));
+		float sinr = sinf(Utils::deg2rad(eulerAngle.z * 0.5f));
+		float cosy = cosf(Utils::deg2rad(eulerAngle.y * 0.5f));
+		float siny = sinf(Utils::deg2rad(eulerAngle.y * 0.5f));
+		float cosp = cosf(Utils::deg2rad(eulerAngle.x * 0.5f));
+		float sinp = sinf(Utils::deg2rad(eulerAngle.x * 0.5f));
 
-		w = cy * cp * cr + sy * sp * sr;
-		x = cy * cp * sr - sy * sp * cr;
-		y = sy * cp * sr + cy * sp * cr;
-		z = sy * cp * cr - cy * sp * sr;
+		w = cosp * cosy * cosr + sinp * siny * sinr;
+		x = sinp * cosy * cosr - cosp * siny * sinr;
+		y = cosp * siny * cosr + sinp * cosy * sinr;
+		z = cosp * cosy * sinr - sinp * siny * cosr;
 	}
 
 
@@ -151,15 +151,17 @@ namespace yellowEngine
 		Vector3 rotation;
 		float sinr_cosp = 2.0f * (w * x + y * z);
 		float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
-		rotation.x = atan2(sinr_cosp, cosr_cosp);
+		rotation.x = Utils::rad2deg(atan2(sinr_cosp, cosr_cosp));
 
 		float sinp = 2.0f * (w * y - z * x);
 		if (fabs(sinp) >= 1.0f) rotation.y = copysignf(Utils::pi / 2.0f, sinp);
 		else rotation.y = asin(sinp);
+		rotation.y = Utils::rad2deg(rotation.y);
+		//rotation.y = Utils::rad2deg(2.0f*(w*y - z * x));
 
 		float siny_cosp = 2.0f * (w * z + x * y);
 		float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
-		rotation.z = atan2(siny_cosp, cosy_cosp);
+		rotation.z = Utils::rad2deg(atan2(siny_cosp, cosy_cosp));
 
 		return rotation;
 	}
@@ -195,11 +197,11 @@ namespace yellowEngine
 	Quaternion Quaternion::lerp(Quaternion& q0, Quaternion& q1, float delta)
 	{
 		Quaternion result;
-		float _delta = 1.0f - delta;
-		result.x = delta * q0.x + _delta * q1.x;
-		result.y = delta * q0.y + _delta * q1.y;
-		result.z = delta * q0.z + _delta * q1.z;
-		result.w = delta * q0.w + _delta * q1.w;
+		float delta_ = 1.0f - delta;
+		result.x = delta_ * q0.x + delta * q1.x;
+		result.y = delta_ * q0.y + delta * q1.y;
+		result.z = delta_ * q0.z + delta * q1.z;
+		result.w = delta_ * q0.w + delta * q1.w;
 		return result;
 	}
 }

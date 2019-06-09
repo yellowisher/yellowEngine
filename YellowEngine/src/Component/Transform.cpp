@@ -242,6 +242,7 @@ namespace yellowEngine
 		{
 			child->dirty(dirtyBits);
 		}
+		// move to getMatrix?
 		transformChanged();
 	}
 
@@ -252,9 +253,9 @@ namespace yellowEngine
 	}
 
 
-	const Vector3 Transform::getWorldRotation()
+	const Quaternion Transform::getWorldRotation()
 	{
-		return Matrix::extractRotation(getTRMatrix()).toEulerAngle();
+		return Matrix::extractRotation(getTRMatrix());
 	}
 
 

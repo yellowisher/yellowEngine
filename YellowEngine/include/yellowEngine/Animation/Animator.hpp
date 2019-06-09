@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+#include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Animation/AnimationClip.hpp"
 
@@ -38,6 +39,7 @@ namespace yellowEngine
 
 		void proceed();
 		void apply(std::pair<std::string, PropertyType> pair, float value);
+		void commit();
 		float getValue(std::pair<std::string, PropertyType> pair);
 		Transform* getTransform(const std::string& target);
 
@@ -46,6 +48,9 @@ namespace yellowEngine
 		int _frame;
 		int _transitionDelay;
 		AnimationClip* _currentClip;
+		
+		// to handle euler angle seperated, store rotation value and apply it when commit()
+		std::map<Transform*, Vector3> _rotations;
 
 		// cache for child transform; finding transform by name in every frame might be expansive
 		std::map<std::string, Transform*> _transformCache;
@@ -55,7 +60,6 @@ namespace yellowEngine
 
 		// frozen value for transition
 		std::map<std::pair<std::string, PropertyType>, float> _frozenValues;
-
 		std::map<std::pair<std::string, PropertyType>, float> _initialValues;
 	};
 }

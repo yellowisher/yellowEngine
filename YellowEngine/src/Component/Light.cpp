@@ -122,7 +122,7 @@ namespace yellowEngine
 		float temp[4] = { 0,0,0,0 };
 		for (auto light : lights[Type_Directional])
 		{
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldRotation(), temp)); offset += 16;
+			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldRotation() * Vector3::forward, temp)); offset += 16;
 
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_ambientColor, temp)); offset += 16;
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_diffuseColor, temp)); offset += 16;
@@ -149,7 +149,8 @@ namespace yellowEngine
 		for (auto light : lights[Type_Spot])
 		{
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldPosition(), temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldRotation(), temp)); offset += 16;
+			
+			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldRotation() * Vector3::forward, temp)); offset += 16;
 
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_ambientColor, temp)); offset += 16;
 			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_diffuseColor, temp)); offset += 16;

@@ -40,6 +40,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 GameObject* g = nullptr;
+bool prevPressed = false;
+bool pressed = false;
 
 void processInput(GLFWwindow *window)
 {
@@ -104,19 +106,23 @@ void processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		if (g == nullptr)
-		{
-			g = new GameObject("New");
-			g->addComponent<BoxCollider>();
-		}
-		else
-		{
-			delete(g);
-			g = nullptr;
-		}
+		//if (g == nullptr)
+		//{
+		//	g = new GameObject("New");
+		//	g->addComponent<BoxCollider>();
+		//}
+		//else
+		//{
+		//	delete(g);
+		//	g = nullptr;
+		//}
+		pressed = true;
+	}
+	else
+	{
+		pressed = false;
 	}
 }
-
 
 int main(void)
 {
@@ -183,11 +189,23 @@ int main(void)
 	ra->transform->setPosition(0, -1.5f, 0);
 	ra->transform->setScale(1.0f, 2.0f, 1.0f);
 
+	GameObject* h = new GameObject("rightShoulder");
+	h->transform->setPosition(0, 2.5f, 0);
+
+	GameObject* hd = new GameObject("rightShoulder");
+	MeshRenderer* hdm = hd->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	h->transform->addChild(hd->transform);
+	hdm->transform->setPosition(0, 0, 0);
+
 	body->transform->addChild(ls->transform);
 	body->transform->addChild(rs->transform);
+	body->transform->addChild(h->transform);
 	Animator* anim = body->addComponent<Animator>();
-	AnimationClip* clip = AnimationClip::create("Animation/temp.json");
-	anim->play(clip);
+
+	AnimationClip* walkingClip = AnimationClip::create("Animation/walking.json");
+	AnimationClip* waveClip = AnimationClip::create("Animation/wave.json");
+
+	anim->play(walkingClip);
 
 	GameObject* dl = new GameObject();
 	Light* l = dl->addComponent<Light>()->setDirectional();
@@ -220,9 +238,23 @@ int main(void)
 	rsm->addTexture(diffuseMap, "u_Material.diffuse");
 	rsm->addTexture(specularMap, "u_Material.specular");
 
+	hdm->addTexture(diffuseMap, "u_Material.diffuse");
+	hdm->addTexture(specularMap, "u_Material.specular");
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
+		if (!prevPressed && pressed)
+		{
+			cout << "Walk to Wave \n";
+			anim->play(waveClip, 20);
+		}
+		if (prevPressed && !pressed)
+		{
+			cout << "Wave to Walk \n";
+			anim->play(walkingClip, 20);
+		}
+		prevPressed = pressed;
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

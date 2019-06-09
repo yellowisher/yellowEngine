@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 #include "yellowEngine/Animation/Animator.hpp"
@@ -116,7 +118,7 @@ namespace yellowEngine
 			{
 				if (_currentClip->_channels.find(frozen.first) == _currentClip->_channels.end())
 				{
-					apply(frozen.first, Utils::lerp(_initialValues[frozen.first], frozen.second, factor));
+					apply(frozen.first, Utils::lerp(frozen.second, _initialValues[frozen.first], factor));
 				}
 			}
 
@@ -127,6 +129,7 @@ namespace yellowEngine
 				_frozenValues.clear();
 			}
 		}
+		commit();
 	}
 
 
@@ -138,12 +141,6 @@ namespace yellowEngine
 			// play request while clean state (after terminate or first playing)
 			_state = State_Playing;
 			_frame = 0;
-			_currentClip = clip;
-
-			for (auto channel : _currentClip->_channels)
-			{
-				_ends[channel.first] = 1;
-			}
 		}
 		else
 		{
@@ -182,7 +179,12 @@ namespace yellowEngine
 				}
 			}
 
-			_currentClip = clip;
+		}
+
+		_currentClip = clip;
+		for (auto channel : _currentClip->_channels)
+		{
+			_ends[channel.first] = 1;
 		}
 	}
 
@@ -226,7 +228,7 @@ namespace yellowEngine
 			case AnimationClip::Property_PositionZ:
 			{
 				Vector3 position = target->position;
-				int v = AnimationClip::Property_Position - type;
+				int v = type - AnimationClip::Property_Position;
 				position.v[v] = value;
 				target->setPosition(position);
 				break;
@@ -236,10 +238,8 @@ namespace yellowEngine
 			case AnimationClip::Property_RotationY:
 			case AnimationClip::Property_RotationZ:
 			{
-				Vector3 rotation = target->rotation.toEulerAngle();
-				int v = AnimationClip::Property_Rotation - type;
-				rotation.v[v] = value;
-				target->setRotation(rotation);
+				int v = type - AnimationClip::Property_Rotation;
+				_rotations[target].v[v] = value;
 				break;
 			}
 
@@ -248,11 +248,20 @@ namespace yellowEngine
 			case AnimationClip::Property_ScaleZ:
 			{
 				Vector3 scale = target->scale;
-				int v = AnimationClip::Property_Scale - type;
+				int v = type - AnimationClip::Property_Scale;
 				scale.v[v] = value;
 				target->setScale(scale);
 				break;
 			}
+		}
+	}
+
+
+	void Animator::commit()
+	{
+		for (auto pair : _rotations)
+		{
+			pair.first->setRotation(pair.second);
 		}
 	}
 
@@ -268,21 +277,21 @@ namespace yellowEngine
 			case AnimationClip::Property_PositionY:
 			case AnimationClip::Property_PositionZ:
 			{
-				return target->position.v[AnimationClip::Property_Position - type];
+				return target->position.v[type - AnimationClip::Property_Position];
 			}
 
 			case AnimationClip::Property_RotationX:
 			case AnimationClip::Property_RotationY:
 			case AnimationClip::Property_RotationZ:
 			{
-				return target->rotation.toEulerAngle().v[AnimationClip::Property_Rotation - type];
+				return _rotations[target].v[type - AnimationClip::Property_Rotation];
 			}
 
 			case AnimationClip::Property_ScaleX:
 			case AnimationClip::Property_ScaleY:
 			case AnimationClip::Property_ScaleZ:
 			{
-				target->scale.v[AnimationClip::Property_Scale - type];
+				target->scale.v[type - AnimationClip::Property_Scale];
 			}
 		}
 		return 0;
