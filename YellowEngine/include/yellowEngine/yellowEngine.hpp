@@ -16,6 +16,7 @@
 #include "Component/Component.hpp"
 #include "Component/Light.hpp"
 #include "Component/MeshRenderer.hpp"
+#include "Component/SkinnedMeshRenderer.hpp"
 #include "Component/ObjectRenderer.hpp"
 #include "Component/SphereCollider.hpp"
 #include "Component/Transform.hpp"
@@ -28,12 +29,12 @@
 #include "Math/Vector4.hpp"
 
 #include "Rendering/Mesh.hpp"
+#include "Rendering/Model.hpp"
 #include "Rendering/Renderer.hpp"
-#include "Rendering/ShaderProgram.hpp"
+#include "Rendering/Shader.hpp"
 #include "Rendering/Texture.hpp"
 #include "Rendering/UniformUpdater.hpp"
 #include "Rendering/VertexLayout.hpp"
-#include "Rendering/VertexLayoutBinding.hpp"
 
 #include "System/Event.hpp"
 #include "System/EventListener.hpp"

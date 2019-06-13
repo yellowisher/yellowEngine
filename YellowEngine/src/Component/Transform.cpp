@@ -48,9 +48,9 @@ namespace yellowEngine
 		Matrix tr = getInverseTRMatrix() * child->getTRMatrix();
 		Matrix s = ~getSMatrix() * child->getSMatrix();
 
-		child->setPosition(Matrix::extractTranslation(tr));
-		child->setRotation(Matrix::extractRotation(tr));
-		child->setScale(Matrix::extractScale(s));
+		child->setPosition(tr.extractTranslation());
+		child->setRotation(tr.extractRotation());
+		child->setScale(s.extractScale());
 
 		child->_parent = this;
 		_children.push_back(child);
@@ -66,9 +66,9 @@ namespace yellowEngine
 				Matrix tr = child->getTRMatrix();
 				Matrix s = child->getSMatrix();
 
-				child->setPosition(Matrix::extractTranslation(tr));
-				child->setRotation(Matrix::extractRotation(tr));
-				child->setScale(Matrix::extractScale(s));
+				child->setPosition(tr.extractTranslation());
+				child->setRotation(tr.extractRotation());
+				child->setScale(s.extractScale());
 
 				_children.erase(it);
 				child->_parent = nullptr;
@@ -249,19 +249,19 @@ namespace yellowEngine
 
 	const Vector3 Transform::getWorldPosition()
 	{
-		return Matrix::extractTranslation(getTRMatrix());
+		return getTRMatrix().extractTranslation();
 	}
 
 
 	const Quaternion Transform::getWorldRotation()
 	{
-		return Matrix::extractRotation(getTRMatrix());
+		return getTRMatrix().extractRotation();
 	}
 
 
 	const Vector3 Transform::getUp()
 	{
-		Quaternion rotation = Matrix::extractRotation(getTRMatrix());
+		Quaternion rotation = getTRMatrix().extractRotation();
 		Vector3 up = rotation * Vector3::up;
 		up.normalize();
 		return up;
@@ -270,7 +270,7 @@ namespace yellowEngine
 
 	const Vector3 Transform::getRight()
 	{
-		Quaternion rotation = Matrix::extractRotation(getTRMatrix());
+		Quaternion rotation = getTRMatrix().extractRotation();
 		Vector3 right = rotation * Vector3::right;
 		right.normalize();
 		return right;
@@ -279,7 +279,7 @@ namespace yellowEngine
 
 	const Vector3 Transform::getForward()
 	{
-		Quaternion rotation = Matrix::extractRotation(getTRMatrix());
+		Quaternion rotation = getTRMatrix().extractRotation();
 		Vector3 forward = rotation * Vector3::forward;
 		forward.normalize();
 		return forward;

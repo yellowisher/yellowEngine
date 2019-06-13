@@ -5,18 +5,21 @@
 
 namespace yellowEngine
 {
-	VertexLayout::Attribute::Attribute(Type type, int size) :type(type), size(size)
-	{
-	}
+	VertexLayout::StaticConstructor VertexLayout::__staticConstructor;
+	VertexLayout::Attribute VertexLayout::__attributeInfo[Num_Usage];
 
 
-	VertexLayout::VertexLayout(std::vector<Attribute> attributes) : _attributes(attributes)
+	VertexLayout::VertexLayout(std::vector<AttributeUsage> attributes)
 	{
-		_vertexSize = 0;
-		for (auto attribute : attributes)
+		int offset = 0;
+		for (auto usage : attributes)
 		{
-			_vertexSize += sizeof(float) * attribute.size;
+			Attribute attr = __attributeInfo[usage];
+			attr.offset = offset;
+			_attributes.insert({ attr.name, attr });
+			offset += sizeof(float) * attr.size;
 		}
+		_vertexSize = offset;
 	}
 
 
@@ -37,22 +40,9 @@ namespace yellowEngine
 	}
 
 
-	const VertexLayout::Attribute VertexLayout::getAttr(int index) const
+	const VertexLayout::Attribute& VertexLayout::getAttr(std::string name) const
 	{
 		// assert?
-		return _attributes[index];
-	}
-
-
-	void VertexLayout::bind() const
-	{
-		size_t offset = 0;
-		for (int i = 0; i < getAttrCount(); i++)
-		{
-			auto attr = getAttr(i);
-			glVertexAttribPointer(i, attr.size, GL_FLOAT, GL_FALSE, _vertexSize, (void*)offset);
-			offset += sizeof(float) * attr.size;
-			glEnableVertexAttribArray(i);
-		}
+		return _attributes[name];
 	}
 }

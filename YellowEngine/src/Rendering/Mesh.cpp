@@ -29,11 +29,44 @@ namespace yellowEngine
 	}
 
 
-	Mesh::Mesh(const VertexLayout& vertexLayout) :
-		_vertexLayout(vertexLayout),
-		_vertexBufferHandle(-1),
-		_elementBufferHandle(-1)
+	Mesh::Mesh(const VertexLayout& vertexLayout,
+		int vertexCount, void* vertexData,
+		int indexCount, void* indexData) :
+		_vertexLayout(vertexLayout)
 	{
+		_vertexCount = indexCount;
+
+		glGenBuffers(1, &_vertexBufferHandle);
+		glGenBuffers(1, &_elementBufferHandle);
+
+		glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferHandle);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferHandle);
+
+		vertexLayout.bind();
+
+		glBufferData(GL_ARRAY_BUFFER, vertexLayout.getVertexSize() * vertexCount, vertexData, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, indexData, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, NULL);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+
+		_bounds.max = Vector3(-Utils::inf, -Utils::inf, -Utils::inf);
+		_bounds.min = Vector3(Utils::inf, Utils::inf, Utils::inf);
+
+		// naively assume first 3 elements are position values
+		int offset = vertexLayout.getVertexSize() / sizeof(float);
+		float* cursor = (float*)vertexData;
+		for (int i = 0; i < vertexCount; i++)
+		{
+			_bounds.max.x = Utils::max(_bounds.max.x, *cursor);
+			_bounds.max.y = Utils::max(_bounds.max.y, *(cursor + 1));
+			_bounds.max.z = Utils::max(_bounds.max.z, *(cursor + 2));
+
+			_bounds.min.x = Utils::min(_bounds.min.x, *cursor);
+			_bounds.min.y = Utils::min(_bounds.min.y, *(cursor + 1));
+			_bounds.min.z = Utils::min(_bounds.min.z, *(cursor + 2));
+			cursor += offset;
+		}
 	}
 
 
@@ -74,21 +107,15 @@ namespace yellowEngine
 			return it->second;
 		}
 
-		Mesh* mesh = createFromOBJ(path);
+		Mesh* mesh = nullptr;
+
+		mesh = loadOBJ(path);
 		if (mesh != nullptr)__meshCache.insert({ path, mesh });
 		return mesh;
 	}
 
 
-	Mesh* Mesh::create(const VertexLayout& layout)
-	{
-		Mesh* mesh = new Mesh(layout);
-		glGenBuffers(1, &mesh->_vertexBufferHandle);
-		return mesh;
-	}
-
-
-	Mesh* Mesh::createFromOBJ(const char* path)
+	Mesh* Mesh::loadOBJ(const char* path)
 	{
 		int index;
 		vector<Vertex> vertices;
@@ -102,13 +129,10 @@ namespace yellowEngine
 		Vector2 vec2;
 		unsigned int pi[3], ni[3], uvi[3];
 
-		Vector3 max = Vector3(-Utils::inf, -Utils::inf, -Utils::inf);
-		Vector3 min = Vector3(Utils::inf, Utils::inf, Utils::inf);
-
 		ifstream fin;
 		char input, c;
 
-		std::string pathString = System::getInstance()->getResourcePath(path).c_str();
+		std::string pathString = System::getInstance()->getResourcePath(path);
 		fin.open(pathString);
 
 		if (fin.fail())
@@ -161,14 +185,6 @@ namespace yellowEngine
 							vertices.push_back(vertex);
 							verticesIndex.push_back(index);
 							uniqueVertices.insert({ vertex, index });
-
-							max.x = Utils::max(max.x, vertex.position.x);
-							max.y = Utils::max(max.y, vertex.position.y);
-							max.z = Utils::max(max.z, vertex.position.z);
-
-							min.x = Utils::min(min.x, vertex.position.x);
-							min.y = Utils::min(min.y, vertex.position.y);
-							min.z = Utils::min(min.z, vertex.position.z);
 						}
 						else
 						{
@@ -195,23 +211,8 @@ namespace yellowEngine
 			VertexLayout::Attribute(VertexLayout::Attr_Normal,3),
 			VertexLayout::Attribute(VertexLayout::Attr_TexCoord0,2)
 			});
-		Mesh* mesh = new Mesh(layout);
-		mesh->_vertexCount = (unsigned int)verticesIndex.size();
-		mesh->_bounds.max = max;
-		mesh->_bounds.min = min;
 
-		glGenBuffers(1, &mesh->_vertexBufferHandle);
-		glGenBuffers(1, &mesh->_elementBufferHandle);
-
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->_vertexBufferHandle);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->_elementBufferHandle);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * verticesIndex.size(), &verticesIndex[0], GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, NULL);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-
+		Mesh* mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)verticesIndex.size(), &verticesIndex[0]);
 		return mesh;
 	}
 

@@ -1,5 +1,5 @@
-#ifndef __H_SHADERPROGRAME__
-#define __H_SHADERPROGRAME__
+#ifndef __H_SHADER__
+#define __H_SHADER__
 
 #include <string>
 #include <vector>
@@ -15,13 +15,30 @@
 
 namespace yellowEngine
 {
-	struct Uniform;
+	struct Attribute
+	{
+		std::string name;
+		int index;
+		GLenum type;
+		int size;
+		unsigned int handle;
+	};
 
-	class ShaderProgram
+	struct Uniform
+	{
+		std::string name;
+		int index;
+		GLenum type;
+		int size;
+		unsigned int handle;
+	};
+
+	class Shader
 	{
 	public:
-		static ShaderProgram* create(const char* vsPath, const char* fsPath);
+		static Shader* create(const char* vsPath, const char* fsPath);
 
+		const std::vector<Attribute>& getAttributes();
 		const Uniform* getUniform(std::string name);
 		void setUniform(const Uniform* uniform, int value);
 		void setUniform(const Uniform* uniform, float value);
@@ -32,31 +49,20 @@ namespace yellowEngine
 
 		void use();
 		void updateUniforms(GameObject* target);
-		int getId();
 
 	private:
-		static std::map<std::string, ShaderProgram*> __shaderCache;
+		static std::map<std::string, Shader*> __shaderCache;
 
 		unsigned int _id;
+		std::vector<Attribute> _attributes;
 		std::map<std::string, Uniform> _uniforms;
 		UniformUpdater _uniformUpdater;
 
-		static ShaderProgram* createFromFile(const char* vsPath, const char* fsPath);
+		static Shader* createFromFile(const char* vsPath, const char* fsPath);
 		static std::string readSourceFile(const char* path);
 
-		ShaderProgram(int id);
-		~ShaderProgram();
-	};
-
-	struct Uniform
-	{
-		Uniform(std::string name, int index, GLenum type, int size, unsigned int handle);
-
-		const std::string name;
-		const int index;
-		const GLenum type;
-		const int size;
-		const unsigned int handle;
+		Shader(int id);
+		~Shader();
 	};
 }
 

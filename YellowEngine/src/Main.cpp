@@ -156,8 +156,11 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
+	GameObject* modelGo = model->instantiate("Person");
+
 	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
-	ShaderProgram* colorShader = ShaderProgram::create("Shader/texture.vert", "Shader/texture.frag");
+	Shader* colorShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
@@ -212,7 +215,7 @@ int main(void)
 	l->transform->rotate(45.0f, 0, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
-	ShaderProgram* lightShader = ShaderProgram::create("Shader/light.vert", "Shader/light.frag");
+	Shader* lightShader = Shader::create("Shader/light.vert", "Shader/light.frag");
 	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
 	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
 

@@ -54,7 +54,7 @@ namespace yellowEngine
 		std::vector<Collider*> _colliders;
 
 		// for rendering colliders
-		ShaderProgram* _wireFrameShader;
+		Shader* _wireFrameShader;
 		const Uniform* _colorUniform;
 		Renderer _renderer;
 

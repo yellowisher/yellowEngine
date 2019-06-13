@@ -2,6 +2,7 @@
 #define __H_UTILS__
 
 #include <limits>
+#include <iostream>
 
 // for debugging code
 #include <cassert>
@@ -47,6 +48,11 @@ namespace yellowEngine
 		constexpr float lerp(float a, float b, float f)
 		{
 			return (1.0f - f) * a + f * b;
+		}
+
+		inline void print(const char* message)
+		{
+			std::cout << message << std::endl;
 		}
 	}
 }

@@ -23,6 +23,7 @@ namespace yellowEngine
 		void setActive(bool active);
 		bool getActive();
 		std::string getName();
+		void setName(const char* name);
 
 		template <typename T> T* getComponent();
 		template <typename T> T* addComponent();

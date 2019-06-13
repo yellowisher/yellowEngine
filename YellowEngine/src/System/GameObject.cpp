@@ -58,4 +58,10 @@ namespace yellowEngine
 	{
 		return _name;
 	}
+
+
+	void GameObject::setName(const char* name)
+	{
+		_name = name;
+	}
 }

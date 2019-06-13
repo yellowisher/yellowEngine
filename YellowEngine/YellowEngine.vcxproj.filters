@@ -87,9 +87,6 @@
     <ClCompile Include="src\Rendering\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\ShaderProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Rendering\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -97,9 +94,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\VertexLayout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\System\EventListener.cpp">
@@ -124,6 +118,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\tinyxml2\tinyxml2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component\SkinnedMeshRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,9 +203,6 @@
     <ClInclude Include="include\yellowEngine\Rendering\Renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Rendering\ShaderProgram.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\yellowEngine\Rendering\Texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -204,9 +210,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\yellowEngine\Rendering\VertexLayout.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\yellowEngine\Rendering\VertexLayoutBinding.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\yellowEngine\System\Event.hpp">
@@ -257,6 +260,24 @@
     <ClInclude Include="vendor\jsoncpp\include\json\json-forwards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\tinyxml2\include\tinyxml2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Component\SkinnedMeshRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Material.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\VertexLayoutBinding.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\color.frag">
@@ -271,9 +292,6 @@
     <None Include="res\Shader\light.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="res\Shader\wireframe.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="res\Shader\wireframe.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
@@ -283,5 +301,11 @@
     <None Include="res\Shader\texture.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="res\Shader\wireframe.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="res\Shader\skeletal.vert" />
+    <None Include="res\Shader\texture_only.vert" />
+    <None Include="res\Shader\texture_only.frag" />
   </ItemGroup>
 </Project>

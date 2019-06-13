@@ -96,21 +96,21 @@ namespace yellowEngine
 	}
 
 
-	Vector3 Matrix::extractTranslation(const Matrix& tr)
+	Vector3 Matrix::extractTranslation() const
 	{
-		return Vector3(tr._m[12], tr._m[13], tr._m[14]);
+		return Vector3(_m[12], _m[13], _m[14]);
 	}
 
 
-	Quaternion Matrix::extractRotation(const Matrix& tr)
+	Quaternion Matrix::extractRotation() const
 	{
-		return Quaternion(tr);
+		return Quaternion(*this);
 	}
 
 
-	Vector3 Matrix::extractScale(const Matrix& s)
+	Vector3 Matrix::extractScale() const
 	{
-		return Vector3(s._m[0], s._m[5], s._m[10]);
+		return Vector3(_m[0], _m[5], _m[10]);
 	}
 
 
@@ -145,6 +145,16 @@ namespace yellowEngine
 
 	}
 
+
+	float& Matrix::operator[](int i)
+	{
+		return _m[i];
+	}
+
+	float Matrix::operator[](int i) const
+	{
+		return _m[i];
+	}
 
 	Matrix Matrix::operator+(const Matrix& matrix) const
 	{

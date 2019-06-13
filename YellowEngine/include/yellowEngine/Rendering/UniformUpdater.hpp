@@ -5,7 +5,7 @@
 
 namespace yellowEngine
 {
-	class ShaderProgram;
+	class Shader;
 	struct Uniform;
 
 	class UniformUpdater
@@ -13,7 +13,7 @@ namespace yellowEngine
 		friend class StaticConstructor;
 
 	public:
-		UniformUpdater(ShaderProgram* shader);
+		UniformUpdater(Shader* shader);
 		~UniformUpdater();
 
 		void initialize();
@@ -49,7 +49,7 @@ namespace yellowEngine
 		static StaticConstructor __staticConstructor;
 		static const char* __uniformStrings[Num_Uniforms];
 
-		ShaderProgram* _shader;
+		Shader* _shader;
 		std::vector<UniformPair> _uniformPairs;
 	};
 }

@@ -5,7 +5,7 @@
 
 #include "yellowEngine/Math/AABB.hpp"
 #include "yellowEngine/Math/Vector3.hpp"
-#include "yellowEngine/Rendering/ShaderProgram.hpp"
+#include "yellowEngine/Rendering/Shader.hpp"
 #include "yellowEngine/Rendering/VertexLayout.hpp"
 
 // non-component generic renderer
@@ -16,7 +16,7 @@ namespace yellowEngine
 	{
 	public:
 		Renderer();
-		Renderer(VertexLayout& layout, ShaderProgram* shader);
+		Renderer(VertexLayout& layout, Shader* shader);
 		~Renderer();
 
 		void setData(const AABB& aabb);
@@ -29,7 +29,7 @@ namespace yellowEngine
 		unsigned int _vbo;
 		unsigned int _vao;
 
-		ShaderProgram* _shader;
+		Shader* _shader;
 	};
 }
 

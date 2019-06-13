@@ -45,9 +45,9 @@ namespace yellowEngine
 
 	Quaternion::Quaternion(const Matrix& matrix)
 	{
-		Vector3 xaxis(matrix.m[0], matrix.m[1], matrix.m[2]);
-		Vector3 yaxis(matrix.m[4], matrix.m[5], matrix.m[6]);
-		Vector3 zaxis(matrix.m[8], matrix.m[9], matrix.m[10]);
+		Vector3 xaxis(matrix[0], matrix[1], matrix[2]);
+		Vector3 yaxis(matrix[4], matrix[5], matrix[6]);
+		Vector3 zaxis(matrix[8], matrix[9], matrix[10]);
 
 		float trace = xaxis.x + yaxis.y + zaxis.z + 1.0f;
 

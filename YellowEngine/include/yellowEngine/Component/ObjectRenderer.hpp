@@ -3,6 +3,7 @@
 
 #include <list>
 
+#include "yellowEngine/Rendering/Shader.hpp"
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Component/Camera.hpp"
 

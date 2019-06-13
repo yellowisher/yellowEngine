@@ -10,7 +10,7 @@ namespace yellowEngine
 	}
 
 
-	Renderer::Renderer(VertexLayout& layout, ShaderProgram* shader) :_shader(shader)
+	Renderer::Renderer(VertexLayout& layout, Shader* shader) :_shader(shader)
 	{
 		glGenVertexArrays(1, &_vao);
 		glGenBuffers(1, &_vbo);

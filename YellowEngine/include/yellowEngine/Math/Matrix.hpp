@@ -20,11 +20,10 @@ namespace yellowEngine
 		static Matrix createTranslation(Vector3 translation);
 		static Matrix createRotation(Quaternion rotation);
 		static Matrix createScale(Vector3 scale);
-		static Vector3 extractTranslation(const Matrix& tr);
-		static Quaternion extractRotation(const Matrix& tr);
-		static Vector3 extractScale(const Matrix& s);
 
-		const float* const m = _m;
+		Vector3 extractTranslation() const;
+		Quaternion extractRotation() const;
+		Vector3 extractScale() const;
 
 		Matrix();
 		Matrix(
@@ -35,6 +34,11 @@ namespace yellowEngine
 		);
 		Matrix(const Matrix& matrix);
 		~Matrix();
+
+		const float* getData() const { return _m; };
+
+		float& operator[](int i);
+		float operator[](int i) const;
 
 		Matrix operator+(const Matrix& matrix) const;
 		Matrix operator-(const Matrix& matrix) const;

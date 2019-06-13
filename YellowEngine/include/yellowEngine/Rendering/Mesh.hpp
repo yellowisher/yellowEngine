@@ -13,6 +13,8 @@ namespace yellowEngine
 {
 	class Mesh
 	{
+		friend class Model;
+
 	public:
 		struct Vertex
 		{
@@ -23,6 +25,16 @@ namespace yellowEngine
 			bool operator<(const Vertex& vertex) const;
 		};
 
+		static const int MaxJointCount = 4;
+		struct SkinnedVertex
+		{
+			Vector3 position;
+			Vector3 normal;
+			Vector2 uv;
+			float joints[MaxJointCount];
+			float weights[MaxJointCount];
+		};
+
 		struct Bounds
 		{
 			Vector3 min;
@@ -30,7 +42,6 @@ namespace yellowEngine
 		};
 
 		static Mesh* create(const char* path);
-		static Mesh* create(const VertexLayout& layout);
 
 		unsigned int getVertexCount() const;
 		unsigned int getVertexBufferHandle() const;
@@ -39,6 +50,12 @@ namespace yellowEngine
 		const Bounds& getBounds() const;
 
 	private:
+		static Mesh* loadOBJ(const char* path);
+		Mesh(const VertexLayout& vertexLayout,
+			int vertexCount, void* vertexData, 
+			int indexCount, void* indexData);
+		~Mesh();
+
 		static std::map<std::string, Mesh*> __meshCache;
 
 		unsigned int _vertexBufferHandle;
@@ -46,11 +63,6 @@ namespace yellowEngine
 		unsigned int _vertexCount;
 		const VertexLayout _vertexLayout;
 		Bounds _bounds;
-
-		static Mesh* createFromOBJ(const char* path);
-
-		Mesh(const VertexLayout& vertexLayout);
-		~Mesh();
 	};
 }
 

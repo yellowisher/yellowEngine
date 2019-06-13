@@ -6,7 +6,7 @@
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Component/ObjectRenderer.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
-#include "yellowEngine/Rendering/ShaderProgram.hpp"
+#include "yellowEngine/Rendering/Shader.hpp"
 #include "yellowEngine/Rendering/VertexLayoutBinding.hpp"
 #include "yellowEngine/Rendering/Texture.hpp"
 
@@ -16,16 +16,15 @@ namespace yellowEngine
 	{
 	public:
 		MeshRenderer(GameObject* gameObject);
-		~MeshRenderer();
+		virtual ~MeshRenderer();
 
-		MeshRenderer* set(Mesh* mesh, ShaderProgram* shader);
-		void _render() override;
+		MeshRenderer* set(Mesh* mesh, Shader* shader = nullptr);
+		virtual void _render() override;
 		void addTexture(Texture* texture, const char* usage);
 
-	private:
+	protected:
 		Mesh* _mesh;
-		ShaderProgram* _shader;
-		VertexLayoutBinding* _binding;
+		Shader* _shader;
 		std::vector<Texture*> _textures;
 	};
 }

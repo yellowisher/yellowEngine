@@ -4,14 +4,14 @@
 #include <vector>
 
 #include "yellowEngine/Rendering/Mesh.hpp"
-#include "yellowEngine/Rendering/ShaderProgram.hpp"
+#include "yellowEngine/Rendering/Shader.hpp"
 
 namespace yellowEngine
 {
 	class VertexLayoutBinding
 	{
 	public:
-		static VertexLayoutBinding* create(Mesh* mesh, ShaderProgram* shader);
+		static VertexLayoutBinding* create(Mesh* mesh, Shader* shader);
 
 		unsigned int getVertexArrayHandle();
 
@@ -20,11 +20,10 @@ namespace yellowEngine
 
 		unsigned int _vertexArrayHandle;
 		Mesh* _mesh;
-		ShaderProgram* _shader;
+		Shader* _shader;
 
 		VertexLayoutBinding();
 		~VertexLayoutBinding();
-		void bind(Mesh* mesh, ShaderProgram* shader);
 	};
 }
 

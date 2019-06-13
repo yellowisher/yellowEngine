@@ -75,7 +75,7 @@ namespace yellowEngine
 	}
 
 
-	void BroadPhase_BVH::render(Renderer& renderer, ShaderProgram* shader, const Uniform* colorUniform)
+	void BroadPhase_BVH::render(Renderer& renderer, Shader* shader, const Uniform* colorUniform)
 	{
 		std::queue<ObjectId> visitQueue;
 		visitQueue.push(_root);

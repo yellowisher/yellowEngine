@@ -1,6 +1,6 @@
 #include "yellowEngine/Component/ObjectRenderer.hpp"
 #include "yellowEngine/System/GameObject.hpp"
-#include "yellowEngine/Rendering/ShaderProgram.hpp"
+#include "yellowEngine/Rendering/Shader.hpp"
 #include "yellowEngine/Rendering/UniformUpdater.hpp"
 
 
@@ -10,7 +10,7 @@ namespace yellowEngine
 	const char* UniformUpdater::__uniformStrings[Num_Uniforms];
 
 
-	UniformUpdater::UniformUpdater(ShaderProgram* shader) :_shader(shader)
+	UniformUpdater::UniformUpdater(Shader* shader) :_shader(shader)
 	{
 	}
 

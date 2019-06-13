@@ -161,7 +161,7 @@ int main(int /* argc */, char ** /* argv */)
 	ColliderManager* colManager = ColliderManager::create(ColliderManager::BroadPhaseType_SAP);
 
 	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
-	ShaderProgram* colorShader = ShaderProgram::create("Shader/texture.vert", "Shader/texture.frag");
+	Shader* colorShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
@@ -190,7 +190,7 @@ int main(int /* argc */, char ** /* argv */)
 	l->transform->rotate(45.0f, 0, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
-	ShaderProgram* lightShader = ShaderProgram::create("Shader/light.vert", "Shader/light.frag");
+	Shader* lightShader = Shader::create("Shader/light.vert", "Shader/light.frag");
 	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
 	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
 
