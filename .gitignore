@@ -3,6 +3,16 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Custom gitignore
+yellowEngine/res/Mesh
+yellowEngine/res/Texture
+
+yellowEditor/res/Mesh
+yellowEditor/res/Texture
+
+*.lib
+
+
 # User-specific files
 *.rsuser
 *.suo
@@ -347,6 +357,3 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
-
-# nanogui static library and header files
-/yellowEditor/vensor/lib/include
