@@ -6,6 +6,7 @@
 # Custom gitignore
 yellowEngine/res/Mesh
 yellowEngine/res/Texture
+yellowEngine/res/Animation
 
 yellowEditor/res/Mesh
 yellowEditor/res/Texture
