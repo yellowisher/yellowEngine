@@ -155,6 +155,7 @@
     <ClCompile Include="src\Math\Vector2.cpp" />
     <ClCompile Include="src\Math\Vector3.cpp" />
     <ClCompile Include="src\Math\Vector4.cpp" />
+    <ClCompile Include="src\Rendering\Material.cpp" />
     <ClCompile Include="src\Rendering\Mesh.cpp" />
     <ClCompile Include="src\Rendering\Model.cpp" />
     <ClCompile Include="src\Rendering\Renderer.cpp" />

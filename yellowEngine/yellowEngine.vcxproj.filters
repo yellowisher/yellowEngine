@@ -135,6 +135,9 @@
     <ClCompile Include="src\Rendering\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">
