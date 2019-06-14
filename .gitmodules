@@ -1,0 +1,15 @@
+[submodule "yellowEditor/vendor/nanogui"]
+	path = yellowEditor/vendor/nanogui
+	url = https://github.com/wjakob/nanogui
+[submodule "yellowEngine/vendor/assimp"]
+	path = yellowEngine/vendor/assimp
+	url = https://github.com/assimp/assimp
+[submodule "yellowEngine/vendor/glfw"]
+	path = yellowEngine/vendor/glfw
+	url = https://github.com/glfw/glfw
+[submodule "yellowEngine/vendor/jsoncpp"]
+	path = yellowEngine/vendor/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp
+[submodule "yellowEngine/vendor/stb"]
+	path = yellowEngine/vendor/stb
+	url = https://github.com/nothings/stb
