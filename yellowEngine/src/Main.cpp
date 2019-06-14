@@ -162,6 +162,9 @@ int main(void)
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
+	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
+	model->instantiate("nanosuit");
+
 	Material cubeMaterial(textureShader);
 	cubeMaterial.addTexture(diffuseMap, "u_Material.diffuse");
 	cubeMaterial.addTexture(specularMap, "u_Material.specular");

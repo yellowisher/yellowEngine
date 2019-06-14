@@ -11,7 +11,7 @@ namespace yellowEngine
 	class Texture
 	{
 	public:
-		static Texture* create(const char* path);
+		static Texture* create(const char* path, bool absolute = false);
 
 		void bind();
 		void unbind();

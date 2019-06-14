@@ -22,23 +22,25 @@ namespace yellowEngine
 	}
 
 
-	Texture* Texture::create(const char* path)
+	Texture* Texture::create(const char* path, bool absolute)
 	{
-		auto it = __textureCache.find(path);
+		std::string fullpath = path;
+		if (!absolute) fullpath = System::getInstance()->getResourcePath(path);
+
+		auto it = __textureCache.find(fullpath);
 		if (it != __textureCache.end())
 		{
 			return it->second;
 		}
 
-		std::string pathString = System::getInstance()->getResourcePath(path);
 
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
-		unsigned char* data = stbi_load(pathString.c_str(), &width, &height, &channels, 0);
+		unsigned char* data = stbi_load(fullpath.c_str(), &width, &height, &channels, 0);
 
 		if (!data)
 		{
-			cout << "Cannot read file " << pathString << endl;
+			cout << "Cannot read file " << fullpath << endl;
 			return nullptr;
 		}
 
@@ -63,7 +65,7 @@ namespace yellowEngine
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
 
-		__textureCache.insert({ path, texture });
+		__textureCache.insert({ fullpath, texture });
 		return texture;
 	}
 

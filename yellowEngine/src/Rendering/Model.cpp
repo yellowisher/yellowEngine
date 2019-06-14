@@ -51,7 +51,7 @@ namespace yellowEngine
 
 			GameObject* gameObject = new GameObject(node->name.c_str());
 			// TODO: remove shader program
-			if (node->mesh)gameObject->addComponent<MeshRenderer>()->set(node->mesh, Shader::create("Shader/texture.vert", "Shader/texture.frag"));
+			if (node->mesh)gameObject->addComponent<MeshRenderer>()->set(node->mesh, node->material);
 
 			if (parent != nullptr)
 			{
@@ -76,25 +76,27 @@ namespace yellowEngine
 	}
 
 
-	Model* Model::create(const char* path)
+	Model* Model::create(const char* path, bool absolute)
 	{
-		auto it = __modelCache.find(path);
+		std::string fullpath = path;
+		if (!absolute) fullpath = System::getInstance()->getResourcePath(path).c_str();
+
+		auto it = __modelCache.find(fullpath);
 		if (it != __modelCache.end())
 		{
 			return it->second;
 		}
 
-		Model* model = loadFBX(path);
-		__modelCache.insert({ path, model });
+		Model* model = loadFBX(fullpath.c_str());
+		__modelCache.insert({ fullpath, model });
 		return model;
 	}
 
 
-	Model* Model::loadFBX(const char* path)
+	Model* Model::loadFBX(std::string path)
 	{
-		std::string pathString = System::getInstance()->getResourcePath(path).c_str();
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(pathString, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -103,7 +105,11 @@ namespace yellowEngine
 		}
 
 		Model* model = new Model();
+
+		// feed temporal information for building scene hierachy
 		model->_scene = scene;
+		model->_directory = path.substr(0, path.find_last_of('/') + 1);
+
 		model->_root = model->buildTree(scene->mRootNode);
 
 		// after build scene hierarchy, fill all the meshes
@@ -118,7 +124,9 @@ namespace yellowEngine
 	{
 		if (node->aiMesh != nullptr)
 		{
-			node->mesh = createMesh(node->aiMesh);
+			auto pair = createMesh(node->aiMesh);
+			node->mesh = pair.first;
+			node->material = pair.second;
 		}
 
 		for (auto child : node->children)
@@ -133,7 +141,7 @@ namespace yellowEngine
 		Node* node = new Node();
 
 		// TODO: figure it out in which situation a node contains multiple meshes
-		// handle atmost 1 mesh
+		// current, handle atmost 1 mesh
 		if (aiNode->mNumMeshes > 0)
 		{
 			node->aiMesh = _scene->mMeshes[aiNode->mMeshes[0]];
@@ -164,7 +172,7 @@ namespace yellowEngine
 	}
 
 
-	Mesh* Model::createMesh(aiMesh* aiMesh)
+	std::pair<Mesh*, Material> Model::createMesh(aiMesh* aiMesh)
 	{	
 		// Model class already caching model itself
 		// there is no need to cache in Mesh class
@@ -188,8 +196,8 @@ namespace yellowEngine
 				vertices[i].normal.y = aiMesh->mNormals[i].y;
 				vertices[i].normal.z = aiMesh->mNormals[i].z;
 
-				vertices[i].uv.x = aiMesh->mTextureCoords[i]->x;
-				vertices[i].uv.y = aiMesh->mTextureCoords[i]->y;
+				vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
+				vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
 
 				for (int j = 0; j < MaxJointCount; j++)
 				{
@@ -244,8 +252,8 @@ namespace yellowEngine
 				vertices[i].normal.y = aiMesh->mNormals[i].y;
 				vertices[i].normal.z = aiMesh->mNormals[i].z;
 
-				vertices[i].uv.x = aiMesh->mTextureCoords[i]->x;
-				vertices[i].uv.y = aiMesh->mTextureCoords[i]->y;
+				vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
+				vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
 			}
 
 			for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
@@ -264,19 +272,29 @@ namespace yellowEngine
 			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
+		Material mat(Shader::create("Shader/texture.vert", "Shader/texture.frag"));
 		if (_scene->HasMaterials())
 		{
 			aiMaterial* material = _scene->mMaterials[aiMesh->mMaterialIndex];
-			auto type = aiTextureType_DIFFUSE;
-			for (unsigned int i = 0; i < material->GetTextureCount(type); i++)
+			if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
 				aiString path;
-				material->GetTexture(type, i, &path);
+				material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+				path = _directory + path.C_Str();
 
-				Texture::create(path.C_Str());
+				mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.diffuse");
+			}
+
+			if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+			{
+				aiString path;
+				material->GetTexture(aiTextureType_SPECULAR, 0, &path);
+				path = _directory + path.C_Str();
+
+				mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
 			}
 		}
 
-		return mesh;
+		return { mesh, mat };
 	}
 }

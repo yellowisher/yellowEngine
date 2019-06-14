@@ -8,6 +8,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "yellowEngine/Rendering/Material.hpp"
 #include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Math/Quaternion.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
@@ -18,7 +19,7 @@ namespace yellowEngine
 	class Model
 	{
 	public:
-		static Model* create(const char* path);
+		static Model* create(const char* path, bool absolute = false);
 		
 		GameObject* instantiate(const char* name);
 		
@@ -31,6 +32,7 @@ namespace yellowEngine
 				aiMesh* aiMesh;
 			};
 			float jointId;
+			Material material;
 
 			Vector3 position;
 			Vector3 scale;
@@ -39,19 +41,21 @@ namespace yellowEngine
 			std::vector<Node*> children;
 		};
 		
-		static Model* loadFBX(const char* path);
+		static Model* loadFBX(std::string path);
 
 		Model();
 		~Model();
 		Node* buildTree(aiNode* aiNode);
 		void fillMesh(Node* node);
-		Mesh* createMesh(aiMesh* mesh);
+		std::pair<Mesh*, Material> createMesh(aiMesh* mesh);
 
 		static std::map<std::string, Model*> __modelCache;
 		static constexpr float NullJoint = -1.0f;
 
 		// temporal value for building scene tree
 		const aiScene* _scene;
+		std::string _directory;
+
 		Node* _root;
 		std::map<std::string, Node*> _nodes;
 	};
