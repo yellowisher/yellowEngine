@@ -3,16 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Custom gitignore
-yellowEngine/res/Mesh
-yellowEngine/res/Texture
-yellowEngine/res/Animation
-
-yellowEditor/res/Mesh
-yellowEditor/res/Texture
-
-*.lib
-
+# Ignore all resources but shader
+**/res/*
+!**/res/Shader/
 
 # User-specific files
 *.rsuser
