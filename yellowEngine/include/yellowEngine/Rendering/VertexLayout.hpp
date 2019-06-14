@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <glad/glad.h>
 
 #include "yellowEngine/Rendering/Mesh.hpp"
 
@@ -51,15 +52,15 @@ namespace yellowEngine
 		{
 			StaticConstructor()
 			{
-				__attributeInfo[Usage_Position	] = AttributeInfo("a_Position"	, GL_FLOAT, 3);
-				__attributeInfo[Usage_Normal	] = AttributeInfo("a_Normal"	, GL_FLOAT, 3);
-				__attributeInfo[Usage_Color		] = AttributeInfo("a_Color"		, GL_FLOAT, 3);
-				__attributeInfo[Usage_TexCoord0	] = AttributeInfo("a_TexCoord0"	, GL_FLOAT, 2);
-				__attributeInfo[Usage_TexCoord1	] = AttributeInfo("a_TexCoord1"	, GL_FLOAT, 2);
-				__attributeInfo[Usage_TexCoord2	] = AttributeInfo("a_TexCoord2"	, GL_FLOAT, 2);
-				__attributeInfo[Usage_TexCoord3	] = AttributeInfo("a_TexCoord3"	, GL_FLOAT, 2);
-				__attributeInfo[Usage_Joints	] = AttributeInfo("a_Joints"	, GL_FLOAT, Mesh::MaxJointCount);
-				__attributeInfo[Usage_Weights	] = AttributeInfo("a_Weights"	, GL_FLOAT, Mesh::MaxJointCount);
+				__attributeInfo[Attr_Position	] = Attribute("a_Position"	, GL_FLOAT, 3);
+				__attributeInfo[Attr_Normal		] = Attribute("a_Normal"	, GL_FLOAT, 3);
+				__attributeInfo[Attr_Color		] = Attribute("a_Color"		, GL_FLOAT, 3);
+				__attributeInfo[Attr_TexCoord0	] = Attribute("a_TexCoord0"	, GL_FLOAT, 2);
+				__attributeInfo[Attr_TexCoord1	] = Attribute("a_TexCoord1"	, GL_FLOAT, 2);
+				__attributeInfo[Attr_TexCoord2	] = Attribute("a_TexCoord2"	, GL_FLOAT, 2);
+				__attributeInfo[Attr_TexCoord3	] = Attribute("a_TexCoord3"	, GL_FLOAT, 2);
+				__attributeInfo[Attr_Joints		] = Attribute("a_Joints"	, GL_FLOAT, Mesh::MaxJointCount);
+				__attributeInfo[Attr_Weights	] = Attribute("a_Weights"	, GL_FLOAT, Mesh::MaxJointCount);
 			}
 		};
 

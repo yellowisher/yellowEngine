@@ -20,7 +20,6 @@ namespace yellowEngine
 	private:
 		static map<string, Texture*> __textureCache;
 
-
 		Texture();
 		~Texture();
 	};

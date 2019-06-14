@@ -41,11 +41,4 @@ namespace yellowEngine
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(NULL);
 	}
-
-
-	void MeshRenderer::addTexture(Texture* texture, const char* usage)
-	{
-		_shader->setUniform(_shader->getUniform(usage), (int)_textures.size());
-		_textures.push_back(texture);
-	}
 }

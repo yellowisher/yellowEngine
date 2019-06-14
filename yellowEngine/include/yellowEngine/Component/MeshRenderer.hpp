@@ -20,12 +20,10 @@ namespace yellowEngine
 
 		MeshRenderer* set(Mesh* mesh, Shader* shader = nullptr);
 		virtual void _render() override;
-		void addTexture(Texture* texture, const char* usage);
 
 	protected:
 		Mesh* _mesh;
 		Shader* _shader;
-		std::vector<Texture*> _textures;
 	};
 }
 
