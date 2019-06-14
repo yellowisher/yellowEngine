@@ -1,5 +1,5 @@
 #include "yellowEngine/Component/ObjectRenderer.hpp"
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 
 
 namespace yellowEngine

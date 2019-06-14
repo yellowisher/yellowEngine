@@ -68,8 +68,13 @@ namespace yellowEngine
 	}
 
 
-	void Texture::use()
+	void Texture::bind()
 	{
 		glBindTexture(GL_TEXTURE_2D, _id);
+	}
+
+	void Texture::unbind()
+	{
+		glBindTexture(GL_TEXTURE_2D, NULL);
 	}
 }

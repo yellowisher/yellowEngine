@@ -1,7 +1,7 @@
 #include <type_traits>
 
 #include "yellowEngine/Component/Component.hpp"
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 
 
 namespace yellowEngine

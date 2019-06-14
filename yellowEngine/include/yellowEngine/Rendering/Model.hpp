@@ -11,14 +11,12 @@
 #include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Math/Quaternion.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 
 namespace yellowEngine
 {
 	class Model
 	{
-		using Attribute = VertexLayout::Attribute;
-
 	public:
 		static Model* create(const char* path);
 		
@@ -50,7 +48,7 @@ namespace yellowEngine
 		Mesh* createMesh(aiMesh* mesh);
 
 		static std::map<std::string, Model*> __modelCache;
-		static const int NullJoint = -1.0f;
+		static constexpr float NullJoint = -1.0f;
 
 		// temporal value for building scene tree
 		const aiScene* _scene;

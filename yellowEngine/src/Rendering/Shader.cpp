@@ -12,7 +12,7 @@ namespace yellowEngine
 
 	Shader::Shader(int id) :_id(id), _uniformUpdater(this)
 	{
-		int count, size, length, handle;
+		int count, size, length, location;
 		const int bufferSize = 32;
 		char name[bufferSize];
 		GLenum type;
@@ -21,19 +21,19 @@ namespace yellowEngine
 		for (int i = 0; i < count; i++)
 		{
 			glGetActiveAttrib(_id, i, bufferSize, &length, &size, &type, name);
-			handle = glGetAttribLocation(_id, name);
-			_attributes.push_back({ name, i, type, size, handle });
+			location = glGetAttribLocation(_id, name);
+			_attributes.push_back({ name, type, size, location });
 		}
 
 		glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &count);
 		for (int i = 0; i < count; i++)
 		{
 			glGetActiveUniform(_id, i, bufferSize, &length, &size, &type, name);
-			handle = glGetUniformLocation(_id, name);
-			_uniforms.insert({ name, {name, i, type, size, handle} });
+			location = glGetUniformLocation(_id, name);
+			_uniforms.insert({ name, {name, type, size, location} });
 		}
 
-		_uniformUpdater.initialize();
+		_uniformUpdater.init();
 	}
 
 
@@ -155,54 +155,59 @@ namespace yellowEngine
 	void Shader::setUniform(const Uniform* uniform, int value)
 	{
 		glUseProgram(_id);
-		glUniform1i(uniform->handle, value);
+		glUniform1i(uniform->location, value);
 	}
 
 
 	void Shader::setUniform(const Uniform* uniform, float value)
 	{
 		glUseProgram(_id);
-		glUniform1f(uniform->handle, value);
+		glUniform1f(uniform->location, value);
 	}
 
 
 	void Shader::setUniform(const Uniform* uniform, const Vector2& value)
 	{
 		glUseProgram(_id);
-		glUniform2f(uniform->handle, value.x, value.y);
+		glUniform2f(uniform->location, value.x, value.y);
 	}
 
 
 	void Shader::setUniform(const Uniform* uniform, const Vector3& value)
 	{
 		glUseProgram(_id);
-		glUniform3f(uniform->handle, value.x, value.y, value.z);
+		glUniform3f(uniform->location, value.x, value.y, value.z);
 	}
 
 
 	void Shader::setUniform(const Uniform* uniform, const Vector4& value)
 	{
 		glUseProgram(_id);
-		glUniform4f(uniform->handle, value.x, value.y, value.z, value.w);
+		glUniform4f(uniform->location, value.x, value.y, value.z, value.w);
 	}
 
 
 	void Shader::setUniform(const Uniform* uniform, const Matrix& value)
 	{
 		glUseProgram(_id);
-		glUniformMatrix4fv(uniform->handle, 1, GL_FALSE, value.getData());
+		glUniformMatrix4fv(uniform->location, 1, GL_FALSE, value.getData());
 	}
 
 
-	void Shader::use()
+	void Shader::bind()
 	{
 		glUseProgram(_id);
+	}
+
+
+	void Shader::unbind()
+	{
+		glUseProgram(NULL);
 	}
 
 
 	void Shader::updateUniforms(GameObject* target)
 	{
-		glUseProgram(_id);
 		_uniformUpdater.update(target);
 	}
 }

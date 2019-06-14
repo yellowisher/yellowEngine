@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+#include "yellowEngine/Utility/Definitions.hpp"
 #include "yellowEngine/Math/Vector2.hpp"
 #include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Rendering/VertexLayout.hpp"
@@ -25,7 +26,6 @@ namespace yellowEngine
 			bool operator<(const Vertex& vertex) const;
 		};
 
-		static const int MaxJointCount = 4;
 		struct SkinnedVertex
 		{
 			Vector3 position;
@@ -52,7 +52,7 @@ namespace yellowEngine
 	private:
 		static Mesh* loadOBJ(const char* path);
 		Mesh(const VertexLayout& vertexLayout,
-			int vertexCount, void* vertexData, 
+			int vertexCount, void* vertexData,
 			int indexCount, void* indexData);
 		~Mesh();
 

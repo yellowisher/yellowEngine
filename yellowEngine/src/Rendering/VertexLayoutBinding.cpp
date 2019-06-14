@@ -5,7 +5,7 @@
 
 namespace yellowEngine
 {
-	std::vector<VertexLayoutBinding*> VertexLayoutBinding::__bindingCache;
+	std::map<std::pair<Mesh*, Shader*>, VertexLayoutBinding*> VertexLayoutBinding::__bindingCache;
 
 
 	VertexLayoutBinding::VertexLayoutBinding()
@@ -26,17 +26,14 @@ namespace yellowEngine
 
 	VertexLayoutBinding* VertexLayoutBinding::create(Mesh* mesh, Shader* shader)
 	{
-		for (auto _binding : __bindingCache)
+		auto key = std::make_pair(mesh, shader);
+		auto it = __bindingCache.find(key);
+		if (it != __bindingCache.end())
 		{
-			if (_binding->_mesh == mesh && _binding->_shader == shader)
-			{
-				return _binding;
-			}
+			return it->second;
 		}
 
 		auto binding = new VertexLayoutBinding();
-		binding->_mesh = mesh;
-		binding->_shader = shader;
 
 		glGenVertexArrays(1, &binding->_vertexArrayHandle);
 		glBindVertexArray(binding->_vertexArrayHandle);
@@ -47,18 +44,30 @@ namespace yellowEngine
 		auto attributes = shader->getAttributes();
 		const VertexLayout& meshLayout = mesh->getVertexLayout();
 
-		for (int i = 0; i < attributes.size(); i++)
+		for (auto attribute : attributes)
 		{
-			auto attr = meshLayout.getAttr(attributes[i].name);
-			glVertexAttribPointer(i, attr.size, attr.type, GL_FALSE, meshLayout.getVertexSize(), (void*)attr.offset);
-			glEnableVertexAttribArray(i);
+			auto meshAttr = meshLayout.getAttr(attribute.name);
+			glVertexAttribPointer(attribute.location, meshAttr.size, meshAttr.type, GL_FALSE, meshLayout.getVertexSize(), (void*)meshAttr.offset);
+			glEnableVertexAttribArray(attribute.location);
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindVertexArray(NULL);
 
-		__bindingCache.push_back(binding);
+		__bindingCache.insert({ key,binding });
 
 		return binding;
+	}
+
+
+	void VertexLayoutBinding::bind()
+	{
+		glBindVertexArray(_vertexArrayHandle);
+	}
+
+
+	void VertexLayoutBinding::unbind()
+	{
+		glBindVertexArray(NULL);
 	}
 }

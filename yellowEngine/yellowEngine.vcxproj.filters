@@ -102,9 +102,6 @@
     <ClCompile Include="src\System\EventNotifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\System\GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\System\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -120,9 +117,6 @@
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\tinyxml2\tinyxml2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Rendering\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -136,6 +130,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,9 +221,6 @@
     <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\System\GameObject.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\yellowEngine\System\System.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -263,9 +257,6 @@
     <ClInclude Include="vendor\jsoncpp\include\json\json-forwards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\tinyxml2\include\tinyxml2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\yellowEngine\Rendering\Model.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -281,20 +272,14 @@
     <ClInclude Include="include\yellowEngine\Rendering\Shader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\yellowEngine\Component\GameObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Utility\Definitions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Shader\color.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="res\Shader\color.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="res\Shader\light.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="res\Shader\light.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="res\Shader\wireframe.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>

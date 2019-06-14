@@ -1,4 +1,4 @@
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 
 

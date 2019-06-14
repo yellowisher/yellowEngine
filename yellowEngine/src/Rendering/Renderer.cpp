@@ -18,7 +18,13 @@ namespace yellowEngine
 		glBindVertexArray(_vao);
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 
-		layout.bind();
+		auto attributes = shader->getAttributes();
+		for (int i = 0; i < attributes.size(); i++)
+		{
+			auto attr = layout.getAttr(attributes[i].name);
+			glVertexAttribPointer(i, attr.size, attr.type, GL_FALSE, layout.getVertexSize(), (void*)attr.offset);
+			glEnableVertexAttribArray(i);
+		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindVertexArray(NULL);
@@ -64,11 +70,13 @@ namespace yellowEngine
 	void Renderer::render()
 	{
 		glLineWidth(2);
-		_shader->use();
+		_shader->bind();
 		_shader->updateUniforms(nullptr);
 
 		glBindVertexArray(_vao);
 		glDrawArrays(GL_LINES, 0, (GLsizei)lines.size());
 		glBindVertexArray(NULL);
+
+		_shader->unbind();
 	}
 }

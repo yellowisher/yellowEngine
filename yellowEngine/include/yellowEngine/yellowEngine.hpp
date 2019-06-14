@@ -16,6 +16,7 @@
 #include "Component/Component.hpp"
 #include "Component/Light.hpp"
 #include "Component/MeshRenderer.hpp"
+#include "Component/GameObject.hpp"
 #include "Component/SkinnedMeshRenderer.hpp"
 #include "Component/ObjectRenderer.hpp"
 #include "Component/SphereCollider.hpp"
@@ -33,13 +34,13 @@
 #include "Rendering/Renderer.hpp"
 #include "Rendering/Shader.hpp"
 #include "Rendering/Texture.hpp"
+#include "Rendering/Material.hpp"
 #include "Rendering/UniformUpdater.hpp"
 #include "Rendering/VertexLayout.hpp"
 
 #include "System/Event.hpp"
 #include "System/EventListener.hpp"
 #include "System/EventNotifier.hpp"
-#include "System/GameObject.hpp"
 #include "System/System.hpp"
 
 #include "Utility/ObjectPool.hpp"

@@ -16,7 +16,7 @@ namespace yellowEngine
 		UniformUpdater(Shader* shader);
 		~UniformUpdater();
 
-		void initialize();
+		void init();
 		void update(GameObject* user) const;
 
 	private:

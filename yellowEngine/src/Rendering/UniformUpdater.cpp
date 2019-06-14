@@ -1,5 +1,5 @@
 #include "yellowEngine/Component/ObjectRenderer.hpp"
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Rendering/Shader.hpp"
 #include "yellowEngine/Rendering/UniformUpdater.hpp"
 
@@ -20,7 +20,7 @@ namespace yellowEngine
 	}
 
 
-	void UniformUpdater::initialize()
+	void UniformUpdater::init()
 	{
 		for (int i = 0; i < Num_Uniforms; i++)
 		{

@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
 
 
@@ -16,29 +16,19 @@ namespace yellowEngine
 	}
 
 
-	MeshRenderer* MeshRenderer::set(Mesh* mesh, Shader* shader)
+	MeshRenderer* MeshRenderer::set(Mesh* mesh, const Material& material)
 	{
 		_mesh = mesh;
-		_shader = shader;
+		_material = material;
+		_material.init(gameObject, mesh);
 		return this;
 	}
 
 
 	void MeshRenderer::_render()
 	{
-		// update automatic uniforms (Model, ProjectionView, etc...)
-		_shader->use();
-		_shader->updateUniforms(gameObject);
-
-		// active all textures
-		for (size_t i = 0; i < _textures.size(); i++)
-		{
-			glActiveTexture((GLenum)(GL_TEXTURE0 + i));
-			_textures[i]->use();
-		}
-
-		glBindVertexArray(_mesh->getVertexArrayHandle());
+		_material.bind();
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(NULL);
+		_material.unbind();
 	}
 }

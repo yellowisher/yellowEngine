@@ -13,7 +13,8 @@ namespace yellowEngine
 	public:
 		static Texture* create(const char* path);
 
-		void use();
+		void bind();
+		void unbind();
 
 		unsigned int _id;
 

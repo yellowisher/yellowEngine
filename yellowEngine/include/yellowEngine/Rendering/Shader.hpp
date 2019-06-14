@@ -10,7 +10,7 @@
 #include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Math/Vector4.hpp"
 #include "yellowEngine/Math/Matrix.hpp"
-#include "yellowEngine/System/GameObject.hpp"
+#include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Rendering/UniformUpdater.hpp"
 
 namespace yellowEngine
@@ -18,25 +18,26 @@ namespace yellowEngine
 	struct Attribute
 	{
 		std::string name;
-		int index;
 		GLenum type;
 		int size;
-		unsigned int handle;
+		int location;
 	};
 
 	struct Uniform
 	{
 		std::string name;
-		int index;
 		GLenum type;
 		int size;
-		unsigned int handle;
+		int location;
 	};
 
 	class Shader
 	{
 	public:
 		static Shader* create(const char* vsPath, const char* fsPath);
+
+		// TODO: remove this; for forward lighting only
+		int getId() { return _id; }
 
 		const std::vector<Attribute>& getAttributes();
 		const Uniform* getUniform(std::string name);
@@ -47,7 +48,8 @@ namespace yellowEngine
 		void setUniform(const Uniform* uniform, const Vector4& value);
 		void setUniform(const Uniform* uniform, const Matrix& value);
 
-		void use();
+		void bind();
+		void unbind();
 		void updateUniforms(GameObject* target);
 
 	private:

@@ -156,38 +156,40 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
-	GameObject* modelGo = model->instantiate("Person");
-
-	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
-	Shader* colorShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
+	Shader* textureShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
+	unsigned int lightsIndex = glGetUniformBlockIndex(textureShader->getId(), "LightBlock");
+	glUniformBlockBinding(textureShader->getId(), lightsIndex, 0);
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
-	unsigned int lightsIndex = glGetUniformBlockIndex(colorShader->getId(), "LightBlock");
-	glUniformBlockBinding(colorShader->getId(), lightsIndex, 0);
+	Material cubeMaterial(textureShader);
+	cubeMaterial.addTexture(diffuseMap, "u_Material.diffuse");
+	cubeMaterial.addTexture(specularMap, "u_Material.specular");
+	cubeMaterial.getShader()->setUniform(cubeMaterial.getShader()->getUniform("u_Material.shininess"), 64.0f);
+
+	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
 
 	GameObject* body = new GameObject("MovingCube");
-	MeshRenderer* cubeRenderer = body->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* cubeRenderer = body->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
 	boxTransform = body->transform;
 	boxTransform->setScale(2.0f, 4.0f, 1.0f);
 
 	GameObject* ls = new GameObject("leftShoulder");
-	MeshRenderer* lsm = ls->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* lsm = ls->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
 	ls->transform->translate(-1.5f, 1.5f, 0);
 
 	GameObject* rs = new GameObject("rightShoulder");
-	MeshRenderer* rsm = rs->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* rsm = rs->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
 	rs->transform->translate(1.5f, 1.5f, 0);
 
 	GameObject* la = new GameObject("leftShoulder");
-	MeshRenderer* lam = la->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* lam = la->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
 	ls->transform->addChild(la->transform);
 	la->transform->setPosition(0, -1.5f, 0);
 	la->transform->setScale(1.0f, 2.0f, 1.0f);
 
 	GameObject* ra = new GameObject("rightShoulder");
-	MeshRenderer* ram = ra->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* ram = ra->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
 	rs->transform->addChild(ra->transform);
 	ra->transform->setPosition(0, -1.5f, 0);
 	ra->transform->setScale(1.0f, 2.0f, 1.0f);
@@ -196,7 +198,7 @@ int main(void)
 	h->transform->setPosition(0, 2.5f, 0);
 
 	GameObject* hd = new GameObject("rightShoulder");
-	MeshRenderer* hdm = hd->addComponent<MeshRenderer>()->set(cubeMesh, colorShader);
+	MeshRenderer* hdm = hd->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
 	h->transform->addChild(hd->transform);
 	hdm->transform->setPosition(0, 0, 0);
 
@@ -215,8 +217,6 @@ int main(void)
 	l->transform->rotate(45.0f, 0, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
-	Shader* lightShader = Shader::create("Shader/light.vert", "Shader/light.frag");
-	dirLightGo->addComponent<MeshRenderer>()->set(cubeMesh, lightShader);
 	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
 
 	light->transform->rotate(45.0f, 0, 0);
@@ -230,19 +230,6 @@ int main(void)
 	cameraTransform->translate(0, 0, 4.0f);
 
 	ObjectRenderer::_currentCamera = camera;
-
-	colorShader->setUniform(colorShader->getUniform("u_Material.shininess"), 64.0f);
-	cubeRenderer->addTexture(diffuseMap, "u_Material.diffuse");
-	cubeRenderer->addTexture(specularMap, "u_Material.specular");
-
-	lsm->addTexture(diffuseMap, "u_Material.diffuse");
-	lsm->addTexture(specularMap, "u_Material.specular");
-
-	rsm->addTexture(diffuseMap, "u_Material.diffuse");
-	rsm->addTexture(specularMap, "u_Material.specular");
-
-	hdm->addTexture(diffuseMap, "u_Material.diffuse");
-	hdm->addTexture(specularMap, "u_Material.specular");
 
 	while (!glfwWindowShouldClose(window))
 	{

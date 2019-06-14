@@ -2,6 +2,7 @@
 #define __H_VERTEXLAYOUTBINDING__
 
 #include <vector>
+#include <map>
 
 #include "yellowEngine/Rendering/Mesh.hpp"
 #include "yellowEngine/Rendering/Shader.hpp"
@@ -14,16 +15,16 @@ namespace yellowEngine
 		static VertexLayoutBinding* create(Mesh* mesh, Shader* shader);
 
 		unsigned int getVertexArrayHandle();
+		void bind();
+		void unbind();
 
 	private:
-		static std::vector<VertexLayoutBinding*> __bindingCache;
-
-		unsigned int _vertexArrayHandle;
-		Mesh* _mesh;
-		Shader* _shader;
+		static std::map<std::pair<Mesh*, Shader*>, VertexLayoutBinding*> __bindingCache;
 
 		VertexLayoutBinding();
 		~VertexLayoutBinding();
+
+		unsigned int _vertexArrayHandle;
 	};
 }
 

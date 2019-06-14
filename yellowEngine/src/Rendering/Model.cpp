@@ -2,6 +2,7 @@
 #include <stack>
 
 #include "yellowEngine/Utility/Utils.hpp"
+#include "yellowEngine/Utility/Definitions.hpp"
 #include "yellowEngine/System/System.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
 #include "yellowEngine/Rendering/Model.hpp"
@@ -50,7 +51,7 @@ namespace yellowEngine
 
 			GameObject* gameObject = new GameObject(node->name.c_str());
 			// TODO: remove shader program
-			if (node->mesh)gameObject->addComponent<MeshRenderer>()->set(node->mesh);
+			if (node->mesh)gameObject->addComponent<MeshRenderer>()->set(node->mesh, Shader::create("Shader/texture.vert", "Shader/texture.frag"));
 
 			if (parent != nullptr)
 			{
@@ -85,6 +86,7 @@ namespace yellowEngine
 
 		Model* model = loadFBX(path);
 		__modelCache.insert({ path, model });
+		return model;
 	}
 
 
@@ -152,7 +154,7 @@ namespace yellowEngine
 		node->name = aiNode->mName.C_Str();
 		_nodes.insert({ node->name, node });
 
-		for (int i = 0; i < aiNode->mNumChildren; i++)
+		for (unsigned int i = 0; i < aiNode->mNumChildren; i++)
 		{
 			Node* child = buildTree(aiNode->mChildren[i]);
 			node->children.push_back(child);
@@ -167,7 +169,7 @@ namespace yellowEngine
 		// Model class already caching model itself
 		// there is no need to cache in Mesh class
 		// so create directly rather than call Mesh::create
-		Mesh* mesh;
+		Mesh* mesh = nullptr;
 
 		// TODO: support vary vertex format
 		// currently only handles model format of PNT(+B)
@@ -189,7 +191,7 @@ namespace yellowEngine
 				vertices[i].uv.x = aiMesh->mTextureCoords[i]->x;
 				vertices[i].uv.y = aiMesh->mTextureCoords[i]->y;
 
-				for (int j = 0; j < Mesh::MaxJointCount; j++)
+				for (int j = 0; j < MaxJointCount; j++)
 				{
 					vertices[i].joints[j] = NullJoint;
 				}
@@ -205,8 +207,8 @@ namespace yellowEngine
 			for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
 			{
 				Node* joint = _nodes[aiMesh->mBones[b]->mName.C_Str()];
-				joint->jointId = b;
-				for (int w = 0; w < aiMesh->mNumBones; w++)
+				joint->jointId = (float)b;
+				for (unsigned int w = 0; w < aiMesh->mNumBones; w++)
 				{
 					int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
 
@@ -218,14 +220,14 @@ namespace yellowEngine
 			}
 
 			VertexLayout layout({
-				Attribute(VertexLayout::Attr_Position,3),
-				Attribute(VertexLayout::Attr_Normal,3),
-				Attribute(VertexLayout::Attr_TexCoord0,2),
-				Attribute(VertexLayout::Attr_Joints,4),
-				Attribute(VertexLayout::Attr_Weights,4),
+				Attr_Position,
+				Attr_Normal,
+				Attr_TexCoord0,
+				Attr_Joints,
+				Attr_Weights,
 				});
 
-			mesh = new Mesh(layout, vertices.size(), &vertices[0], indices.size(), &indices[0]);
+			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 		else
 		{
@@ -254,12 +256,12 @@ namespace yellowEngine
 			}
 
 			VertexLayout layout({
-				Attribute(VertexLayout::Attr_Position,3),
-				Attribute(VertexLayout::Attr_Normal,3),
-				Attribute(VertexLayout::Attr_TexCoord0,2),
+				Attr_Position,
+				Attr_Normal,
+				Attr_TexCoord0,
 				});
 
-			mesh = new Mesh(layout, vertices.size(), &vertices[0], indices.size(), &indices[0]);
+			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
 		if (_scene->HasMaterials())
@@ -274,5 +276,7 @@ namespace yellowEngine
 				Texture::create(path.C_Str());
 			}
 		}
+
+		return mesh;
 	}
 }

@@ -7,8 +7,8 @@
 #include "yellowEngine/Component/ObjectRenderer.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
 #include "yellowEngine/Rendering/Shader.hpp"
-#include "yellowEngine/Rendering/VertexLayoutBinding.hpp"
-#include "yellowEngine/Rendering/Texture.hpp"
+#include "yellowEngine/Rendering/Material.hpp"
+
 
 namespace yellowEngine
 {
@@ -18,12 +18,12 @@ namespace yellowEngine
 		MeshRenderer(GameObject* gameObject);
 		virtual ~MeshRenderer();
 
-		MeshRenderer* set(Mesh* mesh, Shader* shader = nullptr);
+		MeshRenderer* set(Mesh* mesh, const Material& material);
 		virtual void _render() override;
 
 	protected:
 		Mesh* _mesh;
-		Shader* _shader;
+		Material _material;
 	};
 }
 

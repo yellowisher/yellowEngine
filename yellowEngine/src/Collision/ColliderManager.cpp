@@ -24,7 +24,7 @@ namespace yellowEngine
 
 		_wireFrameShader = Shader::create("Shader/wireframe.vert", "Shader/wireframe.frag");
 		_colorUniform = _wireFrameShader->getUniform("u_LineColor");
-		VertexLayout layout = VertexLayout({ VertexLayout::Attribute(VertexLayout::Attr_Position, 3) });
+		VertexLayout layout = VertexLayout({ Attr_Position });
 		_renderer = Renderer(layout, _wireFrameShader);
 	}
 

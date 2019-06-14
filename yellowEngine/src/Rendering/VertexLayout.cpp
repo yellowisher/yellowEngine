@@ -6,12 +6,11 @@
 namespace yellowEngine
 {
 	VertexLayout::StaticConstructor VertexLayout::__staticConstructor;
-	VertexLayout::Attribute VertexLayout::__attributeInfo[Num_Usage];
-
+	VertexLayout::Attribute* VertexLayout::__attributeInfo;
 
 	VertexLayout::VertexLayout(std::vector<AttributeUsage> attributes)
 	{
-		int offset = 0;
+		size_t offset = 0;
 		for (auto usage : attributes)
 		{
 			Attribute attr = __attributeInfo[usage];
@@ -19,7 +18,7 @@ namespace yellowEngine
 			_attributes.insert({ attr.name, attr });
 			offset += sizeof(float) * attr.size;
 		}
-		_vertexSize = offset;
+		_vertexSize = (unsigned int)offset;
 	}
 
 
@@ -43,6 +42,6 @@ namespace yellowEngine
 	const VertexLayout::Attribute& VertexLayout::getAttr(std::string name) const
 	{
 		// assert?
-		return _attributes[name];
+		return _attributes.at(name);
 	}
 }

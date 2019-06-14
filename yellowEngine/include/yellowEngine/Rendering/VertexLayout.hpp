@@ -1,11 +1,12 @@
 #ifndef __H_VERTEXLAYOUT__
 #define __H_VERTEXLAYOUT__
 
+#include <map>
 #include <vector>
 #include <string>
 #include <glad/glad.h>
 
-#include "yellowEngine/Rendering/Mesh.hpp"
+#include "yellowEngine/Utility/Definitions.hpp"
 
 namespace yellowEngine
 {
@@ -28,6 +29,7 @@ namespace yellowEngine
 	public:
 		struct Attribute
 		{
+			Attribute() {};
 			Attribute(std::string name, GLenum type, int size) :
 				name(name), type(type), size(size)
 			{
@@ -36,7 +38,7 @@ namespace yellowEngine
 			std::string name;
 			GLenum type;
 			int size;
-			int offset;
+			size_t offset;
 		};
 
 		VertexLayout(std::vector<AttributeUsage> attributes);
@@ -52,6 +54,7 @@ namespace yellowEngine
 		{
 			StaticConstructor()
 			{
+				__attributeInfo = new Attribute[Num_Usage];
 				__attributeInfo[Attr_Position	] = Attribute("a_Position"	, GL_FLOAT, 3);
 				__attributeInfo[Attr_Normal		] = Attribute("a_Normal"	, GL_FLOAT, 3);
 				__attributeInfo[Attr_Color		] = Attribute("a_Color"		, GL_FLOAT, 3);
@@ -59,13 +62,13 @@ namespace yellowEngine
 				__attributeInfo[Attr_TexCoord1	] = Attribute("a_TexCoord1"	, GL_FLOAT, 2);
 				__attributeInfo[Attr_TexCoord2	] = Attribute("a_TexCoord2"	, GL_FLOAT, 2);
 				__attributeInfo[Attr_TexCoord3	] = Attribute("a_TexCoord3"	, GL_FLOAT, 2);
-				__attributeInfo[Attr_Joints		] = Attribute("a_Joints"	, GL_FLOAT, Mesh::MaxJointCount);
-				__attributeInfo[Attr_Weights	] = Attribute("a_Weights"	, GL_FLOAT, Mesh::MaxJointCount);
+				__attributeInfo[Attr_Joints		] = Attribute("a_Joints"	, GL_FLOAT, MaxJointCount);
+				__attributeInfo[Attr_Weights	] = Attribute("a_Weights"	, GL_FLOAT, MaxJointCount);
 			}
 		};
 
 		static StaticConstructor __staticConstructor;
-		static Attribute __attributeInfo[Num_Usage];
+		static Attribute* __attributeInfo;
 
 		std::map<std::string, Attribute> _attributes;
 		unsigned int _vertexSize;

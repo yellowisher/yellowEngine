@@ -42,8 +42,6 @@ namespace yellowEngine
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBufferHandle);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBufferHandle);
 
-		vertexLayout.bind();
-
 		glBufferData(GL_ARRAY_BUFFER, vertexLayout.getVertexSize() * vertexCount, vertexData, GL_STATIC_DRAW);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexCount, indexData, GL_STATIC_DRAW);
 
@@ -207,9 +205,9 @@ namespace yellowEngine
 		fin.close();
 
 		VertexLayout layout({
-			VertexLayout::Attribute(VertexLayout::Attr_Position,3),
-			VertexLayout::Attribute(VertexLayout::Attr_Normal,3),
-			VertexLayout::Attribute(VertexLayout::Attr_TexCoord0,2)
+			Attr_Position,
+			Attr_Normal,
+			Attr_TexCoord0
 			});
 
 		Mesh* mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)verticesIndex.size(), &verticesIndex[0]);

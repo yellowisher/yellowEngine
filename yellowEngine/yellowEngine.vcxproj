@@ -92,10 +92,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\GLFW\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb_image\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\tinyxml2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\GLFW\lib;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\lib;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimpd-vc140-mt.lib;glfw3d.lib;IrrXMLd.lib;zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -121,7 +121,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\GLFW\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb_image\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\tinyxml2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -166,11 +166,10 @@
     <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp" />
     <ClCompile Include="src\System\EventListener.cpp" />
     <ClCompile Include="src\System\EventNotifier.cpp" />
-    <ClCompile Include="src\System\GameObject.cpp" />
+    <ClCompile Include="src\Component\GameObject.cpp" />
     <ClCompile Include="src\System\System.cpp" />
     <ClCompile Include="vendor\glad\src\glad.c" />
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp" />
-    <ClCompile Include="vendor\tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Animation\AnimationClip.hpp" />
@@ -209,7 +208,8 @@
     <ClInclude Include="include\yellowEngine\System\Event.hpp" />
     <ClInclude Include="include\yellowEngine\System\EventListener.hpp" />
     <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp" />
-    <ClInclude Include="include\yellowEngine\System\GameObject.hpp" />
+    <ClInclude Include="include\yellowEngine\Component\GameObject.hpp" />
+    <ClInclude Include="include\yellowEngine\Utility\Definitions.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp" />
     <ClInclude Include="include\yellowEngine\System\System.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\Utils.hpp" />
@@ -219,7 +219,6 @@
     <ClInclude Include="vendor\jsoncpp\include\json\json-forwards.h" />
     <ClInclude Include="vendor\jsoncpp\include\json\json.h" />
     <ClInclude Include="vendor\stb_image\include\stb_image.h" />
-    <ClInclude Include="vendor\tinyxml2\include\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\skeletal.vert" />
@@ -227,10 +226,6 @@
     <None Include="res\Shader\texture_only.vert" />
     <None Include="res\Shader\wireframe.frag" />
     <None Include="res\Shader\wireframe.vert" />
-    <None Include="res\Shader\color.frag" />
-    <None Include="res\Shader\color.vert" />
-    <None Include="res\Shader\light.frag" />
-    <None Include="res\Shader\light.vert" />
     <None Include="res\Shader\texture.frag" />
     <None Include="res\Shader\texture.vert" />
   </ItemGroup>
