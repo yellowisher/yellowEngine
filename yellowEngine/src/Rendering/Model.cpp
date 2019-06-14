@@ -273,6 +273,7 @@ namespace yellowEngine
 		}
 
 		Material mat(Shader::create("Shader/texture.vert", "Shader/texture.frag"));
+		mat.setProperty("shininess", 64.0f);
 		if (_scene->HasMaterials())
 		{
 			aiMaterial* material = _scene->mMaterials[aiMesh->mMaterialIndex];

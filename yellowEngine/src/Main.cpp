@@ -168,7 +168,7 @@ int main(void)
 	Material cubeMaterial(textureShader);
 	cubeMaterial.addTexture(diffuseMap, "u_Material.diffuse");
 	cubeMaterial.addTexture(specularMap, "u_Material.specular");
-	cubeMaterial.getShader()->setUniform(cubeMaterial.getShader()->getUniform("u_Material.shininess"), 64.0f);
+	cubeMaterial.setProperty("shininess", 64.0f);
 
 	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
 
@@ -220,7 +220,8 @@ int main(void)
 	l->transform->rotate(45.0f, 0, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
-	Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
+	//Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
+	Light* light = dirLightGo->addComponent<Light>()->setDirectional();
 
 	light->transform->rotate(45.0f, 0, 0);
 	light->transform->setScale(0.2f, 0.2f, 0.2f);

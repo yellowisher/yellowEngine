@@ -141,6 +141,12 @@ namespace yellowEngine
 	}
 
 
+	const std::map<std::string, Uniform>& Shader::getUniforms()
+	{
+		return _uniforms;
+	}
+
+
 	const Uniform* Shader::getUniform(std::string name)
 	{
 		auto it = _uniforms.find(name);
