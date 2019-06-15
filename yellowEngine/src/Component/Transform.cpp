@@ -33,7 +33,7 @@ namespace yellowEngine
 		{
 			Transform* last = _children.back();
 			_children.pop_back();
-			delete(last);
+			delete(last->gameObject);
 		}
 		if (_parent)_parent->removeChild(this);
 	}

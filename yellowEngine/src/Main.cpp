@@ -162,8 +162,10 @@ int main(void)
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
-	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
-	model->instantiate("nanosuit");
+	Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
+	GameObject* go = model->instantiate("nanosuit");
+	go->transform->setScale(0.03f, 0.03f, 0.03f);
+	go->transform->rotate(270, 0, 0);
 
 	Material cubeMaterial(textureShader);
 	cubeMaterial.addTexture(diffuseMap, "u_Material.diffuse");
@@ -217,13 +219,13 @@ int main(void)
 
 	GameObject* dl = new GameObject();
 	Light* l = dl->addComponent<Light>()->setDirectional();
-	l->transform->rotate(45.0f, 0, 0);
+	l->transform->rotate(0, 180.0f, 0);
 
 	GameObject* dirLightGo = new GameObject("dirLight");
 	//Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
 	Light* light = dirLightGo->addComponent<Light>()->setDirectional();
 
-	light->transform->rotate(45.0f, 0, 0);
+	//light->transform->rotate(45.0f, 0, 0);
 	light->transform->setScale(0.2f, 0.2f, 0.2f);
 	light->transform->setPosition(1.2f, 1.0f, 2.0f);
 
@@ -235,19 +237,20 @@ int main(void)
 
 	ObjectRenderer::_currentCamera = camera;
 
+	delete(body);
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
-		if (!prevPressed && pressed)
-		{
-			cout << "Walk to Wave \n";
-			anim->play(waveClip, 20);
-		}
-		if (prevPressed && !pressed)
-		{
-			cout << "Wave to Walk \n";
-			anim->play(walkingClip, 20);
-		}
+		//if (!prevPressed && pressed)
+		//{
+		//	cout << "Walk to Wave \n";
+		//	anim->play(waveClip, 20);
+		//}
+		//if (prevPressed && !pressed)
+		//{
+		//	cout << "Wave to Walk \n";
+		//	anim->play(walkingClip, 20);
+		//}
 		prevPressed = pressed;
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

@@ -272,9 +272,9 @@ namespace yellowEngine
 			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
-		Material mat(Shader::create("Shader/texture.vert", "Shader/texture.frag"));
+		Material mat(Shader::create("Shader/color.vert", "Shader/color.frag"));
 		mat.setProperty("shininess", 64.0f);
-		if (_scene->HasMaterials())
+	/*	if (_scene->HasMaterials())
 		{
 			aiMaterial* material = _scene->mMaterials[aiMesh->mMaterialIndex];
 			if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -294,7 +294,7 @@ namespace yellowEngine
 
 				mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
 			}
-		}
+		}*/
 
 		return { mesh, mat };
 	}

@@ -295,5 +295,7 @@
     <None Include="res\Shader\skeletal.vert" />
     <None Include="res\Shader\texture_only.vert" />
     <None Include="res\Shader\texture_only.frag" />
+    <None Include="res\Shader\color.frag" />
+    <None Include="res\Shader\color.vert" />
   </ItemGroup>
 </Project>

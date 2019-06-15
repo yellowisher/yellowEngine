@@ -2,14 +2,15 @@
 
 in vec3 a_Position;
 in vec3 a_Normal;
-in vec2 a_TexCoord0;
+in vec4 a_Joints;
+in vec4 a_Weights;
 
 out vec3 v_Normal;
 out vec3 v_FragPosition;
-out vec2 v_TexCoord;
   
 uniform mat4 u_Model;
 uniform mat4 u_ProjectionView;
+uniform 
 
 void main()
 {
@@ -17,5 +18,4 @@ void main()
 	v_FragPosition = vec3(u_Model * vec4(a_Position, 1.0));
 
     gl_Position = u_ProjectionView * u_Model * vec4(a_Position, 1.0);
-	v_TexCoord = a_TexCoord0;
 }
