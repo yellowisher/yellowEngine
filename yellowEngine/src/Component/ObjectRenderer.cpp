@@ -27,9 +27,9 @@ namespace yellowEngine
 	}
 
 
-	void ObjectRenderer::render()
+	void ObjectRenderer::render(Shader* shader)
 	{
-		_render();
+		_render(shader);
 	}
 
 

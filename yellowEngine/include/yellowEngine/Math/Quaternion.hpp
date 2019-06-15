@@ -24,7 +24,7 @@ namespace yellowEngine
 		Quaternion(float x, float y, float z, float w);
 		Quaternion(const Quaternion& quaternion);
 		Quaternion(const Vector3& eulerAngle);
-		Quaternion(const Matrix& matrix);
+		//Quaternion(const Matrix& matrix);
 		~Quaternion();
 
 		Quaternion operator~() const;

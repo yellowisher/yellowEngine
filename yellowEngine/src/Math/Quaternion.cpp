@@ -43,7 +43,7 @@ namespace yellowEngine
 	}
 
 
-	Quaternion::Quaternion(const Matrix& matrix)
+	/*Quaternion::Quaternion(const Matrix& matrix)
 	{
 		Vector3 xaxis(matrix[0], matrix[1], matrix[2]);
 		Vector3 yaxis(matrix[4], matrix[5], matrix[6]);
@@ -86,7 +86,7 @@ namespace yellowEngine
 				z = 0.25f / s;
 			}
 		}
-	}
+	}*/
 
 
 	Quaternion::~Quaternion()

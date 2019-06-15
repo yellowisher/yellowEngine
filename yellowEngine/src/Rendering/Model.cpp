@@ -5,6 +5,7 @@
 #include "yellowEngine/Utility/Definitions.hpp"
 #include "yellowEngine/System/System.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
+#include "yellowEngine/Component/SkinnedMeshRenderer.hpp"
 #include "yellowEngine/Rendering/Model.hpp"
 
 namespace yellowEngine
@@ -50,8 +51,18 @@ namespace yellowEngine
 			visitQueue.pop();
 
 			GameObject* gameObject = new GameObject(node->name.c_str());
-			// TODO: remove shader program
-			if (node->mesh)gameObject->addComponent<MeshRenderer>()->set(node->mesh, node->material);
+			node->transform = gameObject->transform;
+			if (node->mesh)
+			{
+				if (_scene->HasAnimations())
+				{
+					gameObject->addComponent<SkinnedMeshRenderer>();
+				}
+				else
+				{
+					gameObject->addComponent<MeshRenderer>()->set(node->mesh, node->material);
+				}
+			}
 
 			if (parent != nullptr)
 			{
@@ -69,6 +80,33 @@ namespace yellowEngine
 			for (auto child : node->children)
 			{
 				visitQueue.push({ child, gameObject->transform });
+			}
+		}
+
+		if (_scene->HasAnimations())
+		{
+			visitQueue.push({ _root, nullptr });
+			while (!visitQueue.empty())
+			{
+				auto visit = visitQueue.front();
+				Node* node = visit.first;
+				visitQueue.pop();
+
+				auto renderer = node->transform->gameObject->getComponent<SkinnedMeshRenderer>();
+				if (renderer != nullptr)
+				{
+					std::vector<Transform*> jointTransforms;
+					for (auto node : node->jointNodes)
+					{
+						jointTransforms.push_back(node->transform);
+					}
+					renderer->set(node->mesh, node->material, jointTransforms);
+				}
+
+				for (auto child : node->children)
+				{
+					visitQueue.push({ child, nullptr });
+				}
 			}
 		}
 
@@ -124,7 +162,7 @@ namespace yellowEngine
 	{
 		if (node->aiMesh != nullptr)
 		{
-			auto pair = createMesh(node->aiMesh);
+			auto pair = createMesh(node->aiMesh, node);
 			node->mesh = pair.first;
 			node->material = pair.second;
 		}
@@ -172,7 +210,7 @@ namespace yellowEngine
 	}
 
 
-	std::pair<Mesh*, Material> Model::createMesh(aiMesh* aiMesh)
+	std::pair<Mesh*, Material> Model::createMesh(aiMesh* aiMesh, Node* currentNode)
 	{	
 		// Model class already caching model itself
 		// there is no need to cache in Mesh class
@@ -196,8 +234,11 @@ namespace yellowEngine
 				vertices[i].normal.y = aiMesh->mNormals[i].y;
 				vertices[i].normal.z = aiMesh->mNormals[i].z;
 
-				vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
-				vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
+				//vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
+				//vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
+
+				vertices[i].uv.x = 0;
+				vertices[i].uv.y = 0;
 
 				for (int j = 0; j < MaxJointCount; j++)
 				{
@@ -212,17 +253,18 @@ namespace yellowEngine
 				indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
 			}
 
+			currentNode->jointNodes.resize(aiMesh->mNumBones);
 			for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
 			{
-				Node* joint = _nodes[aiMesh->mBones[b]->mName.C_Str()];
-				joint->jointId = (float)b;
+				Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
+				currentNode->jointNodes[b] = jointNode;
 				for (unsigned int w = 0; w < aiMesh->mNumBones; w++)
 				{
 					int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
 
 					int wi = 0;
 					while (vertices[vi].joints[wi] != NullJoint) wi++;
-					vertices[vi].joints[wi] = joint->jointId;
+					vertices[vi].joints[wi] = (float)b;
 					vertices[vi].weights[wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
 				}
 			}
@@ -272,7 +314,9 @@ namespace yellowEngine
 			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
-		Material mat(Shader::create("Shader/color.vert", "Shader/color.frag"));
+		//Material mat(Shader::create("Shader/color.vert", "Shader/color.frag"));
+		Material mat(Shader::create("Shader/skeletal.vert", "Shader/color.frag"));
+
 		mat.setProperty("shininess", 64.0f);
 	/*	if (_scene->HasMaterials())
 		{

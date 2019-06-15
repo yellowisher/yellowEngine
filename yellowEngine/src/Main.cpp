@@ -162,7 +162,7 @@ int main(void)
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
-	Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
+	Model* model = Model::create("Mesh/free3DmodelFBX.fbx");
 	GameObject* go = model->instantiate("nanosuit");
 	go->transform->setScale(0.03f, 0.03f, 0.03f);
 	go->transform->rotate(270, 0, 0);

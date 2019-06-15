@@ -42,12 +42,12 @@ namespace yellowEngine
 		const std::vector<Attribute>& getAttributes();
 		const std::map<std::string, Uniform>& getUniforms();
 		const Uniform* getUniform(std::string name);
-		void setUniform(const Uniform* uniform, int value);
-		void setUniform(const Uniform* uniform, float value);
-		void setUniform(const Uniform* uniform, const Vector2& value);
-		void setUniform(const Uniform* uniform, const Vector3& value);
-		void setUniform(const Uniform* uniform, const Vector4& value);
-		void setUniform(const Uniform* uniform, const Matrix& value);
+		void setUniform(const Uniform* uniform, int value, int index = 0);
+		void setUniform(const Uniform* uniform, float value, int index = 0);
+		void setUniform(const Uniform* uniform, const Vector2& value, int index = 0);
+		void setUniform(const Uniform* uniform, const Vector3& value, int index = 0);
+		void setUniform(const Uniform* uniform, const Vector4& value, int index = 0);
+		void setUniform(const Uniform* uniform, const Matrix& value, int index = 0);
 
 		void bind();
 		void unbind();

@@ -31,7 +31,6 @@ namespace yellowEngine
 				Mesh* mesh;
 				aiMesh* aiMesh;
 			};
-			float jointId;
 			Material material;
 
 			Vector3 position;
@@ -39,18 +38,22 @@ namespace yellowEngine
 			Quaternion rotation;
 			std::string name;
 			std::vector<Node*> children;
+			
+			// store instantiated transform
+			Transform* transform;
+			std::vector<Node*> jointNodes;
 		};
 		
 		static Model* loadFBX(std::string path);
+
+		static std::map<std::string, Model*> __modelCache;
+		static constexpr float NullJoint = -1.0f;
 
 		Model();
 		~Model();
 		Node* buildTree(aiNode* aiNode);
 		void fillMesh(Node* node);
-		std::pair<Mesh*, Material> createMesh(aiMesh* mesh);
-
-		static std::map<std::string, Model*> __modelCache;
-		static constexpr float NullJoint = -1.0f;
+		std::pair<Mesh*, Material> createMesh(aiMesh* mesh, Node* currentNode);
 
 		// temporal value for building scene tree
 		const aiScene* _scene;

@@ -21,6 +21,7 @@ namespace yellowEngine
 		static Matrix createRotation(Quaternion rotation);
 		static Matrix createScale(Vector3 scale);
 
+		float determinant() const;
 		Vector3 extractTranslation() const;
 		Quaternion extractRotation() const;
 		Vector3 extractScale() const;

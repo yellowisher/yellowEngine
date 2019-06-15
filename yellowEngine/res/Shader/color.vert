@@ -2,8 +2,6 @@
 
 in vec3 a_Position;
 in vec3 a_Normal;
-in vec4 a_Joints;
-in vec4 a_Weights;
 
 out vec3 v_Normal;
 out vec3 v_FragPosition;

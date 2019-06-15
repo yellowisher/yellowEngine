@@ -158,45 +158,45 @@ namespace yellowEngine
 	}
 
 
-	void Shader::setUniform(const Uniform* uniform, int value)
+	void Shader::setUniform(const Uniform* uniform, int value, int index)
 	{
 		glUseProgram(_id);
-		glUniform1i(uniform->location, value);
+		glUniform1i(uniform->location + index, value);
 	}
 
 
-	void Shader::setUniform(const Uniform* uniform, float value)
+	void Shader::setUniform(const Uniform* uniform, float value, int index)
 	{
 		glUseProgram(_id);
-		glUniform1f(uniform->location, value);
+		glUniform1f(uniform->location + index, value);
 	}
 
 
-	void Shader::setUniform(const Uniform* uniform, const Vector2& value)
+	void Shader::setUniform(const Uniform* uniform, const Vector2& value, int index)
 	{
 		glUseProgram(_id);
-		glUniform2f(uniform->location, value.x, value.y);
+		glUniform2f(uniform->location + index, value.x, value.y);
 	}
 
 
-	void Shader::setUniform(const Uniform* uniform, const Vector3& value)
+	void Shader::setUniform(const Uniform* uniform, const Vector3& value, int index)
 	{
 		glUseProgram(_id);
-		glUniform3f(uniform->location, value.x, value.y, value.z);
+		glUniform3f(uniform->location + index, value.x, value.y, value.z);
 	}
 
 
-	void Shader::setUniform(const Uniform* uniform, const Vector4& value)
+	void Shader::setUniform(const Uniform* uniform, const Vector4& value, int index)
 	{
 		glUseProgram(_id);
-		glUniform4f(uniform->location, value.x, value.y, value.z, value.w);
+		glUniform4f(uniform->location + index, value.x, value.y, value.z, value.w);
 	}
 
 
-	void Shader::setUniform(const Uniform* uniform, const Matrix& value)
+	void Shader::setUniform(const Uniform* uniform, const Matrix& value, int index)
 	{
 		glUseProgram(_id);
-		glUniformMatrix4fv(uniform->location, 1, GL_FALSE, value.getData());
+		glUniformMatrix4fv(uniform->location + index, 1, GL_FALSE, value.getData());
 	}
 
 

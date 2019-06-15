@@ -96,21 +96,106 @@ namespace yellowEngine
 	}
 
 
+	float Matrix::determinant() const
+	{
+		float a0 = _m[0] * _m[5] - _m[1] * _m[4];
+		float a1 = _m[0] * _m[6] - _m[2] * _m[4];
+		float a2 = _m[0] * _m[7] - _m[3] * _m[4];
+		float a3 = _m[1] * _m[6] - _m[2] * _m[5];
+		float a4 = _m[1] * _m[7] - _m[3] * _m[5];
+		float a5 = _m[2] * _m[7] - _m[3] * _m[6];
+		float b0 = _m[8] * _m[13] - _m[9] * _m[12];
+		float b1 = _m[8] * _m[14] - _m[10] * _m[12];
+		float b2 = _m[8] * _m[15] - _m[11] * _m[12];
+		float b3 = _m[9] * _m[14] - _m[10] * _m[13];
+		float b4 = _m[9] * _m[15] - _m[11] * _m[13];
+		float b5 = _m[10] * _m[15] - _m[11] * _m[14];
+
+		return a0 * b5 - a1 * b4 + a2 * b3 + a3 * b2 - a4 * b1 + a5 * b0;
+	}
+
+
 	Vector3 Matrix::extractTranslation() const
 	{
-		return Vector3(_m[12], _m[13], _m[14]);
+		if (determinant() < 0)return Vector3(_m[12], -_m[13], _m[14]);
+		else return Vector3(_m[12], _m[13], _m[14]);
 	}
 
 
 	Quaternion Matrix::extractRotation() const
 	{
-		return Quaternion(*this);
+		Quaternion rotation;
+		Vector3 xaxis(_m[0], _m[1], _m[2]);
+		Vector3 yaxis(_m[4], _m[5], _m[6]);
+		Vector3 zaxis(_m[8], _m[9], _m[10]);
+
+		Vector3 scale = extractScale();
+		float rn;
+
+		rn = 1.0f / scale.x;
+		xaxis.x *= rn;
+		xaxis.y *= rn;
+		xaxis.z *= rn;
+
+		rn = 1.0f / scale.y;
+		yaxis.x *= rn;
+		yaxis.y *= rn;
+		yaxis.z *= rn;
+
+		rn = 1.0f / scale.z;
+		zaxis.x *= rn;
+		zaxis.y *= rn;
+		zaxis.z *= rn;
+
+		float trace = xaxis.x + yaxis.y + zaxis.z + 1.0f;
+
+		if (trace > 1.0f)
+		{
+			float s = 0.5f / sqrt(trace);
+			rotation.w = 0.25f / s;
+			rotation.x = (yaxis.z - zaxis.y) * s;
+			rotation.y = (zaxis.x - xaxis.z) * s;
+			rotation.z = (xaxis.y - yaxis.x) * s;
+		}
+		else
+		{
+			if (xaxis.x > yaxis.y && xaxis.x > zaxis.z)
+			{
+				float s = 0.5f / sqrt(1.0f + xaxis.x - yaxis.y - zaxis.z);
+				rotation.w = (yaxis.z - zaxis.y) * s;
+				rotation.x = 0.25f / s;
+				rotation.y = (yaxis.x + xaxis.y) * s;
+				rotation.z = (zaxis.x + xaxis.z) * s;
+			}
+			else if (yaxis.y > zaxis.z)
+			{
+				float s = 0.5f / sqrt(1.0f + yaxis.y - xaxis.x - zaxis.z);
+				rotation.w = (zaxis.x - xaxis.z) * s;
+				rotation.x = (yaxis.x + xaxis.y) * s;
+				rotation.y = 0.25f / s;
+				rotation.z = (zaxis.y + yaxis.z) * s;
+			}
+			else
+			{
+				float s = 0.5f / sqrt(1.0f + zaxis.z - xaxis.x - yaxis.y);
+				rotation.w = (xaxis.y - yaxis.x) * s;
+				rotation.x = (zaxis.x + xaxis.z) * s;
+				rotation.y = (zaxis.y + yaxis.z) * s;
+				rotation.z = 0.25f / s;
+			}
+		}
+		return rotation;
 	}
 
 
 	Vector3 Matrix::extractScale() const
 	{
-		return Vector3(_m[0], _m[5], _m[10]);
+		Vector3 scale;
+		scale.x = sqrtf(_m[0] * _m[0] + _m[1] * _m[1] + _m[2] * _m[2]);
+		scale.y = sqrtf(_m[4] * _m[4] + _m[5] * _m[5] + _m[6] * _m[6]);
+		scale.z = sqrtf(_m[8] * _m[8] + _m[9] * _m[9] + _m[10] * _m[10]);
+
+		return scale;
 	}
 
 

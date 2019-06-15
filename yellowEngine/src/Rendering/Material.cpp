@@ -9,7 +9,7 @@ namespace yellowEngine
 			if (uniformPair.second.type == GL_SAMPLER_1D ||
 				uniformPair.second.type == GL_SAMPLER_2D ||
 				uniformPair.second.type == GL_SAMPLER_3D)continue;
-			int commaPos = uniformPair.first.find('.');
+			size_t commaPos = uniformPair.first.find('.');
 			if (uniformPair.first.substr(0, commaPos) == "u_Material")
 			{
 				Property prop;

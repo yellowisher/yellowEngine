@@ -18,12 +18,12 @@ namespace yellowEngine
 		ObjectRenderer(GameObject* gameObject);
 		virtual ~ObjectRenderer();
 
-		void render();
+		void render(Shader* shader = nullptr);
 
 		static Camera* _currentCamera;
 	protected:
 
-		virtual void _render() = 0;
+		virtual void _render(Shader* shader) = 0;
 
 	private:
 		static std::list<ObjectRenderer*> _renderers;
