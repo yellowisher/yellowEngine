@@ -38,7 +38,6 @@ namespace yellowEngine
 
 		bool _pointsChanged;
 		Vector3 _points[Num_Points];
-		Vector3 _scalePoints[Num_Points];
 		Vector3 _worldPoints[Num_Points];
 
 		void set(float minx, float miny, float minz, float maxx, float maxy, float maxz);

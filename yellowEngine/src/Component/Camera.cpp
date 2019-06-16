@@ -111,7 +111,7 @@ namespace yellowEngine
 		if (_dirtyBits & Dirty_View)
 		{
 			_dirtyBits &= ~Dirty_View;
-			_vMatrix = transform->getTRMatrix();
+			_vMatrix = transform->getMatrix();
 			_vMatrix = ~_vMatrix;
 		}
 		return _vMatrix;

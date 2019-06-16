@@ -18,7 +18,7 @@ bool firstMouse = true;
 float _yaw = 0;
 float _pitch = 0;
 
-float speed = 3100.0f;
+float speed = 1.0f;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
@@ -104,6 +104,22 @@ void processInput(GLFWwindow *window)
 	{
 		boxTransform->rotate(0, -3.0f, 0);
 	}
+	if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+	{
+		Vector3 scale = boxTransform->scale;
+		scale.x += 0.01f;
+		scale.y += 0.01f;
+		scale.z += 0.01f;
+		boxTransform->setScale(scale);
+	}
+	if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
+	{
+		Vector3 scale = boxTransform->scale;
+		scale.x -= 0.01f;
+		scale.y -= 0.01f;
+		scale.z -= 0.01f;
+		boxTransform->setScale(scale);
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
@@ -125,25 +141,25 @@ void processInput(GLFWwindow *window)
 	}
 }
 
-void addCube(Transform* target, Mesh* mesh, Material material)
-{
-	GameObject* go = new GameObject();
-	go->addComponent<MeshRenderer>()->set(mesh, material);
-	go->transform->setPosition(target->getWorldPosition());
-
-	auto localPosition = target->position;
-	auto localRotation = target->rotation.toEulerAngle();
-
-	auto worldPosition = target->getWorldPosition();
-	auto worldRotation = target->getWorldRotation().toEulerAngle();
-	auto m = target->getMatrix();
-	auto l = target->getLocalMatrix();
-
-	for (int i = 0; i < target->getChildCount(); i++)
-	{
-		addCube(target->getChild(i), mesh, material);
-	}
-}
+//void addCube(Transform* target, Mesh* mesh, Material material)
+//{
+//	GameObject* go = new GameObject();
+//	go->addComponent<MeshRenderer>()->set(mesh, material);
+//	go->transform->setPosition(target->getWorldPosition());
+//
+//	auto localPosition = target->position;
+//	auto localRotation = target->rotation.toEulerAngle();
+//
+//	auto worldPosition = target->getWorldPosition();
+//	auto worldRotation = target->getWorldRotation().toEulerAngle();
+//	auto m = target->getMatrix();
+//	auto l = target->getLocalMatrix();
+//
+//	for (int i = 0; i < target->getChildCount(); i++)
+//	{
+//		addCube(target->getChild(i), mesh, material);
+//	}
+//}
 
 int main(void)
 {
@@ -183,13 +199,14 @@ int main(void)
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
-	//Model* model = Model::create("Mesh/free3DmodelFBX.fbx");
+	//Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
 	Model* model = Model::create("Mesh/free3DmodelFBX.fbx");
 
 	GameObject* go = model->instantiate("nanosuit");
-	//go->transform->setScale(0.03f, 0.03f, 0.03f);
+	go->transform->setScale(0.01f, 0.01f, 0.01f);
 	//go->transform->rotate(270, 0, 0);
 
+	//boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
 	boxTransform = go->transform->findChild("free3dmodel_skeleton")->findChild("hips")->findChild("abdomen")->findChild("abdomen2")->findChild("chest")->findChild("shoulder.L");
 
 	Material cubeMaterial(textureShader);
@@ -199,12 +216,14 @@ int main(void)
 
 	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
 
-	addCube(go->transform, cubeMesh, cubeMaterial);
+	//addCube(go->transform, cubeMesh, cubeMaterial);
 
 	GameObject* body = new GameObject("MovingCube");
-	MeshRenderer* cubeRenderer = body->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	//boxTransform = body->transform;
-	//boxTransform->setScale(2.0f, 4.0f, 1.0f);
+	boxTransform = body->transform;
+
+	GameObject* bodyImage = new GameObject("Body");
+	MeshRenderer* cubeRenderer = bodyImage->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
+	bodyImage->transform->setScale(2.0f, 4.0f, 1.0f);
 
 	GameObject* ls = new GameObject("leftShoulder");
 	MeshRenderer* lsm = ls->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
@@ -237,6 +256,7 @@ int main(void)
 	body->transform->addChild(ls->transform);
 	body->transform->addChild(rs->transform);
 	body->transform->addChild(h->transform);
+	body->transform->addChild(bodyImage->transform);
 	Animator* anim = body->addComponent<Animator>();
 
 	AnimationClip* walkingClip = AnimationClip::create("Animation/walking.json");
@@ -258,15 +278,15 @@ int main(void)
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
-	camera->setPerspective(60.0f, 10.0f, 100000.0f);
+	camera->setPerspective(60.0f, 0.01f, 1000.0f);
 	//camera->setPerspective(60.0f, 0.01f, 10000.0f);
 
 	cameraTransform = cameraGo->transform;
-	cameraTransform->translate(0, 0, 500.0f);
+	cameraTransform->translate(0, 0, 4);
 
 	ObjectRenderer::_currentCamera = camera;
 
-	delete(body);
+	//delete(body);
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);

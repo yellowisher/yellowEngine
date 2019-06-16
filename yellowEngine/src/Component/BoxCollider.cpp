@@ -114,12 +114,10 @@ namespace yellowEngine
 		{
 			_pointsChanged = false;
 			Matrix matrix = transform->getMatrix();
-			Matrix sMatrix = transform->getSMatrix();
 
 			for (int i = 0; i < Num_Points; i++)
 			{
 				_worldPoints[i] = matrix * _points[i];
-				_scalePoints[i] = sMatrix * _points[i];
 			}
 		}
 	}
@@ -143,10 +141,18 @@ namespace yellowEngine
 			updatePoints();
 
 			Vector3 center = other->transform->getWorldPosition();
-			center = transform->getInverseTRMatrix() * center;
+			center = transform->getInverseMatrix() * center;
 
-			Vector3& max = _scalePoints[Right_Top_Back];
-			Vector3& min = _scalePoints[Left_Bottom_Front];
+			// convert radius to world space scale
+			Vector3 scale = other->transform->getMatrix().extractScale();
+			float radius = Utils::max(scale.x, scale.y, scale.z) * otherSphere->radius;
+
+			// ... and go back to box space scale (assume uniform scale)
+			Vector3 boxScale = transform->getInverseMatrix().extractScale();
+			radius = Utils::max(boxScale.x, boxScale.y, boxScale.z) * radius;
+
+			Vector3& max = _points[Right_Top_Back];
+			Vector3& min = _points[Left_Bottom_Front];
 			Vector3 closestPoint;
 
 			if (center.x < min.x)closestPoint.x = min.x;
@@ -162,7 +168,7 @@ namespace yellowEngine
 			else closestPoint.z = center.z;
 
 			Vector3 v = (center - closestPoint);
-			return (center - closestPoint).magnitude() < otherSphere->radius * otherSphere->radius;
+			return (center - closestPoint).magnitude() < radius * radius;
 		}
 		return false;
 	}

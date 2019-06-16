@@ -30,6 +30,11 @@ namespace yellowEngine
 			return a > b ? a : b;
 		}
 
+		constexpr float max(float a, float b, float c)
+		{
+			return max(max(a, b), c);
+		}
+
 		constexpr int max(int a, int b)
 		{
 			return a > b ? a : b;

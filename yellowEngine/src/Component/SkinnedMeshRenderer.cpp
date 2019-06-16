@@ -38,7 +38,14 @@ namespace yellowEngine
 			// update joint matrices
 			for (int i = 0; i < _joints.size(); i++)
 			{
-				_material.getShader()->setUniform(_jointUniform, _joints[i].first->getTRMatrix(_modelRoot) * _joints[i].second, i);
+				Matrix matrix;
+				Transform* cursor = _joints[i].first;
+				while (cursor != _modelRoot)
+				{
+					matrix = cursor->getLocalMatrix() * matrix;
+					cursor = cursor->getParent();
+				}
+				_material.getShader()->setUniform(_jointUniform, matrix * _joints[i].second, i);
 			}
 			glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 			_material.unbind();

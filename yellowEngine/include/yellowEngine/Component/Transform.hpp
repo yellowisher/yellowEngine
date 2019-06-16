@@ -49,11 +49,11 @@ namespace yellowEngine
 		void setScale(const Vector3& scale);
 		void setScale(float x, float y, float z);
 
-		const Matrix& getTRMatrix(Transform* until = nullptr);
-		const Matrix& getInverseTRMatrix(Transform* until = nullptr);
-		const Matrix& getSMatrix(Transform* until = nullptr);
-		const Matrix& getMatrix(Transform* until = nullptr);
-		Matrix getLocalMatrix();
+		const Matrix& getLocalMatrix();
+		const Matrix& getParentMatrix();	
+		const Matrix& getMatrix();
+		const Matrix& getInverseMatrix();
+		Matrix getMatrix(Transform* until);
 
 		const Vector3 getWorldPosition();
 		const Quaternion getWorldRotation();
@@ -67,27 +67,28 @@ namespace yellowEngine
 			Dirty_None = 0,
 			Dirty_Translation = 1,
 			Dirty_Rotation = 2,
-			Dirty_Inverse_Translation_Rotation = 4,
-			Dirty_Scale = 8,
-			Dirty_Matrix = 16,
-			Dirty_Translation_Rotation = Dirty_Translation | Dirty_Rotation,
-			Dirty_All = Dirty_Translation | Dirty_Rotation | Dirty_Inverse_Translation_Rotation | Dirty_Scale | Dirty_Matrix
+			Dirty_Scale = 4,
+			Dirty_LocalMatrix = Dirty_Translation | Dirty_Rotation | Dirty_Scale,
+			Dirty_Parent = 8,
+			Dirty_Matrix = Dirty_LocalMatrix | Dirty_Parent,
+			Dirty_InverseMatrix = 16,
+			Dirty_All = (Dirty_Parent << 1 - 1),
 		};
 
 		Transform* _parent;
 		std::vector<Transform*> _children;
 
 		Matrix _matrix;
-		Matrix _trMatrix;
-		Matrix _itrMatrix;
-		Matrix _sMatrix;
-		char _dirtyBits;
+		Matrix _localMatrix;
+		Matrix _parentMatrix;
+		Matrix _inverseMatrix;
+		int _dirtyBits;
 
 		Vector3 _position;
 		Vector3 _scale;
 		Quaternion _rotation;
 
-		void dirty(char bit);
+		void dirty(int bit);
 		void transformChanged();
 	};
 }

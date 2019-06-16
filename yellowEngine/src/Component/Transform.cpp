@@ -51,13 +51,11 @@ namespace yellowEngine
 
 		if (child->_parent)child->_parent->removeChild(child);
 
-		// test needed
-		Matrix tr = getInverseTRMatrix() * child->getTRMatrix();
-		Matrix s = ~getSMatrix() * child->getSMatrix();
+		Matrix childToParent = getInverseMatrix() * child->getMatrix();
 
-		child->setPosition(tr.extractTranslation());
-		child->setRotation(tr.extractRotation());
-		child->setScale(s.extractScale());
+		child->setPosition(childToParent.extractTranslation());
+		child->setRotation(childToParent.extractRotation());
+		child->setScale(childToParent.extractScale());
 
 		child->_parent = this;
 		_children.push_back(child);
@@ -70,12 +68,11 @@ namespace yellowEngine
 		{
 			if (*it == child)
 			{
-				Matrix tr = child->getTRMatrix();
-				Matrix s = child->getSMatrix();
+				Matrix childToParent = child->getMatrix();
 
-				child->setPosition(tr.extractTranslation());
-				child->setRotation(tr.extractRotation());
-				child->setScale(s.extractScale());
+				child->setPosition(childToParent.extractTranslation());
+				child->setRotation(childToParent.extractRotation());
+				child->setScale(childToParent.extractScale());
 
 				_children.erase(it);
 				child->_parent = nullptr;
@@ -189,101 +186,94 @@ namespace yellowEngine
 	}
 
 
-	const Matrix& Transform::getTRMatrix(Transform* until)
+	const Matrix& Transform::getLocalMatrix()
 	{
-		if (_dirtyBits | Dirty_Translation_Rotation)
+		if (_dirtyBits | Dirty_LocalMatrix)
 		{
-			_dirtyBits &= ~Dirty_Translation_Rotation;
+			_dirtyBits &= ~Dirty_LocalMatrix;
+			_localMatrix =
+				Matrix::createTranslation(position) *
+				Matrix::createRotation(rotation) *
+				Matrix::createScale(scale);
+		}
+		return _localMatrix;
+	}
 
-			Matrix t = Matrix::createTranslation(_position);
-			Matrix r = Matrix::createRotation(_rotation);
 
-			_trMatrix = t * r;
-			if (_parent != until)
+	const Matrix& Transform::getParentMatrix()
+	{
+		if (_dirtyBits | Dirty_Parent)
+		{
+			_dirtyBits &= ~Dirty_Parent;
+			if (_parent != nullptr)
 			{
-				_trMatrix = _parent->getTRMatrix(until) * _trMatrix;
+				_parentMatrix = _parent->getMatrix();
 			}
 		}
-		return _trMatrix;
+		return _parentMatrix;
 	}
 
 
-	const Matrix& Transform::getInverseTRMatrix(Transform* until)
+	const Matrix& Transform::getMatrix()
 	{
-		if (_dirtyBits | Dirty_Inverse_Translation_Rotation)
+		if (_dirtyBits | Dirty_Matrix)
 		{
-			_dirtyBits &= ~Dirty_Inverse_Translation_Rotation;
-
-			_itrMatrix = ~getTRMatrix(until);
-		}
-		return _itrMatrix;
-	}
-
-
-	const Matrix& Transform::getSMatrix(Transform* until)
-	{
-		if (_dirtyBits & Dirty_Scale)
-		{
-			_dirtyBits &= ~Dirty_Scale;
-			_sMatrix = Matrix::createScale(_scale);
-			if (_parent != until)
-			{
-				_sMatrix *= _parent->getSMatrix(until);
-			}
-		}
-		return _sMatrix;
-	}
-
-
-	const Matrix& Transform::getMatrix(Transform* until)
-	{
-		if (_dirtyBits != Dirty_None)
-		{
-			_dirtyBits &= ~Dirty_Matrix;
-			_matrix = getTRMatrix(until) * getSMatrix(until);
+			_matrix = getParentMatrix() * getLocalMatrix();
 		}
 		return _matrix;
 	}
 
 
-	Matrix Transform::getLocalMatrix()
+	const Matrix& Transform::getInverseMatrix()
 	{
-		Matrix t = Matrix::createTranslation(_position);
-		Matrix r = Matrix::createRotation(_rotation);
-		Matrix s = Matrix::createScale(_scale);
-		return t * r * s;
+		if (_dirtyBits | Dirty_InverseMatrix)
+		{
+			_dirtyBits &= ~Dirty_LocalMatrix;
+			_inverseMatrix = ~getMatrix();
+		}
+		return _inverseMatrix;
 	}
 
 
-	void Transform::dirty(char dirtyBits)
+	Matrix Transform::getMatrix(Transform* until)
 	{
-		_dirtyBits |= dirtyBits | Dirty_Matrix;
-		if (dirtyBits & Dirty_Translation_Rotation)_dirtyBits |= Dirty_Inverse_Translation_Rotation;
+		Matrix matrix = getLocalMatrix();
+		if (_parent != until)
+		{
+			matrix = _parent->getMatrix(until) * matrix;
+		}
+		return matrix;
+	}
+
+
+	void Transform::dirty(int dirtyBits)
+	{
+		dirtyBits |= Dirty_InverseMatrix;
+		_dirtyBits |= dirtyBits;
 
 		for (auto child : _children)
 		{
-			child->dirty(dirtyBits);
+			child->dirty(Dirty_Parent);
 		}
-		// move to getMatrix?
 		transformChanged();
 	}
 
 
 	const Vector3 Transform::getWorldPosition()
 	{
-		return getTRMatrix().extractTranslation();
+		return getMatrix().extractTranslation();
 	}
 
 
 	const Quaternion Transform::getWorldRotation()
 	{
-		return getTRMatrix().extractRotation();
+		return getMatrix().extractRotation();
 	}
 
 
 	const Vector3 Transform::getUp()
 	{
-		Quaternion rotation = getTRMatrix().extractRotation();
+		Quaternion rotation = getMatrix().extractRotation();
 		Vector3 up = rotation * Vector3::up;
 		up.normalize();
 		return up;
@@ -292,7 +282,7 @@ namespace yellowEngine
 
 	const Vector3 Transform::getRight()
 	{
-		Quaternion rotation = getTRMatrix().extractRotation();
+		Quaternion rotation = getMatrix().extractRotation();
 		Vector3 right = rotation * Vector3::right;
 		right.normalize();
 		return right;
@@ -301,7 +291,7 @@ namespace yellowEngine
 
 	const Vector3 Transform::getForward()
 	{
-		Quaternion rotation = getTRMatrix().extractRotation();
+		Quaternion rotation = getMatrix().extractRotation();
 		Vector3 forward = rotation * Vector3::forward;
 		forward.normalize();
 		return forward;
