@@ -13,6 +13,8 @@ namespace yellowEngine
 {
 	class Animator : public Component
 	{
+		using Key = AnimationClip::Key;
+		using Value = AnimationClip::Value;
 		using KeyFrame = AnimationClip::KeyFrame;
 		using PropertyType = AnimationClip::PropertyType;
 
@@ -37,10 +39,10 @@ namespace yellowEngine
 
 		static std::vector<Animator*> __animators;
 
+		Value lerp(Value a, Value b, float factor, PropertyType type);
 		void proceed();
-		void apply(std::pair<std::string, PropertyType> pair, float value);
-		void commit();
-		float getValue(std::pair<std::string, PropertyType> pair);
+		void apply(Key pair, Value value);
+		Value getValue(Key pair);
 		Transform* getTransform(const std::string& target);
 
 		State _state;
@@ -49,18 +51,15 @@ namespace yellowEngine
 		int _transitionDelay;
 		AnimationClip* _currentClip;
 		
-		// to handle euler angle seperated, store rotation value and apply it when commit()
-		std::map<Transform*, Vector3> _rotations;
-
 		// cache for child transform; finding transform by name in every frame might be expansive
 		std::map<std::string, Transform*> _transformCache;
 		
 		// current end points
-		std::map<std::pair<std::string, PropertyType>, int> _ends;
+		std::map<Key, int> _ends;
 
 		// frozen value for transition
-		std::map<std::pair<std::string, PropertyType>, float> _frozenValues;
-		std::map<std::pair<std::string, PropertyType>, float> _initialValues;
+		std::map<Key, Value> _frozenValues;
+		std::map<Key, Value> _initialValues;
 	};
 }
 

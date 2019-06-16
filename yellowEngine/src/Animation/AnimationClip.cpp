@@ -51,12 +51,37 @@ namespace yellowEngine
 			std::string target = fullTarget.substr(0, pos + 1);
 			auto prop = getProperty(fullTarget.substr(pos + 1));
 
-			std::vector<KeyFrame>& frames = clip->_channels.insert({ {target, prop}, {} }).first->second;
+			clip->_channels.insert({ {target, prop}, {} });
+			std::vector<KeyFrame>& frames = clip->_channels[{target, prop}];
 
 			for (auto keyFrame : channel["key_frames"])
 			{
 				int frame = keyFrame["frame"].asInt();
-				frames.push_back(KeyFrame(frame, keyFrame["value"].asFloat()));
+				auto value = keyFrame["value"];
+
+				switch (prop)
+				{
+					case Property_Position:
+					case Property_Scale:
+					{
+						Vector3 vector3;
+						vector3.x = value["x"].asFloat();
+						vector3.y = value["y"].asFloat();
+						vector3.z = value["z"].asFloat();
+						frames.push_back(KeyFrame(frame, vector3));
+						break;
+					}
+					case Property_Rotation:
+					{
+						Quaternion quaternion;
+						quaternion.x = value["x"].asFloat();
+						quaternion.y = value["y"].asFloat();
+						quaternion.z = value["z"].asFloat();
+						quaternion.w = value["w"].asFloat();
+						frames.push_back(KeyFrame(frame, quaternion));
+						break;
+					}
+				}
 			}
 		}
 

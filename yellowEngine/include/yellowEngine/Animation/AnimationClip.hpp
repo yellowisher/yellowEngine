@@ -5,6 +5,9 @@
 #include <string>
 #include <map>
 
+#include "yellowEngine/Math/Vector3.hpp"
+#include "yellowEngine/Math/Quaternion.hpp"
+
 namespace yellowEngine
 {
 	class AnimationClip
@@ -18,44 +21,68 @@ namespace yellowEngine
 	private:
 		enum PropertyType
 		{
-			Property_Position = 0,
-			Property_PositionX = 0,
-			Property_PositionY,
-			Property_PositionZ,
+			Property_Position,
+			Property_Rotation,
+			Property_Scale
+		};
 
-			Property_Rotation = 3,
-			Property_RotationX = 3,
-			Property_RotationY,
-			Property_RotationZ,
+		struct Value
+		{
+			Value() {};
+			Value(const Value& copy) { quaternion = copy.quaternion; }
+			Value& operator=(const Value& other) { quaternion = other.quaternion; return *this; }
+			~Value() {};
 
-			Property_Scale =6,
-			Property_ScaleX = 6,
-			Property_ScaleY,
-			Property_ScaleZ,
+			Value(const Vector3 vector3) :vector3(vector3) {}
+			Value(const Quaternion quaternion) :quaternion(quaternion) {}
+			union
+			{
+				Quaternion quaternion;
+				Quaternion rotation;
+
+				Vector3 vector3;
+				Vector3 position;
+				Vector3 scale;
+			};
 		};
 
 		struct KeyFrame
 		{
-			KeyFrame(int frame, float value) :frame(frame), value(value) {}
+			//KeyFrame() {};
+			KeyFrame(int frame, Vector3 value) :frame(frame), value(value) {}
+			KeyFrame(int frame, Quaternion value) :frame(frame), value(value) {}
 			~KeyFrame() {}
 
 			int frame;
-			float value;
+			Value value;
+		};
+
+		/*
+			instead of bunch of std::pair<>, use own structure
+			nothing but some syntax sugar
+		*/
+		struct Key
+		{
+			std::string transformPath;
+			PropertyType prop;
+
+			bool operator<(const Key& other) const
+			{
+				if (transformPath == other.transformPath)
+				{
+					return prop < other.prop;
+				}
+				return transformPath < other.transformPath;
+			}
 		};
 
 		static PropertyType getProperty(std::string string)
 		{
 			static std::map<std::string, PropertyType> __types =
 			{
-				{"position.x", {Property_PositionX}},
-				{"position.y", {Property_PositionY}},
-				{"position.z", {Property_PositionZ}},
-				{"rotation.x", {Property_RotationX}},
-				{"rotation.y", {Property_RotationY}},
-				{"rotation.z", {Property_RotationZ}},
-				{"scale.x", {Property_ScaleX}},
-				{"scale.y", {Property_ScaleY}},
-				{"scale.z", {Property_ScaleZ}}
+				{"position", {Property_Position}},
+				{"rotation", {Property_Rotation}},
+				{"scale", {Property_Scale}},
 			};
 
 			return __types[string];
@@ -68,7 +95,7 @@ namespace yellowEngine
 		int _frameCount;
 		bool _isLooping;
 		// mapping {target, property} to {key frames}
-		std::map<std::pair<std::string, PropertyType>, std::vector<KeyFrame>> _channels;
+		std::map<Key, std::vector<KeyFrame>> _channels;
 	};
 }
 

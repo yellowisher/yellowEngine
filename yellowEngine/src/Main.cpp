@@ -265,10 +265,9 @@ int main(void)
 	body->transform->addChild(bodyImage->transform);
 	Animator* anim = body->addComponent<Animator>();
 
-	AnimationClip* walkingClip = AnimationClip::create("Animation/walking.json");
-	AnimationClip* waveClip = AnimationClip::create("Animation/wave.json");
-
-	anim->play(walkingClip);
+	//AnimationClip* walkingClip = AnimationClip::create("Animation/walking.json");
+	//AnimationClip* waveClip = AnimationClip::create("Animation/wave.json");
+	//anim->play(walkingClip);
 
 	GameObject* dl = new GameObject();
 	Light* l = dl->addComponent<Light>()->setDirectional();

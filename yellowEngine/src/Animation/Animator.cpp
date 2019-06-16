@@ -35,12 +35,28 @@ namespace yellowEngine
 	{
 		for (auto animator : __animators)
 		{
-			if (animator->_state == State_Playing ||
-				animator->_state == State_Transitioning)
+			if (animator->_state == State_Playing || animator->_state == State_Transitioning)
 			{
 				if (!animator->_paused)animator->proceed();
 			}
 		}
+	}
+
+
+	AnimationClip::Value Animator::lerp(Value a, Value b, float factor, PropertyType type)
+	{
+		Value result;
+		switch (type)
+		{
+			case AnimationClip::Property_Position:
+			case AnimationClip::Property_Scale:
+				result.vector3 = Vector3::lerp(a.vector3, b.vector3, factor);
+				break;
+			case AnimationClip::Property_Rotation:
+				result.quaternion = Quaternion::lerp(a.quaternion, b.quaternion, factor);
+				break;
+		}
+		return result;
 	}
 
 
@@ -77,15 +93,23 @@ namespace yellowEngine
 				KeyFrame& end = channel.second[ei];
 
 				float factor = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
-				apply(channel.first, Utils::lerp(begin.value, end.value, factor));
+
+				// maybe make structure for channel pair would be better
+				apply(channel.first, lerp(begin.value, end.value, factor, channel.first.prop));
 			}
 		}
 		else if (_state == State_Transitioning)
 		{
-			// frozen,	clip
-			// Yes		Yes
-			// Yes		No
-			// No		Yes
+			/*
+				Some properties are exist in frozen properties while some are not (and/or in current clip)
+				So handle 4 case according their existence
+				
+				frozen value,	current clip
+				Exsit			Exsit
+				Exsit			Not Exsit
+				Not Exsit		Exsit
+				Not Exsit		Not Exist (free case; Horay!)
+			*/
 
 			float factor = (float)_frame / (float)_transitionDelay;
 			for (auto channel : _currentClip->_channels)
@@ -101,12 +125,12 @@ namespace yellowEngine
 				KeyFrame& end = channel.second[ei];
 
 				float factor_ = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
-				float targetValue = Utils::lerp(begin.value, end.value, factor_);
+				Value targetValue = lerp(begin.value, end.value, factor_, channel.first.prop);
 
 				auto fit = _frozenValues.find(channel.first);
 				if (fit != _frozenValues.end())
 				{
-					apply(channel.first, Utils::lerp(fit->second, targetValue, factor));
+					apply(channel.first, lerp(fit->second, targetValue, factor, channel.first.prop));
 				}
 				else
 				{
@@ -118,7 +142,7 @@ namespace yellowEngine
 			{
 				if (_currentClip->_channels.find(frozen.first) == _currentClip->_channels.end())
 				{
-					apply(frozen.first, Utils::lerp(frozen.second, _initialValues[frozen.first], factor));
+					apply(frozen.first, lerp(frozen.second, _initialValues[frozen.first], factor, frozen.first.prop));
 				}
 			}
 
@@ -129,7 +153,6 @@ namespace yellowEngine
 				_frozenValues.clear();
 			}
 		}
-		commit();
 	}
 
 
@@ -216,85 +239,50 @@ namespace yellowEngine
 	}
 
 
-	void Animator::apply(std::pair<std::string, PropertyType> pair, float value)
+	void Animator::apply(Key key, Value value)
 	{
-		Transform* target = getTransform(pair.first);
-		PropertyType type = pair.second;
-
-		switch (type)
+		switch (key.prop)
 		{
-			case AnimationClip::Property_PositionX:
-			case AnimationClip::Property_PositionY:
-			case AnimationClip::Property_PositionZ:
+			case AnimationClip::Property_Position:
 			{
-				Vector3 position = target->position;
-				int v = type - AnimationClip::Property_Position;
-				position.v[v] = value;
-				target->setPosition(position);
+				getTransform(key.transformPath)->setPosition(value.position);
 				break;
 			}
 
-			case AnimationClip::Property_RotationX:
-			case AnimationClip::Property_RotationY:
-			case AnimationClip::Property_RotationZ:
+			case AnimationClip::Property_Rotation:
 			{
-				int v = type - AnimationClip::Property_Rotation;
-				_rotations[target].v[v] = value;
+				getTransform(key.transformPath)->setRotation(value.rotation);
 				break;
 			}
 
-			case AnimationClip::Property_ScaleX:
-			case AnimationClip::Property_ScaleY:
-			case AnimationClip::Property_ScaleZ:
+			case AnimationClip::Property_Scale:
 			{
-				Vector3 scale = target->scale;
-				int v = type - AnimationClip::Property_Scale;
-				scale.v[v] = value;
-				target->setScale(scale);
+				getTransform(key.transformPath)->setScale(value.scale);
 				break;
 			}
 		}
 	}
 
 
-	void Animator::commit()
+	AnimationClip::Value Animator::getValue(Key key)
 	{
-		for (auto pair : _rotations)
+		switch (key.prop)
 		{
-			pair.first->setRotation(pair.second);
-		}
-	}
-
-
-	float Animator::getValue(std::pair<std::string, PropertyType> pair)
-	{
-		Transform* target = getTransform(pair.first);
-		PropertyType type = pair.second;
-
-		switch (type)
-		{
-			case AnimationClip::Property_PositionX:
-			case AnimationClip::Property_PositionY:
-			case AnimationClip::Property_PositionZ:
+			case AnimationClip::Property_Position:
 			{
-				return target->position.v[type - AnimationClip::Property_Position];
+				return Value(getTransform(key.transformPath)->position);
 			}
 
-			case AnimationClip::Property_RotationX:
-			case AnimationClip::Property_RotationY:
-			case AnimationClip::Property_RotationZ:
+			case AnimationClip::Property_Rotation:
 			{
-				return _rotations[target].v[type - AnimationClip::Property_Rotation];
+				return Value(getTransform(key.transformPath)->rotation);
 			}
 
-			case AnimationClip::Property_ScaleX:
-			case AnimationClip::Property_ScaleY:
-			case AnimationClip::Property_ScaleZ:
+			case AnimationClip::Property_Scale:
 			{
-				return target->scale.v[type - AnimationClip::Property_Scale];
+				return Value(getTransform(key.transformPath)->scale);
 			}
 		}
-		return 0;
 	}
 
 

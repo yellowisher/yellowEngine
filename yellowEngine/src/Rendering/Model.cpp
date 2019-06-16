@@ -159,7 +159,7 @@ namespace yellowEngine
 				
 				AnimationClip* clip = new AnimationClip();
 				// TODO: where to find looping? and set play speed
-				clip->_frameCount = animation->mDuration;
+				clip->_frameCount = (int)animation->mDuration;
 				clip->_isLooping = true;
 				for (unsigned int c = 0; c < animation->mNumChannels; c++)
 				{
@@ -176,46 +176,46 @@ namespace yellowEngine
 
 					if (channel->mNumPositionKeys > 0)
 					{
-						for (int v = 0; v < 3; v++)
+						AnimationClip::Key key = { targetPath, AnimationClip::Property_Position };
+						clip->_channels.insert({ key, {} });
+						std::vector<AnimationClip::KeyFrame>& frames = clip->_channels[key];
+						frames.reserve(channel->mNumPositionKeys);
+
+						for (unsigned int f = 0; f < channel->mNumPositionKeys; f++)
 						{
-							auto prop = (AnimationClip::PropertyType)(AnimationClip::Property_Position + v);
-							std::vector<AnimationClip::KeyFrame>& frames = clip->_channels.insert({ {targetPath, prop}, {} }).first->second;
-							for (int k = 0; k < channel->mNumPositionKeys; k++)
-							{
-								auto key = channel->mPositionKeys[k];
-								frames.push_back(AnimationClip::KeyFrame(key.mTime, key.mValue[v]));
-							}
+							auto frame = channel->mPositionKeys[f];
+							Vector3 position(frame.mValue.x, frame.mValue.y, frame.mValue.z);
+							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, position));
 						}
 					}
 
-					// TODO: change rotation as quaternion?
 					if (channel->mNumRotationKeys > 0)
 					{
-						for (int v = 0; v < 3; v++)
-						{
-							auto prop = (AnimationClip::PropertyType)(AnimationClip::Property_Rotation + v);
-							std::vector<AnimationClip::KeyFrame>& frames = clip->_channels.insert({ {targetPath, prop}, {} }).first->second;
-							for (int k = 0; k < channel->mNumRotationKeys; k++)
-							{
-								auto key = channel->mRotationKeys[k];
-								Vector3 rotation = Quaternion(key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w).toEulerAngle();
+						AnimationClip::Key key = { targetPath, AnimationClip::Property_Rotation };
+						clip->_channels.insert({ key, {} });
+						std::vector<AnimationClip::KeyFrame>& frames = clip->_channels[key];
+						frames.reserve(channel->mNumRotationKeys);
 
-								frames.push_back(AnimationClip::KeyFrame(key.mTime, rotation.v[v]));
-							}
+						for (unsigned int f = 0; f < channel->mNumRotationKeys; f++)
+						{
+							auto frame = channel->mRotationKeys[f];
+							Quaternion rotation(frame.mValue.x, frame.mValue.y, frame.mValue.z, frame.mValue.w);
+							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, rotation));
 						}
 					}
 
 					if (channel->mScalingKeys > 0)
 					{
-						for (int v = 0; v < 3; v++)
+						AnimationClip::Key key = { targetPath, AnimationClip::Property_Scale };
+						clip->_channels.insert({ key, {} });
+						std::vector<AnimationClip::KeyFrame>& frames = clip->_channels[key];
+						frames.reserve(channel->mNumScalingKeys);
+
+						for (unsigned int f = 0; f < channel->mNumScalingKeys; f++)
 						{
-							auto prop = (AnimationClip::PropertyType)(AnimationClip::Property_Scale + v);
-							std::vector<AnimationClip::KeyFrame>& frames = clip->_channels.insert({ {targetPath, prop}, {} }).first->second;
-							for (int k = 0; k < channel->mNumScalingKeys; k++)
-							{
-								auto key = channel->mScalingKeys[k];
-								frames.push_back(AnimationClip::KeyFrame(key.mTime, key.mValue[v]));
-							}
+							auto frame = channel->mScalingKeys[f];
+							Vector3 scale(frame.mValue.x, frame.mValue.y, frame.mValue.z);
+							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, scale));
 						}
 					}
 				}
