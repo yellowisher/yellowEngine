@@ -150,7 +150,79 @@ namespace yellowEngine
 		// after build scene hierarchy, fill all the meshes
 		model->fillMesh(model->_root);
 
-		// free here
+		// create animation clips
+		if (scene->HasAnimations())
+		{
+			for (unsigned int a = 0; a < scene->mNumAnimations; a++)
+			{
+				aiAnimation* animation = scene->mAnimations[a];
+				
+				AnimationClip* clip = new AnimationClip();
+				// TODO: where to find looping? and set play speed
+				clip->_frameCount = animation->mDuration;
+				clip->_isLooping = true;
+				for (unsigned int c = 0; c < animation->mNumChannels; c++)
+				{
+					aiNodeAnim* channel = animation->mChannels[c];
+					auto targetNode = model->_nodes[channel->mNodeName.C_Str()];
+
+					std::string targetPath = targetNode->name + '/';
+					auto cursor = targetNode->parent;
+					while (cursor != model->_root)
+					{
+						targetPath = cursor->name + '/' + targetPath;
+						cursor = cursor->parent;
+					}
+
+					if (channel->mNumPositionKeys > 0)
+					{
+						for (int v = 0; v < 3; v++)
+						{
+							auto prop = (AnimationClip::PropertyType)(AnimationClip::Property_Position + v);
+							std::vector<AnimationClip::KeyFrame>& frames = clip->_channels.insert({ {targetPath, prop}, {} }).first->second;
+							for (int k = 0; k < channel->mNumPositionKeys; k++)
+							{
+								auto key = channel->mPositionKeys[k];
+								frames.push_back(AnimationClip::KeyFrame(key.mTime, key.mValue[v]));
+							}
+						}
+					}
+
+					// TODO: change rotation as quaternion?
+					if (channel->mNumRotationKeys > 0)
+					{
+						for (int v = 0; v < 3; v++)
+						{
+							auto prop = (AnimationClip::PropertyType)(AnimationClip::Property_Rotation + v);
+							std::vector<AnimationClip::KeyFrame>& frames = clip->_channels.insert({ {targetPath, prop}, {} }).first->second;
+							for (int k = 0; k < channel->mNumRotationKeys; k++)
+							{
+								auto key = channel->mRotationKeys[k];
+								Vector3 rotation = Quaternion(key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w).toEulerAngle();
+
+								frames.push_back(AnimationClip::KeyFrame(key.mTime, rotation.v[v]));
+							}
+						}
+					}
+
+					if (channel->mScalingKeys > 0)
+					{
+						for (int v = 0; v < 3; v++)
+						{
+							auto prop = (AnimationClip::PropertyType)(AnimationClip::Property_Scale + v);
+							std::vector<AnimationClip::KeyFrame>& frames = clip->_channels.insert({ {targetPath, prop}, {} }).first->second;
+							for (int k = 0; k < channel->mNumScalingKeys; k++)
+							{
+								auto key = channel->mScalingKeys[k];
+								frames.push_back(AnimationClip::KeyFrame(key.mTime, key.mValue[v]));
+							}
+						}
+					}
+				}
+				model->_clips.insert({ animation->mName.C_Str() ,clip });
+			}
+		}
+
 		return model;
 	}
 
@@ -174,9 +246,10 @@ namespace yellowEngine
 	Model::Node* Model::buildTree(aiNode* aiNode)
 	{
 		Node* node = new Node();
+		node->parent = nullptr;
 
 		// TODO: figure it out in which situation a node contains multiple meshes
-		// current, handle atmost 1 mesh
+		// current, handle atmost one mesh
 		if (aiNode->mNumMeshes > 0)
 		{
 			node->aiMesh = _scene->mMeshes[aiNode->mMeshes[0]];
@@ -199,6 +272,7 @@ namespace yellowEngine
 		for (unsigned int i = 0; i < aiNode->mNumChildren; i++)
 		{
 			Node* child = buildTree(aiNode->mChildren[i]);
+			child->parent = node;
 			node->children.push_back(child);
 		}
 
@@ -229,15 +303,18 @@ namespace yellowEngine
 				vertices[i].position.y = aiMesh->mVertices[i].y;
 				vertices[i].position.z = aiMesh->mVertices[i].z;
 
-				vertices[i].normal.x = aiMesh->mNormals[i].x;
-				vertices[i].normal.y = aiMesh->mNormals[i].y;
-				vertices[i].normal.z = aiMesh->mNormals[i].z;
+				if (aiMesh->HasNormals())
+				{
+					vertices[i].normal.x = aiMesh->mNormals[i].x;
+					vertices[i].normal.y = aiMesh->mNormals[i].y;
+					vertices[i].normal.z = aiMesh->mNormals[i].z;
+				}
 
-				//vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
-				//vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
-
-				vertices[i].uv.x = 0;
-				vertices[i].uv.y = 0;
+				if (aiMesh->HasTextureCoords(0))
+				{
+					vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
+					vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
+				}
 
 				for (int j = 0; j < MaxJointCount; j++)
 				{
@@ -263,7 +340,9 @@ namespace yellowEngine
 					int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
 
 					int wi = 0;
-					while (vertices[vi].weights[wi] != NullWeight) wi++;
+					while (wi < MaxJointCount && vertices[vi].weights[wi] != NullWeight) wi++;
+					if (wi >= MaxJointCount) continue;
+
 					vertices[vi].joints[wi] = (float)b;
 					vertices[vi].weights[wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
 				}
@@ -316,12 +395,11 @@ namespace yellowEngine
 			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
-		//Material mat(Shader::create("Shader/color.vert", "Shader/color.frag"));
-		Material mat(Shader::create("Shader/skeletal.vert", "Shader/color.frag"));
-
-		mat.setProperty("shininess", 64.0f);
-	/*	if (_scene->HasMaterials())
+		if (_scene->HasTextures())
 		{
+			Material mat(Shader::create("Shader/skeletal.vert", "Shader/texture.frag"));
+			mat.setProperty("shininess", 64.0f);
+
 			aiMaterial* material = _scene->mMaterials[aiMesh->mMaterialIndex];
 			if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 			{
@@ -340,9 +418,14 @@ namespace yellowEngine
 
 				mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
 			}
-		}*/
-
-		return { mesh, mat };
+			return { mesh, mat };
+		}
+		else
+		{
+			Material mat(Shader::create("Shader/skeletal.vert", "Shader/color.frag"));
+			mat.setProperty("shininess", 64.0f);
+			return { mesh, mat };
+		}
 	}
 
 

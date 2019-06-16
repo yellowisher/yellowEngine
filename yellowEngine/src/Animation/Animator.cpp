@@ -291,7 +291,7 @@ namespace yellowEngine
 			case AnimationClip::Property_ScaleY:
 			case AnimationClip::Property_ScaleZ:
 			{
-				target->scale.v[type - AnimationClip::Property_Scale];
+				return target->scale.v[type - AnimationClip::Property_Scale];
 			}
 		}
 		return 0;
@@ -303,6 +303,26 @@ namespace yellowEngine
 		auto it = _transformCache.find(target);
 		if (it == _transformCache.end())
 		{
+			// name version
+			size_t begin = 0;
+			size_t end = 0;
+			Transform* cursor = transform;
+			while ((end = target.find('/', begin)) != std::string::npos)
+			{
+				std::string word = target.substr(begin, end - begin);
+				if (word == "..")
+				{
+					cursor = cursor->getParent();
+				}
+				else
+				{
+					cursor = cursor->findChild(word);
+				}
+				begin = end + 1;
+			}
+			_transformCache.insert({ target, cursor });
+
+			/*	index version
 			size_t begin = 0;
 			size_t end = 0;
 			Transform* cursor = transform;
@@ -313,6 +333,7 @@ namespace yellowEngine
 				begin = end + 1;
 			}
 			_transformCache.insert({ target, cursor });
+			*/
 		}
 		return _transformCache[target];
 	}

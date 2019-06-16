@@ -13,6 +13,7 @@
 #include "yellowEngine/Math/Quaternion.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
+#include "yellowEngine/Animation/AnimationClip.hpp"
 
 namespace yellowEngine
 {
@@ -22,10 +23,13 @@ namespace yellowEngine
 		static Model* create(const char* path, bool absolute = false);
 		
 		GameObject* instantiate(const char* name);
+		const std::map<std::string, AnimationClip*>& getClips() { return _clips; }
 		
 	private:
 		struct Node	
 		{
+			std::string name;
+
 			union
 			{
 				Mesh* mesh;
@@ -37,7 +41,8 @@ namespace yellowEngine
 			Vector3 scale;
 			Quaternion rotation;
 			Matrix offset;
-			std::string name;
+			
+			Node* parent;
 			std::vector<Node*> children;
 			
 			// store instantiated transform
@@ -63,6 +68,7 @@ namespace yellowEngine
 
 		Node* _root;
 		std::map<std::string, Node*> _nodes;
+		std::map<std::string, AnimationClip*> _clips;
 	};
 }
 

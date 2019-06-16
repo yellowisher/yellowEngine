@@ -199,15 +199,21 @@ int main(void)
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
-	//Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
-	Model* model = Model::create("Mesh/free3DmodelFBX.fbx");
+	Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
+	//Model* model = Model::create("Mesh/free3DmodelFBX.fbx");
+	AnimationClip* clips[3];
+	clips[0] = model->getClips().begin()->second;
+	clips[1] = (++model->getClips().begin())->second;
+	clips[2] = (++model->getClips().begin())->second;
 
 	GameObject* go = model->instantiate("nanosuit");
-	go->transform->setScale(0.01f, 0.01f, 0.01f);
-	//go->transform->rotate(270, 0, 0);
+	go->transform->setScale(0.03f, 0.03f, 0.03f);
+	go->transform->rotate(270, 0, 0);
+	auto animm = go->addComponent<Animator>();
+	//animm->play(clips[0]);
 
-	//boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
-	boxTransform = go->transform->findChild("free3dmodel_skeleton")->findChild("hips")->findChild("abdomen")->findChild("abdomen2")->findChild("chest")->findChild("shoulder.L");
+	boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
+	//boxTransform = go->transform->findChild("free3dmodel_skeleton")->findChild("hips")->findChild("abdomen")->findChild("abdomen2")->findChild("chest")->findChild("shoulder.L");
 
 	Material cubeMaterial(textureShader);
 	cubeMaterial.addTexture(diffuseMap, "u_Material.diffuse");
@@ -219,7 +225,7 @@ int main(void)
 	//addCube(go->transform, cubeMesh, cubeMaterial);
 
 	GameObject* body = new GameObject("MovingCube");
-	boxTransform = body->transform;
+	//boxTransform = body->transform;
 
 	GameObject* bodyImage = new GameObject("Body");
 	MeshRenderer* cubeRenderer = bodyImage->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
@@ -286,20 +292,19 @@ int main(void)
 
 	ObjectRenderer::_currentCamera = camera;
 
-	//delete(body);
+	animm->play(clips[0]);
+	delete(body);
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
-		//if (!prevPressed && pressed)
-		//{
-		//	cout << "Walk to Wave \n";
-		//	anim->play(waveClip, 20);
-		//}
-		//if (prevPressed && !pressed)
-		//{
-		//	cout << "Wave to Walk \n";
-		//	anim->play(walkingClip, 20);
-		//}
+		if (!prevPressed && pressed)
+		{
+			animm->play(clips[1]);
+		}
+		if (prevPressed && !pressed)
+		{
+			animm->play(clips[0]);
+		}
 		prevPressed = pressed;
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

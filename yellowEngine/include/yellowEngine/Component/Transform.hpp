@@ -72,7 +72,7 @@ namespace yellowEngine
 			Dirty_Parent = 8,
 			Dirty_Matrix = Dirty_LocalMatrix | Dirty_Parent,
 			Dirty_InverseMatrix = 16,
-			Dirty_All = (Dirty_Parent << 1 - 1),
+			Dirty_All = (Dirty_InverseMatrix * 2 - 1),
 		};
 
 		Transform* _parent;

@@ -9,6 +9,7 @@ namespace yellowEngine
 {
 	class AnimationClip
 	{
+		friend class Model;
 		friend class Animator;
 
 	public:
