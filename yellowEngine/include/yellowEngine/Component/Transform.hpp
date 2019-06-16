@@ -29,10 +29,12 @@ namespace yellowEngine
 		void onCreate() override;
 		void onDestroy() override;
 
+		Transform* getParent();
 		void addChild(Transform* child);
 		void removeChild(Transform* child);
 		Transform* findChild(const std::string& name);
 		Transform* getChild(int index);
+		int getChildCount();
 
 		void translate(const Vector3& translation);
 		void translate(float x, float y, float z);
@@ -47,10 +49,11 @@ namespace yellowEngine
 		void setScale(const Vector3& scale);
 		void setScale(float x, float y, float z);
 
-		const Matrix& getTRMatrix();
-		const Matrix& getInverseTRMatrix();
-		const Matrix& getSMatrix();
-		const Matrix& getMatrix();
+		const Matrix& getTRMatrix(Transform* until = nullptr);
+		const Matrix& getInverseTRMatrix(Transform* until = nullptr);
+		const Matrix& getSMatrix(Transform* until = nullptr);
+		const Matrix& getMatrix(Transform* until = nullptr);
+		Matrix getLocalMatrix();
 
 		const Vector3 getWorldPosition();
 		const Quaternion getWorldRotation();

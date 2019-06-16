@@ -23,7 +23,7 @@ namespace yellowEngine
 		Quaternion();
 		Quaternion(float x, float y, float z, float w);
 		Quaternion(const Quaternion& quaternion);
-		Quaternion(const Vector3& eulerAngle);
+		Quaternion(Vector3 eulerAngle, bool rad = false);
 		//Quaternion(const Matrix& matrix);
 		~Quaternion();
 

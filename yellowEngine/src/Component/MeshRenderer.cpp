@@ -8,6 +8,7 @@ namespace yellowEngine
 {
 	MeshRenderer::MeshRenderer(GameObject* gameObject) :ObjectRenderer(gameObject)
 	{
+		_mesh = nullptr;
 	}
 
 
@@ -27,6 +28,8 @@ namespace yellowEngine
 
 	void MeshRenderer::_render(Shader* shader)
 	{
+		if (_mesh == nullptr)return;
+
 		// if shader is not given; render with its own material
 		if (shader == nullptr) {
 			_material.bind();

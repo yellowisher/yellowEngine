@@ -21,15 +21,10 @@ void main()
 	jointMatrix += u_Joints[int(a_Joints[2])] * a_Weights[2];
 	jointMatrix += u_Joints[int(a_Joints[3])] * a_Weights[3];
 
-	if (a_Weights[0] == 0.0)
-	{
-		jointMatrix = u_Model;
-	}
+	mat4 model = u_Model * jointMatrix;
 
-	//mat4 model = u_Model * jointMatrix;
+	v_Normal = normalize(mat3(transpose(inverse(model))) * a_Normal);
+	v_FragPosition = vec3(model * vec4(a_Position, 1.0));
 
-	v_Normal = normalize(mat3(transpose(inverse(jointMatrix))) * a_Normal);
-	v_FragPosition = vec3(jointMatrix * vec4(a_Position, 1.0));
-
-    gl_Position = u_ProjectionView * jointMatrix * vec4(a_Position, 1.0);
+    gl_Position = u_ProjectionView * model * vec4(a_Position, 1.0);
 }

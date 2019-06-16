@@ -27,14 +27,22 @@ namespace yellowEngine
 	}
 
 
-	Quaternion::Quaternion(const Vector3& eulerAngle)
+	Quaternion::Quaternion(Vector3 eulerAngle, bool rad)
 	{
-		float cosr = cosf(Utils::deg2rad(eulerAngle.z * 0.5f));
-		float sinr = sinf(Utils::deg2rad(eulerAngle.z * 0.5f));
-		float cosy = cosf(Utils::deg2rad(eulerAngle.y * 0.5f));
-		float siny = sinf(Utils::deg2rad(eulerAngle.y * 0.5f));
-		float cosp = cosf(Utils::deg2rad(eulerAngle.x * 0.5f));
-		float sinp = sinf(Utils::deg2rad(eulerAngle.x * 0.5f));
+		eulerAngle = eulerAngle * 0.5f;
+		if (!rad)
+		{
+			eulerAngle.x = Utils::deg2rad(eulerAngle.x);
+			eulerAngle.y = Utils::deg2rad(eulerAngle.y);
+			eulerAngle.z = Utils::deg2rad(eulerAngle.z);
+		}
+
+		float cosr = cosf(eulerAngle.z);
+		float sinr = sinf(eulerAngle.z);
+		float cosy = cosf(eulerAngle.y);
+		float siny = sinf(eulerAngle.y);
+		float cosp = cosf(eulerAngle.x);
+		float sinp = sinf(eulerAngle.x);
 
 		w = cosp * cosy * cosr + sinp * siny * sinr;
 		x = sinp * cosy * cosr - cosp * siny * sinr;

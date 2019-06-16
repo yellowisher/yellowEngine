@@ -304,7 +304,7 @@ namespace yellowEngine
 
 		if (det == 0)
 		{
-			std::cout << "Wrong operation in invering Matrix" << std::endl;
+			std::cout << "Wrong operation in inverting Matrix" << std::endl;
 			return Matrix::identity;
 		}
 

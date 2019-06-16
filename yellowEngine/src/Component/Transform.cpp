@@ -39,9 +39,16 @@ namespace yellowEngine
 	}
 
 
+	Transform* Transform::getParent()
+	{
+		return _parent;
+	}
+
+
 	void Transform::addChild(Transform* child)
 	{
 		if (child->_parent == this)return;
+
 		if (child->_parent)child->_parent->removeChild(child);
 
 		// test needed
@@ -96,6 +103,12 @@ namespace yellowEngine
 	{
 		// assert index?
 		return _children[index];
+	}
+
+
+	int Transform::getChildCount()
+	{
+		return (int)_children.size();
 	}
 
 
@@ -176,7 +189,7 @@ namespace yellowEngine
 	}
 
 
-	const Matrix& Transform::getTRMatrix()
+	const Matrix& Transform::getTRMatrix(Transform* until)
 	{
 		if (_dirtyBits | Dirty_Translation_Rotation)
 		{
@@ -186,50 +199,59 @@ namespace yellowEngine
 			Matrix r = Matrix::createRotation(_rotation);
 
 			_trMatrix = t * r;
-			if (_parent != nullptr)
+			if (_parent != until)
 			{
-				_trMatrix = _parent->getTRMatrix() * _trMatrix;
+				_trMatrix = _parent->getTRMatrix(until) * _trMatrix;
 			}
 		}
 		return _trMatrix;
 	}
 
 
-	const Matrix& Transform::getInverseTRMatrix()
+	const Matrix& Transform::getInverseTRMatrix(Transform* until)
 	{
 		if (_dirtyBits | Dirty_Inverse_Translation_Rotation)
 		{
 			_dirtyBits &= ~Dirty_Inverse_Translation_Rotation;
 
-			_itrMatrix = ~getTRMatrix();
+			_itrMatrix = ~getTRMatrix(until);
 		}
 		return _itrMatrix;
 	}
 
 
-	const Matrix& Transform::getSMatrix()
+	const Matrix& Transform::getSMatrix(Transform* until)
 	{
 		if (_dirtyBits & Dirty_Scale)
 		{
 			_dirtyBits &= ~Dirty_Scale;
 			_sMatrix = Matrix::createScale(_scale);
-			if (_parent != nullptr)
+			if (_parent != until)
 			{
-				_sMatrix *= _parent->getSMatrix();
+				_sMatrix *= _parent->getSMatrix(until);
 			}
 		}
 		return _sMatrix;
 	}
 
 
-	const Matrix& Transform::getMatrix()
+	const Matrix& Transform::getMatrix(Transform* until)
 	{
 		if (_dirtyBits != Dirty_None)
 		{
 			_dirtyBits &= ~Dirty_Matrix;
-			_matrix = getTRMatrix() * getSMatrix();
+			_matrix = getTRMatrix(until) * getSMatrix(until);
 		}
 		return _matrix;
+	}
+
+
+	Matrix Transform::getLocalMatrix()
+	{
+		Matrix t = Matrix::createTranslation(_position);
+		Matrix r = Matrix::createRotation(_rotation);
+		Matrix s = Matrix::createScale(_scale);
+		return t * r * s;
 	}
 
 

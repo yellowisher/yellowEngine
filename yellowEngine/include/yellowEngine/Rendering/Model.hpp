@@ -36,6 +36,7 @@ namespace yellowEngine
 			Vector3 position;
 			Vector3 scale;
 			Quaternion rotation;
+			Matrix offset;
 			std::string name;
 			std::vector<Node*> children;
 			
@@ -47,13 +48,14 @@ namespace yellowEngine
 		static Model* loadFBX(std::string path);
 
 		static std::map<std::string, Model*> __modelCache;
-		static constexpr float NullJoint = -1.0f;
+		static constexpr float NullWeight = 0.0f;
 
 		Model();
 		~Model();
 		Node* buildTree(aiNode* aiNode);
 		void fillMesh(Node* node);
 		std::pair<Mesh*, Material> createMesh(aiMesh* mesh, Node* currentNode);
+		void copyMatrix(aiMatrix4x4& aiMatrix, Matrix& matrix);
 
 		// temporal value for building scene tree
 		const aiScene* _scene;

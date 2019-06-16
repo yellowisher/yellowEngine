@@ -13,12 +13,15 @@ namespace yellowEngine
 		SkinnedMeshRenderer(GameObject* gameObject);
 		~SkinnedMeshRenderer();
 
-		SkinnedMeshRenderer* set(Mesh* mesh, const Material& material, std::vector<Transform*> jointTransforms);
+		SkinnedMeshRenderer* set(
+			Mesh* mesh, const Material& material,
+			std::vector<std::pair<Transform*, Matrix>> joints, Transform* modelRoot);
 		void _render(Shader* shader) override;
 
 	private:
+		Transform* _modelRoot;
 		const Uniform* _jointUniform;
-		std::vector<Transform*> _jointTransforms;
+		std::vector<std::pair<Transform*, Matrix>> _joints;
 	};
 }
 

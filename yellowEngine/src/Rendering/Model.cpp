@@ -83,30 +83,27 @@ namespace yellowEngine
 			}
 		}
 
-		if (_scene->HasAnimations())
+		visitQueue.push({ _root, nullptr });
+		while (!visitQueue.empty())
 		{
-			visitQueue.push({ _root, nullptr });
-			while (!visitQueue.empty())
+			auto visit = visitQueue.front();
+			Node* node = visit.first;
+			visitQueue.pop();
+
+			auto renderer = node->transform->gameObject->getComponent<SkinnedMeshRenderer>();
+			if (renderer != nullptr)
 			{
-				auto visit = visitQueue.front();
-				Node* node = visit.first;
-				visitQueue.pop();
-
-				auto renderer = node->transform->gameObject->getComponent<SkinnedMeshRenderer>();
-				if (renderer != nullptr)
+				std::vector<std::pair<Transform*, Matrix>> joints;
+				for (auto node : node->jointNodes)
 				{
-					std::vector<Transform*> jointTransforms;
-					for (auto node : node->jointNodes)
-					{
-						jointTransforms.push_back(node->transform);
-					}
-					renderer->set(node->mesh, node->material, jointTransforms);
+					joints.push_back({ node->transform,node->offset });
 				}
+				renderer->set(node->mesh, node->material, joints, rootObject->transform);
+			}
 
-				for (auto child : node->children)
-				{
-					visitQueue.push({ child, nullptr });
-				}
+			for (auto child : node->children)
+			{
+				visitQueue.push({ child, nullptr });
 			}
 		}
 
@@ -190,13 +187,12 @@ namespace yellowEngine
 		}
 
 		Matrix matrix;
-		for (int i = 0; i < 16; i++)
-		{
-			matrix[i] = aiNode->mTransformation[i / 4][i % 4];
-		}
+		copyMatrix(aiNode->mTransformation, matrix);
+
 		node->position = matrix.extractTranslation();
 		node->rotation = matrix.extractRotation();
 		node->scale = matrix.extractScale();
+
 		node->name = aiNode->mName.C_Str();
 		_nodes.insert({ node->name, node });
 
@@ -216,6 +212,9 @@ namespace yellowEngine
 		// there is no need to cache in Mesh class
 		// so create directly rather than call Mesh::create
 		Mesh* mesh = nullptr;
+		
+		// create matrix from transform information? (global)
+		Matrix nodeMatrix;
 
 		// TODO: support vary vertex format
 		// currently only handles model format of PNT(+B)
@@ -242,7 +241,8 @@ namespace yellowEngine
 
 				for (int j = 0; j < MaxJointCount; j++)
 				{
-					vertices[i].joints[j] = NullJoint;
+					vertices[i].joints[j] = 0;
+					vertices[i].weights[j] = NullWeight;
 				}
 			}
 
@@ -258,15 +258,17 @@ namespace yellowEngine
 			{
 				Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
 				currentNode->jointNodes[b] = jointNode;
-				for (unsigned int w = 0; w < aiMesh->mNumBones; w++)
+				for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
 				{
 					int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
 
 					int wi = 0;
-					while (vertices[vi].joints[wi] != NullJoint) wi++;
+					while (vertices[vi].weights[wi] != NullWeight) wi++;
 					vertices[vi].joints[wi] = (float)b;
 					vertices[vi].weights[wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
 				}
+
+				copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
 			}
 
 			VertexLayout layout({
@@ -341,5 +343,14 @@ namespace yellowEngine
 		}*/
 
 		return { mesh, mat };
+	}
+
+
+	void Model::copyMatrix(aiMatrix4x4& aiMatrix, Matrix& matrix)
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			matrix[i] = aiMatrix[i % 4][i / 4];
+		}
 	}
 }
