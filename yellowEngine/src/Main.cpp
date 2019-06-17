@@ -199,20 +199,22 @@ int main(void)
 	Texture* diffuseMap = Texture::create("Texture/container2.png");
 	Texture* specularMap = Texture::create("Texture/container2_specular.png");
 
+	//Model* model = Model::create("Mesh/92-dog_anim/dog final.blend");
 	Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
-	//Model* model = Model::create("Mesh/free3DmodelFBX.fbx");
+
+
+	int c = model->getClips().size();
 	AnimationClip* clips[3];
 	clips[0] = model->getClips().begin()->second;
 	clips[1] = (++model->getClips().begin())->second;
-	clips[2] = (++model->getClips().begin())->second;
 
 	GameObject* go = model->instantiate("nanosuit");
-	go->transform->setScale(0.03f, 0.03f, 0.03f);
+	go->transform->setScale(0.01f, 0.01f, 0.01f);
 	go->transform->rotate(270, 0, 0);
 	auto animm = go->addComponent<Animator>();
 	//animm->play(clips[0]);
 
-	boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
+	//boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
 	//boxTransform = go->transform->findChild("free3dmodel_skeleton")->findChild("hips")->findChild("abdomen")->findChild("abdomen2")->findChild("chest")->findChild("shoulder.L");
 
 	Material cubeMaterial(textureShader);

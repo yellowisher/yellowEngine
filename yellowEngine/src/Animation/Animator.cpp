@@ -167,10 +167,6 @@ namespace yellowEngine
 		}
 		else
 		{
-			_state = State_Transitioning;
-			_transitionDelay = delay;
-			_frame = 0;
-
 			if (_state == State_Playing)
 			{
 				// play request while playing
@@ -201,7 +197,9 @@ namespace yellowEngine
 					}
 				}
 			}
-
+			_state = State_Transitioning;
+			_transitionDelay = delay;
+			_frame = 0;
 		}
 
 		_currentClip = clip;

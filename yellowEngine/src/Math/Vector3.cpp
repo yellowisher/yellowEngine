@@ -13,7 +13,7 @@ namespace yellowEngine
 
 	Vector3 Vector3::lerp(const Vector3 & v0, const Vector3 & v1, float delta)
 	{
-		return v0 * delta + v1 * (1.0f - delta);
+		return v0 * (1.0f - delta) + v1 * delta;
 	}
 
 
