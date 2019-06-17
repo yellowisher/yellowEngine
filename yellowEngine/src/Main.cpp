@@ -214,7 +214,7 @@ int main(void)
 	auto animm = go->addComponent<Animator>();
 	//animm->play(clips[0]);
 
-	//boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
+	boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
 	//boxTransform = go->transform->findChild("free3dmodel_skeleton")->findChild("hips")->findChild("abdomen")->findChild("abdomen2")->findChild("chest")->findChild("shoulder.L");
 
 	Material cubeMaterial(textureShader);
@@ -294,10 +294,13 @@ int main(void)
 	ObjectRenderer::_currentCamera = camera;
 
 	animm->play(clips[0]);
+	int frame = 0;
 	delete(body);
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
+		if (++frame == 100)animm->play(clips[1]);
+
 		if (!prevPressed && pressed)
 		{
 			animm->play(clips[1]);

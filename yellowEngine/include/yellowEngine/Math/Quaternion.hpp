@@ -33,6 +33,9 @@ namespace yellowEngine
 		Quaternion& operator*=(const Quaternion& quaternion);
 		Vector3 operator*(const Vector3& point) const;
 
+		bool operator==(const Quaternion& other) const { return x == other.x && y == other.y && z == other.z && w == other.w; }
+		bool operator!=(const Quaternion& other) const { return !(*this == other); }
+
 		Quaternion conjugate() const;
 		Vector3 toEulerAngle() const;
 		Matrix toMatrix();

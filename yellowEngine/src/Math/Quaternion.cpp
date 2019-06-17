@@ -193,6 +193,7 @@ namespace yellowEngine
 
 		m = sqrt(m);
 		m = 1.0f / m;
+
 		x *= m;
 		y *= m;
 		z *= m;
@@ -206,6 +207,14 @@ namespace yellowEngine
 	{
 		Quaternion result;
 		float delta_ = 1.0f - delta;
+
+		// lerp smaller direction
+		// https://alfonse.bitbucket.io/oldtut/Positioning/Tut08%20Interpolation.html
+		if (q0.x * q1.x + q0.y * q1.y + q0.z * q1.z + q0.w * q1.w < 0)
+		{
+			delta = -delta;
+		}
+
 		result.x = delta_ * q0.x + delta * q1.x;
 		result.y = delta_ * q0.y + delta * q1.y;
 		result.z = delta_ * q0.z + delta * q1.z;
