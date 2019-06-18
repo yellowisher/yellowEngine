@@ -44,32 +44,35 @@ namespace yellowEngine
 		// update auto binding uniforms (like model matrix)
 		shader->updateUniforms(_gameObject);
 
-		/*for (auto uniformPair : shader->getUniforms())
+		for (auto uniformPair : shader->getUniforms())
 		{
+			auto it = _properties.find(uniformPair.second.name);
+			if (it == _properties.end())continue;
+
 			switch (uniformPair.second.type)
 			{
 				case GL_INT:
-					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].intValue);
+					shader->setUniform(uniformPair.first, it->second.intValue);
 					break;
 				case GL_FLOAT:
-					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].floatValue);
+					shader->setUniform(uniformPair.first, it->second.floatValue);
 					break;
 				case GL_FLOAT_VEC2:
-					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].vector2Value);
+					shader->setUniform(uniformPair.first, it->second.vector2Value);
 					break;
 				case GL_FLOAT_VEC3:
-					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].vector3Value);
+					shader->setUniform(uniformPair.first, it->second.vector3Value);
 					break;
 				case GL_FLOAT_VEC4:
-					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].vector4Value);
+					shader->setUniform(uniformPair.first, it->second.vector4Value);
 					break;
 				case GL_FLOAT_MAT4:
-					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].matrixValue);
+					shader->setUniform(uniformPair.first, it->second.matrixValue);
 					break;
 				default:
 					continue;
 			}
-		}*/
+		}
 
 		const std::vector<std::string>& names = shader->getTextureUnits();
 		for (int i = 0; i < names.size(); i++)

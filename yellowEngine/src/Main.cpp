@@ -137,28 +137,7 @@ int main(void)
 	system->setHeight(768);
 	system->setResourcePath("./res/");
 
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "yellow engine", NULL, NULL);
-	if (window == NULL)
-	{
-		cout << "Failed to create GLFW window" << endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-
-	InputManager::init(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
+	
 	//glEnable(GL_CULL_FACE);
 
 	//glfwSetKeyCallback(window, _keyCallback);
@@ -188,7 +167,7 @@ int main(void)
 	//camera->setPerspective(60.0f, 0.01f, 10000.0f);
 
 	cameraTransform = cameraGo->transform;
-	cameraTransform->translate(0, 0, 40);
+	cameraTransform->translate(0, 0, 10);
 
 	ObjectRenderer::_currentCamera = camera;
 
@@ -206,49 +185,55 @@ int main(void)
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
-		glEnable(GL_DEPTH_TEST);
-
-		glClearColor(0.1, 0.1, 0.1, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		ObjectRenderer::renderAll(camera);
 
 		// geometry pass
-		//gbuffer->bindForWriting();
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//ObjectRenderer::renderAll(camera, geometryShader);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
 
-		//// lighting pass
-		//gbuffer->unbind();
-		//gbuffer->bindForReading();
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		gbuffer->bindForWriting();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		ObjectRenderer::renderAll(camera, geometryShader);
 
-		//gbuffer->setBufferToRead(0);
-		//glBlitFramebuffer(
-		//	0, 0, width, height,
-		//	0, 0, width / 2, height / 2,
-		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
-		//);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
 
-		//gbuffer->setBufferToRead(1);
-		//glBlitFramebuffer(
-		//	0, 0, width, height,
-		//	width / 2, 0, width, height / 2,
-		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
-		//);
+		// lighting pass
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
 
-		//gbuffer->setBufferToRead(2);
-		//glBlitFramebuffer(
-		//	0, 0, width, height,
-		//	0, height / 2, width / 2, height,
-		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
-		//);
+		gbuffer->bindForReading();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//gbuffer->setBufferToRead(3);
-		//glBlitFramebuffer(
-		//	0, 0, width, height,
-		//	width / 2, height / 2, width, height,
-		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
-		//);
+		gbuffer->setBufferToRead(0);
+		glBlitFramebuffer(
+			0, 0, width, height,
+			0, 0, width / 2, height / 2,
+			GL_COLOR_BUFFER_BIT, GL_LINEAR
+		);
+
+		gbuffer->setBufferToRead(1);
+		glBlitFramebuffer(
+			0, 0, width, height,
+			width / 2, 0, width, height / 2,
+			GL_COLOR_BUFFER_BIT, GL_LINEAR
+		);
+
+		gbuffer->setBufferToRead(2);
+		glBlitFramebuffer(
+			0, 0, width, height,
+			0, height / 2, width / 2, height,
+			GL_COLOR_BUFFER_BIT, GL_LINEAR
+		);
+
+		gbuffer->setBufferToRead(3);
+		glBlitFramebuffer(
+			0, 0, width, height,
+			width / 2, height / 2, width, height,
+			GL_COLOR_BUFFER_BIT, GL_LINEAR
+		);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -20,6 +20,10 @@ namespace yellowEngine
 		{
 			_mouseButtons[i] = State_Released;
 		}
+		double x, y;
+		glfwGetCursorPos(_window, &x, &y);
+		_mousePosition = Vector2((float)x, (float)y);
+		_mouseDeltaPosition = Vector2(0, 0);
 	}
 
 
@@ -62,6 +66,12 @@ namespace yellowEngine
 	const Vector2& InputManager::getMousePosition()
 	{
 		return _mousePosition;
+	}
+
+
+	const Vector2& InputManager::getMouseDeltaPosition()
+	{
+		return _mouseDeltaPosition;
 	}
 
 
@@ -123,7 +133,8 @@ namespace yellowEngine
 
 		double x, y;
 		glfwGetCursorPos(_window, &x, &y);
-		_mousePosition.x = (float)x;
-		_mousePosition.y = (float)y;
+		Vector2 newMousePosition((float)x, (float)y);
+		_mouseDeltaPosition = newMousePosition - _mousePosition;
+		_mousePosition = newMousePosition;
 	}
 }

@@ -2,30 +2,30 @@
 	#define NULL 0
 #endif
 
-#include "yellowEngine\Rendering\Renderbuffer.hpp"
+#include "yellowEngine\Rendering\RenderBuffer.hpp"
 
 
 namespace yellowEngine
 {
-	Renderbuffer::Renderbuffer(int width, int height, GLenum format)
+	RenderBuffer::RenderBuffer(int width, int height, GLenum format)
 	{
-		glGenRenderbuffers(1, &_renderbufferHandle);
-		glBindRenderbuffer(GL_RENDERBUFFER, _renderbufferHandle);
+		glGenRenderbuffers(1, &_renderBufferHandle);
+		glBindRenderbuffer(GL_RENDERBUFFER, _renderBufferHandle);
 		glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
 	}
 
-	Renderbuffer::~Renderbuffer()
+	RenderBuffer::~RenderBuffer()
 	{
 	}
 
 
-	void Renderbuffer::bind()
+	void RenderBuffer::bind()
 	{
-		glBindRenderbuffer(GL_RENDERBUFFER, _renderbufferHandle);
+		glBindRenderbuffer(GL_RENDERBUFFER, _renderBufferHandle);
 	}
 
 
-	void Renderbuffer::unbind()
+	void RenderBuffer::unbind()
 	{
 		glBindRenderbuffer(GL_RENDERBUFFER, NULL);
 	}

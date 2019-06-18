@@ -5,17 +5,17 @@
 
 namespace yellowEngine
 {
-	class Renderbuffer
+	class RenderBuffer
 	{
 	public:
-		Renderbuffer(int width, int height, GLenum format);
-		~Renderbuffer();
+		RenderBuffer(int width, int height, GLenum format);
+		~RenderBuffer();
 
 		void bind();
-		void unbind();
+		static void unbind();
 
 	private:
-		unsigned int _renderbufferHandle;
+		unsigned int _renderBufferHandle;
 	};
 }
 

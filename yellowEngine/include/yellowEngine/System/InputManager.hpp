@@ -1,6 +1,7 @@
 #ifndef __H_INPUTMANAGER__
 #define __H_INPUTMANAGER__
 
+#include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -11,7 +12,7 @@ namespace yellowEngine
 {
 	class InputManager
 	{
-		friend class System;
+		friend class Game;
 	public:
 		static void init(GLFWwindow* window);
 		static bool getKey(int keyCode);
@@ -22,6 +23,7 @@ namespace yellowEngine
 		static bool getMouseButtonDown(int button);
 		static bool getMouseButtonUp(int button);
 		static const Vector2& getMousePosition();
+		static const Vector2& getMouseDeltaPosition();
 
 	private:
 		static constexpr int Num_Keys = GLFW_KEY_LAST;
@@ -44,6 +46,7 @@ namespace yellowEngine
 		static State _keys[Num_Keys];
 		static State _mouseButtons[Num_MouseButtons];
 		static Vector2 _mousePosition;
+		static Vector2 _mouseDeltaPosition;
 	};
 }
 

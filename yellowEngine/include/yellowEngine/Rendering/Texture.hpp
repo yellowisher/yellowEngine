@@ -11,7 +11,7 @@ namespace yellowEngine
 {
 	class Texture
 	{
-		friend class Framebuffer;
+		friend class FrameBuffer;
 	public:
 		static Texture* create(const char* path, bool absolute = false, int wrap = GL_REPEAT, int filter = GL_NEAREST);
 

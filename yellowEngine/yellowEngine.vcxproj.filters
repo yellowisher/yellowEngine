@@ -102,9 +102,6 @@
     <ClCompile Include="src\System\EventNotifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\System\System.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,13 +135,19 @@
     <ClCompile Include="src\System\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Framebuffer.cpp">
+    <ClCompile Include="src\Rendering\SceneRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Geometrybuffer.cpp">
+    <ClCompile Include="src\Rendering\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Renderbuffer.cpp">
+    <ClCompile Include="src\Rendering\RenderBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Pass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -233,9 +236,6 @@
     <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\System\System.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\yellowEngine\Utility\Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -293,13 +293,19 @@
     <ClInclude Include="include\yellowEngine\System\InputManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Rendering\Framebuffer.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\SceneRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Rendering\Geometrybuffer.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\FrameBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Rendering\Renderbuffer.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\RenderBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\System\Game.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Component\Pass.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

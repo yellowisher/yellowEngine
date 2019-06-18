@@ -1,14 +1,14 @@
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Rendering/Renderbuffer.hpp"
-#include "yellowEngine/Rendering/Framebuffer.hpp"
+#include "yellowEngine/Rendering/FrameBuffer.hpp"
 
 
 namespace yellowEngine
 {
-	Framebuffer::Framebuffer(int textureCount, int width, int height, int format, GLenum type, int internalFormat, int addition)
+	FrameBuffer::FrameBuffer(int textureCount, int width, int height, int format, GLenum type, int internalFormat, int addition)
 	{
-		glGenFramebuffers(1, &_framebufferHandle);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebufferHandle);
+		glGenFramebuffers(1, &_frameBufferHandle);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferHandle);
 
 		_textures.resize(textureCount);
 		GLenum* drawBuffers = new GLenum[textureCount];
@@ -31,38 +31,33 @@ namespace yellowEngine
 		if (status != GL_FRAMEBUFFER_COMPLETE)
 		{
 			// should delete framebuffer and textures
-			Utils::print("Framebuffer not complete!");
+			Utils::print("FrameBuffer not complete!");
 		}
 
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 
 
-	Framebuffer::~Framebuffer()
+	FrameBuffer::~FrameBuffer()
 	{
 	}
 
 
-	void Framebuffer::bindForWriting()
+	void FrameBuffer::bindForWriting()
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebufferHandle);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferHandle);
 	}
 
 
-	void Framebuffer::bindForReading()
+	void FrameBuffer::bindForReading()
 	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebufferHandle);
-	}
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, NULL);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBufferHandle);
 
-
-	void Framebuffer::unbind()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-	}
-
-
-	void Framebuffer::setBufferToRead(int i)
-	{
-		glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+		for (size_t i = 0; i < _textures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			_textures[i]->bind();
+		}
 	}
 }

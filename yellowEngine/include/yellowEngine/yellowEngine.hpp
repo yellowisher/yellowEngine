@@ -51,7 +51,7 @@
 #include "System/EventListener.hpp"
 #include "System/EventNotifier.hpp"
 #include "System/InputManager.hpp"
-#include "System/System.hpp"
+#include "System/Game.hpp"
 
 // utility
 #include "Utility/ObjectPool.hpp"
