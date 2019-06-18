@@ -155,9 +155,12 @@
     <ClCompile Include="src\Math\Vector2.cpp" />
     <ClCompile Include="src\Math\Vector3.cpp" />
     <ClCompile Include="src\Math\Vector4.cpp" />
+    <ClCompile Include="src\Rendering\Framebuffer.cpp" />
+    <ClCompile Include="src\Rendering\Geometrybuffer.cpp" />
     <ClCompile Include="src\Rendering\Material.cpp" />
     <ClCompile Include="src\Rendering\Mesh.cpp" />
     <ClCompile Include="src\Rendering\Model.cpp" />
+    <ClCompile Include="src\Rendering\Renderbuffer.cpp" />
     <ClCompile Include="src\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Rendering\Shader.cpp" />
     <ClCompile Include="src\Rendering\Texture.cpp" />
@@ -167,6 +170,7 @@
     <ClCompile Include="src\System\EventListener.cpp" />
     <ClCompile Include="src\System\EventNotifier.cpp" />
     <ClCompile Include="src\Component\GameObject.cpp" />
+    <ClCompile Include="src\System\InputManager.cpp" />
     <ClCompile Include="src\System\System.cpp" />
     <ClCompile Include="vendor\glad\src\glad.c" />
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp" />
@@ -196,9 +200,12 @@
     <ClInclude Include="include\yellowEngine\Math\Vector2.hpp" />
     <ClInclude Include="include\yellowEngine\Math\Vector3.hpp" />
     <ClInclude Include="include\yellowEngine\Math\Vector4.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\Framebuffer.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\Geometrybuffer.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Material.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Mesh.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Model.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\Renderbuffer.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Shader.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Texture.hpp" />
@@ -209,6 +216,7 @@
     <ClInclude Include="include\yellowEngine\System\EventListener.hpp" />
     <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp" />
     <ClInclude Include="include\yellowEngine\Component\GameObject.hpp" />
+    <ClInclude Include="include\yellowEngine\System\InputManager.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\Definitions.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp" />
     <ClInclude Include="include\yellowEngine\System\System.hpp" />
@@ -223,6 +231,10 @@
   <ItemGroup>
     <None Include="res\Shader\color.frag" />
     <None Include="res\Shader\color.vert" />
+    <None Include="res\Shader\deferred_light.frag" />
+    <None Include="res\Shader\deferred_light.vert" />
+    <None Include="res\Shader\deferred_geometry.frag" />
+    <None Include="res\Shader\deferred_geometry.vert" />
     <None Include="res\Shader\skeletal.vert" />
     <None Include="res\Shader\texture_only.frag" />
     <None Include="res\Shader\texture_only.vert" />

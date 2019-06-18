@@ -1,5 +1,4 @@
 #include <iostream>
-#include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -11,18 +10,33 @@ namespace yellowEngine
 {
 	map<string, Texture*> Texture::__textureCache;
 
-	Texture::Texture()
+
+	Texture::Texture(int width, int height, int format, GLenum type, int internalFromat,
+					 int wrap, int filter, bool generateMipMap, const void* data)
 	{
+		glGenTextures(1, &_id);
+		glBindTexture(GL_TEXTURE_2D, _id);
+
+		// TODO: should be parameters(customizable)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFromat, width, height, 0, format, type, data);
+		
+		// lazy initialization?
+		if (generateMipMap) glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
 
 	Texture::~Texture()
 	{
-
 	}
 
 
-	Texture* Texture::create(const char* path, bool absolute)
+	Texture* Texture::create(const char* path, bool absolute, int wrap, int filter)
 	{
 		std::string fullpath = path;
 		if (!absolute) fullpath = System::getInstance()->getResourcePath(path);
@@ -32,7 +46,6 @@ namespace yellowEngine
 		{
 			return it->second;
 		}
-
 
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
@@ -49,20 +62,7 @@ namespace yellowEngine
 		else if (channels == 3)format = GL_RGB;
 		else if (channels == 4)format = GL_RGBA;
 
-		Texture* texture = new Texture();
-		glGenTextures(1, &texture->_id);
-		glBindTexture(GL_TEXTURE_2D, texture->_id);
-
-		// TODO: should be parameters(customizable)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		// lazy initialization?
-		glGenerateMipmap(GL_TEXTURE_2D);
+		Texture* texture = new Texture(width, height, format, GL_UNSIGNED_BYTE, format, wrap, filter, true, data);
 		stbi_image_free(data);
 
 		__textureCache.insert({ fullpath, texture });

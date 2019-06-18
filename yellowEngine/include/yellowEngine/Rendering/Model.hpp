@@ -57,15 +57,14 @@ namespace yellowEngine
 
 		Model();
 		~Model();
-		Node* buildTree(aiNode* aiNode);
-		void fillMesh(Node* node);
-		std::pair<Mesh*, Material> createMesh(aiMesh* mesh, Node* currentNode);
+		Node* buildTree(aiNode* aiNode, const aiScene* scene);
+		void fillMesh(Node* node, const aiScene* scene);
+		std::pair<Mesh*, Material> createMesh(aiMesh* mesh, const aiScene* scene, Node* currentNode);
 		void copyMatrix(aiMatrix4x4& aiMatrix, Matrix& matrix);
 
-		// temporal value for building scene tree
-		const aiScene* _scene;
 		std::string _directory;
 
+		bool _hasAnimation;
 		Node* _root;
 		std::map<std::string, Node*> _nodes;
 		std::map<std::string, AnimationClip*> _clips;

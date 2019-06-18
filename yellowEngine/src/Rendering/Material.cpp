@@ -2,22 +2,14 @@
 
 namespace yellowEngine
 {
-	Material::Material(Shader* shader) :_shader(shader)
+	Material::Material()
 	{
-		for (auto uniformPair : _shader->getUniforms())
-		{
-			if (uniformPair.second.type == GL_SAMPLER_1D ||
-				uniformPair.second.type == GL_SAMPLER_2D ||
-				uniformPair.second.type == GL_SAMPLER_3D)continue;
-			size_t commaPos = uniformPair.first.find('.');
-			if (uniformPair.first.substr(0, commaPos) == "u_Material")
-			{
-				Property prop;
-				std::string name = uniformPair.first.substr(commaPos + 1);
-				prop.uniform = _shader->getUniform(uniformPair.first);
-				_properties.insert({ name, prop });
-			}
-		}
+		_shader = nullptr;
+	}
+
+	Material::Material(Shader* shader)
+	{
+		_shader = shader;
 	}
 
 
@@ -29,70 +21,71 @@ namespace yellowEngine
 	Material* Material::init(GameObject* gameObject, Mesh* mesh)
 	{
 		_gameObject = gameObject;
-		_binding = VertexLayoutBinding::create(mesh, _shader);
-
-		for (size_t i = 0; i < _textures.size(); i++)
-		{
-			_shader->setUniform(_shader->getUniform(_textures[i].first), (int)i);
-		}
+		_mesh = mesh;
 		return this;
 	}
 
 
 	void Material::addTexture(Texture* texture, const char* usage)
 	{
-		_textures.push_back({ usage,texture });
+		_textures.insert({ usage, texture });
 	}
 
 
-	void Material::bind()
+	void Material::bind(Shader* shader)
 	{
-		_shader->bind();
+		if (shader == nullptr)
+		{
+			shader = _shader;
+		}
+
+		shader->bind();
 
 		// update auto binding uniforms (like model matrix)
-		_shader->updateUniforms(_gameObject);
+		shader->updateUniforms(_gameObject);
 
-		for (auto prop : _properties)
+		/*for (auto uniformPair : shader->getUniforms())
 		{
-			switch (prop.second.uniform->type)
+			switch (uniformPair.second.type)
 			{
 				case GL_INT:
-					_shader->setUniform(prop.second.uniform, prop.second.intValue);
+					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].intValue);
 					break;
 				case GL_FLOAT:
-					_shader->setUniform(prop.second.uniform, prop.second.floatValue);
+					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].floatValue);
 					break;
 				case GL_FLOAT_VEC2:
-					_shader->setUniform(prop.second.uniform, prop.second.vector2Value);
+					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].vector2Value);
 					break;
 				case GL_FLOAT_VEC3:
-					_shader->setUniform(prop.second.uniform, prop.second.vector3Value);
+					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].vector3Value);
 					break;
 				case GL_FLOAT_VEC4:
-					_shader->setUniform(prop.second.uniform, prop.second.vector4Value);
+					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].vector4Value);
 					break;
 				case GL_FLOAT_MAT4:
-					_shader->setUniform(prop.second.uniform, prop.second.matrixValue);
+					shader->setUniform(uniformPair.first, _properties[uniformPair.second.name].matrixValue);
 					break;
 				default:
 					continue;
 			}
-		}
+		}*/
 
-		for (size_t i = 0; i < _textures.size(); i++)
+		const std::vector<std::string>& names = shader->getTextureUnits();
+		for (int i = 0; i < names.size(); i++)
 		{
-			glActiveTexture((GLenum)(GL_TEXTURE0 + i));
-			_textures[i].second->bind();
+			glActiveTexture(GL_TEXTURE0 + i);
+			_textures[names[i]]->bind();
 		}
 
-		_binding->bind();
+		VertexLayoutBinding::create(_mesh, shader)->bind();
 	}
 
 
 	void Material::unbind()
 	{
 		_shader->unbind();
-		_binding->unbind();
+		VertexLayoutBinding::unbind();
 	}
 
 

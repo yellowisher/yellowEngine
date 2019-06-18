@@ -127,9 +127,8 @@ namespace yellowEngine
 	const Matrix& Camera::getMatrix(bool pulling)
 	{
 		if (pulling)_matrixPulled = true;
-		if (_dirtyBits != Dirty_None)
+		if (_dirtyBits & Dirty_Matrix)
 		{
-			_dirtyBits &= ~Dirty_Matrix;
 			_pvMatrix = getPMatrix() * getVMatrix();
 		}
 		return _pvMatrix;
@@ -150,6 +149,6 @@ namespace yellowEngine
 	void Camera::dirty(char dirtyBits)
 	{
 		_matrixPulled = false;
-		_dirtyBits |= dirtyBits | Dirty_Matrix;
+		_dirtyBits |= dirtyBits;
 	}
 }

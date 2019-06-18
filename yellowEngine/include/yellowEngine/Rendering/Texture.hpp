@@ -5,24 +5,27 @@ using namespace std;
 
 #include <string>
 #include <map>
+#include <glad/glad.h>
 
 namespace yellowEngine
 {
 	class Texture
 	{
+		friend class Framebuffer;
 	public:
-		static Texture* create(const char* path, bool absolute = false);
+		static Texture* create(const char* path, bool absolute = false, int wrap = GL_REPEAT, int filter = GL_NEAREST);
 
 		void bind();
 		void unbind();
 
-		unsigned int _id;
-
 	private:
 		static map<string, Texture*> __textureCache;
 
-		Texture();
+		Texture(int width, int height, int format,  GLenum type, int internalFromat,
+				int wrap = GL_REPEAT, int filter = GL_NEAREST, bool generateMipMap = false, const void* data = nullptr);
 		~Texture();
+		
+		unsigned int _id;
 	};
 }
 

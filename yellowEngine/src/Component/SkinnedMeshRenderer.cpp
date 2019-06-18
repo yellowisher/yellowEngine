@@ -52,13 +52,9 @@ namespace yellowEngine
 		}
 		else
 		{
-			shader->bind();
-			shader->updateUniforms(gameObject);
-			auto binding = VertexLayoutBinding::create(_mesh, shader);
-			binding->bind();
+			_material.bind(shader);
 			glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
-			binding->unbind();
-			shader->unbind();
+			_material.unbind();
 		}
 	}
 }

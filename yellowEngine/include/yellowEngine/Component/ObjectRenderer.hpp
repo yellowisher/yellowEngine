@@ -12,7 +12,7 @@ namespace yellowEngine
 	class ObjectRenderer : public Component
 	{
 	public:
-		static void renderAll(Camera* camera);
+		static void renderAll(Camera* camera, Shader* shader = nullptr);
 		static Camera* getCurrentCamera();
 
 		ObjectRenderer(GameObject* gameObject);

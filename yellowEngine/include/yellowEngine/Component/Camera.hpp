@@ -44,7 +44,7 @@ namespace yellowEngine
 			Dirty_None = 0,
 			Dirty_View = 1,
 			Dirty_Projection = 2,
-			Dirty_Matrix = 4
+			Dirty_Matrix = Dirty_View | Dirty_Projection
 		};
 		char _dirtyBits;
 

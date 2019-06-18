@@ -17,6 +17,7 @@ namespace yellowEngine
 		char name[bufferSize];
 		GLenum type;
 
+		glUseProgram(_id);
 		glGetProgramiv(_id, GL_ACTIVE_ATTRIBUTES, &count);
 		for (int i = 0; i < count; i++)
 		{
@@ -30,7 +31,16 @@ namespace yellowEngine
 		{
 			glGetActiveUniform(_id, i, bufferSize, &length, &size, &type, name);
 			location = glGetUniformLocation(_id, name);
-			_uniforms.insert({ name, {name, type, size, location} });
+
+			if (type == GL_SAMPLER_1D || type == GL_SAMPLER_2D || type == GL_SAMPLER_3D)
+			{
+				glUniform1i(location, _textureUnits.size());
+				_textureUnits.push_back(name);
+			}
+			else
+			{
+				_uniforms.insert({ name, {name, type, size, location} });
+			}
 		}
 
 		_uniformUpdater.init();
@@ -141,6 +151,12 @@ namespace yellowEngine
 	}
 
 
+	const std::vector<std::string>& Shader::getTextureUnits()
+	{
+		return _textureUnits;
+	}
+
+
 	const std::map<std::string, Uniform>& Shader::getUniforms()
 	{
 		return _uniforms;
@@ -155,6 +171,41 @@ namespace yellowEngine
 			return &it->second;
 		}
 		return nullptr;
+	}
+
+	void Shader::setUniform(const std::string& name, int value, int index)
+	{
+		setUniform(&_uniforms[name], value, index);
+	}
+
+
+	void Shader::setUniform(const std::string& name, float value, int index)
+	{
+		setUniform(&_uniforms[name], value, index);
+	}
+
+
+	void Shader::setUniform(const std::string& name, const Vector2 & value, int index)
+	{
+		setUniform(&_uniforms[name], value, index);
+	}
+
+
+	void Shader::setUniform(const std::string& name, const Vector3 & value, int index)
+	{
+		setUniform(&_uniforms[name], value, index);
+	}
+
+
+	void Shader::setUniform(const std::string& name, const Vector4 & value, int index)
+	{
+		setUniform(&_uniforms[name], value, index);
+	}
+
+
+	void Shader::setUniform(const std::string& name, const Matrix & value, int index)
+	{
+		setUniform(&_uniforms[name], value, index);
 	}
 
 

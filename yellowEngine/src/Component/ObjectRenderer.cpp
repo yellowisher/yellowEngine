@@ -33,14 +33,14 @@ namespace yellowEngine
 	}
 
 
-	void ObjectRenderer::renderAll(Camera* camera)
+	void ObjectRenderer::renderAll(Camera* camera, Shader* shader)
 	{
 		_currentCamera = camera;
 		for (auto renderer : _renderers)
 		{
 			if (renderer->gameObject->getActive() && renderer->getActive())
 			{
-				renderer->render();
+				renderer->render(shader);
 			}
 		}
 	}

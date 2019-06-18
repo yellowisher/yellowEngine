@@ -6,181 +6,50 @@
 
 namespace yellowEngine
 {
-	std::vector<Light*> Light::lights[Num_Type];
-	unsigned int Light::__ubo;
-	bool Light::__initialized = false;
+	std::vector<Light*> Light::__lights[Num_LightType];
 
 
-	Light::Light(GameObject* gameObject) :
-		Component(gameObject),
-		_ambientColor(0.1f, 0.1f, 0.1f),
-		_diffuseColor(0.5f, 0.5f, 0.5f),
-		_specularColor(1.0f, 1.0f, 1.0f),
-		_type(Type_None)
+	const std::vector<Light*>& Light::getLights(LightType type)
 	{
+		return __lights[type];
+	}
+
+
+	Light::Light(GameObject* gameObject) :Component(gameObject)
+	{
+		color = Vector3(1.0f, 1.0f, 1.0f);
+		intensity = 1.0f;
+
+		_type = LightType_Dir;
+		__lights[LightType_Dir].push_back(this);
 	}
 
 
 	Light::~Light()
 	{
-		if (_type != Type_None)
-		{
-			for (auto it = lights[_type].begin(); it != lights[_type].end(); ++it)
-			{
-				if (*it == this)
-				{
-					lights[_type].erase(it);
-					break;
-				}
-			}
-		}
 	}
 
 
-	void Light::setColor(Vector3 ambient, Vector3 diffuse, Vector3 specular)
+	Light* Light::setType(LightType type)
 	{
-		_ambientColor = ambient;
-		_diffuseColor = diffuse;
-		_specularColor = specular;
-	}
-
-
-	void Light::setType(Type type)
-	{
-		if (_type != Type_None)
+		for (int i = 0; i < __lights[_type].size(); i++)
 		{
-			for (auto it = lights[_type].begin(); it != lights[_type].end(); ++it)
+			if (__lights[_type][i] == this)
 			{
-				if (*it == this)
-				{
-					lights[_type].erase(it);
-					break;
-				}
+				__lights[_type][i] = __lights[_type].back();
+				__lights[_type].pop_back();
+				break;
 			}
 		}
+
 		_type = type;
-		if (_type != Type_None)
-		{
-			lights[_type].push_back(this);
-		}
-	}
-
-
-	Light* Light::setDirectional()
-	{
-		setType(Type_Directional);
-
+		__lights[_type].push_back(this);
 		return this;
 	}
 
 
-	Light* Light::setPoint(float constant, float linear, float quadratic)
+	Vector3 Light::getDirection()
 	{
-		setType(Type_Point);
-		_constant = constant;
-		_linear = linear;
-		_quadratic = quadratic;
-
-		return this;
-	}
-
-
-	Light* Light::setSpot(float constant, float linear, float quadratic, float cutoffCos, float outerCutoffCos)
-	{
-		setType(Type_Spot);
-		_constant = constant;
-		_linear = linear;
-		_quadratic = quadratic;
-
-		_cutoffCos = cutoffCos;
-		_outerCutoffCos = outerCutoffCos;
-
-		return this;
-	}
-
-
-	void Light::setDirection(float x, float y, float z)
-	{
-		transform->setRotation(x, y, z);
-	}
-
-
-	void Light::updateUniformBuffer()
-	{
-		if (!__initialized)
-		{
-			__initialized = true;
-			glGenBuffers(1, &__ubo);
-			glBindBuffer(GL_UNIFORM_BUFFER, __ubo);
-			glBufferData(GL_UNIFORM_BUFFER, 1680, NULL, GL_DYNAMIC_DRAW);
-			glBindBufferBase(GL_UNIFORM_BUFFER, 0, __ubo);
-		}
-
-		glBindBuffer(GL_UNIFORM_BUFFER, __ubo);
-
-		int offset = 0;
-		float temp[4] = { 0,0,0,0 };
-		for (auto light : lights[Type_Directional])
-		{
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldRotation() * Vector3::forward, temp)); offset += 16;
-
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_ambientColor, temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_diffuseColor, temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_specularColor, temp)); offset += 16;
-		}
-		offset = 256;
-
-		for (auto light : lights[Type_Point])
-		{
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldPosition(), temp)); offset += 16;
-
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_ambientColor, temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_diffuseColor, temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_specularColor, temp)); offset += 16;
-
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_constant); offset += 4;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_linear); offset += 4;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_quadratic); offset += 4;
-			offset += 4;
-
-		}
-		offset = 1216;
-
-		for (auto light : lights[Type_Spot])
-		{
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldPosition(), temp)); offset += 16;
-			
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->transform->getWorldRotation() * Vector3::forward, temp)); offset += 16;
-
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_ambientColor, temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_diffuseColor, temp)); offset += 16;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 16, addPadding(light->_specularColor, temp)); offset += 16;
-
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_constant); offset += 4;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_linear); offset += 4;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_quadratic); offset += 4;
-
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_cutoffCos); offset += 4;
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &light->_outerCutoffCos); offset += 4;
-			offset += 12;
-		}
-		offset = 1664;
-
-		for (int i = 0; i < Num_Type; i++)
-		{
-			size_t count = lights[i].size();
-			glBufferSubData(GL_UNIFORM_BUFFER, offset, 4, &count); offset += 4;
-		}
-
-		//glBindBuffer(GL_UNIFORM_BUFFER, NULL);
-	}
-
-
-	float* Light::addPadding(const Vector3& vector, float* arr)
-	{
-		arr[0] = vector.x;
-		arr[1] = vector.y;
-		arr[2] = vector.z;
-		return arr;
+		return transform->getForward();
 	}
 }

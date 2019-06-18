@@ -54,7 +54,7 @@ namespace yellowEngine
 			node->transform = gameObject->transform;
 			if (node->mesh)
 			{
-				if (_scene->HasAnimations())
+				if (_hasAnimation)
 				{
 					gameObject->addComponent<SkinnedMeshRenderer>();
 				}
@@ -83,27 +83,30 @@ namespace yellowEngine
 			}
 		}
 
-		visitQueue.push({ _root, nullptr });
-		while (!visitQueue.empty())
+		if (_hasAnimation)
 		{
-			auto visit = visitQueue.front();
-			Node* node = visit.first;
-			visitQueue.pop();
-
-			auto renderer = node->transform->gameObject->getComponent<SkinnedMeshRenderer>();
-			if (renderer != nullptr)
+			visitQueue.push({ _root, nullptr });
+			while (!visitQueue.empty())
 			{
-				std::vector<std::pair<Transform*, Matrix>> joints;
-				for (auto node : node->jointNodes)
+				auto visit = visitQueue.front();
+				Node* node = visit.first;
+				visitQueue.pop();
+
+				auto renderer = node->transform->gameObject->getComponent<SkinnedMeshRenderer>();
+				if (renderer != nullptr)
 				{
-					joints.push_back({ node->transform,node->offset });
+					std::vector<std::pair<Transform*, Matrix>> joints;
+					for (auto node : node->jointNodes)
+					{
+						joints.push_back({ node->transform,node->offset });
+					}
+					renderer->set(node->mesh, node->material, joints, rootObject->transform);
 				}
-				renderer->set(node->mesh, node->material, joints, rootObject->transform);
-			}
 
-			for (auto child : node->children)
-			{
-				visitQueue.push({ child, nullptr });
+				for (auto child : node->children)
+				{
+					visitQueue.push({ child, nullptr });
+				}
 			}
 		}
 
@@ -142,13 +145,13 @@ namespace yellowEngine
 		Model* model = new Model();
 
 		// feed temporal information for building scene hierachy
-		model->_scene = scene;
+		model->_hasAnimation = scene->HasAnimations();
 		model->_directory = path.substr(0, path.find_last_of('/') + 1);
 
-		model->_root = model->buildTree(scene->mRootNode);
+		model->_root = model->buildTree(scene->mRootNode, scene);
 
 		// after build scene hierarchy, fill all the meshes
-		model->fillMesh(model->_root);
+		model->fillMesh(model->_root, scene);
 
 		// create animation clips
 		if (scene->HasAnimations())
@@ -227,23 +230,23 @@ namespace yellowEngine
 	}
 
 
-	void Model::fillMesh(Node* node)
+	void Model::fillMesh(Node* node, const aiScene* scene)
 	{
 		if (node->aiMesh != nullptr)
 		{
-			auto pair = createMesh(node->aiMesh, node);
+			auto pair = createMesh(node->aiMesh, scene, node);
 			node->mesh = pair.first;
 			node->material = pair.second;
 		}
 
 		for (auto child : node->children)
 		{
-			fillMesh(child);
+			fillMesh(child, scene);
 		}
 	}
 
 
-	Model::Node* Model::buildTree(aiNode* aiNode)
+	Model::Node* Model::buildTree(aiNode* aiNode, const aiScene* scene)
 	{
 		Node* node = new Node();
 		node->parent = nullptr;
@@ -252,7 +255,7 @@ namespace yellowEngine
 		// current, handle atmost one mesh
 		if (aiNode->mNumMeshes > 0)
 		{
-			node->aiMesh = _scene->mMeshes[aiNode->mMeshes[0]];
+			node->aiMesh = scene->mMeshes[aiNode->mMeshes[0]];
 		}
 		else
 		{
@@ -271,7 +274,7 @@ namespace yellowEngine
 
 		for (unsigned int i = 0; i < aiNode->mNumChildren; i++)
 		{
-			Node* child = buildTree(aiNode->mChildren[i]);
+			Node* child = buildTree(aiNode->mChildren[i], scene);
 			child->parent = node;
 			node->children.push_back(child);
 		}
@@ -280,7 +283,7 @@ namespace yellowEngine
 	}
 
 
-	std::pair<Mesh*, Material> Model::createMesh(aiMesh* aiMesh, Node* currentNode)
+	std::pair<Mesh*, Material> Model::createMesh(aiMesh* aiMesh, const aiScene* scene, Node* currentNode)
 	{	
 		// Model class already caching model itself
 		// there is no need to cache in Mesh class
@@ -395,37 +398,28 @@ namespace yellowEngine
 			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
-		if (_scene->HasTextures())
+		//Material mat(Shader::create("Shader/texture.vert", "Shader/texture.frag"));
+		Material mat(Shader::create("Shader/texture_only.vert", "Shader/texture_only.frag"));
+
+		aiMaterial* material = scene->mMaterials[aiMesh->mMaterialIndex];
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 		{
-			Material mat(Shader::create("Shader/skeletal.vert", "Shader/texture.frag"));
-			mat.setProperty("shininess", 64.0f);
+			aiString path;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+			path = _directory + path.C_Str();
 
-			aiMaterial* material = _scene->mMaterials[aiMesh->mMaterialIndex];
-			if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-			{
-				aiString path;
-				material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-				path = _directory + path.C_Str();
-
-				mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.diffuse");
-			}
-
-			if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
-			{
-				aiString path;
-				material->GetTexture(aiTextureType_SPECULAR, 0, &path);
-				path = _directory + path.C_Str();
-
-				mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
-			}
-			return { mesh, mat };
+			mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.diffuse");
 		}
-		else
-		{
-			Material mat(Shader::create("Shader/skeletal.vert", "Shader/color.frag"));
-			mat.setProperty("shininess", 64.0f);
-			return { mesh, mat };
-		}
+
+		//if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+		//{
+		//	aiString path;
+		//	material->GetTexture(aiTextureType_SPECULAR, 0, &path);
+		//	path = _directory + path.C_Str();
+
+		//	mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
+		//}
+		return { mesh, mat };
 	}
 
 

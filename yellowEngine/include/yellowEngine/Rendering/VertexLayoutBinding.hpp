@@ -16,7 +16,7 @@ namespace yellowEngine
 
 		unsigned int getVertexArrayHandle();
 		void bind();
-		void unbind();
+		static void unbind();
 
 	private:
 		static std::map<std::pair<Mesh*, Shader*>, VertexLayoutBinding*> __bindingCache;

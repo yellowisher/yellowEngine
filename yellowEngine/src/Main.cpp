@@ -79,7 +79,6 @@ void processInput(GLFWwindow *window)
 		cameraTransform->translate(0, 0.06f*speed, 0);
 	}
 
-
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
 		boxTransform->translate(boxTransform->getForward()*-0.06f);
@@ -123,16 +122,6 @@ void processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		//if (g == nullptr)
-		//{
-		//	g = new GameObject("New");
-		//	g->addComponent<BoxCollider>();
-		//}
-		//else
-		//{
-		//	delete(g);
-		//	g = nullptr;
-		//}
 		pressed = true;
 	}
 	else
@@ -140,26 +129,6 @@ void processInput(GLFWwindow *window)
 		pressed = false;
 	}
 }
-
-//void addCube(Transform* target, Mesh* mesh, Material material)
-//{
-//	GameObject* go = new GameObject();
-//	go->addComponent<MeshRenderer>()->set(mesh, material);
-//	go->transform->setPosition(target->getWorldPosition());
-//
-//	auto localPosition = target->position;
-//	auto localRotation = target->rotation.toEulerAngle();
-//
-//	auto worldPosition = target->getWorldPosition();
-//	auto worldRotation = target->getWorldRotation().toEulerAngle();
-//	auto m = target->getMatrix();
-//	auto l = target->getLocalMatrix();
-//
-//	for (int i = 0; i < target->getChildCount(); i++)
-//	{
-//		addCube(target->getChild(i), mesh, material);
-//	}
-//}
 
 int main(void)
 {
@@ -182,106 +151,36 @@ int main(void)
 	}
 	glfwMakeContextCurrent(window);
 
+	InputManager::init(window);
+
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 
-	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
+
+	//glfwSetKeyCallback(window, _keyCallback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	Shader* textureShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
-	unsigned int lightsIndex = glGetUniformBlockIndex(textureShader->getId(), "LightBlock");
-	glUniformBlockBinding(textureShader->getId(), lightsIndex, 0);
-	Texture* diffuseMap = Texture::create("Texture/container2.png");
-	Texture* specularMap = Texture::create("Texture/container2_specular.png");
+	//Shader* textureShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
+	//unsigned int lightsIndex = glGetUniformBlockIndex(textureShader->getId(), "LightBlock");
+	//glUniformBlockBinding(textureShader->getId(), lightsIndex, 0);
 
 	//Model* model = Model::create("Mesh/92-dog_anim/dog final.blend");
-	Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
-
-
-	int c = model->getClips().size();
-	AnimationClip* clips[3];
-	clips[0] = model->getClips().begin()->second;
-	clips[1] = (++model->getClips().begin())->second;
+	//Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
+	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
 	GameObject* go = model->instantiate("nanosuit");
-	go->transform->setScale(0.01f, 0.01f, 0.01f);
-	go->transform->rotate(270, 0, 0);
-	auto animm = go->addComponent<Animator>();
-	//animm->play(clips[0]);
-
-	boxTransform = go->transform->findChild("Root")->findChild("hips")->findChild("thigh.L");
-	//boxTransform = go->transform->findChild("free3dmodel_skeleton")->findChild("hips")->findChild("abdomen")->findChild("abdomen2")->findChild("chest")->findChild("shoulder.L");
-
-	Material cubeMaterial(textureShader);
-	cubeMaterial.addTexture(diffuseMap, "u_Material.diffuse");
-	cubeMaterial.addTexture(specularMap, "u_Material.specular");
-	cubeMaterial.setProperty("shininess", 64.0f);
-
-	Mesh* cubeMesh = Mesh::create("Mesh/cube.obj");
-
-	//addCube(go->transform, cubeMesh, cubeMaterial);
-
-	GameObject* body = new GameObject("MovingCube");
-	//boxTransform = body->transform;
-
-	GameObject* bodyImage = new GameObject("Body");
-	MeshRenderer* cubeRenderer = bodyImage->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	bodyImage->transform->setScale(2.0f, 4.0f, 1.0f);
-
-	GameObject* ls = new GameObject("leftShoulder");
-	MeshRenderer* lsm = ls->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	ls->transform->translate(-1.5f, 1.5f, 0);
-
-	GameObject* rs = new GameObject("rightShoulder");
-	MeshRenderer* rsm = rs->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	rs->transform->translate(1.5f, 1.5f, 0);
-
-	GameObject* la = new GameObject("leftShoulder");
-	MeshRenderer* lam = la->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	ls->transform->addChild(la->transform);
-	la->transform->setPosition(0, -1.5f, 0);
-	la->transform->setScale(1.0f, 2.0f, 1.0f);
-
-	GameObject* ra = new GameObject("rightShoulder");
-	MeshRenderer* ram = ra->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	rs->transform->addChild(ra->transform);
-	ra->transform->setPosition(0, -1.5f, 0);
-	ra->transform->setScale(1.0f, 2.0f, 1.0f);
-
-	GameObject* h = new GameObject("rightShoulder");
-	h->transform->setPosition(0, 2.5f, 0);
-
-	GameObject* hd = new GameObject("rightShoulder");
-	MeshRenderer* hdm = hd->addComponent<MeshRenderer>()->set(cubeMesh, cubeMaterial);
-	h->transform->addChild(hd->transform);
-	hdm->transform->setPosition(0, 0, 0);
-
-	body->transform->addChild(ls->transform);
-	body->transform->addChild(rs->transform);
-	body->transform->addChild(h->transform);
-	body->transform->addChild(bodyImage->transform);
-	Animator* anim = body->addComponent<Animator>();
-
-	//AnimationClip* walkingClip = AnimationClip::create("Animation/walking.json");
-	//AnimationClip* waveClip = AnimationClip::create("Animation/wave.json");
-	//anim->play(walkingClip);
+	//go->transform->setScale(0.01f, 0.01f, 0.01f);
+	//go->transform->rotate(270, 0, 0);
+	boxTransform = go->transform;
 
 	GameObject* dl = new GameObject();
-	Light* l = dl->addComponent<Light>()->setDirectional();
-	l->transform->rotate(0, 180.0f, 0);
-
-	GameObject* dirLightGo = new GameObject("dirLight");
-	//Light* light = dirLightGo->addComponent<Light>()->setPoint(1.0f, 0.14f, 0.07f);
-	Light* light = dirLightGo->addComponent<Light>()->setDirectional();
-
-	//light->transform->rotate(45.0f, 0, 0);
-	light->transform->setScale(0.2f, 0.2f, 0.2f);
-	light->transform->setPosition(1.2f, 1.0f, 2.0f);
+	Light* light = dl->addComponent<Light>()->setType(Light::LightType_Dir);
+	dl->transform->rotate(45, 135.0f, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
@@ -289,34 +188,67 @@ int main(void)
 	//camera->setPerspective(60.0f, 0.01f, 10000.0f);
 
 	cameraTransform = cameraGo->transform;
-	cameraTransform->translate(0, 0, 4);
+	cameraTransform->translate(0, 0, 40);
 
 	ObjectRenderer::_currentCamera = camera;
 
-	animm->play(clips[0]);
-	int frame = 0;
-	delete(body);
+	//auto clip0 = model->getClips().begin()->second;
+	//auto clip1 = (++model->getClips().begin())->second;
+	//auto anim = go->addComponent<Animator>();
+	//anim->play(clip1);
+
+	int width = System::getInstance()->getWidth();
+	int height = System::getInstance()->getHeight();
+
+	Framebuffer* gbuffer = new Framebuffer(4, System::getInstance()->getWidth(), System::getInstance()->getHeight(), GL_RGB, GL_FLOAT, GL_RGB32F);
+	Shader* geometryShader = Shader::create("Shader/deferred_geometry.vert", "Shader/deferred_geometry.frag");
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
-		if (++frame == 100)animm->play(clips[1]);
+		glEnable(GL_DEPTH_TEST);
 
-		if (!prevPressed && pressed)
-		{
-			animm->play(clips[1]);
-		}
-		if (prevPressed && !pressed)
-		{
-			animm->play(clips[0]);
-		}
-		prevPressed = pressed;
-
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.1, 0.1, 0.1, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		Light::updateUniformBuffer();
-		Animator::proceedAll();
 		ObjectRenderer::renderAll(camera);
+
+		// geometry pass
+		//gbuffer->bindForWriting();
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//ObjectRenderer::renderAll(camera, geometryShader);
+
+		//// lighting pass
+		//gbuffer->unbind();
+		//gbuffer->bindForReading();
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//gbuffer->setBufferToRead(0);
+		//glBlitFramebuffer(
+		//	0, 0, width, height,
+		//	0, 0, width / 2, height / 2,
+		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
+		//);
+
+		//gbuffer->setBufferToRead(1);
+		//glBlitFramebuffer(
+		//	0, 0, width, height,
+		//	width / 2, 0, width, height / 2,
+		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
+		//);
+
+		//gbuffer->setBufferToRead(2);
+		//glBlitFramebuffer(
+		//	0, 0, width, height,
+		//	0, height / 2, width / 2, height,
+		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
+		//);
+
+		//gbuffer->setBufferToRead(3);
+		//glBlitFramebuffer(
+		//	0, 0, width, height,
+		//	width / 2, height / 2, width, height,
+		//	GL_COLOR_BUFFER_BIT, GL_LINEAR
+		//);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

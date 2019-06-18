@@ -135,6 +135,18 @@
     <ClCompile Include="src\Component\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\System\InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Geometrybuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Renderbuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">
@@ -278,6 +290,18 @@
     <ClInclude Include="include\yellowEngine\Utility\Definitions.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\yellowEngine\System\InputManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Framebuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Geometrybuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Renderbuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\wireframe.frag">
@@ -297,5 +321,9 @@
     <None Include="res\Shader\texture_only.frag" />
     <None Include="res\Shader\color.frag" />
     <None Include="res\Shader\color.vert" />
+    <None Include="res\Shader\deferred_light.frag" />
+    <None Include="res\Shader\deferred_light.vert" />
+    <None Include="res\Shader\deferred_geometry.vert" />
+    <None Include="res\Shader\deferred_geometry.frag" />
   </ItemGroup>
 </Project>

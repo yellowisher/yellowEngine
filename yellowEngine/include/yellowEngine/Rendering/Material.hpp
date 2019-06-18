@@ -21,7 +21,6 @@ namespace yellowEngine
 			Property(const Property& copy) { memcpy(this, &copy, sizeof(Property)); }
 			~Property() {};
 
-			const Uniform* uniform;
 			union
 			{
 				int intValue;
@@ -33,12 +32,12 @@ namespace yellowEngine
 			};
 		};
 
-		Material() {};
+		Material();
 		Material(Shader* shader);
 		~Material();
 		Material* init(GameObject* gameObject, Mesh* mesh);
 		void addTexture(Texture* texture, const char* usage);
-		void bind();
+		void bind(Shader* shader = nullptr);
 		void unbind();
 		Shader* getShader();
 
@@ -50,12 +49,13 @@ namespace yellowEngine
 		void setProperty(const char* name, Matrix value);
 
 	private:
-
 		GameObject* _gameObject;
-		Shader* _shader;
-		VertexLayoutBinding* _binding;
+		Mesh* _mesh;
 
-		std::vector<std::pair<std::string, Texture*>> _textures;
+		// TODO: remove this shader member and create pass
+		Shader* _shader;
+
+		std::map<std::string, Texture*> _textures;
 		std::map<std::string, Property> _properties;
 	};
 }

@@ -40,8 +40,17 @@ namespace yellowEngine
 		int getId() { return _id; }
 
 		const std::vector<Attribute>& getAttributes();
+		const std::vector<std::string>& getTextureUnits();
 		const std::map<std::string, Uniform>& getUniforms();
 		const Uniform* getUniform(std::string name);
+
+		void setUniform(const std::string& name, int value, int index = 0);
+		void setUniform(const std::string& name, float value, int index = 0);
+		void setUniform(const std::string& name, const Vector2& value, int index = 0);
+		void setUniform(const std::string& name, const Vector3& value, int index = 0);
+		void setUniform(const std::string& name, const Vector4& value, int index = 0);
+		void setUniform(const std::string& name, const Matrix& value, int index = 0);
+
 		void setUniform(const Uniform* uniform, int value, int index = 0);
 		void setUniform(const Uniform* uniform, float value, int index = 0);
 		void setUniform(const Uniform* uniform, const Vector2& value, int index = 0);
@@ -58,6 +67,7 @@ namespace yellowEngine
 
 		unsigned int _id;
 		std::vector<Attribute> _attributes;
+		std::vector<std::string> _textureUnits;
 		std::map<std::string, Uniform> _uniforms;
 		UniformUpdater _uniformUpdater;
 
