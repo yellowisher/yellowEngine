@@ -9,6 +9,8 @@
 
 namespace yellowEngine
 {
+	class IUpdatable;
+
 	class Game
 	{
 	public:
@@ -18,6 +20,10 @@ namespace yellowEngine
 		static int getHeight();
 		static float getAspectRatio();
 		static std::string getResourcePath(const char* fileName);
+		
+		static void addUpdatable(IUpdatable* target);
+		static void removeUpdatable(IUpdatable* target);
+		static void trimUpdatable();
 		static void run();
 
 		// configurable properties
@@ -28,9 +34,27 @@ namespace yellowEngine
 		static std::string _resourcePath;
 		static int _width;
 		static int _height;
+		static std::vector<IUpdatable*> _updatables;
+		static int _removedCount;
+
+		static constexpr int TrimCount = 32;
 
 		Game() = delete;
 		~Game() = delete;
+	};
+
+	class IUpdatable
+	{
+	public:
+		IUpdatable()
+		{
+			Game::addUpdatable(this);
+		}
+		virtual ~IUpdatable()
+		{
+			Game::removeUpdatable(this);
+		}
+		virtual void update() = 0;
 	};
 }
 

@@ -174,6 +174,7 @@
     <ClCompile Include="src\Component\GameObject.cpp" />
     <ClCompile Include="src\System\InputManager.cpp" />
     <ClCompile Include="src\System\Game.cpp" />
+    <ClCompile Include="src\Utility\Utils.cpp" />
     <ClCompile Include="vendor\glad\src\glad.c" />
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp" />
   </ItemGroup>

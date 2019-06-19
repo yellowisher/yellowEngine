@@ -10,6 +10,8 @@ namespace yellowEngine
 	std::string Game::_resourcePath = "./res/";
 	int Game::_width;
 	int Game::_height;
+	std::vector<IUpdatable*> Game::_updatables;
+	int Game::_removedCount = 0;
 
 	ColliderManager::BroadPhaseType Game::broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 
@@ -73,6 +75,48 @@ namespace yellowEngine
 	}
 
 
+	void Game::addUpdatable(IUpdatable* target)
+	{
+		_updatables.push_back(target);
+	}
+
+
+	// removing updatable and triming list for every request might be expansive
+	// just set removed updatable as nullptr and trim them when removedCount is big enough (or when trimUpdatable is called)
+	// we cannot simply change target with last element because changing excution order is not desirable
+	void Game::removeUpdatable(IUpdatable* target)
+	{
+		for (auto it = _updatables.begin();; ++it)
+		{
+			if (*it == target)
+			{
+				*it = nullptr;
+				if (++_removedCount == TrimCount)
+				{
+					trimUpdatable();
+				}
+			}
+		}
+	}
+
+
+	void Game::trimUpdatable()
+	{
+		int trimed = 0;
+		for (int i = 0; i + trimed < _updatables.size(); i++)
+		{
+			while (_updatables[i + trimed] == nullptr)
+			{
+				if (++trimed == _removedCount)break;
+			}
+
+			_updatables[i] = _updatables[i + trimed];
+		}
+		_updatables.resize(_updatables.size() - _removedCount);
+		_removedCount = 0;
+	}
+
+
 	void Game::run()
 	{
 		while (!glfwWindowShouldClose(_window))
@@ -80,6 +124,12 @@ namespace yellowEngine
 			glfwPollEvents();
 			InputManager::update();
 			Technique::renderScene();
+
+			for (auto updatable : _updatables)
+			{
+				if (updatable) updatable->update();
+			}
+
 			glfwSwapBuffers(_window);
 		}
 		glfwTerminate();

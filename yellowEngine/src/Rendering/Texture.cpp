@@ -1,7 +1,7 @@
-#include <iostream>
-
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
+
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Rendering/Texture.hpp"
 
@@ -24,8 +24,10 @@ namespace yellowEngine
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
+		Utils::printGLError("Texture.cpp", 27);
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
-		
+		Utils::printGLError("Texture.cpp", 29);
+
 		// lazy initialization?
 		if (generateMipMap) glGenerateMipmap(GL_TEXTURE_2D);
 	}
@@ -49,11 +51,12 @@ namespace yellowEngine
 
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
+
 		unsigned char* data = stbi_load(fullpath.c_str(), &width, &height, &channels, 0);
 
 		if (!data)
 		{
-			cout << "Cannot read file " << fullpath << endl;
+			Utils::print(("Cannot read file " + fullpath).c_str());
 			return nullptr;
 		}
 
@@ -62,7 +65,7 @@ namespace yellowEngine
 		else if (channels == 3)format = GL_RGB;
 		else if (channels == 4)format = GL_RGBA;
 
-		Texture* texture = new Texture(width, height, format, GL_UNSIGNED_BYTE, format, wrap, filter, true, data);
+		Texture* texture = new Texture(format, width, height, format, GL_UNSIGNED_BYTE, wrap, filter, true, data);
 		stbi_image_free(data);
 
 		__textureCache.insert({ fullpath, texture });

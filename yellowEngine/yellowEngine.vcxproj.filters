@@ -153,6 +153,9 @@
     <ClCompile Include="src\Rendering\Technique\Technique_Deferred.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utility\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">

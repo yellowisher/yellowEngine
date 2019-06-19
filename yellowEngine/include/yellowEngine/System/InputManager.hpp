@@ -23,7 +23,7 @@ namespace yellowEngine
 		static bool getMouseButtonDown(int button);
 		static bool getMouseButtonUp(int button);
 		static const Vector2& getMousePosition();
-		static const Vector2& getMouseDeltaPosition();
+		static const Vector2& getDeltaMousePosition();
 
 	private:
 		static constexpr int Num_Keys = GLFW_KEY_LAST;

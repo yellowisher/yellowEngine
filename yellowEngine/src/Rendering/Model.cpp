@@ -235,6 +235,7 @@ namespace yellowEngine
 		if (node->aiMesh != nullptr)
 		{
 			auto pair = createMesh(node->aiMesh, scene, node);
+
 			node->mesh = pair.first;
 			node->material = pair.second;
 		}
@@ -509,8 +510,6 @@ namespace yellowEngine
 
 		Material mat;
 		mat.setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
-
-		//Material mat(Shader::create("Shader/texture_only.vert", "Shader/texture_only.frag"));
 
 		aiMaterial* material = scene->mMaterials[aiMesh->mMaterialIndex];
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)

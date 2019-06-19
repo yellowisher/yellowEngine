@@ -70,7 +70,7 @@ namespace yellowEngine
 	}
 
 
-	const Vector2& InputManager::getMouseDeltaPosition()
+	const Vector2& InputManager::getDeltaMousePosition()
 	{
 		return _deltaMousePosition;
 	}

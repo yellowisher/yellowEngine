@@ -2,10 +2,13 @@
 #define __H_UTILS__
 
 #include <limits>
+#include <string>
 #include <iostream>
 
 // for debugging code
 #include <cassert>
+
+#include <glad/glad.h>
 
 namespace yellowEngine
 {
@@ -59,6 +62,8 @@ namespace yellowEngine
 		{
 			std::cout << message << std::endl;
 		}
+
+		void printGLError(const char* file, int line);
 	}
 }
 

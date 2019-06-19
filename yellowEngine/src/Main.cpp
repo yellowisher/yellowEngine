@@ -1,137 +1,57 @@
-using namespace std;
-
-#include <iostream>
-
 #include "yellowEngine/yellowEngine.hpp"
+
 using namespace yellowEngine;
 
-Transform* cameraTransform;
-Transform* boxTransform;
-
-float lastX = 1024.0f / 2.0f;
-float lastY = 768.0f / 2.0f;
-bool firstMouse = true;
-
-float _yaw = 0;
-float _pitch = 0;
-
-float speed = 1.0f;
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+class CameraScript : IUpdatable
 {
-	if (firstMouse)
+public:
+	void update() override
 	{
-		lastX = (float)xpos;
-		lastY = (float)ypos;
-		firstMouse = false;
-	}
+		static const float moveSpeed = 0.06f;
+		static const float rotateSpeedX = 0.16f;
+		static const float rotateSpeedY = 0.08f;
+		static Vector3 rotation = Vector3(0, 0, 0);
 
-	float xoffset = lastX - (float)xpos;
-	float yoffset = lastY - (float)ypos;
+		// translate
+		Vector3 move = Vector3::zero;
+		if (InputManager::getKey(GLFW_KEY_A				)) move.x -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_D				)) move.x += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_W				)) move.z -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_S				)) move.z += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_SPACE			)) move.y += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_LEFT_CONTROL	)) move.y -= 1.0f;
 
-	lastX = (float)xpos;
-	lastY = (float)ypos;
+		Transform* transform = Camera::getMainCamera()->transform;
+		Vector3 forward = transform->getForward();
+		forward.y = 0; forward.normalize();
 
-	_yaw += xoffset * 0.08f;
-	_pitch += yoffset * 0.16f;
+		Vector3 right = transform->getRight();
+		right.y = 0; right.normalize();
 
-	cameraTransform->setRotation(_pitch, _yaw, 0);
-}
+		Vector3 up = Vector3::up;
 
-GameObject* g = nullptr;
-bool prevPressed = false;
-bool pressed = false;
+		Vector3 movement = Vector3::zero;
+		movement += forward * move.z;
+		movement += right	* move.x;
+		movement += up		* move.y;
 
-void processInput(GLFWwindow *window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)glfwSetWindowShouldClose(window, true);
+		transform->translate(movement * moveSpeed);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		Vector3 forward = cameraTransform->getForward();
-		forward.y = 0;
-		forward.normalize();
-		cameraTransform->translate(forward * -0.06f*speed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		Vector3 forward = cameraTransform->getForward();
-		forward.y = 0;
-		forward.normalize();
-		cameraTransform->translate(forward * 0.06f*speed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		cameraTransform->translate(cameraTransform->getRight() * -0.06f*speed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		cameraTransform->translate(cameraTransform->getRight() * 0.06f*speed);
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-	{
-		cameraTransform->translate(0, -0.06f*speed, 0);
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		cameraTransform->translate(0, 0.06f*speed, 0);
-	}
+		// rotate
+		Vector2 rotate = InputManager::getDeltaMousePosition();
+		rotation.x += -rotate.y * rotateSpeedX;
+		rotation.y += -rotate.x *rotateSpeedY;
 
-	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-	{
-		boxTransform->translate(boxTransform->getForward()*-0.06f);
+		transform->setRotation(rotation);
 	}
-	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS)
-	{
-		boxTransform->translate(boxTransform->getForward()*0.06f);
-	}
-	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-	{
-		boxTransform->translate(boxTransform->getRight()*-0.06f);
-	}
-	if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS)
-	{
-		boxTransform->translate(boxTransform->getRight()*0.06f);
-	}
-	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
-	{
-		boxTransform->rotate(0, 3.0f, 0);
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
-	{
-		boxTransform->rotate(0, -3.0f, 0);
-	}
-	if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
-	{
-		Vector3 scale = boxTransform->scale;
-		scale.x += 0.01f;
-		scale.y += 0.01f;
-		scale.z += 0.01f;
-		boxTransform->setScale(scale);
-	}
-	if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
-	{
-		Vector3 scale = boxTransform->scale;
-		scale.x -= 0.01f;
-		scale.y -= 0.01f;
-		scale.z -= 0.01f;
-		boxTransform->setScale(scale);
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-	{
-		pressed = true;
-	}
-	else
-	{
-		pressed = false;
-	}
-}
+};
 
 int main(void)
 {
 	Game::createWindow("yellowEngine", 1280, 720);
 	Game::init();
-
+	
+	////////// Scene
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
 	GameObject* go = model->instantiate("nanosuit");
@@ -144,8 +64,9 @@ int main(void)
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
 
-	cameraTransform = cameraGo->transform;
-	cameraTransform->translate(0, 0, 10);
+	new CameraScript();
+
+	////////// Scene end
 
 	Game::run();
 
