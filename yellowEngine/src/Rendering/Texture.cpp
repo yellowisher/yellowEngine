@@ -2,7 +2,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Rendering/Texture.hpp"
 
 
@@ -11,7 +11,7 @@ namespace yellowEngine
 	map<string, Texture*> Texture::__textureCache;
 
 
-	Texture::Texture(int width, int height, int format, GLenum type, int internalFromat,
+	Texture::Texture(int internalFormat, int width, int height, int format, GLenum type,
 					 int wrap, int filter, bool generateMipMap, const void* data)
 	{
 		glGenTextures(1, &_id);
@@ -24,7 +24,7 @@ namespace yellowEngine
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFromat, width, height, 0, format, type, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
 		
 		// lazy initialization?
 		if (generateMipMap) glGenerateMipmap(GL_TEXTURE_2D);
@@ -39,7 +39,7 @@ namespace yellowEngine
 	Texture* Texture::create(const char* path, bool absolute, int wrap, int filter)
 	{
 		std::string fullpath = path;
-		if (!absolute) fullpath = System::getInstance()->getResourcePath(path);
+		if (!absolute) fullpath = Game::getResourcePath(path);
 
 		auto it = __textureCache.find(fullpath);
 		if (it != __textureCache.end())

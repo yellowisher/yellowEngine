@@ -39,6 +39,12 @@ namespace yellowEngine
 	}
 
 
+	const std::map<std::string, VertexLayout::Attribute>& VertexLayout::getAttributes()
+	{
+		return _attributes;
+	}
+
+
 	const VertexLayout::Attribute& VertexLayout::getAttr(std::string name) const
 	{
 		// assert?

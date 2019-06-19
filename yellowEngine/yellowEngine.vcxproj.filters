@@ -147,7 +147,10 @@
     <ClCompile Include="src\System\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\Pass.cpp">
+    <ClCompile Include="src\Rendering\Technique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\Technique\Technique_Deferred.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -305,7 +308,10 @@
     <ClInclude Include="include\yellowEngine\System\Game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Component\Pass.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\Technique.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\Technique\Technique_Deferred.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

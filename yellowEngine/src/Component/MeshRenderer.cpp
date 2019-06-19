@@ -14,6 +14,10 @@ namespace yellowEngine
 
 	MeshRenderer::~MeshRenderer()
 	{
+		if (_material._technique != nullptr)
+		{
+			_material._technique->removeRenderer(this);
+		}
 	}
 
 
@@ -21,17 +25,21 @@ namespace yellowEngine
 	{
 		_mesh = mesh;
 		_material = material;
-		_material.init(gameObject, mesh);
+		_material.attachTo(gameObject, mesh);
+		if (_material._technique != nullptr)
+		{
+			_material._technique->addRenderer(this);
+		}
 		return this;
 	}
 
 
-	void MeshRenderer::_render(Shader* shader)
+	void MeshRenderer::_render(const char* vsPath, const char* fsPath)
 	{
-		if (_mesh == nullptr)return;
+		if (_mesh == nullptr) return;
 
-		_material.bind(shader);
+		_material.bind(vsPath, fsPath);
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
-		_material.unbind();
+		//_material.unbind();
 	}
 }

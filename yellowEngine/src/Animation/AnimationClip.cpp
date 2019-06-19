@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "json/json.h"
-#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Animation/AnimationClip.hpp"
 
 
@@ -29,7 +29,7 @@ namespace yellowEngine
 			return it->second;
 		}
 
-		std::string fullPath = System::getInstance()->getResourcePath(path);
+		std::string fullPath = Game::getResourcePath(path);
 		std::ifstream document(fullPath, std::ifstream::binary);
 
 		Json::Reader reader;

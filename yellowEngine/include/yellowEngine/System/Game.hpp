@@ -26,8 +26,8 @@ namespace yellowEngine
 	private:
 		static GLFWwindow* _window;
 		static std::string _resourcePath;
-		static float _width;
-		static float _height;
+		static int _width;
+		static int _height;
 
 		Game() = delete;
 		~Game() = delete;

@@ -6,6 +6,7 @@ namespace yellowEngine
 	InputManager::State InputManager::_keys[Num_Keys];
 	InputManager::State InputManager::_mouseButtons[Num_MouseButtons];
 	Vector2 InputManager::_mousePosition;
+	Vector2 InputManager::_deltaMousePosition;
 
 
 	void InputManager::init(GLFWwindow* window)
@@ -23,7 +24,7 @@ namespace yellowEngine
 		double x, y;
 		glfwGetCursorPos(_window, &x, &y);
 		_mousePosition = Vector2((float)x, (float)y);
-		_mouseDeltaPosition = Vector2(0, 0);
+		_deltaMousePosition = Vector2(0, 0);
 	}
 
 
@@ -71,7 +72,7 @@ namespace yellowEngine
 
 	const Vector2& InputManager::getMouseDeltaPosition()
 	{
-		return _mouseDeltaPosition;
+		return _deltaMousePosition;
 	}
 
 
@@ -134,7 +135,7 @@ namespace yellowEngine
 		double x, y;
 		glfwGetCursorPos(_window, &x, &y);
 		Vector2 newMousePosition((float)x, (float)y);
-		_mouseDeltaPosition = newMousePosition - _mousePosition;
+		_deltaMousePosition = newMousePosition - _mousePosition;
 		_mousePosition = newMousePosition;
 	}
 }

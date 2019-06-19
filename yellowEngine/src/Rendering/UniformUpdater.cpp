@@ -44,10 +44,7 @@ namespace yellowEngine
 				break;
 
 			case Uniform_ProjectionView:
-				if (!ObjectRenderer::getCurrentCamera()->matrixPulled())
-				{
-					_shader->setUniform(pair.uniform, ObjectRenderer::getCurrentCamera()->getMatrix(true));
-				}
+				_shader->setUniform(pair.uniform, ObjectRenderer::getCurrentCamera()->getMatrix());
 				break;
 
 			case Uniform_CameraPosition:

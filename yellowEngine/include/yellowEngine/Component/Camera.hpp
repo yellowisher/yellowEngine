@@ -7,16 +7,22 @@
 #include "yellowEngine/Component/Transform.hpp"
 #include "yellowEngine/Math/Matrix.hpp"
 
+// TODO: add logic for multi camera rendering
+
 namespace yellowEngine
 {
 	class Camera : public Component, public INotifiable
 	{
+	private:
+		static Camera* __mainCamera;
+
 	public:
 		enum Type
 		{
 			Type_Perspective,
 			Type_Orthographic
 		};
+		static Camera* getMainCamera();
 
 		Camera(GameObject* gameObject);
 		virtual ~Camera();
@@ -34,8 +40,7 @@ namespace yellowEngine
 		float getZFar();
 		float getFov();
 
-		const Matrix& getMatrix(bool pulling = false);
-		bool matrixPulled();
+		const Matrix& getMatrix();
 		void notify(Event event, void* sender) override;
 
 	private:
@@ -58,7 +63,6 @@ namespace yellowEngine
 		Matrix _pMatrix;
 		Matrix _vMatrix;
 		Matrix _pvMatrix;
-		bool _matrixPulled;
 
 		void dirty(char dirtyBits);
 		const Matrix& getPMatrix();

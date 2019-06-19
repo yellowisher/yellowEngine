@@ -21,7 +21,7 @@ namespace yellowEngine
 	private:
 		static map<string, Texture*> __textureCache;
 
-		Texture(int width, int height, int format,  GLenum type, int internalFromat,
+		Texture(int internalFormat, int width, int height, int format,  GLenum type,
 				int wrap = GL_REPEAT, int filter = GL_NEAREST, bool generateMipMap = false, const void* data = nullptr);
 		~Texture();
 		

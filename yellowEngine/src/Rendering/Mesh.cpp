@@ -6,7 +6,7 @@ using namespace std;
 #include <glad/glad.h>
 
 #include "yellowEngine/Utility/Utils.hpp"
-#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
 
 
@@ -130,7 +130,7 @@ namespace yellowEngine
 		ifstream fin;
 		char input, c;
 
-		std::string pathString = System::getInstance()->getResourcePath(path);
+		std::string pathString = Game::getResourcePath(path);
 		fin.open(pathString);
 
 		if (fin.fail())

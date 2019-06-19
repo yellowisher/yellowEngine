@@ -1,15 +1,12 @@
+#include "yellowEngine/Rendering/VertexLayoutBinding.hpp"
 #include "yellowEngine/Rendering/Material.hpp"
+
 
 namespace yellowEngine
 {
 	Material::Material()
 	{
-		_shader = nullptr;
-	}
-
-	Material::Material(Shader* shader)
-	{
-		_shader = shader;
+		_technique = nullptr;
 	}
 
 
@@ -18,7 +15,15 @@ namespace yellowEngine
 	}
 
 
-	Material* Material::init(GameObject* gameObject, Mesh* mesh)
+	void Material::setTechnique(Technique* technique, const char* defaultVsPath, const char* defaultFsPath)
+	{
+		_technique = technique;
+		_defaultVsPath = defaultVsPath;
+		_defaultFsPath = defaultFsPath;
+	}
+
+
+	Material* Material::attachTo(GameObject* gameObject, Mesh* mesh)
 	{
 		_gameObject = gameObject;
 		_mesh = mesh;
@@ -32,14 +37,12 @@ namespace yellowEngine
 	}
 
 
-	void Material::bind(Shader* shader)
+	void Material::bind(const char* vsPath, const char* fsPath)
 	{
-		if (shader == nullptr)
-		{
-			shader = _shader;
-		}
+		if (vsPath == nullptr) vsPath = _defaultVsPath;
+		if (fsPath == nullptr) fsPath = _defaultFsPath;
 
-		shader->bind();
+		Shader* shader = Shader::create(vsPath, fsPath);
 
 		// update auto binding uniforms (like model matrix)
 		shader->updateUniforms(_gameObject);
@@ -77,8 +80,11 @@ namespace yellowEngine
 		const std::vector<std::string>& names = shader->getTextureUnits();
 		for (int i = 0; i < names.size(); i++)
 		{
+			auto it = _textures.find(names[i]);
+			if (it == _textures.end()) continue;
+
 			glActiveTexture(GL_TEXTURE0 + i);
-			_textures[names[i]]->bind();
+			it->second->bind();
 		}
 
 		VertexLayoutBinding::create(_mesh, shader)->bind();
@@ -87,14 +93,7 @@ namespace yellowEngine
 
 	void Material::unbind()
 	{
-		_shader->unbind();
 		VertexLayoutBinding::unbind();
-	}
-
-
-	Shader* Material::getShader()
-	{
-		return _shader;
 	}
 
 

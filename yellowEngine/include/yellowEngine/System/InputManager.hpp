@@ -46,7 +46,7 @@ namespace yellowEngine
 		static State _keys[Num_Keys];
 		static State _mouseButtons[Num_MouseButtons];
 		static Vector2 _mousePosition;
-		static Vector2 _mouseDeltaPosition;
+		static Vector2 _deltaMousePosition;
 	};
 }
 

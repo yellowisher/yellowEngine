@@ -6,10 +6,10 @@
 
 namespace yellowEngine
 {
-	static GLFWwindow* _window;
+	GLFWwindow* Game::_window;
 	std::string Game::_resourcePath = "./res/";
-	float Game::_width;
-	float Game::_height;
+	int Game::_width;
+	int Game::_height;
 
 	ColliderManager::BroadPhaseType Game::broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 
@@ -79,6 +79,8 @@ namespace yellowEngine
 		{
 			glfwPollEvents();
 			InputManager::update();
+			Technique::renderScene();
+			glfwSwapBuffers(_window);
 		}
 		glfwTerminate();
 	}

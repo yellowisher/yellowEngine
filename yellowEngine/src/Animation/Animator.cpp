@@ -267,19 +267,16 @@ namespace yellowEngine
 		switch (key.prop)
 		{
 			case AnimationClip::Property_Position:
-			{
 				return Value(getTransform(key.transformPath)->position);
-			}
 
 			case AnimationClip::Property_Rotation:
-			{
 				return Value(getTransform(key.transformPath)->rotation);
-			}
 
 			case AnimationClip::Property_Scale:
-			{
 				return Value(getTransform(key.transformPath)->scale);
-			}
+
+			default:
+				return Value();
 		}
 	}
 

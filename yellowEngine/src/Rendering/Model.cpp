@@ -3,7 +3,7 @@
 
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Utility/Definitions.hpp"
-#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
 #include "yellowEngine/Component/SkinnedMeshRenderer.hpp"
 #include "yellowEngine/Rendering/Model.hpp"
@@ -117,7 +117,7 @@ namespace yellowEngine
 	Model* Model::create(const char* path, bool absolute)
 	{
 		std::string fullpath = path;
-		if (!absolute) fullpath = System::getInstance()->getResourcePath(path).c_str();
+		if (!absolute) fullpath = Game::getResourcePath(path).c_str();
 
 		auto it = __modelCache.find(fullpath);
 		if (it != __modelCache.end())
@@ -289,12 +289,121 @@ namespace yellowEngine
 		// there is no need to cache in Mesh class
 		// so create directly rather than call Mesh::create
 		Mesh* mesh = nullptr;
-		
-		// create matrix from transform information? (global)
-		Matrix nodeMatrix;
+		std::vector<AttributeUsage> attributes;
 
-		// TODO: support vary vertex format
-		// currently only handles model format of PNT(+B)
+		//if (aiMesh->HasPositions())
+		//{
+		//	attributes.push_back(Attr_Position);
+		//}
+		//if (aiMesh->HasNormals())
+		//{
+		//	attributes.push_back(Attr_Normal);
+		//}
+		//if (aiMesh->HasTextureCoords(0))
+		//{
+		//	attributes.push_back(Attr_TexCoord0);
+		//}
+		//if (aiMesh->HasBones())
+		//{
+		//	attributes.push_back(Attr_Joints);
+		//	attributes.push_back(Attr_Weights);
+		//}
+
+		//VertexLayout layout(attributes);
+		//int stride = layout.getVertexSize() / sizeof(float);
+
+		//int jointOffset = 0;
+		//int weightOffset = 0;
+
+		//float* vertices = new float[stride * aiMesh->mNumVertices];
+		//for (auto attrPair : layout.getAttributes())
+		//{
+		//	const auto& attribute = attrPair.second;
+		//	int cursor = attribute.offset / sizeof(float);
+		//	switch (attribute.usage)
+		//	{
+		//		case Attr_Position:
+		//		{
+		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+		//			{
+		//				vertices[cursor] = aiMesh->mVertices[i].x;
+		//				vertices[cursor + 1] = aiMesh->mVertices[i].y;
+		//				vertices[cursor + 2] = aiMesh->mVertices[i].z;
+		//			}
+		//		}
+		//		break;
+
+		//		case Attr_Normal:
+		//		{
+		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+		//			{
+		//				vertices[cursor] = aiMesh->mNormals[i].x;
+		//				vertices[cursor + 1] = aiMesh->mNormals[i].y;
+		//				vertices[cursor + 2] = aiMesh->mNormals[i].z;
+		//			}
+		//		}
+		//		break;
+
+		//		case Attr_TexCoord0:
+		//		{
+		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+		//			{
+		//				vertices[cursor] = aiMesh->mTextureCoords[0][i].x;
+		//				vertices[cursor + 1] = aiMesh->mTextureCoords[0][i].y;
+		//			}
+		//		}
+		//		break;
+
+		//		case Attr_Joints:
+		//		case Attr_Weights:
+		//		{
+
+		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+		//			{
+		//				for (int j = 0; j < MaxJointCount; j++)
+		//				{
+		//					vertices[cursor + j] = NullWeight;
+		//				}
+		//			}
+		//		}
+		//		break;
+		//	}
+		//}
+
+		//int* indices = new int[3 * aiMesh->mNumFaces];
+		//for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
+		//{
+		//	indices[i * 3    ] = aiMesh->mFaces[i].mIndices[0];
+		//	indices[i * 3 + 1] = aiMesh->mFaces[i].mIndices[1];
+		//	indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
+		//}
+
+		//currentNode->jointNodes.resize(aiMesh->mNumBones);
+		//for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
+		//{
+		//	Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
+		//	currentNode->jointNodes[b] = jointNode;
+		//	for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
+		//	{
+		//		int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
+		//		int vi_j = stride * vi + jointOffset;
+		//		int vi_w = stride * vi + weightOffset;
+
+		//		int wi = 0;
+		//		while (wi < MaxJointCount && vertices[vi_w + wi] != NullWeight) wi++;
+		//		if (wi >= MaxJointCount) continue;
+
+		//		vertices[vi_j + wi] = (float)b;
+		//		vertices[vi_w + wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
+		//	}
+
+		//	copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
+		//}
+
+
+
+
+
 		if (aiMesh->HasBones())
 		{
 			std::vector<Mesh::SkinnedVertex> vertices(aiMesh->mNumVertices);
@@ -398,8 +507,10 @@ namespace yellowEngine
 			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 		}
 
-		//Material mat(Shader::create("Shader/texture.vert", "Shader/texture.frag"));
-		Material mat(Shader::create("Shader/texture_only.vert", "Shader/texture_only.frag"));
+		Material mat;
+		mat.setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
+
+		//Material mat(Shader::create("Shader/texture_only.vert", "Shader/texture_only.frag"));
 
 		aiMaterial* material = scene->mMaterials[aiMesh->mMaterialIndex];
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -411,14 +522,14 @@ namespace yellowEngine
 			mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.diffuse");
 		}
 
-		//if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
-		//{
-		//	aiString path;
-		//	material->GetTexture(aiTextureType_SPECULAR, 0, &path);
-		//	path = _directory + path.C_Str();
+		if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+		{
+			aiString path;
+			material->GetTexture(aiTextureType_SPECULAR, 0, &path);
+			path = _directory + path.C_Str();
 
-		//	mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
-		//}
+			mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
+		}
 		return { mesh, mat };
 	}
 

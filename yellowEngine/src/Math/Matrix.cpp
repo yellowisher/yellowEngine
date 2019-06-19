@@ -48,7 +48,7 @@ namespace yellowEngine
 	}
 
 
-	Matrix Matrix::createOrthographic(float width, float height, float zNear, float zFar)
+	Matrix Matrix::createOrthographic(int width, int height, float zNear, float zFar)
 	{
 		float halfWidth = width * 0.5f;
 		float halfHeight = height * 0.5f;

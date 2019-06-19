@@ -7,8 +7,9 @@ namespace yellowEngine
 {
 	class RenderBuffer
 	{
+		friend class FrameBuffer;
 	public:
-		RenderBuffer(int width, int height, GLenum format);
+		RenderBuffer(GLenum internalFormat, int width, int height);
 		~RenderBuffer();
 
 		void bind();

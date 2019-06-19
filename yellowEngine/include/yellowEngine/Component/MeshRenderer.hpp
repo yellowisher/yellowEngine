@@ -19,7 +19,7 @@ namespace yellowEngine
 		virtual ~MeshRenderer();
 
 		MeshRenderer* set(Mesh* mesh, const Material& material);
-		virtual void _render(Shader* shader) override;
+		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) override;
 
 	protected:
 		Mesh* _mesh;

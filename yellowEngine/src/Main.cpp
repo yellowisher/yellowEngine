@@ -2,9 +2,6 @@ using namespace std;
 
 #include <iostream>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "yellowEngine/yellowEngine.hpp"
 using namespace yellowEngine;
 
@@ -132,113 +129,25 @@ void processInput(GLFWwindow *window)
 
 int main(void)
 {
-	System* system = System::getInstance();
-	system->setWidth(1024);
-	system->setHeight(768);
-	system->setResourcePath("./res/");
+	Game::createWindow("yellowEngine", 1280, 720);
+	Game::init();
 
-	
-	//glEnable(GL_CULL_FACE);
-
-	//glfwSetKeyCallback(window, _keyCallback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	//Shader* textureShader = Shader::create("Shader/texture.vert", "Shader/texture.frag");
-	//unsigned int lightsIndex = glGetUniformBlockIndex(textureShader->getId(), "LightBlock");
-	//glUniformBlockBinding(textureShader->getId(), lightsIndex, 0);
-
-	//Model* model = Model::create("Mesh/92-dog_anim/dog final.blend");
-	//Model* model = Model::create("Mesh/BaseMesh_Anim.fbx");
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
 	GameObject* go = model->instantiate("nanosuit");
-	//go->transform->setScale(0.01f, 0.01f, 0.01f);
-	//go->transform->rotate(270, 0, 0);
-	boxTransform = go->transform;
 
-	GameObject* dl = new GameObject();
-	Light* light = dl->addComponent<Light>()->setType(Light::LightType_Dir);
-	dl->transform->rotate(45, 135.0f, 0);
+	GameObject* lightGo = new GameObject();
+	Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Dir);
+	lightGo->transform->rotate(45, 135.0f, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
-	//camera->setPerspective(60.0f, 0.01f, 10000.0f);
 
 	cameraTransform = cameraGo->transform;
 	cameraTransform->translate(0, 0, 10);
 
-	ObjectRenderer::_currentCamera = camera;
+	Game::run();
 
-	//auto clip0 = model->getClips().begin()->second;
-	//auto clip1 = (++model->getClips().begin())->second;
-	//auto anim = go->addComponent<Animator>();
-	//anim->play(clip1);
-
-	int width = System::getInstance()->getWidth();
-	int height = System::getInstance()->getHeight();
-
-	Framebuffer* gbuffer = new Framebuffer(4, System::getInstance()->getWidth(), System::getInstance()->getHeight(), GL_RGB, GL_FLOAT, GL_RGB32F);
-	Shader* geometryShader = Shader::create("Shader/deferred_geometry.vert", "Shader/deferred_geometry.frag");
-
-	while (!glfwWindowShouldClose(window))
-	{
-		processInput(window);
-
-		// geometry pass
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
-
-		gbuffer->bindForWriting();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-		ObjectRenderer::renderAll(camera, geometryShader);
-
-		glDepthMask(GL_FALSE);
-		glDisable(GL_DEPTH_TEST);
-
-		// lighting pass
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
-
-		gbuffer->bindForReading();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		gbuffer->setBufferToRead(0);
-		glBlitFramebuffer(
-			0, 0, width, height,
-			0, 0, width / 2, height / 2,
-			GL_COLOR_BUFFER_BIT, GL_LINEAR
-		);
-
-		gbuffer->setBufferToRead(1);
-		glBlitFramebuffer(
-			0, 0, width, height,
-			width / 2, 0, width, height / 2,
-			GL_COLOR_BUFFER_BIT, GL_LINEAR
-		);
-
-		gbuffer->setBufferToRead(2);
-		glBlitFramebuffer(
-			0, 0, width, height,
-			0, height / 2, width / 2, height,
-			GL_COLOR_BUFFER_BIT, GL_LINEAR
-		);
-
-		gbuffer->setBufferToRead(3);
-		glBlitFramebuffer(
-			0, 0, width, height,
-			width / 2, height / 2, width, height,
-			GL_COLOR_BUFFER_BIT, GL_LINEAR
-		);
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-	glfwTerminate();
 	return 0;
 }

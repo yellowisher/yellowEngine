@@ -1,14 +1,26 @@
-#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Component/Camera.hpp"
 
 
 namespace yellowEngine
 {
-	Camera::Camera(GameObject* gameObject) :
-		Component(gameObject),
-		_matrixPulled(false)
+	Camera* Camera::__mainCamera;
+
+
+	Camera* Camera::getMainCamera()
 	{
+		return __mainCamera;
+	}
+
+
+	Camera::Camera(GameObject* gameObject) :
+		Component(gameObject)
+	{
+		if (__mainCamera == nullptr)
+		{
+			__mainCamera = this;
+		}
 		setPerspective(60.0f, 0.01f, 100.0f);
 	}
 
@@ -95,11 +107,11 @@ namespace yellowEngine
 			_dirtyBits &= ~Dirty_Projection;
 			if (_type == Type_Perspective)
 			{
-				_pMatrix = Matrix::createPerspective(_fov, System::getInstance()->getAspectRatio(), _zNear, _zFar);
+				_pMatrix = Matrix::createPerspective(_fov, Game::getAspectRatio(), _zNear, _zFar);
 			}
 			else
 			{
-				_pMatrix = Matrix::createOrthographic(System::getInstance()->getWidth(), System::getInstance()->getHeight(), _zNear, _zFar);
+				_pMatrix = Matrix::createOrthographic(Game::getWidth(), Game::getHeight(), _zNear, _zFar);
 			}
 		}
 		return _pMatrix;
@@ -118,15 +130,8 @@ namespace yellowEngine
 	}
 
 
-	bool Camera::matrixPulled()
+	const Matrix& Camera::getMatrix()
 	{
-		return _matrixPulled;
-	}
-
-
-	const Matrix& Camera::getMatrix(bool pulling)
-	{
-		if (pulling)_matrixPulled = true;
 		if (_dirtyBits & Dirty_Matrix)
 		{
 			_pvMatrix = getPMatrix() * getVMatrix();
@@ -148,7 +153,6 @@ namespace yellowEngine
 
 	void Camera::dirty(char dirtyBits)
 	{
-		_matrixPulled = false;
 		_dirtyBits |= dirtyBits;
 	}
 }

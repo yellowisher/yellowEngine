@@ -1,30 +1,52 @@
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Rendering/Renderbuffer.hpp"
 #include "yellowEngine/Rendering/FrameBuffer.hpp"
+#include "..\..\include\yellowEngine\Rendering\FrameBuffer.hpp"
 
 
 namespace yellowEngine
 {
-	FrameBuffer::FrameBuffer(int textureCount, int width, int height, int format, GLenum type, int internalFormat, int addition)
+	FrameBuffer::FrameBuffer()
+	{
+		_depthBuffer = nullptr;
+	}
+
+
+	FrameBuffer::~FrameBuffer()
+	{
+	}
+
+
+	void FrameBuffer::addColorAttachment(int internalFormat, int width, int height, int format, GLenum type)
+	{
+		_colorBuffers.push_back(new Texture(internalFormat, width, height, format, type));
+	}
+
+
+	void FrameBuffer::addDepthAttachment(int width, int height)
+	{
+		_depthBuffer = new RenderBuffer(GL_DEPTH_COMPONENT, width, height);
+	}
+
+
+	void FrameBuffer::init()
 	{
 		glGenFramebuffers(1, &_frameBufferHandle);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferHandle);
 
-		_textures.resize(textureCount);
-		GLenum* drawBuffers = new GLenum[textureCount];
-		for (int i = 0; i < textureCount; i++)
+		GLenum* drawBuffers = new GLenum[_colorBuffers.size()];
+		for (int i = 0; i < _colorBuffers.size(); i++)
 		{
-			_textures[i] = new Texture(width, height, format, type, internalFormat);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _textures[i]->_id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _colorBuffers[i]->_id, 0);
 			drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
 		}
 
-		// TODO: change as parameterizable
-		// add depth or stencil buffer
-		Texture* depthTexture = new Texture(width, height, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT32F);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture->_id, 0);
+		if (_depthBuffer)
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer->_renderBufferHandle);
+		}
 
-		glDrawBuffers(textureCount, drawBuffers);
+		glDrawBuffers((int)_colorBuffers.size(), drawBuffers);
 		delete[](drawBuffers);
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -38,8 +60,9 @@ namespace yellowEngine
 	}
 
 
-	FrameBuffer::~FrameBuffer()
+	void FrameBuffer::unbind()
 	{
+		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 	}
 
 
@@ -51,13 +74,18 @@ namespace yellowEngine
 
 	void FrameBuffer::bindForReading()
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, NULL);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBufferHandle);
 
-		for (size_t i = 0; i < _textures.size(); i++)
+		for (size_t i = 0; i < _colorBuffers.size(); i++)
 		{
-			glActiveTexture(GL_TEXTURE0 + i);
-			_textures[i]->bind();
+			glActiveTexture(GL_TEXTURE0 + (GLenum)i);
+			_colorBuffers[i]->bind();
 		}
+	}
+
+
+	void FrameBuffer::setBufferToRead(int index)
+	{
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 	}
 }

@@ -159,11 +159,12 @@
     <ClCompile Include="src\Rendering\Material.cpp" />
     <ClCompile Include="src\Rendering\Mesh.cpp" />
     <ClCompile Include="src\Rendering\Model.cpp" />
-    <ClCompile Include="src\Rendering\Pass.cpp" />
     <ClCompile Include="src\Rendering\RenderBuffer.cpp" />
     <ClCompile Include="src\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Rendering\SceneRenderer.cpp" />
     <ClCompile Include="src\Rendering\Shader.cpp" />
+    <ClCompile Include="src\Rendering\Technique.cpp" />
+    <ClCompile Include="src\Rendering\Technique\Technique_Deferred.cpp" />
     <ClCompile Include="src\Rendering\Texture.cpp" />
     <ClCompile Include="src\Rendering\UniformUpdater.cpp" />
     <ClCompile Include="src\Rendering\VertexLayout.cpp" />
@@ -179,7 +180,6 @@
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Animation\AnimationClip.hpp" />
     <ClInclude Include="include\yellowEngine\Animation\Animator.hpp" />
-    <ClInclude Include="include\yellowEngine\Component\Pass.hpp" />
     <ClInclude Include="include\yellowEngine\Component\SkinnedMeshRenderer.hpp" />
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp" />
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase_BVH.hpp" />
@@ -210,6 +210,8 @@
     <ClInclude Include="include\yellowEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\SceneRenderer.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Shader.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\Technique.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\Technique\Technique_Deferred.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Texture.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\UniformUpdater.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\VertexLayout.hpp" />

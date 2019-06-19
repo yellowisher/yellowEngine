@@ -30,13 +30,14 @@ namespace yellowEngine
 		struct Attribute
 		{
 			Attribute() {};
-			Attribute(std::string name, GLenum type, int size) :
-				name(name), type(type), size(size)
+			Attribute(std::string name, GLenum type, AttributeUsage usage, int size) :
+				name(name), type(type), usage(usage), size(size)
 			{
 			}
 
 			std::string name;
 			GLenum type;
+			AttributeUsage usage;
 			int size;
 			size_t offset;
 		};
@@ -46,6 +47,8 @@ namespace yellowEngine
 
 		unsigned int getVertexSize() const;
 		size_t getAttrCount() const;
+		const std::map<std::string, Attribute>& getAttributes();
+
 		// mutable structure is evil!
 		const Attribute& getAttr(std::string name) const;
 
@@ -55,15 +58,15 @@ namespace yellowEngine
 			StaticConstructor()
 			{
 				__attributeInfo = new Attribute[Num_Usage];
-				__attributeInfo[Attr_Position	] = Attribute("a_Position"	, GL_FLOAT, 3);
-				__attributeInfo[Attr_Normal		] = Attribute("a_Normal"	, GL_FLOAT, 3);
-				__attributeInfo[Attr_Color		] = Attribute("a_Color"		, GL_FLOAT, 3);
-				__attributeInfo[Attr_TexCoord0	] = Attribute("a_TexCoord0"	, GL_FLOAT, 2);
-				__attributeInfo[Attr_TexCoord1	] = Attribute("a_TexCoord1"	, GL_FLOAT, 2);
-				__attributeInfo[Attr_TexCoord2	] = Attribute("a_TexCoord2"	, GL_FLOAT, 2);
-				__attributeInfo[Attr_TexCoord3	] = Attribute("a_TexCoord3"	, GL_FLOAT, 2);
-				__attributeInfo[Attr_Joints		] = Attribute("a_Joints"	, GL_FLOAT, MaxJointCount);
-				__attributeInfo[Attr_Weights	] = Attribute("a_Weights"	, GL_FLOAT, MaxJointCount);
+				__attributeInfo[Attr_Position	] = Attribute("a_Position"	, GL_FLOAT, Attr_Position  , 3);
+				__attributeInfo[Attr_Normal		] = Attribute("a_Normal"	, GL_FLOAT, Attr_Normal    , 3);
+				__attributeInfo[Attr_Color		] = Attribute("a_Color"		, GL_FLOAT, Attr_Color     , 3);
+				__attributeInfo[Attr_TexCoord0	] = Attribute("a_TexCoord0"	, GL_FLOAT, Attr_TexCoord0 , 2);
+				__attributeInfo[Attr_TexCoord1	] = Attribute("a_TexCoord1"	, GL_FLOAT, Attr_TexCoord1 , 2);
+				__attributeInfo[Attr_TexCoord2	] = Attribute("a_TexCoord2"	, GL_FLOAT, Attr_TexCoord2 , 2);
+				__attributeInfo[Attr_TexCoord3	] = Attribute("a_TexCoord3"	, GL_FLOAT, Attr_TexCoord3 , 2);
+				__attributeInfo[Attr_Joints		] = Attribute("a_Joints"	, GL_FLOAT, Attr_Joints    , MaxJointCount);
+				__attributeInfo[Attr_Weights	] = Attribute("a_Weights"	, GL_FLOAT, Attr_Weights   , MaxJointCount);
 			}
 		};
 

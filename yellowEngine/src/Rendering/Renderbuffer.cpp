@@ -7,11 +7,11 @@
 
 namespace yellowEngine
 {
-	RenderBuffer::RenderBuffer(int width, int height, GLenum format)
+	RenderBuffer::RenderBuffer(GLenum internalFormat, int width, int height)
 	{
 		glGenRenderbuffers(1, &_renderBufferHandle);
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBufferHandle);
-		glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height);
 	}
 
 	RenderBuffer::~RenderBuffer()

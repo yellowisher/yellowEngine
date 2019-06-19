@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "yellowEngine/System/System.hpp"
+#include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Rendering/Shader.hpp"
 
 
@@ -34,7 +34,7 @@ namespace yellowEngine
 
 			if (type == GL_SAMPLER_1D || type == GL_SAMPLER_2D || type == GL_SAMPLER_3D)
 			{
-				glUniform1i(location, _textureUnits.size());
+				glUniform1i(location, (int)_textureUnits.size());
 				_textureUnits.push_back(name);
 			}
 			else
@@ -78,8 +78,8 @@ namespace yellowEngine
 		std::string shader;
 		const char* shaderCode;
 
-		std::string vsPathString = System::getInstance()->getResourcePath(vsPath);
-		std::string fsPathString = System::getInstance()->getResourcePath(fsPath);
+		std::string vsPathString = Game::getResourcePath(vsPath);
+		std::string fsPathString = Game::getResourcePath(fsPath);
 
 		shader = readSourceFile(vsPathString.c_str());
 		shaderCode = shader.c_str();

@@ -27,20 +27,20 @@ namespace yellowEngine
 	}
 
 
-	void ObjectRenderer::render(Shader* shader)
+	void ObjectRenderer::render(const char* vsPath, const char* fsPath)
 	{
-		_render(shader);
+		_render(vsPath, fsPath);
 	}
 
 
-	void ObjectRenderer::renderAll(Camera* camera, Shader* shader)
+	void ObjectRenderer::renderAll(Camera* camera, const char* vsPath, const char* fsPath)
 	{
 		_currentCamera = camera;
 		for (auto renderer : _renderers)
 		{
 			if (renderer->gameObject->getActive() && renderer->getActive())
 			{
-				renderer->render(shader);
+				renderer->render(vsPath, fsPath);
 			}
 		}
 	}

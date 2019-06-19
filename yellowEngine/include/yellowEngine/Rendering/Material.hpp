@@ -6,14 +6,16 @@
 
 #include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
-#include "yellowEngine/Rendering/Shader.hpp"
 #include "yellowEngine/Rendering/Texture.hpp"
-#include "yellowEngine/Rendering/VertexLayoutBinding.hpp"
+#include "yellowEngine/Rendering/Technique.hpp"
 
 namespace yellowEngine
 {
 	class Material
 	{
+		friend class MeshRenderer;
+		friend class Technique;
+
 	public:
 		struct Property
 		{
@@ -33,13 +35,12 @@ namespace yellowEngine
 		};
 
 		Material();
-		Material(Shader* shader);
 		~Material();
-		Material* init(GameObject* gameObject, Mesh* mesh);
+		void setTechnique(Technique* technique, const char* defaultVsPath, const char* defaultFsPath);
+		Material* attachTo(GameObject* gameObject, Mesh* mesh);
 		void addTexture(Texture* texture, const char* usage);
-		void bind(Shader* shader = nullptr);
+		void bind(const char* vsPath = nullptr, const char* fsPath = nullptr);
 		void unbind();
-		Shader* getShader();
 
 		void setProperty(const char* name, int value);
 		void setProperty(const char* name, float value);
@@ -52,8 +53,9 @@ namespace yellowEngine
 		GameObject* _gameObject;
 		Mesh* _mesh;
 
-		// TODO: remove this shader member and create pass
-		Shader* _shader;
+		Technique* _technique;
+		const char* _defaultVsPath;
+		const char* _defaultFsPath;
 
 		std::map<std::string, Texture*> _textures;
 		std::map<std::string, Property> _properties;

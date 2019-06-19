@@ -12,18 +12,18 @@ namespace yellowEngine
 	class ObjectRenderer : public Component
 	{
 	public:
-		static void renderAll(Camera* camera, Shader* shader = nullptr);
+		static void renderAll(Camera* camera, const char* vsPath = nullptr, const char* fsPath = nullptr);
 		static Camera* getCurrentCamera();
 
 		ObjectRenderer(GameObject* gameObject);
 		virtual ~ObjectRenderer();
 
-		void render(Shader* shader = nullptr);
+		void render(const char* vsPath = nullptr, const char* fsPath = nullptr);
 
 		static Camera* _currentCamera;
 	protected:
 
-		virtual void _render(Shader* shader) = 0;
+		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) = 0;
 
 	private:
 		static std::list<ObjectRenderer*> _renderers;
