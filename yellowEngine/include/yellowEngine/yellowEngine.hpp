@@ -52,6 +52,7 @@
 #include "System/EventNotifier.hpp"
 #include "System/InputManager.hpp"
 #include "System/Game.hpp"
+#include "System/IUpdatable.hpp"
 
 // utility
 #include "Utility/ObjectPool.hpp"

@@ -1,4 +1,4 @@
-#include "yellowEngine/System/Game.hpp"
+#include "yellowEngine/System/Display.hpp"
 #include "yellowEngine/Rendering/Technique/Technique_Deferred.hpp"
 
 
@@ -7,16 +7,15 @@ namespace yellowEngine
 	Technique_Deferred::Technique_Deferred()
 	{
 		// position
-		_geometryBuffer.addColorAttachment(GL_RGB32F, Game::getWidth(), Game::getHeight(), GL_RGB, GL_FLOAT);
+		_geometryBuffer.addColorAttachment(GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		
 		// normal
-		_geometryBuffer.addColorAttachment(GL_RGB32F, Game::getWidth(), Game::getHeight(), GL_RGB, GL_FLOAT);
-
-		// diffuse & spec
-		_geometryBuffer.addColorAttachment(GL_RGBA32F, Game::getWidth(), Game::getHeight(), GL_RGBA, GL_UNSIGNED_BYTE);
-
-		_geometryBuffer.addDepthAttachment(Game::getWidth(), Game::getHeight());
+		_geometryBuffer.addColorAttachment(GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		
+		// diffuse & spec
+		_geometryBuffer.addColorAttachment(GL_RGBA32F, Display::width, Display::height, GL_RGBA, GL_UNSIGNED_BYTE);
+		
+		_geometryBuffer.addDepthAttachment(Display::width, Display::height);
 		_geometryBuffer.init();
 
 		_geometryFsPath = "Shader/deferred_geometry.frag";
@@ -53,22 +52,22 @@ namespace yellowEngine
 
 		_geometryBuffer.setBufferToRead(0);
 		glBlitFramebuffer(
-			0, 0, Game::getWidth(), Game::getHeight(),
-			0, 0, Game::getWidth() / 2, Game::getHeight() / 2,
+			0, 0, Display::width, Display::height,
+			0, 0, Display::width / 2, Display::height / 2,
 			GL_COLOR_BUFFER_BIT, GL_LINEAR
 		);
 
 		_geometryBuffer.setBufferToRead(1);
 		glBlitFramebuffer(
-			0, 0, Game::getWidth(), Game::getHeight(),
-			Game::getWidth() / 2, 0, Game::getWidth(), Game::getHeight() / 2,
+			0, 0, Display::width, Display::height,
+			Display::width / 2, 0, Display::width, Display::height / 2,
 			GL_COLOR_BUFFER_BIT, GL_LINEAR
 		);
 
 		_geometryBuffer.setBufferToRead(2);
 		glBlitFramebuffer(
-			0, 0, Game::getWidth(), Game::getHeight(),
-			0, Game::getHeight() / 2, Game::getWidth() / 2, Game::getHeight(),
+			0, 0, Display::width, Display::height,
+			0, Display::height / 2, Display::width / 2, Display::height,
 			GL_COLOR_BUFFER_BIT, GL_LINEAR
 		);
 	}

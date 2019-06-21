@@ -14,12 +14,12 @@ public:
 
 		// translate
 		Vector3 move = Vector3::zero;
-		if (InputManager::getKey(GLFW_KEY_A				)) move.x -= 1.0f;
-		if (InputManager::getKey(GLFW_KEY_D				)) move.x += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_W				)) move.z -= 1.0f;
-		if (InputManager::getKey(GLFW_KEY_S				)) move.z += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_SPACE			)) move.y += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_LEFT_CONTROL	)) move.y -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_A)) move.x -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_D)) move.x += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_W)) move.z -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_S)) move.z += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_SPACE)) move.y += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_LEFT_CONTROL)) move.y -= 1.0f;
 
 		Transform* transform = Camera::getMainCamera()->transform;
 		Vector3 forward = transform->getForward();
@@ -32,8 +32,8 @@ public:
 
 		Vector3 movement = Vector3::zero;
 		movement += forward * move.z;
-		movement += right	* move.x;
-		movement += up		* move.y;
+		movement += right * move.x;
+		movement += up * move.y;
 
 		transform->translate(movement * moveSpeed);
 
@@ -48,9 +48,9 @@ public:
 
 int main(void)
 {
-	Game::createWindow("yellowEngine", 1280, 720);
-	Game::init();
-	
+	Game* game = new Game("yellowEngine", 1280, 720);
+	game->init();
+
 	////////// Scene
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
@@ -68,7 +68,7 @@ int main(void)
 
 	////////// Scene end
 
-	Game::run();
+	game->run();
 
 	return 0;
 }

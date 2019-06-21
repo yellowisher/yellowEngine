@@ -169,11 +169,13 @@
     <ClCompile Include="src\Rendering\UniformUpdater.cpp" />
     <ClCompile Include="src\Rendering\VertexLayout.cpp" />
     <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp" />
+    <ClCompile Include="src\System\Display.cpp" />
     <ClCompile Include="src\System\EventListener.cpp" />
     <ClCompile Include="src\System\EventNotifier.cpp" />
     <ClCompile Include="src\Component\GameObject.cpp" />
     <ClCompile Include="src\System\InputManager.cpp" />
     <ClCompile Include="src\System\Game.cpp" />
+    <ClCompile Include="src\System\IUpdatable.cpp" />
     <ClCompile Include="src\Utility\Utils.cpp" />
     <ClCompile Include="vendor\glad\src\glad.c" />
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp" />
@@ -217,11 +219,13 @@
     <ClInclude Include="include\yellowEngine\Rendering\UniformUpdater.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\VertexLayout.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\VertexLayoutBinding.hpp" />
+    <ClInclude Include="include\yellowEngine\System\Display.hpp" />
     <ClInclude Include="include\yellowEngine\System\Event.hpp" />
     <ClInclude Include="include\yellowEngine\System\EventListener.hpp" />
     <ClInclude Include="include\yellowEngine\System\EventNotifier.hpp" />
     <ClInclude Include="include\yellowEngine\Component\GameObject.hpp" />
     <ClInclude Include="include\yellowEngine\System\InputManager.hpp" />
+    <ClInclude Include="include\yellowEngine\System\IUpdatable.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\Definitions.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp" />
     <ClInclude Include="include\yellowEngine\System\Game.hpp" />

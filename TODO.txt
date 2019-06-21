@@ -1,7 +1,8 @@
 revisit:
 	GameObject copy constructor
-	Texture changed _id access modifier
-	Remove _currentCamera on Renderer class; use UBO instead
+	Remove _currentCamera on Renderer class; use UBO instead (should I?)
+	Change all u_Model to u_World (more meaningful to me)
+	Chagne all static class to singleton service provider class (Game, InputManager, ColliderManager)
 	
 
 new:

@@ -130,7 +130,7 @@ namespace yellowEngine
 		ifstream fin;
 		char input, c;
 
-		std::string pathString = Game::getResourcePath(path);
+		std::string pathString = Game::getAssetPath(path);
 		fin.open(pathString);
 
 		if (fin.fail())

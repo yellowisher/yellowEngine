@@ -1,4 +1,4 @@
-#include "yellowEngine/System/Game.hpp"
+#include "yellowEngine/System/Display.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Component/Camera.hpp"
 
@@ -107,11 +107,11 @@ namespace yellowEngine
 			_dirtyBits &= ~Dirty_Projection;
 			if (_type == Type_Perspective)
 			{
-				_pMatrix = Matrix::createPerspective(_fov, Game::getAspectRatio(), _zNear, _zFar);
+				_pMatrix = Matrix::createPerspective(_fov, Display::aspectRatio, _zNear, _zFar);
 			}
 			else
 			{
-				_pMatrix = Matrix::createOrthographic(Game::getWidth(), Game::getHeight(), _zNear, _zFar);
+				_pMatrix = Matrix::createOrthographic(Display::width, Display::height, _zNear, _zFar);
 			}
 		}
 		return _pMatrix;

@@ -7,54 +7,39 @@
 
 #include "yellowEngine/Collision/ColliderManager.hpp"
 
+int main(void);
+
 namespace yellowEngine
 {
 	class IUpdatable;
-
 	class Game
 	{
+		friend int ::main(void);
+
 	public:
-		static void createWindow(std::string name, int width, int height);
-		static void init();
-		static int getWidth();
-		static int getHeight();
-		static float getAspectRatio();
-		static std::string getResourcePath(const char* fileName);
+		static std::string getAssetPath(const char* fileName);
 		
 		static void addUpdatable(IUpdatable* target);
 		static void removeUpdatable(IUpdatable* target);
 		static void trimUpdatable();
-		static void run();
-
-		// configurable properties
-		static ColliderManager::BroadPhaseType broadPhaseType;
 
 	private:
-		static GLFWwindow* _window;
-		static std::string _resourcePath;
-		static int _width;
-		static int _height;
-		static std::vector<IUpdatable*> _updatables;
-		static int _removedCount;
+		static Game* _instance;
 
-		static constexpr int TrimCount = 32;
+		Game(std::string name, int width, int height);
+		~Game();
+		Game(const Game* game) = delete;
+		void init();
+		void run();
 
-		Game() = delete;
-		~Game() = delete;
-	};
+		//////// configurable properties
+		ColliderManager::BroadPhaseType broadPhaseType;
 
-	class IUpdatable
-	{
-	public:
-		IUpdatable()
-		{
-			Game::addUpdatable(this);
-		}
-		virtual ~IUpdatable()
-		{
-			Game::removeUpdatable(this);
-		}
-		virtual void update() = 0;
+		GLFWwindow* _window;
+		std::string _assetPath;
+		std::vector<IUpdatable*> _updatables;
+		int _removedCount;
+
 	};
 }
 

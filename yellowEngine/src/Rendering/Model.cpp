@@ -117,7 +117,7 @@ namespace yellowEngine
 	Model* Model::create(const char* path, bool absolute)
 	{
 		std::string fullpath = path;
-		if (!absolute) fullpath = Game::getResourcePath(path).c_str();
+		if (!absolute) fullpath = Game::getAssetPath(path).c_str();
 
 		auto it = __modelCache.find(fullpath);
 		if (it != __modelCache.end())

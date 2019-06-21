@@ -1,25 +1,26 @@
 #include <iostream>
 
 #include "yellowEngine/yellowEngine.hpp"
+#include "yellowEngine/System/Display.hpp"
+#include "yellowEngine/System/IUpdatable.hpp"
 #include "yellowEngine/System/Game.hpp"
 
 
 namespace yellowEngine
 {
-	GLFWwindow* Game::_window;
-	std::string Game::_resourcePath = "./res/";
-	int Game::_width;
-	int Game::_height;
-	std::vector<IUpdatable*> Game::_updatables;
-	int Game::_removedCount = 0;
-
-	ColliderManager::BroadPhaseType Game::broadPhaseType = ColliderManager::BroadPhaseType_SAP;
+	static const int TrimCount = 32;
+	Game* Game::_instance;
 
 
-	void Game::createWindow(std::string name, int width, int height)
+	Game::Game(std::string name, int width, int height)
 	{
-		_width = width;
-		_height = height;
+		_instance = this;
+
+		Display::_width = width;
+		Display::_height = height;
+		Display::_aspectRatio = (float)width / (float)height;
+
+		_assetPath = "./res/";
 
 		// init glfw, glad
 		glfwInit();
@@ -44,76 +45,16 @@ namespace yellowEngine
 		}
 	}
 
+
+	Game::~Game()
+	{
+	}
+
+
 	void Game::init()
 	{
 		InputManager::init(_window);
 		ColliderManager::create(broadPhaseType);
-	}
-
-
-	int Game::getWidth()
-	{
-		return _width;
-	}
-
-
-	int Game::getHeight()
-	{
-		return _height;
-	}
-
-
-	float Game::getAspectRatio()
-	{
-		return (float)_width / (float)_height;
-	}
-
-
-	std::string Game::getResourcePath(const char* fileName)
-	{
-		return _resourcePath + fileName;
-	}
-
-
-	void Game::addUpdatable(IUpdatable* target)
-	{
-		_updatables.push_back(target);
-	}
-
-
-	// removing updatable and triming list for every request might be expansive
-	// just set removed updatable as nullptr and trim them when removedCount is big enough (or when trimUpdatable is called)
-	// we cannot simply change target with last element because changing excution order is not desirable
-	void Game::removeUpdatable(IUpdatable* target)
-	{
-		for (auto it = _updatables.begin();; ++it)
-		{
-			if (*it == target)
-			{
-				*it = nullptr;
-				if (++_removedCount == TrimCount)
-				{
-					trimUpdatable();
-				}
-			}
-		}
-	}
-
-
-	void Game::trimUpdatable()
-	{
-		int trimed = 0;
-		for (int i = 0; i + trimed < _updatables.size(); i++)
-		{
-			while (_updatables[i + trimed] == nullptr)
-			{
-				if (++trimed == _removedCount)break;
-			}
-
-			_updatables[i] = _updatables[i + trimed];
-		}
-		_updatables.resize(_updatables.size() - _removedCount);
-		_removedCount = 0;
 	}
 
 
@@ -133,5 +74,56 @@ namespace yellowEngine
 			glfwSwapBuffers(_window);
 		}
 		glfwTerminate();
+	}
+
+
+	std::string Game::getAssetPath(const char* fileName)
+	{
+		return _instance->_assetPath + fileName;
+	}
+
+
+	void Game::addUpdatable(IUpdatable* target)
+	{
+		_instance->_updatables.push_back(target);
+	}
+
+
+	// removing updatable and triming list for every request might be expansive
+	// just set removed updatable as nullptr and trim them when removedCount is big enough (or when trimUpdatable is called)
+	// we cannot simply change target with last element because changing excution order is not desirable
+	void Game::removeUpdatable(IUpdatable* target)
+	{
+		for (auto it = _instance->_updatables.begin();; ++it)
+		{
+			if (*it == target)
+			{
+				*it = nullptr;
+				if (++_instance->_removedCount == TrimCount)
+				{
+					trimUpdatable();
+				}
+			}
+		}
+	}
+
+
+	void Game::trimUpdatable()
+	{
+		int& removeCount = _instance->_removedCount;
+		auto& updatables = _instance->_updatables;
+
+		int trimed = 0;
+		for (int i = 0; i + trimed < updatables.size(); i++)
+		{
+			while (updatables[i + trimed] == nullptr)
+			{
+				if (++trimed == removeCount)break;
+			}
+
+			updatables[i] = updatables[i + trimed];
+		}
+		updatables.resize(updatables.size() - removeCount);
+		removeCount = 0;
 	}
 }

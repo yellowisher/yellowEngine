@@ -156,6 +156,12 @@
     <ClCompile Include="src\Utility\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\System\IUpdatable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System\Display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp">
@@ -315,6 +321,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\yellowEngine\Rendering\Technique\Technique_Deferred.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\System\IUpdatable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\System\Display.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

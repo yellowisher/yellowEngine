@@ -29,7 +29,7 @@ namespace yellowEngine
 			return it->second;
 		}
 
-		std::string fullPath = Game::getResourcePath(path);
+		std::string fullPath = Game::getAssetPath(path);
 		std::ifstream document(fullPath, std::ifstream::binary);
 
 		Json::Reader reader;

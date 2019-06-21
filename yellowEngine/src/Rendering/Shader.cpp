@@ -78,8 +78,8 @@ namespace yellowEngine
 		std::string shader;
 		const char* shaderCode;
 
-		std::string vsPathString = Game::getResourcePath(vsPath);
-		std::string fsPathString = Game::getResourcePath(fsPath);
+		std::string vsPathString = Game::getAssetPath(vsPath);
+		std::string fsPathString = Game::getAssetPath(fsPath);
 
 		shader = readSourceFile(vsPathString.c_str());
 		shaderCode = shader.c_str();

@@ -41,7 +41,7 @@ namespace yellowEngine
 	Texture* Texture::create(const char* path, bool absolute, int wrap, int filter)
 	{
 		std::string fullpath = path;
-		if (!absolute) fullpath = Game::getResourcePath(path);
+		if (!absolute) fullpath = Game::getAssetPath(path);
 
 		auto it = __textureCache.find(fullpath);
 		if (it != __textureCache.end())
