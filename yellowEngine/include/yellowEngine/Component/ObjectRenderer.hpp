@@ -13,6 +13,7 @@ namespace yellowEngine
 	{
 	public:
 		static void renderAll(Camera* camera, const char* vsPath = nullptr, const char* fsPath = nullptr);
+
 		static Camera* getCurrentCamera();
 
 		ObjectRenderer(GameObject* gameObject);

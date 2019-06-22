@@ -175,7 +175,8 @@ namespace yellowEngine
 
 					for (int i = 0; i < 3; i++)
 					{
-						Vertex vertex = { positions[pi[i] - 1], normals[ni[i] - 1],uvs[uvi[i] - 1] };
+						Vertex vertex = { positions[pi[i] - 1], normals[ni[i] - 1], uvs[uvi[i] - 1] };
+
 						auto it = uniqueVertices.find(vertex);
 						if (it == uniqueVertices.end())
 						{

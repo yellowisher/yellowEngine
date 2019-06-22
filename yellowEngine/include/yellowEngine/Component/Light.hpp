@@ -32,7 +32,8 @@ namespace yellowEngine
 		Vector3 getDirection();
 
 		Vector3 color;
-		float intensity;
+		float ambiendIntensity;
+		float diffuseIntensity;
 
 		// only for spot light
 		float cutoffCos;

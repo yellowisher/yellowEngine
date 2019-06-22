@@ -175,7 +175,6 @@
     <ClCompile Include="src\Component\GameObject.cpp" />
     <ClCompile Include="src\System\InputManager.cpp" />
     <ClCompile Include="src\System\Game.cpp" />
-    <ClCompile Include="src\System\IUpdatable.cpp" />
     <ClCompile Include="src\Utility\Utils.cpp" />
     <ClCompile Include="vendor\glad\src\glad.c" />
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp" />
@@ -240,7 +239,8 @@
   <ItemGroup>
     <None Include="res\Shader\color.frag" />
     <None Include="res\Shader\color.vert" />
-    <None Include="res\Shader\deferred_light.frag" />
+    <None Include="res\Shader\deferred_light_dir.frag" />
+    <None Include="res\Shader\deferred_light_point.frag" />
     <None Include="res\Shader\deferred_light.vert" />
     <None Include="res\Shader\deferred_geometry.frag" />
     <None Include="res\Shader\deferred_geometry.vert" />

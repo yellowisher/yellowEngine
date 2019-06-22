@@ -46,6 +46,26 @@ public:
 	}
 };
 
+class LightScript : public IUpdatable, public Component
+{
+public:
+	LightScript(GameObject* gameObject) : Component(gameObject) {}
+
+	void update() override
+	{
+		Vector3 move = Vector3::zero;
+
+		if (InputManager::getKey(GLFW_KEY_L)) move.x -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_APOSTROPHE)) move.x += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_P)) move.z -= 1.0f;
+		if (InputManager::getKey(GLFW_KEY_SEMICOLON)) move.z += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_I)) move.y += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_K)) move.y -= 1.0f;
+
+		transform->translate(move * 0.03f);
+	}
+};
+
 int main(void)
 {
 	Game* game = new Game("yellowEngine", 1280, 720);
@@ -57,8 +77,13 @@ int main(void)
 	GameObject* go = model->instantiate("nanosuit");
 
 	GameObject* lightGo = new GameObject();
-	Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Dir);
-	lightGo->transform->rotate(45, 135.0f, 0);
+	lightGo->addComponent<LightScript>();
+	Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
+	lightGo->transform->setPosition(0, 10, 0);
+
+	GameObject* dirLight = new GameObject();
+	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
+	dirLight->transform->setRotation(45, 180, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();

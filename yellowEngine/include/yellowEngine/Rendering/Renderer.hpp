@@ -23,7 +23,7 @@ namespace yellowEngine
 		void bufferData();
 		void render();
 
-		std::vector<Vector3> lines;
+		std::vector<Vector3> data;
 
 	private:
 		unsigned int _vbo;

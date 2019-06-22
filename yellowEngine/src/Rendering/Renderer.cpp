@@ -50,8 +50,8 @@ namespace yellowEngine
 				Vector3 end = begin;
 				end.v[b] = aabb[1 - p[b]].v[b];
 
-				lines.push_back(begin);
-				lines.push_back(end);
+				data.push_back(begin);
+				data.push_back(end);
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace yellowEngine
 	void Renderer::bufferData()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3) * lines.size(), &lines[0], GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3) * data.size(), &data[0], GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
 
@@ -74,7 +74,7 @@ namespace yellowEngine
 		_shader->updateUniforms(nullptr);
 
 		glBindVertexArray(_vao);
-		glDrawArrays(GL_LINES, 0, (GLsizei)lines.size());
+		glDrawArrays(GL_LINES, 0, (GLsizei)data.size());
 		glBindVertexArray(NULL);
 
 		_shader->unbind();

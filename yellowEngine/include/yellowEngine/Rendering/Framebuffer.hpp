@@ -15,17 +15,19 @@ namespace yellowEngine
 		FrameBuffer();
 		~FrameBuffer();
 
-		void addColorAttachment(int internalFormat, int width, int height, int format, GLenum type);
+		void addColorAttachment(const char* usage, int internalFormat, int width, int height, int format, GLenum type);
 		void addDepthAttachment(int width, int height);
 		void init();
 		static void unbind();
 		void bindForWriting();
 		void bindForReading();
 		void setBufferToRead(int index);
+		const std::vector<std::pair<std::string, Texture*>>& getColorBuffers();
 
 	protected:
 		unsigned int _frameBufferHandle;
-		std::vector<Texture*> _colorBuffers;
+
+		std::vector<std::pair<std::string, Texture*>> _colorBuffers;
 		RenderBuffer* _depthBuffer;
 	};
 }

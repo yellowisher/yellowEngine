@@ -96,7 +96,7 @@ namespace yellowEngine
 		_wireFrameShader->setUniform(_colorUniform, _colliderColor);
 		for (auto collider : _colliders)
 		{
-			collider->fillRenderingPoints(_renderer.lines);
+			collider->fillRenderingPoints(_renderer.data);
 			_renderer.bufferData();
 			_renderer.render();
 		}

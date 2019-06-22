@@ -1,7 +1,6 @@
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Rendering/Renderbuffer.hpp"
 #include "yellowEngine/Rendering/FrameBuffer.hpp"
-#include "..\..\include\yellowEngine\Rendering\FrameBuffer.hpp"
 
 
 namespace yellowEngine
@@ -17,9 +16,10 @@ namespace yellowEngine
 	}
 
 
-	void FrameBuffer::addColorAttachment(int internalFormat, int width, int height, int format, GLenum type)
+	void FrameBuffer::addColorAttachment(
+		const char* usage, int internalFormat, int width, int height, int format, GLenum type)
 	{
-		_colorBuffers.push_back(new Texture(internalFormat, width, height, format, type));
+		_colorBuffers.push_back({ usage,  new Texture(internalFormat, width, height, format, type) });
 	}
 
 
@@ -37,7 +37,7 @@ namespace yellowEngine
 		GLenum* drawBuffers = new GLenum[_colorBuffers.size()];
 		for (int i = 0; i < _colorBuffers.size(); i++)
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _colorBuffers[i]->_id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _colorBuffers[i].second->_id, 0);
 			drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
 		}
 
@@ -75,17 +75,17 @@ namespace yellowEngine
 	void FrameBuffer::bindForReading()
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _frameBufferHandle);
-
-		for (size_t i = 0; i < _colorBuffers.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + (GLenum)i);
-			_colorBuffers[i]->bind();
-		}
 	}
 
 
 	void FrameBuffer::setBufferToRead(int index)
 	{
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
+	}
+
+
+	const std::vector<std::pair<std::string, Texture*>>& FrameBuffer::getColorBuffers()
+	{
+		return _colorBuffers;
 	}
 }

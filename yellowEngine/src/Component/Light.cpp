@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Component/Light.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 
@@ -18,7 +19,11 @@ namespace yellowEngine
 	Light::Light(GameObject* gameObject) :Component(gameObject)
 	{
 		color = Vector3(1.0f, 1.0f, 1.0f);
-		intensity = 1.0f;
+		ambiendIntensity = 0.1f;
+		diffuseIntensity = 1.0f;
+
+		cutoffCos = cosf(Utils::deg2rad(25.0f));
+		outerCutoffCos = cosf(Utils::deg2rad(35.0f));
 
 		_type = LightType_Dir;
 		__lights[LightType_Dir].push_back(this);

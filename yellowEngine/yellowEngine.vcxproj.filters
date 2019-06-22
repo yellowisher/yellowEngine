@@ -156,9 +156,6 @@
     <ClCompile Include="src\Utility\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\System\IUpdatable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\System\Display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -348,9 +345,10 @@
     <None Include="res\Shader\texture_only.frag" />
     <None Include="res\Shader\color.frag" />
     <None Include="res\Shader\color.vert" />
-    <None Include="res\Shader\deferred_light.frag" />
-    <None Include="res\Shader\deferred_light.vert" />
     <None Include="res\Shader\deferred_geometry.vert" />
     <None Include="res\Shader\deferred_geometry.frag" />
+    <None Include="res\Shader\deferred_light_point.frag" />
+    <None Include="res\Shader\deferred_light_dir.frag" />
+    <None Include="res\Shader\deferred_light.vert" />
   </ItemGroup>
 </Project>
