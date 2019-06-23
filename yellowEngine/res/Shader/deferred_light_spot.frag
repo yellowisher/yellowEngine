@@ -38,7 +38,7 @@ void main()
 	vec4 color         = texture(u_ColorMap, texCoord);
 	vec3 normal        = normalize(texture(u_NormalMap, texCoord).xyz);
 
-	vec3 fragToLightDir = u_Light.position.xyz - worldPosition;
+	vec3 fragToLightDir = u_Light.position - worldPosition;
 	float dist = length(fragToLightDir);
 	fragToLightDir = normalize(fragToLightDir);
 
@@ -53,12 +53,13 @@ void main()
 	float spec = clamp(pow(dot(normal, halfVector), 32), 0.0, 1.0);
 	vec3 specular = vec3(color.a * spec);
 
-	float theta = dot(-fragToLightDir, normalize(u_Light.direction)); 
+	// negative light direction!!
+	float theta = dot(-fragToLightDir, normalize(-u_Light.direction)); 
 	float epsilon = u_Light.cutoffCos - u_Light.outerCutoffCos;
 	float intensity = clamp((theta - u_Light.outerCutoffCos) / epsilon, 0.0, 1.0);
 
-	ambient *= intensity;
 	diffuse *= intensity;
+	specular *= intensity;
 
 	vec3 combined = ambient + diffuse + specular;
 

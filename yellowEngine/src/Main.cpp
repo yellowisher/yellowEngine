@@ -54,7 +54,6 @@ public:
 	void update() override
 	{
 		Vector3 move = Vector3::zero;
-
 		if (InputManager::getKey(GLFW_KEY_L)) move.x -= 1.0f;
 		if (InputManager::getKey(GLFW_KEY_APOSTROPHE)) move.x += 1.0f;
 		if (InputManager::getKey(GLFW_KEY_P)) move.z -= 1.0f;
@@ -62,7 +61,7 @@ public:
 		if (InputManager::getKey(GLFW_KEY_I)) move.y += 1.0f;
 		if (InputManager::getKey(GLFW_KEY_K)) move.y -= 1.0f;
 
-		transform->translate(move * 0.03f);
+		transform->translate(move * 0.06f);
 	}
 };
 
@@ -78,18 +77,23 @@ int main(void)
 	go->transform->setPosition(0, 0, 0);
 
 	GameObject* spotLightGo = new GameObject();
-	spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
+	Light* sl = spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
+	sl->diffuseIntensity = 1.0f;
+	sl->linear = 0.07f;
+	sl->quadratic = 0.002f;
 	spotLightGo->addComponent<LightScript>();
 	spotLightGo->transform->setPosition(0, 10, 5);
 
-	GameObject* lightGo = new GameObject();
-	lightGo->addComponent<LightScript>();
+	//GameObject* lightGo = new GameObject();
+	//lightGo->addComponent<LightScript>();
 	//Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
-	lightGo->transform->setPosition(0, 10, 5);
+	//light->linear = 0.007f;
+	//light->quadratic = 0.0002f;
+	//lightGo->transform->setPosition(0, 10, 5);
 
-	GameObject* dirLight = new GameObject();
-	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
-	dirLight->transform->setRotation(45, 180, 0);
+	//GameObject* dirLight = new GameObject();
+	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.6f;
+	//dirLight->transform->setRotation(45, 180, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();

@@ -63,8 +63,9 @@ namespace yellowEngine
 			_geometryBuffer.setDrawBuffer(Final);
 			spotLightPass(light);
 		}
-		
 		glDisable(GL_STENCIL_TEST);
+		
+		_geometryBuffer.setDrawBuffer(Final);
 		dirLightPass();
 
 		_geometryBuffer.unbind();
@@ -136,7 +137,7 @@ namespace yellowEngine
 
 		_stencilShader->setUniform("u_ProjViewWorld", pvw);
 
-		auto type = Light::LightType_Point;
+		auto type = Light::LightType_Spot;
 		VertexLayoutBinding::create(_meshes[type], _stencilShader)->bind();
 		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
 	}
@@ -173,9 +174,12 @@ namespace yellowEngine
 
 		_lightShaders[type]->setUniform("u_ProjViewWorld", pvw);
 		_lightShaders[type]->setUniform("u_Light.position", light->transform->getWorldPosition());
+		_lightShaders[type]->setUniform("u_Light.direction", light->transform->getForward());
 		_lightShaders[type]->setUniform("u_Light.color", light->color);
 		_lightShaders[type]->setUniform("u_Light.ambiendIntensity", light->ambiendIntensity);
 		_lightShaders[type]->setUniform("u_Light.diffuseIntensity", light->diffuseIntensity);
+		_lightShaders[type]->setUniform("u_Light.cutoffCos", light->getCutoffCos());
+		_lightShaders[type]->setUniform("u_Light.outerCutoffCos", light->getOuterCutoffCos());
 
 		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
 
