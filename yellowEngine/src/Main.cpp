@@ -84,16 +84,17 @@ int main(void)
 
 	GameObject* lightGo = new GameObject();
 	lightGo->addComponent<LightScript>();
-	Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
+	//Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
 	lightGo->transform->setPosition(0, 10, 5);
 
 	GameObject* dirLight = new GameObject();
-	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
+	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
 	dirLight->transform->setRotation(45, 180, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
+	camera->transform->setPosition(0, 10, 5);
 
 	new CameraScript();
 

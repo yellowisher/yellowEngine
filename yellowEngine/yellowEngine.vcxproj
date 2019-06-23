@@ -245,9 +245,9 @@
     <None Include="res\Shader\deferred_light.vert" />
     <None Include="res\Shader\deferred_geometry.frag" />
     <None Include="res\Shader\deferred_geometry.vert" />
+    <None Include="res\Shader\null.frag" />
+    <None Include="res\Shader\null.vert" />
     <None Include="res\Shader\skeletal.vert" />
-    <None Include="res\Shader\texture_only.frag" />
-    <None Include="res\Shader\texture_only.vert" />
     <None Include="res\Shader\wireframe.frag" />
     <None Include="res\Shader\wireframe.vert" />
     <None Include="res\Shader\texture.frag" />

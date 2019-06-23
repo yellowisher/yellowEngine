@@ -341,8 +341,6 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="res\Shader\skeletal.vert" />
-    <None Include="res\Shader\texture_only.vert" />
-    <None Include="res\Shader\texture_only.frag" />
     <None Include="res\Shader\color.frag" />
     <None Include="res\Shader\color.vert" />
     <None Include="res\Shader\deferred_geometry.vert" />
@@ -351,5 +349,7 @@
     <None Include="res\Shader\deferred_light_dir.frag" />
     <None Include="res\Shader\deferred_light.vert" />
     <None Include="res\Shader\deferred_light_spot.frag" />
+    <None Include="res\Shader\null.frag" />
+    <None Include="res\Shader\null.vert" />
   </ItemGroup>
 </Project>

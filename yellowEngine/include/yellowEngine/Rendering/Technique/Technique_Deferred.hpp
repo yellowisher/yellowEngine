@@ -22,14 +22,17 @@ namespace yellowEngine
 
 		void geometryPass();
 		void dirLightPass();
-		void spotLightPass();
-		void pointLightPass();
+		void spotLightStencilPass(const Light* light);
+		void spotLightPass(const Light* light);
+		void pointStencilPass(const Light* light);
+		void pointLightPass(const Light* light);
 		void lightPassBase(Light::LightType type);
 
 		FrameBuffer _geometryBuffer;
 		const char* _geometryFsPath;
 		Mesh* _meshes[Light::Num_LightType];
 		Shader* _lightShaders[Light::Num_LightType];
+		Shader* _stencilShader;
 	};
 }
 

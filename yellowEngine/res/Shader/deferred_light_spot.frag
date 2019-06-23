@@ -68,5 +68,5 @@ void main()
 		dist * dist * u_Attenuation.quadratic;
 
 	o_FragColor = vec4(combined / attenuation, 1.0);
-	//o_FragColor = vec4(vec3(1.0, 1.0, 1.0) + 0.000001 * combined * intensity / attenuation, 0.5);
+	//o_FragColor = vec4(vec3(1.0, 1.0, 1.0) + (combined / attenuation)*0.00001, 1.0);
 }

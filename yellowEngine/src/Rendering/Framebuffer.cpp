@@ -41,11 +41,9 @@ namespace yellowEngine
 		glGenFramebuffers(1, &_frameBufferHandle);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferHandle);
 
-		GLenum* drawBuffers = new GLenum[_colorBuffers.size()];
 		for (int i = 0; i < _colorBuffers.size(); i++)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _colorBuffers[i].second->_id, 0);
-			drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
 		}
 
 		if (_depthBuffer)
@@ -56,9 +54,6 @@ namespace yellowEngine
 		{
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilBuffer->_renderBufferHandle);
 		}
-
-		glDrawBuffers((int)_colorBuffers.size(), drawBuffers);
-		delete[](drawBuffers);
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE)
@@ -77,7 +72,7 @@ namespace yellowEngine
 	}
 
 
-	void FrameBuffer::bindForWriting()
+	void FrameBuffer::bindForDrawing()
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferHandle);
 	}
@@ -89,7 +84,30 @@ namespace yellowEngine
 	}
 
 
-	void FrameBuffer::setBufferToRead(int index)
+	void FrameBuffer::setDrawBuffer(int index, int count)
+	{
+		if (index == -1)
+		{
+			glDrawBuffer(GL_NONE);
+		}
+		else if (count == 1)
+		{
+			glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
+		}
+		else
+		{
+			GLenum* drawBuffers = new GLenum[count];
+			for (int i = 0; i < count; i++)
+			{
+				drawBuffers[i] = GL_COLOR_ATTACHMENT0 + index + i;
+			}
+			glDrawBuffers(count, drawBuffers);
+			delete[](drawBuffers);
+		}
+	}
+
+
+	void FrameBuffer::setReadBuffer(int index)
 	{
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
 	}

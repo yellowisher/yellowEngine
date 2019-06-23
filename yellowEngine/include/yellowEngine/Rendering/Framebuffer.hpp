@@ -20,9 +20,10 @@ namespace yellowEngine
 		void addDepthStencilAttachment(int width, int height);
 		void init();
 		static void unbind();
-		void bindForWriting();
+		void bindForDrawing();
 		void bindForReading();
-		void setBufferToRead(int index);
+		void setDrawBuffer(int index, int count = 1);
+		void setReadBuffer(int index);
 		const std::vector<std::pair<std::string, Texture*>>& getColorBuffers();
 
 	protected:
