@@ -22,8 +22,7 @@ namespace yellowEngine
 		ambiendIntensity = 0.1f;
 		diffuseIntensity = 1.0f;
 
-		cutoffCos = cosf(Utils::deg2rad(25.0f));
-		outerCutoffCos = cosf(Utils::deg2rad(35.0f));
+		setCutoff(25.0f, 27.5f);
 
 		_type = LightType_Dir;
 		__lights[LightType_Dir].push_back(this);
@@ -50,6 +49,28 @@ namespace yellowEngine
 		_type = type;
 		__lights[_type].push_back(this);
 		return this;
+	}
+
+
+	void Light::setCutoff(float inner, float outer)
+	{
+		_cutoffDegree = inner;
+		_outerCutoffDegree = outer;
+
+		_cutoffCos = cosf(Utils::deg2rad(_cutoffDegree));
+		_outerCutoffCos = cosf(Utils::deg2rad(_outerCutoffDegree));
+	}
+
+
+	float Light::getCutoffCos()
+	{
+		return _cutoffCos;
+	}
+
+
+	float Light::getOuterCutoffCos()
+	{
+		return _outerCutoffCos;
 	}
 
 

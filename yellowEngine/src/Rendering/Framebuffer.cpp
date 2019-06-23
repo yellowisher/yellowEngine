@@ -8,6 +8,7 @@ namespace yellowEngine
 	FrameBuffer::FrameBuffer()
 	{
 		_depthBuffer = nullptr;
+		_depthStencilBuffer = nullptr;
 	}
 
 
@@ -29,6 +30,12 @@ namespace yellowEngine
 	}
 
 
+	void FrameBuffer::addDepthStencilAttachment(int width, int height)
+	{
+		_depthStencilBuffer = new RenderBuffer(GL_DEPTH32F_STENCIL8, width, height);
+	}
+
+
 	void FrameBuffer::init()
 	{
 		glGenFramebuffers(1, &_frameBufferHandle);
@@ -44,6 +51,10 @@ namespace yellowEngine
 		if (_depthBuffer)
 		{
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthBuffer->_renderBufferHandle);
+		}
+		if (_depthStencilBuffer)
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilBuffer->_renderBufferHandle);
 		}
 
 		glDrawBuffers((int)_colorBuffers.size(), drawBuffers);

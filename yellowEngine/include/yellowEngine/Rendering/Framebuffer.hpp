@@ -17,6 +17,7 @@ namespace yellowEngine
 
 		void addColorAttachment(const char* usage, int internalFormat, int width, int height, int format, GLenum type);
 		void addDepthAttachment(int width, int height);
+		void addDepthStencilAttachment(int width, int height);
 		void init();
 		static void unbind();
 		void bindForWriting();
@@ -29,6 +30,7 @@ namespace yellowEngine
 
 		std::vector<std::pair<std::string, Texture*>> _colorBuffers;
 		RenderBuffer* _depthBuffer;
+		RenderBuffer* _depthStencilBuffer;
 	};
 }
 

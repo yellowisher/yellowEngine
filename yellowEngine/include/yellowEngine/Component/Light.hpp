@@ -23,26 +23,31 @@ namespace yellowEngine
 
 		static constexpr float constant = 1.0f;
 		static constexpr float linear = 0.14f;
-		static constexpr float quadratic = 0.07f;
+		static constexpr float quadratic = 0.07;
 
 		Light(GameObject* gameObject);
 		~Light();
-
 		Light* setType(LightType type);
+		void setCutoff(float inner, float outer);
+		float getCutoffCos();
+		float getOuterCutoffCos();
+
 		Vector3 getDirection();
 
 		Vector3 color;
 		float ambiendIntensity;
 		float diffuseIntensity;
 
-		// only for spot light
-		float cutoffCos;
-		float outerCutoffCos;
-
 	private:
 		static std::vector<Light*> __lights[Num_LightType];
 
 		LightType _type;
+		// only for spot light
+		float _cutoffDegree;
+		float _outerCutoffDegree;
+
+		float _cutoffCos;
+		float _outerCutoffCos;
 	};
 }
 

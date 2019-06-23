@@ -350,5 +350,6 @@
     <None Include="res\Shader\deferred_light_point.frag" />
     <None Include="res\Shader\deferred_light_dir.frag" />
     <None Include="res\Shader\deferred_light.vert" />
+    <None Include="res\Shader\deferred_light_spot.frag" />
   </ItemGroup>
 </Project>

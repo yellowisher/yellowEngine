@@ -49,19 +49,24 @@ void main()
 
 	vec3 fragToCamera = normalize(u_CameraPosition - worldPosition);
 	vec3 halfVector = normalize(fragToLightDir + fragToCamera);
+	// where to set shiness?
 	float spec = clamp(pow(dot(normal, halfVector), 32), 0.0, 1.0);
 	vec3 specular = vec3(color.a * spec);
-
-	vec3 combined = ambient + diffuse + specular;
 
 	float theta = dot(-fragToLightDir, normalize(u_Light.direction)); 
 	float epsilon = u_Light.cutoffCos - u_Light.outerCutoffCos;
 	float intensity = clamp((theta - u_Light.outerCutoffCos) / epsilon, 0.0, 1.0);
+
+	ambient *= intensity;
+	diffuse *= intensity;
+
+	vec3 combined = ambient + diffuse + specular;
 
 	float attenuation = 
 		u_Attenuation.constant + 
 		dist * u_Attenuation.linear + 
 		dist * dist * u_Attenuation.quadratic;
 
-	o_FragColor = vec4(combined * intensity / attenuation, 1.0);
+	o_FragColor = vec4(combined / attenuation, 1.0);
+	//o_FragColor = vec4(vec3(1.0, 1.0, 1.0) + 0.000001 * combined * intensity / attenuation, 0.5);
 }

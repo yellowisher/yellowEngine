@@ -75,11 +75,17 @@ int main(void)
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
 	GameObject* go = model->instantiate("nanosuit");
+	go->transform->setPosition(0, 0, 0);
+
+	GameObject* spotLightGo = new GameObject();
+	spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
+	spotLightGo->addComponent<LightScript>();
+	spotLightGo->transform->setPosition(0, 10, 5);
 
 	GameObject* lightGo = new GameObject();
 	lightGo->addComponent<LightScript>();
 	Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
-	lightGo->transform->setPosition(0, 10, 0);
+	lightGo->transform->setPosition(0, 10, 5);
 
 	GameObject* dirLight = new GameObject();
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);

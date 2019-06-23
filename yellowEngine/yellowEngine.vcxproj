@@ -239,6 +239,7 @@
   <ItemGroup>
     <None Include="res\Shader\color.frag" />
     <None Include="res\Shader\color.vert" />
+    <None Include="res\Shader\deferred_light_spot.frag" />
     <None Include="res\Shader\deferred_light_dir.frag" />
     <None Include="res\Shader\deferred_light_point.frag" />
     <None Include="res\Shader\deferred_light.vert" />

@@ -6,18 +6,20 @@
 
 namespace yellowEngine
 {
+	static constexpr float MinLightEffect = 5.0f;
+
 	Technique_Deferred::Technique_Deferred()
 	{
 		_geometryBuffer.addColorAttachment("u_PositionMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		_geometryBuffer.addColorAttachment("u_NormalMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		_geometryBuffer.addColorAttachment("u_ColorMap", GL_RGBA32F, Display::width, Display::height, GL_RGBA, GL_UNSIGNED_BYTE);
-		_geometryBuffer.addDepthAttachment(Display::width, Display::height);
+		_geometryBuffer.addDepthStencilAttachment(Display::width, Display::height);
 		_geometryBuffer.init();
 
 		_geometryFsPath = "Shader/deferred_geometry.frag";
 
 		_meshes[Light::LightType_Dir  ] = Mesh::create("Mesh/quad.obj");
-		//_meshes[Light::LightType_Spot ] = Mesh::create("Mesh/cone.obj");
+		_meshes[Light::LightType_Spot ] = Mesh::create("Mesh/cone.obj");
 		_meshes[Light::LightType_Point] = Mesh::create("Mesh/sphere.obj");
 
 		_lightShaders[Light::LightType_Dir  ] = Shader::create("Shader/deferred_light.vert", "Shader/deferred_light_dir.frag");
@@ -99,9 +101,14 @@ namespace yellowEngine
 		for (auto light : Light::getLights(type))
 		{
 			float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
-			float radius = (-L + sqrtf(L * L - 4 * Q * (C - 256.0f * C * lightMax))) / (2.0f * Q);
+			float depth = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightEffect) * C * lightMax))) / (2.0f * Q);
 
-			Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(radius, radius, radius));
+			float cos2 = light->getOuterCutoffCos() * light->getOuterCutoffCos();
+			float sin2 = 1.0f - cos2;
+
+			float scaleXY = depth * sqrtf(sin2 / cos2);
+			float scaleZ = depth / 2.0f;
+			Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(scaleXY, scaleXY, scaleZ));
 
 			_lightShaders[type]->setUniform("u_ProjViewWorld", pvw);
 			_lightShaders[type]->setUniform("u_Light.position", light->transform->getWorldPosition());
@@ -109,8 +116,8 @@ namespace yellowEngine
 			_lightShaders[type]->setUniform("u_Light.color", light->color);
 			_lightShaders[type]->setUniform("u_Light.ambiendIntensity", light->ambiendIntensity);
 			_lightShaders[type]->setUniform("u_Light.diffuseIntensity", light->diffuseIntensity);
-			_lightShaders[type]->setUniform("u_Light.cutoffCos", light->cutoffCos);
-			_lightShaders[type]->setUniform("u_Light.outerCutoffCos", light->outerCutoffCos);
+			_lightShaders[type]->setUniform("u_Light.cutoffCos", light->getCutoffCos());
+			_lightShaders[type]->setUniform("u_Light.outerCutoffCos", light->getOuterCutoffCos());
 
 			glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
 		}
@@ -134,7 +141,7 @@ namespace yellowEngine
 		for (auto light : Light::getLights(type))
 		{
 			float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
-			float radius = (-L + sqrtf(L * L - 4 * Q * (C - 256.0f * C * lightMax))) / (2.0f * Q);
+			float radius = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightEffect) * C * lightMax))) / (2.0f * Q);
 
 			// should exclude scaling of light-containing game object?
 			Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(radius, radius, radius));
