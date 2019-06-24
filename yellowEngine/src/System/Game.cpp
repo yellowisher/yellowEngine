@@ -9,40 +9,20 @@
 namespace yellowEngine
 {
 	static const int TrimCount = 32;
-	Game* Game::_instance;
+	Game* Game::__instance;
 
 
-	Game::Game(std::string name, int width, int height)
+	Game::Game(int width, int height)
 	{
-		_instance = this;
+		__instance = this;
 
 		Display::_width = width;
 		Display::_height = height;
 		Display::_aspectRatio = (float)width / (float)height;
 
+		broadPhaseType = ColliderManager::BroadPhaseType_SAP;
+
 		_assetPath = "./res/";
-
-		// init glfw, glad
-		glfwInit();
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-		_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
-		if (_window == NULL)
-		{
-			std::cout << "Failed to create GLFW window" << std::endl;
-			glfwTerminate();
-			return;
-		}
-		glfwMakeContextCurrent(_window);
-		glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			std::cout << "Failed to initialize GLAD" << std::endl;
-			return;
-		}
 	}
 
 
@@ -53,41 +33,63 @@ namespace yellowEngine
 
 	void Game::init()
 	{
-		InputManager::init(_window);
-		ColliderManager::create(broadPhaseType);
+		_inputManager = new InputManager();
+		_colliderManager = ColliderManager::create(broadPhaseType);
 
 		glEnable(GL_CULL_FACE);
 	}
 
 
-	void Game::run()
+	void Game::update()
 	{
-		while (!glfwWindowShouldClose(_window))
+		_colliderManager->detect();
+
+		for (auto updatable : _updatables)
 		{
-			glfwPollEvents();
-			InputManager::update();
-			Technique::renderScene();
-
-			for (auto updatable : _updatables)
-			{
-				if (updatable) updatable->update();
-			}
-
-			glfwSwapBuffers(_window);
+			if (updatable) updatable->update();
 		}
-		glfwTerminate();
+
+		// update input state at the end of frame
+		_inputManager->update();
+	}
+
+
+	void Game::render()
+	{
+		Technique::renderScene();
+	}
+
+
+	void Game::glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (key == -1) return;
+		if (action == GLFW_REPEAT) return;
+		__instance->_inputManager->keyCallback(key, action == GLFW_PRESS);
+	}
+
+
+	void Game::glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	{
+		if (button == -1) return;
+		__instance->_inputManager->mouseButtonCallback(button, action == GLFW_PRESS);
+	}
+
+
+	void Game::glfwCursorCallback(GLFWwindow* window, double xpos, double ypos)
+	{
+		__instance->_inputManager->mouseCursorCallback((float)xpos, (float)ypos);
 	}
 
 
 	std::string Game::getAssetPath(const char* fileName)
 	{
-		return _instance->_assetPath + fileName;
+		return __instance->_assetPath + fileName;
 	}
 
 
 	void Game::addUpdatable(IUpdatable* target)
 	{
-		_instance->_updatables.push_back(target);
+		__instance->_updatables.push_back(target);
 	}
 
 
@@ -96,12 +98,12 @@ namespace yellowEngine
 	// we cannot simply change target with last element because changing excution order is not desirable
 	void Game::removeUpdatable(IUpdatable* target)
 	{
-		for (auto it = _instance->_updatables.begin();; ++it)
+		for (auto it = __instance->_updatables.begin();; ++it)
 		{
 			if (*it == target)
 			{
 				*it = nullptr;
-				if (++_instance->_removedCount == TrimCount)
+				if (++__instance->_removedCount == TrimCount)
 				{
 					trimUpdatable();
 				}
@@ -112,8 +114,8 @@ namespace yellowEngine
 
 	void Game::trimUpdatable()
 	{
-		int& removeCount = _instance->_removedCount;
-		auto& updatables = _instance->_updatables;
+		int& removeCount = __instance->_removedCount;
+		auto& updatables = __instance->_updatables;
 
 		int trimed = 0;
 		for (int i = 0; i + trimed < updatables.size(); i++)

@@ -1,17 +1,17 @@
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/System/InputManager.hpp"
+
 
 namespace yellowEngine
 {
-	GLFWwindow* InputManager::_window;
-	InputManager::State InputManager::_keys[Num_Keys];
-	InputManager::State InputManager::_mouseButtons[Num_MouseButtons];
-	Vector2 InputManager::_mousePosition;
-	Vector2 InputManager::_deltaMousePosition;
+	InputManager* InputManager::__instance;
 
 
-	void InputManager::init(GLFWwindow* window)
+	InputManager::InputManager()
 	{
-		_window = window;
+		assert(__instance == nullptr);
+
+		__instance = this;
 		for (int i = 0; i < Num_Keys; i++)
 		{
 			_keys[i] = State_Released;
@@ -21,121 +21,120 @@ namespace yellowEngine
 		{
 			_mouseButtons[i] = State_Released;
 		}
-		double x, y;
-		glfwGetCursorPos(_window, &x, &y);
-		_mousePosition = Vector2((float)x, (float)y);
-		_deltaMousePosition = Vector2(0, 0);
+	}
+
+
+	InputManager::~InputManager()
+	{
 	}
 
 
 	bool InputManager::getKey(int keyCode)
 	{
-		return _keys[keyCode] == State_Pressed;
+		return __instance->_keys[keyCode] == State_Pressed;
 	}
 
 
 	bool InputManager::getKeyDown(int keyCode)
 	{
-		return _keys[keyCode] == State_Down;
+		return __instance->_keys[keyCode] == State_Down;
 	}
 
 
 	bool InputManager::getKeyUp(int keyCode)
 	{
-		return _keys[keyCode] == State_Up;
+		return __instance->_keys[keyCode] == State_Up;
 	}
 
 
 	bool InputManager::getMouseButton(int button)
 	{
-		return _mouseButtons[button] == State_Pressed;
+		return __instance->_mouseButtons[button] == State_Pressed;
 	}
 
 
 	bool InputManager::getMouseButtonDown(int button)
 	{
-		return _mouseButtons[button] == State_Down;
+		return __instance->_mouseButtons[button] == State_Down;
 	}
 
 
 	bool InputManager::getMouseButtonUp(int button)
 	{
-		return _mouseButtons[button] == State_Up;
+		return __instance->_mouseButtons[button] == State_Up;
 	}
 
 
-	const Vector2& InputManager::getMousePosition()
+	Vector2 InputManager::getMousePosition()
 	{
-		return _mousePosition;
+		return __instance->_newMousePosition;
 	}
 
 
-	const Vector2& InputManager::getDeltaMousePosition()
+	Vector2 InputManager::getDeltaMousePosition()
 	{
-		return _deltaMousePosition;
+		return __instance->_newMousePosition - __instance->_prevMousePosition;
+	}
+
+
+	void InputManager::keyCallback(int keyCode, bool pressed)
+	{
+		_keys[keyCode] = pressed ? State_Down : State_Up;
+		_changedKeys.insert(keyCode);
+	}
+
+
+	void InputManager::mouseButtonCallback(int buttonCode, bool pressed)
+	{
+		_mouseButtons[buttonCode] = pressed ? State_Down : State_Up;
+		_changedMouseButtons.insert(buttonCode);
+	}
+
+	void InputManager::mouseCursorCallback(float x, float y)
+	{
+		_newMousePosition.x = x;
+		_newMousePosition.y = y;
+	}
+
+
+	void InputManager::initMousePosition(float x, float y)
+	{
+		_prevMousePosition.x = x;
+		_prevMousePosition.y = y;
+
+		_newMousePosition.x = x;
+		_newMousePosition.y = y;
 	}
 
 
 	void InputManager::update()
 	{
-		for (int i = 0; i < Num_Keys; i++)
+		for (int keyCode : _changedKeys)
 		{
-			int state = glfwGetKey(_window, i);
-			if (state == GLFW_RELEASE)
+			if (_keys[keyCode] == State_Up)
 			{
-				if (_keys[i] == State_Down || _keys[i] == State_Pressed)
-				{
-					_keys[i] = State_Up;
-				}
-				else
-				{
-					_keys[i] = State_Released;
-				}
+				_keys[keyCode] = State_Released;
 			}
-			else if (state == GLFW_PRESS)
+			else if (_keys[keyCode] == State_Down)
 			{
-				if (_keys[i] == State_Up || _keys[i] == State_Released)
-				{
-					_keys[i] = State_Down;
-				}
-				else
-				{
-					_keys[i] = State_Pressed;
-				}
+				_keys[keyCode] = State_Pressed;
 			}
 		}
+		_changedKeys.clear();
 
-		for (int i = 0; i < Num_MouseButtons; i++)
+		for (int buttonCode : _changedMouseButtons)
 		{
-			int state = glfwGetMouseButton(_window, i);
-			if (state == GLFW_RELEASE)
+			if (_mouseButtons[buttonCode] == State_Up)
 			{
-				if (_mouseButtons[i] == State_Down || _mouseButtons[i] == State_Pressed)
-				{
-					_mouseButtons[i] = State_Up;
-				}
-				else
-				{
-					_mouseButtons[i] = State_Released;
-				}
+				_mouseButtons[buttonCode] = State_Released;
 			}
-			else if (state == GLFW_PRESS)
+			else if (_mouseButtons[buttonCode] == State_Down)
 			{
-				if (_mouseButtons[i] == State_Up || _mouseButtons[i] == State_Released)
-				{
-					_mouseButtons[i] = State_Down;
-				}
-				else
-				{
-					_mouseButtons[i] = State_Pressed;
-				}
+				_mouseButtons[buttonCode] = State_Pressed;
 			}
 		}
+		_changedMouseButtons.clear();
 
-		double x, y;
-		glfwGetCursorPos(_window, &x, &y);
-		Vector2 newMousePosition((float)x, (float)y);
-		_deltaMousePosition = newMousePosition - _mousePosition;
-		_mousePosition = newMousePosition;
+		_prevMousePosition = _newMousePosition;
 	}
 }

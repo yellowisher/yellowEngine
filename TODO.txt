@@ -2,7 +2,6 @@ revisit:
 	GameObject copy constructor
 	Remove _currentCamera on Renderer class; use UBO instead (should I?)
 	Change all u_Model to u_World (more meaningful to me)
-	Chagne all static class to singleton service provider class (Game, InputManager, ColliderManager)
 	
 
 new:

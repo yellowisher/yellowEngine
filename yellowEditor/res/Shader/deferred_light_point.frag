@@ -2,13 +2,9 @@
 
 out vec4 o_FragColor;
 
-struct SpotLight
+struct PointLight
 {
 	vec3 position;
-	vec3 direction;
-
-	float cutoffCos;
-	float outerCutoffCos;
 
 	vec3 color;
 	float ambiendIntensity;
@@ -27,7 +23,7 @@ uniform sampler2D u_NormalMap;
 uniform sampler2D u_ColorMap;
 
 uniform vec2 u_ScreenSize;
-uniform SpotLight u_Light;
+uniform PointLight u_Light;
 uniform Attenuation u_Attenuation;
 uniform vec3 u_CameraPosition;
 
@@ -38,7 +34,7 @@ void main()
 	vec4 color         = texture(u_ColorMap, texCoord);
 	vec3 normal        = normalize(texture(u_NormalMap, texCoord).xyz);
 
-	vec3 fragToLightDir = u_Light.position - worldPosition;
+	vec3 fragToLightDir = u_Light.position.xyz - worldPosition;
 	float dist = length(fragToLightDir);
 	fragToLightDir = normalize(fragToLightDir);
 
@@ -49,17 +45,8 @@ void main()
 
 	vec3 fragToCamera = normalize(u_CameraPosition - worldPosition);
 	vec3 halfVector = normalize(fragToLightDir + fragToCamera);
-	// where to set shiness?
 	float spec = clamp(pow(dot(normal, halfVector), 32), 0.0, 1.0);
 	vec3 specular = vec3(color.a * spec);
-
-	// should make sure where is Z+ direction...
-	float theta = dot(-fragToLightDir, u_Light.direction); 
-	float epsilon = u_Light.cutoffCos - u_Light.outerCutoffCos;
-	float intensity = clamp((theta - u_Light.outerCutoffCos) / epsilon, 0.0, 1.0);
-
-	diffuse *= intensity;
-	specular *= intensity;
 
 	vec3 combined = ambient + diffuse + specular;
 
@@ -68,6 +55,6 @@ void main()
 		dist * u_Attenuation.linear + 
 		dist * dist * u_Attenuation.quadratic;
 
+	//o_FragColor = vec4(vec3(1.0, 1.0, 1.0) + (combined / attenuation) * 0.00001, 1.0);
 	o_FragColor = vec4(combined / attenuation, 1.0);
-	//o_FragColor = vec4(vec3(1.0, 1.0, 1.0) + (combined / attenuation)*0.00001, 1.0);
 }

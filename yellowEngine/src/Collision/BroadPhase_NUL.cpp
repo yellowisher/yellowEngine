@@ -9,9 +9,9 @@ namespace yellowEngine
 		auto _colliders = manager->_colliders;
 		auto _collidingPairs = manager->_collidingPairs;
 
-		for (size_t i = 0; i < _colliders.size() - 1; i++)
+		for (int i = 0; i < (int)(_colliders.size()) - 1; i++)
 		{
-			for (size_t j = i + 1; j < _colliders.size(); j++)
+			for (int j = i + 1; j < (int)_colliders.size(); j++)
 			{
 				if (_colliders[i]->isCollideWith(_colliders[j]))
 				{

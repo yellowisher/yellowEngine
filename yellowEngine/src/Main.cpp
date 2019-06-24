@@ -1,3 +1,6 @@
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "yellowEngine/yellowEngine.hpp"
 
 using namespace yellowEngine;
@@ -8,16 +11,16 @@ public:
 	void update() override
 	{
 		static const float moveSpeed = 0.06f;
-		static const float rotateSpeedX = 0.16f;
-		static const float rotateSpeedY = 0.08f;
+		static const float rotateSpeedX = 0.016f;
+		static const float rotateSpeedY = 0.008f;
 		static Vector3 rotation = Vector3(0, 0, 0);
 
 		// translate
 		Vector3 move = Vector3::zero;
 		if (InputManager::getKey(GLFW_KEY_A)) move.x -= 1.0f;
 		if (InputManager::getKey(GLFW_KEY_D)) move.x += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_W)) move.z -= 1.0f;
-		if (InputManager::getKey(GLFW_KEY_S)) move.z += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_W)) move.z += 1.0f;
+		if (InputManager::getKey(GLFW_KEY_S)) move.z -= 1.0f;
 		if (InputManager::getKey(GLFW_KEY_SPACE)) move.y += 1.0f;
 		if (InputManager::getKey(GLFW_KEY_LEFT_CONTROL)) move.y -= 1.0f;
 
@@ -65,10 +68,44 @@ public:
 	}
 };
 
-int main(void)
+int main()
 {
-	Game* game = new Game("yellowEngine", 1280, 720);
+	int width = 1280;
+	int height = 720;
+	const char* name = "yellowEngine";
+
+	// init glfw, glad
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+
+	// init game
+	Game* game = new Game(width, height);
 	game->init();
+
+	glfwSetKeyCallback(window, game->glfwKeyCallback);
+	glfwSetMouseButtonCallback(window, game->glfwMouseButtonCallback);
+	glfwSetCursorPosCallback(window, game->glfwCursorCallback);
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	game->_inputManager->initMousePosition((float)x, (float)y);
 
 	////////// Scene
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
@@ -104,7 +141,16 @@ int main(void)
 
 	////////// Scene end
 
-	game->run();
+	while (!glfwWindowShouldClose(window))
+	{
+		glfwPollEvents();
+
+		game->update();
+		game->render();
+
+		glfwSwapBuffers(window);
+	}
+	glfwTerminate();
 
 	return 0;
 }

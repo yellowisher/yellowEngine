@@ -5,16 +5,17 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "yellowEngine/System/InputManager.hpp"
 #include "yellowEngine/Collision/ColliderManager.hpp"
 
-int main(void);
+int main();
 
 namespace yellowEngine
 {
 	class IUpdatable;
 	class Game
 	{
-		friend int ::main(void);
+		friend int ::main();
 
 	public:
 		static std::string getAssetPath(const char* fileName);
@@ -24,22 +25,30 @@ namespace yellowEngine
 		static void trimUpdatable();
 
 	private:
-		static Game* _instance;
+		static Game* __instance;
 
-		Game(std::string name, int width, int height);
+		Game(int width, int height);
 		~Game();
 		Game(const Game* game) = delete;
 		void init();
-		void run();
 
-		//////// configurable properties
+		void update();
+		void render();
+
+		static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+		static void glfwCursorCallback(GLFWwindow* window, double xpos, double ypos);
+
+		// configurable properties
 		ColliderManager::BroadPhaseType broadPhaseType;
 
-		GLFWwindow* _window;
+		// managers
+		InputManager* _inputManager;
+		ColliderManager* _colliderManager;
+
 		std::string _assetPath;
 		std::vector<IUpdatable*> _updatables;
 		int _removedCount;
-
 	};
 }
 

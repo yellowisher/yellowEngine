@@ -101,7 +101,6 @@ void main()
 	for(int i = 0; i < Lights.spotLightCount;	i++) result += calcSpotLight(Lights.spotLights[i]);
 
 	o_FragColor = vec4(result, 1.0);
-	//o_FragColor = vec4(texture(u_Material.diffuse, v_TexCoord)) + vec4(result,1.0) *0.0001;
 }
 
 
