@@ -1,11 +1,16 @@
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include <glad/glad.h>
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 
-#include <nanogui/nanogui.h>
+#include <Windows.h>
+#include <Commdlg.h>
 #include <yellowEngine/yellowEngine.hpp>
 #include <iostream>
 
-using namespace nanogui;
 using namespace yellowEngine;
 
 class CameraScript : IUpdatable
@@ -71,243 +76,208 @@ public:
 	}
 };
 
-class GLWindow
+static void glfw_error_callback(int error, const char* description)
 {
-public:
-	GLWindow(int width, int height, const char* name)
-	{
-		this->width = width;
-		this->height = height;
-		window = glfwCreateWindow(width, height, name, nullptr, nullptr);
-	}
-	~GLWindow()
-	{
-	}
+	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
 
-	void bind()
-	{
-		glfwMakeContextCurrent(window);
-	}
 
-	GLFWwindow* window;
-	int width;
-	int height;
-};
+std::string fileDialog(const std::vector<std::pair<std::string, std::string>> &filetypes, bool save);
 
-enum test_enum
-{
-	Item1 = 0,
-	Item2,
-	Item3
-};
-
-bool bvar = true;
-int ivar = 12345678;
-double dvar = 3.1415926;
-float fvar = (float)dvar;
-std::string strval = "A string";
-test_enum enumval = Item2;
-Color colval(0.5f, 0.5f, 0.7f, 1.f);
-
-Screen *screen = nullptr;
+void mainMenuBar();
 
 int main()
 {
-	glfwInit();
+	glfwSetErrorCallback(glfw_error_callback);
+	if (!glfwInit()) return 1;
 
-	glfwSetTime(0);
-
+	const char* glsl_version = "#version 330";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	GLWindow* gameWindow = new GLWindow(1280, 720, "game");
+	GLFWwindow* mainWindow = glfwCreateWindow(1440, 1080, "yellowEditor", NULL, NULL);
+	glfwMakeContextCurrent(mainWindow);
+	glfwSwapInterval(1); // Enable vsync
 
-	glfwWindowHint(GLFW_SAMPLES, 0);
-	glfwWindowHint(GLFW_RED_BITS, 8);
-	glfwWindowHint(GLFW_GREEN_BITS, 8);
-	glfwWindowHint(GLFW_BLUE_BITS, 8);
-	glfwWindowHint(GLFW_ALPHA_BITS, 8);
-	glfwWindowHint(GLFW_STENCIL_BITS, 8);
-	glfwWindowHint(GLFW_DEPTH_BITS, 24);
-	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-
-	GLWindow* mainWindow = new GLWindow(1440, 1080, "yellowEditor");
-
-	mainWindow->bind();
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "GLAD initialization failed!" << std::endl;
-		return -1;
+		return 1;
 	}
 
-	glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	screen = new Screen();
-	screen->initialize(mainWindow->window, true);
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
 
-	//int width, height;
-	//glfwGetFramebufferSize(mainWindow->window, &width, &height);
-	//glViewport(0, 0, width, height);
-	//glfwSwapInterval(0);
-	//glfwSwapBuffers(mainWindow->window);
+	ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
 
+	// Our state
+	bool show_demo_window = true;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	// copying scene
-	mainWindow->bind();
-	GLuint* data = new GLuint[gameWindow->width * gameWindow->height * 3];
-	GLuint* flippedData = new GLuint[gameWindow->width * gameWindow->height * 3];
-
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow->width, gameWindow->height, 0, GL_RGB, GL_UNSIGNED_INT, nullptr);
-
-	// Create nanogui gui
-	bool enabled = true;
-
-	Window* window = new Window(screen, "Game Scene");
-	window->setLayout(new GroupLayout());
-
-	auto imageView = new ImageView(window, texture);
-	imageView->bindImage(texture);
-
-	screen->setVisible(true);
-	screen->performLayout();
-
-	glfwSetCursorPosCallback(mainWindow->window,
-							 [](GLFWwindow *, double x, double y)
+	while (!glfwWindowShouldClose(mainWindow))
 	{
-		screen->cursorPosCallbackEvent(x, y);
-	}
-	);
+		glfwPollEvents();
 
-	glfwSetMouseButtonCallback(mainWindow->window,
-							   [](GLFWwindow *, int button, int action, int modifiers)
-	{
-		screen->mouseButtonCallbackEvent(button, action, modifiers);
-	}
-	);
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
-	glfwSetKeyCallback(mainWindow->window,
-					   [](GLFWwindow *, int key, int scancode, int action, int mods)
-	{
-		screen->keyCallbackEvent(key, scancode, action, mods);
-	}
-	);
+		mainMenuBar();
 
-	glfwSetCharCallback(mainWindow->window,
-						[](GLFWwindow *, unsigned int codepoint)
-	{
-		screen->charCallbackEvent(codepoint);
-	}
-	);
+		// Rendering
+		ImGui::Render();
+		int display_w, display_h;
+		glfwGetFramebufferSize(mainWindow, &display_w, &display_h);
+		glViewport(0, 0, display_w, display_h);
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+		glClear(GL_COLOR_BUFFER_BIT);
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	glfwSetDropCallback(mainWindow->window,
-						[](GLFWwindow *, int count, const char **filenames)
-	{
-		screen->dropCallbackEvent(count, filenames);
-	}
-	);
-
-	glfwSetScrollCallback(mainWindow->window,
-						  [](GLFWwindow *, double x, double y)
-	{
-		screen->scrollCallbackEvent(x, y);
-	}
-	);
-
-	glfwSetFramebufferSizeCallback(mainWindow->window,
-								   [](GLFWwindow *, int width, int height)
-	{
-		screen->resizeCallbackEvent(width, height);
-	}
-	);
-
-	gameWindow->bind();
-	glfwSetInputMode(gameWindow->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//glfwHideWindow(gameWindow->window);
-
-	Game* game = new Game(gameWindow->width, gameWindow->height);
-	game->init();
-
-	glfwSetKeyCallback(gameWindow->window, game->glfwKeyCallback);
-	glfwSetMouseButtonCallback(gameWindow->window, game->glfwMouseButtonCallback);
-	glfwSetCursorPosCallback(gameWindow->window, game->glfwCursorCallback);
-	double x, y;
-	glfwGetCursorPos(gameWindow->window, &x, &y);
-	game->_inputManager->initMousePosition((float)x, (float)y);
-
-	////////// Scene
-	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
-
-	GameObject* go = model->instantiate("nanosuit");
-	go->transform->setPosition(0, 0, 0);
-
-	GameObject* spotLightGo = new GameObject();
-	Light* sl = spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
-	sl->diffuseIntensity = 1.0f;
-	sl->linear = 0.07f;
-	sl->quadratic = 0.002f;
-	spotLightGo->addComponent<LightScript>();
-	spotLightGo->transform->setPosition(0, 10, 5);
-
-	GameObject* dirLight = new GameObject();
-	dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.8f;
-	dirLight->transform->setRotation(45, 0, 0);
-
-	GameObject* cameraGo = new GameObject();
-	Camera* camera = cameraGo->addComponent<Camera>();
-	camera->setPerspective(60.0f, 0.01f, 1000.0f);
-	camera->transform->setPosition(0, 10, 5);
-
-	new CameraScript();
-
-	// Game loop
-	while (!glfwWindowShouldClose(mainWindow->window))
-	{
-		gameWindow->bind();
-		{
-			// gameWindow
-			glfwPollEvents();
-
-			game->update();
-			game->render();
-
-			glfwSwapBuffers(gameWindow->window);
-			glReadPixels(0, 0, gameWindow->width, gameWindow->height, GL_RGB, GL_UNSIGNED_INT, data);
-		}
-		//
-
-		for (int y = 0; y < gameWindow->height; y++)
-		{
-			memcpy(flippedData + (y * gameWindow->width * 3), data + ((gameWindow->height - 1 - y) * gameWindow->width * 3), gameWindow->width * 3 * sizeof(GLuint));
-		}
-
-		mainWindow->bind();
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow->width, gameWindow->height, 0, GL_RGB, GL_UNSIGNED_INT, flippedData);
-		imageView->bindImage(texture);
-		{
-			glfwPollEvents();
-
-			glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			// Draw nanogui
-			screen->drawContents();
-			screen->drawWidgets();
-
-			glfwSwapBuffers(mainWindow->window);
-		}
+		glfwSwapBuffers(mainWindow);
 	}
 
-	// Terminate GLFW, clearing any resources allocated by GLFW.
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(mainWindow);
 	glfwTerminate();
 
 	return 0;
+}
+
+std::string fileDialog(const std::vector<std::pair<std::string, std::string>> &filetypes, bool save)
+{
+	static const int FILE_DIALOG_MAX_BUFFER = 16384;
+
+	OPENFILENAMEW ofn;
+	ZeroMemory(&ofn, sizeof(OPENFILENAMEW));
+	ofn.lStructSize = sizeof(OPENFILENAMEW);
+	wchar_t tmp[FILE_DIALOG_MAX_BUFFER];
+	ofn.lpstrFile = tmp;
+	ZeroMemory(tmp, sizeof(tmp));
+	ofn.nMaxFile = FILE_DIALOG_MAX_BUFFER;
+	ofn.nFilterIndex = 1;
+
+	std::string filter;
+
+	if (!save && filetypes.size() > 1)
+	{
+		filter.append("Supported file types (");
+		for (size_t i = 0; i < filetypes.size(); ++i)
+		{
+			filter.append("*.");
+			filter.append(filetypes[i].first);
+			if (i + 1 < filetypes.size())
+				filter.append(";");
+		}
+		filter.append(")");
+		filter.push_back('\0');
+		for (size_t i = 0; i < filetypes.size(); ++i)
+		{
+			filter.append("*.");
+			filter.append(filetypes[i].first);
+			if (i + 1 < filetypes.size())
+				filter.append(";");
+		}
+		filter.push_back('\0');
+	}
+	for (auto pair : filetypes)
+	{
+		filter.append(pair.second);
+		filter.append(" (*.");
+		filter.append(pair.first);
+		filter.append(")");
+		filter.push_back('\0');
+		filter.append("*.");
+		filter.append(pair.first);
+		filter.push_back('\0');
+	}
+	filter.push_back('\0');
+
+	int size = MultiByteToWideChar(CP_UTF8, 0, &filter[0], (int)filter.size(), NULL, 0);
+	std::wstring wfilter(size, 0);
+	MultiByteToWideChar(CP_UTF8, 0, &filter[0], (int)filter.size(), &wfilter[0], size);
+
+	ofn.lpstrFilter = wfilter.data();
+
+	if (save)
+	{
+		ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+		if (GetSaveFileNameW(&ofn) == FALSE)
+			return {};
+	}
+	else
+	{
+		ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+		/*if (multiple)
+			ofn.Flags |= OFN_ALLOWMULTISELECT;*/
+		if (GetOpenFileNameW(&ofn) == FALSE)
+			return {};
+	}
+
+	size_t i = 0;
+	std::vector<std::string> result;
+	while (tmp[i] != '\0')
+	{
+		std::string filename;
+		int tmpSize = (int)wcslen(&tmp[i]);
+		if (tmpSize > 0)
+		{
+			int filenameSize = WideCharToMultiByte(CP_UTF8, 0, &tmp[i], tmpSize, NULL, 0, NULL, NULL);
+			filename.resize(filenameSize, 0);
+			WideCharToMultiByte(CP_UTF8, 0, &tmp[i], tmpSize, &filename[0], filenameSize, NULL, NULL);
+		}
+
+		result.emplace_back(filename);
+		i += tmpSize + 1;
+	}
+
+	if (result.size() > 1)
+	{
+		for (i = 1; i < result.size(); ++i)
+		{
+			result[i] = result[0] + "\\" + result[i];
+		}
+		result.erase(begin(result));
+	}
+
+	return result.empty() ? "" : result.front();
+}
+
+
+void mainMenuBar()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New")) {}
+			if (ImGui::MenuItem("Open", "Ctrl+O")) { std::cout << fileDialog({ {"yes", "Yellow Editor Scene"} }, false); }
+			if (ImGui::MenuItem("Save", "Ctrl+S")) { std::cout << fileDialog({ {"yes", "Yellow Editor Scene"} }, true); }
+			if (ImGui::MenuItem("Save As..")) {}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Undo", "CTRL+Z")) { std::cout << "!"; }
+			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+			ImGui::Separator();
+			if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+			ImGui::EndMenu();
+		}
+	}
+	ImGui::EndMainMenuBar();
 }

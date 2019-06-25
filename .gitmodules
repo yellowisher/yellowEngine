@@ -1,6 +1,3 @@
-[submodule "yellowEditor/vendor/nanogui"]
-	path = yellowEditor/vendor/nanogui
-	url = https://github.com/wjakob/nanogui
 [submodule "yellowEngine/vendor/assimp"]
 	path = yellowEngine/vendor/assimp
 	url = https://github.com/assimp/assimp
@@ -13,3 +10,6 @@
 [submodule "yellowEngine/vendor/stb"]
 	path = yellowEngine/vendor/stb
 	url = https://github.com/nothings/stb
+[submodule "yellowEditor/vendor/imgui"]
+	path = yellowEditor/vendor/imgui
+	url = https://github.com/ocornut/imgui

@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\src;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\nanogui\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\imgui\examples;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\imgui;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\include;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\nanogui\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\lib;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\nanogui\lib;C:\Users\yApy\source\repos\yellowEngine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -129,11 +129,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\GLWindow.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="vendor\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="vendor\imgui\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="vendor\imgui\imgui.cpp" />
+    <ClCompile Include="vendor\imgui\imgui_demo.cpp" />
+    <ClCompile Include="vendor\imgui\imgui_draw.cpp" />
+    <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\GLWindow.hpp" />
+    <ClInclude Include="vendor\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="vendor\imgui\examples\imgui_impl_opengl3.h" />
+    <ClInclude Include="vendor\imgui\imconfig.h" />
+    <ClInclude Include="vendor\imgui\imgui.h" />
+    <ClInclude Include="vendor\imgui\imgui_internal.h" />
+    <ClInclude Include="vendor\imgui\imstb_rectpack.h" />
+    <ClInclude Include="vendor\imgui\imstb_textedit.h" />
+    <ClInclude Include="vendor\imgui\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
