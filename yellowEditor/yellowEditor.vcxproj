@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\nanogui\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\src;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\nanogui\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\lib;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\nanogui\lib;C:\Users\yApy\source\repos\yellowEngine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -129,7 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\GLWindow.cpp" />
     <ClCompile Include="src\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\GLWindow.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

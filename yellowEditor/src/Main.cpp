@@ -1,17 +1,12 @@
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "yellowEngine/yellowEngine.hpp"
-
-
-#define GL_GLEXT_PROTOTYPES
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <nanogui/nanogui.h>
+#include <yellowEngine/yellowEngine.hpp>
 #include <iostream>
 
-using namespace yellowEngine;
 using namespace nanogui;
-
-#pragma region Scripts
+using namespace yellowEngine;
 
 class CameraScript : IUpdatable
 {
@@ -19,8 +14,8 @@ public:
 	void update() override
 	{
 		static const float moveSpeed = 0.06f;
-		static const float rotateSpeedX = 0.16f;
-		static const float rotateSpeedY = 0.08f;
+		static const float rotateSpeedX = 0.016f;
+		static const float rotateSpeedY = 0.008f;
 		static Vector3 rotation = Vector3(0, 0, 0);
 
 		// translate
@@ -76,7 +71,28 @@ public:
 	}
 };
 
-#pragma endregion
+class GLWindow
+{
+public:
+	GLWindow(int width, int height, const char* name)
+	{
+		this->width = width;
+		this->height = height;
+		window = glfwCreateWindow(width, height, name, nullptr, nullptr);
+	}
+	~GLWindow()
+	{
+	}
+
+	void bind()
+	{
+		glfwMakeContextCurrent(window);
+	}
+
+	GLFWwindow* window;
+	int width;
+	int height;
+};
 
 enum test_enum
 {
@@ -97,95 +113,134 @@ Screen *screen = nullptr;
 
 int main()
 {
-	Game* game = new Game("yellowEditor", 1280, 720);
-	game->init();
+	glfwInit();
 
-	GLFWwindow* window = game->_window;
+	glfwSetTime(0);
 
-	// Create a nanogui screen and pass the glfw pointer to initialize
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	GLWindow* gameWindow = new GLWindow(1280, 720, "game");
+
+	glfwWindowHint(GLFW_SAMPLES, 0);
+	glfwWindowHint(GLFW_RED_BITS, 8);
+	glfwWindowHint(GLFW_GREEN_BITS, 8);
+	glfwWindowHint(GLFW_BLUE_BITS, 8);
+	glfwWindowHint(GLFW_ALPHA_BITS, 8);
+	glfwWindowHint(GLFW_STENCIL_BITS, 8);
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+
+	GLWindow* mainWindow = new GLWindow(1440, 1080, "yellowEditor");
+
+	mainWindow->bind();
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "GLAD initialization failed!" << std::endl;
+		return -1;
+	}
+
+	glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	screen = new Screen();
-	screen->initialize(window, true);
+	screen->initialize(mainWindow->window, true);
+
+	//int width, height;
+	//glfwGetFramebufferSize(mainWindow->window, &width, &height);
+	//glViewport(0, 0, width, height);
+	//glfwSwapInterval(0);
+	//glfwSwapBuffers(mainWindow->window);
+
+
+	// copying scene
+	mainWindow->bind();
+	GLuint* data = new GLuint[gameWindow->width * gameWindow->height * 3];
+	GLuint* flippedData = new GLuint[gameWindow->width * gameWindow->height * 3];
+
+	GLuint texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow->width, gameWindow->height, 0, GL_RGB, GL_UNSIGNED_INT, nullptr);
 
 	// Create nanogui gui
 	bool enabled = true;
-	FormHelper *gui = new FormHelper(screen);
-	nanogui::ref<Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(10, 10), "Form helper example");
-	gui->addGroup("Basic types");
-	gui->addVariable("bool", bvar)->setTooltip("Test tooltip.");
-	gui->addVariable("string", strval);
 
-	gui->addGroup("Validating fields");
-	gui->addVariable("int", ivar)->setSpinnable(true);
-	gui->addVariable("float", fvar)->setTooltip("Test.");
-	gui->addVariable("double", dvar)->setSpinnable(true);
+	Window* window = new Window(screen, "Game Scene");
+	window->setLayout(new GroupLayout());
 
-	gui->addGroup("Complex types");
-	gui->addVariable("Enumeration", enumval, enabled)->setItems({ "Item 1", "Item 2", "Item 3" });
-	gui->addVariable("Color", colval)
-		->setFinalCallback([](const Color &c)
-	{
-		std::cout << "ColorPicker Final Callback: ["
-			<< c.r() << ", "
-			<< c.g() << ", "
-			<< c.b() << ", "
-			<< c.w() << "]" << std::endl;
-	});
-
-	gui->addGroup("Other widgets");
-	gui->addButton("A button", []() { std::cout << "Button pressed." << std::endl; })->setTooltip("Testing a much longer tooltip, that will wrap around to new lines multiple times.");;
+	auto imageView = new ImageView(window, texture);
+	imageView->bindImage(texture);
 
 	screen->setVisible(true);
 	screen->performLayout();
-	nanoguiWindow->center();
 
-	glfwSetCursorPosCallback(window,
+	glfwSetCursorPosCallback(mainWindow->window,
 							 [](GLFWwindow *, double x, double y)
 	{
 		screen->cursorPosCallbackEvent(x, y);
 	}
 	);
 
-	glfwSetMouseButtonCallback(window,
+	glfwSetMouseButtonCallback(mainWindow->window,
 							   [](GLFWwindow *, int button, int action, int modifiers)
 	{
 		screen->mouseButtonCallbackEvent(button, action, modifiers);
 	}
 	);
 
-	glfwSetKeyCallback(window,
+	glfwSetKeyCallback(mainWindow->window,
 					   [](GLFWwindow *, int key, int scancode, int action, int mods)
 	{
 		screen->keyCallbackEvent(key, scancode, action, mods);
 	}
 	);
 
-	glfwSetCharCallback(window,
+	glfwSetCharCallback(mainWindow->window,
 						[](GLFWwindow *, unsigned int codepoint)
 	{
 		screen->charCallbackEvent(codepoint);
 	}
 	);
 
-	glfwSetDropCallback(window,
+	glfwSetDropCallback(mainWindow->window,
 						[](GLFWwindow *, int count, const char **filenames)
 	{
 		screen->dropCallbackEvent(count, filenames);
 	}
 	);
 
-	glfwSetScrollCallback(window,
+	glfwSetScrollCallback(mainWindow->window,
 						  [](GLFWwindow *, double x, double y)
 	{
 		screen->scrollCallbackEvent(x, y);
 	}
 	);
 
-	glfwSetFramebufferSizeCallback(window,
+	glfwSetFramebufferSizeCallback(mainWindow->window,
 								   [](GLFWwindow *, int width, int height)
 	{
 		screen->resizeCallbackEvent(width, height);
 	}
 	);
+
+	gameWindow->bind();
+	glfwSetInputMode(gameWindow->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwHideWindow(gameWindow->window);
+
+	Game* game = new Game(gameWindow->width, gameWindow->height);
+	game->init();
+
+	glfwSetKeyCallback(gameWindow->window, game->glfwKeyCallback);
+	glfwSetMouseButtonCallback(gameWindow->window, game->glfwMouseButtonCallback);
+	glfwSetCursorPosCallback(gameWindow->window, game->glfwCursorCallback);
+	double x, y;
+	glfwGetCursorPos(gameWindow->window, &x, &y);
+	game->_inputManager->initMousePosition((float)x, (float)y);
 
 	////////// Scene
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
@@ -201,16 +256,9 @@ int main()
 	spotLightGo->addComponent<LightScript>();
 	spotLightGo->transform->setPosition(0, 10, 5);
 
-	//GameObject* lightGo = new GameObject();
-	//lightGo->addComponent<LightScript>();
-	//Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
-	//light->linear = 0.007f;
-	//light->quadratic = 0.0002f;
-	//lightGo->transform->setPosition(0, 10, 5);
-
-	//GameObject* dirLight = new GameObject();
-	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.6f;
-	//dirLight->transform->setRotation(45, 180, 0);
+	GameObject* dirLight = new GameObject();
+	dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.8f;
+	dirLight->transform->setRotation(45, 0, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
@@ -219,21 +267,47 @@ int main()
 
 	new CameraScript();
 
-	while (!game->pollEvents())
+	// Game loop
+	while (!glfwWindowShouldClose(mainWindow->window))
 	{
-		glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		gameWindow->bind();
+		{
+			// gameWindow
+			glfwPollEvents();
 
-		game->pollEvents();
-		game->update();
-		game->render();
+			game->update();
+			game->render();
 
-		screen->drawContents();
-		screen->drawWidgets();
-		game->swapBuffer();
+			glfwSwapBuffers(gameWindow->window);
+			glReadPixels(0, 0, gameWindow->width, gameWindow->height, GL_RGB, GL_UNSIGNED_INT, data);
+		}
+		//
+
+		for (int y = 0; y < gameWindow->height; y++)
+		{
+			memcpy(flippedData + (y * gameWindow->width * 3), data + ((gameWindow->height - 1 - y) * gameWindow->width * 3), gameWindow->width * 3 * sizeof(GLuint));
+		}
+
+		mainWindow->bind();
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow->width, gameWindow->height, 0, GL_RGB, GL_UNSIGNED_INT, flippedData);
+		imageView->bindImage(texture);
+		{
+			glfwPollEvents();
+
+			glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			// Draw nanogui
+			screen->drawContents();
+			screen->drawWidgets();
+
+			glfwSwapBuffers(mainWindow->window);
+		}
 	}
 
-
+	// Terminate GLFW, clearing any resources allocated by GLFW.
+	glfwTerminate();
 
 	return 0;
 }
