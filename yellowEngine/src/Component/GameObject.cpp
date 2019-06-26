@@ -64,4 +64,13 @@ namespace yellowEngine
 	{
 		_name = name;
 	}
+
+
+	Component* GameObject::addComponent(const std::string& type)
+	{
+		Component* component = Component::createComponent(type, this);
+		component->onCreate();
+		_components.push_back(component);
+		return component;
+	}
 }

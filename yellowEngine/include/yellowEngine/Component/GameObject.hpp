@@ -19,6 +19,7 @@ namespace yellowEngine
 		GameObject(const char* name);
 		GameObject(const GameObject& copy);
 		~GameObject();
+		GameObject& operator=(const GameObject& copy) = delete;
 
 		void setActive(bool active);
 		bool getActive();
@@ -27,6 +28,7 @@ namespace yellowEngine
 
 		template <typename T> T* getComponent();
 		template <typename T> T* addComponent();
+		Component* addComponent(const std::string& type);
 
 	private:
 		std::list<Component*> _components;

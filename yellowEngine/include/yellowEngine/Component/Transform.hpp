@@ -17,6 +17,8 @@ namespace yellowEngine
 	class Transform : public Component
 	{
 	public:
+		static Transform* Root;
+
 		const Vector3& position;
 		const Vector3& scale;
 		const Quaternion& rotation;
@@ -34,6 +36,7 @@ namespace yellowEngine
 		void removeChild(Transform* child);
 		Transform* findChild(const std::string& name);
 		Transform* getChild(int index);
+		const std::vector<Transform*>& getChildren();
 		int getChildCount();
 
 		void translate(const Vector3& translation);

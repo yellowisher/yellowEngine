@@ -18,7 +18,7 @@ namespace yellowEngine
 		~Technique_Deferred();
 
 	private:
-		virtual void _renderScene() override;
+		virtual void _renderScene(Camera* camera) override;
 
 		void geometryPass();
 		void dirLightPass();
@@ -33,6 +33,8 @@ namespace yellowEngine
 		Mesh* _meshes[Light::Num_LightType];
 		Shader* _lightShaders[Light::Num_LightType];
 		Shader* _stencilShader;
+
+		Camera* _currentCamera;
 	};
 }
 

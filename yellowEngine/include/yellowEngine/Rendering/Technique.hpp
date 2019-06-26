@@ -18,7 +18,7 @@ namespace yellowEngine
 	{
 	public:
 		static Technique* getTechnique(TechniqueType type);
-		static void renderScene();
+		static void renderScene(Camera* camera);
 
 		void addRenderer(ObjectRenderer* renderer);
 		void removeRenderer(ObjectRenderer* renderer);
@@ -28,7 +28,7 @@ namespace yellowEngine
 
 		Technique() {};
 		virtual ~Technique() {};
-		virtual void _renderScene() = 0;
+		virtual void _renderScene(Camera* camera) = 0;
 
 	private:
 		static Technique* __techniques[Num_TechniqueType];

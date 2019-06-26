@@ -4,15 +4,22 @@
 
 namespace yellowEngine
 {
+	Transform* Transform::Root = (new GameObject("Root"))->transform;
+
+
 	Transform::Transform(GameObject* gameObject) :
 		Component(gameObject),
 		position(_position),
 		scale(_scale),
 		rotation(_rotation),
-		_parent(nullptr),
+		_parent(Root),
 		_scale(1.0f, 1.0f, 1.0f),
 		_dirtyBits(Dirty_All)
 	{
+		if (Root != nullptr)
+		{
+			Root->_children.push_back(this);
+		}
 	}
 
 
@@ -48,8 +55,7 @@ namespace yellowEngine
 	void Transform::addChild(Transform* child)
 	{
 		if (child->_parent == this)return;
-
-		if (child->_parent)child->_parent->removeChild(child);
+		child->_parent->removeChild(child);
 
 		Matrix childToParent = getInverseMatrix() * child->getMatrix();
 
@@ -75,7 +81,7 @@ namespace yellowEngine
 				child->setScale(childToParent.extractScale());
 
 				_children.erase(it);
-				child->_parent = nullptr;
+				child->_parent = Root;
 
 				return;
 			}
@@ -100,6 +106,12 @@ namespace yellowEngine
 	{
 		// assert index?
 		return _children[index];
+	}
+
+
+	const std::vector<Transform*>& Transform::getChildren()
+	{
+		return _children;
 	}
 
 
@@ -205,7 +217,7 @@ namespace yellowEngine
 		if (_dirtyBits | Dirty_Parent)
 		{
 			_dirtyBits &= ~Dirty_Parent;
-			if (_parent != nullptr)
+			if (_parent != Root)
 			{
 				_parentMatrix = _parent->getMatrix();
 			}

@@ -175,6 +175,7 @@
     <ClCompile Include="src\Component\GameObject.cpp" />
     <ClCompile Include="src\System\InputManager.cpp" />
     <ClCompile Include="src\System\Game.cpp" />
+    <ClCompile Include="src\System\SceneManager.cpp" />
     <ClCompile Include="src\Utility\Utils.cpp" />
     <ClCompile Include="vendor\glad\src\glad.c" />
     <ClCompile Include="vendor\jsoncpp\jsoncpp.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="include\yellowEngine\Component\GameObject.hpp" />
     <ClInclude Include="include\yellowEngine\System\InputManager.hpp" />
     <ClInclude Include="include\yellowEngine\System\IUpdatable.hpp" />
+    <ClInclude Include="include\yellowEngine\System\SceneManager.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\Definitions.hpp" />
     <ClInclude Include="include\yellowEngine\Utility\ObjectPool.hpp" />
     <ClInclude Include="include\yellowEngine\System\Game.hpp" />

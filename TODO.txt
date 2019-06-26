@@ -6,3 +6,4 @@ revisit:
 
 new:
 	Use data chunk in mesh class (not multiple structure)
+	Full serialization

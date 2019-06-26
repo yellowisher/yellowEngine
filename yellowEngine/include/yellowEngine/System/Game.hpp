@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "yellowEngine/System/InputManager.hpp"
+#include "yellowEngine/Component/Camera.hpp"
 #include "yellowEngine/Collision/ColliderManager.hpp"
 
 int main();
@@ -33,7 +34,7 @@ namespace yellowEngine
 		void init();
 
 		void update();
-		void render();
+		void render(Camera* camera);
 
 		static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);

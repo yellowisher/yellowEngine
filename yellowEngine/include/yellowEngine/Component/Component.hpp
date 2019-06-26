@@ -1,6 +1,9 @@
 #ifndef __H_COMPONENT__
 #define __H_COMPONENT__
 
+#include <map>
+#include <string>
+
 namespace yellowEngine
 {
 	class GameObject;
@@ -11,6 +14,8 @@ namespace yellowEngine
 		friend class GameObject;
 
 	public:
+		static Component* createComponent(const std::string& type, GameObject* gameObject);
+
 		GameObject* const gameObject;
 		Transform* const transform;
 
@@ -22,6 +27,11 @@ namespace yellowEngine
 
 		void setActive(bool active);
 		bool getActive();
+
+	protected:
+		// store createComponent function pointers that can be referenced with string
+		template<class T> static Component* createComponent(GameObject* gameObject) { return new T(gameObject); }
+		static std::map <std::string, Component*(*)(GameObject*)> __constructors;
 
 	private:
 		bool _active;

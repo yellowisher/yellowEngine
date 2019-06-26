@@ -4,6 +4,15 @@
 
 namespace yellowEngine
 {
+	std::map <std::string, Component*(*)(GameObject*)> Component::__constructors;
+
+
+	Component* Component::createComponent(const std::string& type, GameObject* gameObject)
+	{
+		return __constructors[type](gameObject);
+	}
+
+
 	Component::Component(GameObject* gameObject) :gameObject(gameObject), transform(gameObject->transform)
 	{
 		_active = true;

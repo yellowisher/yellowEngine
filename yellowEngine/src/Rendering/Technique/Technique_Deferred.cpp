@@ -38,8 +38,10 @@ namespace yellowEngine
 	}
 
 
-	void Technique_Deferred::_renderScene()
+	void Technique_Deferred::_renderScene(Camera* camera)
 	{
+		_currentCamera = camera;
+
 		_geometryBuffer.bindForDrawing();
 		_geometryBuffer.setDrawBuffer(Final);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -83,7 +85,7 @@ namespace yellowEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 
-		ObjectRenderer::renderAll(Camera::getMainCamera(), nullptr, _geometryFsPath);
+		ObjectRenderer::renderAll(_currentCamera, nullptr, _geometryFsPath);
 
 		glDepthMask(GL_FALSE);
 	}
@@ -124,7 +126,7 @@ namespace yellowEngine
 		const float& L = light->linear;
 		const float& Q = light->quadratic;
 
-		Matrix pv = Camera::getMainCamera()->getMatrix();
+		Matrix pv = _currentCamera->getMatrix();
 		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
 		float depth = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
 
@@ -161,7 +163,7 @@ namespace yellowEngine
 		_lightShaders[type]->setUniform("u_Attenuation.linear", L);
 		_lightShaders[type]->setUniform("u_Attenuation.quadratic", Q);
 
-		Matrix pv = Camera::getMainCamera()->getMatrix();
+		Matrix pv = _currentCamera->getMatrix();
 		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
 		float depth = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
 
@@ -204,7 +206,7 @@ namespace yellowEngine
 		const float& L = light->linear;
 		const float& Q = light->quadratic;
 
-		Matrix pv = Camera::getMainCamera()->getMatrix();
+		Matrix pv = _currentCamera->getMatrix();
 		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
 		float radius = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
 
@@ -235,7 +237,7 @@ namespace yellowEngine
 		_lightShaders[type]->setUniform("u_Attenuation.linear", L);
 		_lightShaders[type]->setUniform("u_Attenuation.quadratic", Q);
 
-		Matrix pv = Camera::getMainCamera()->getMatrix();
+		Matrix pv = _currentCamera->getMatrix();
 		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
 		float radius = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
 
@@ -265,7 +267,7 @@ namespace yellowEngine
 		_lightShaders[type]->bind();
 
 		_lightShaders[type]->setUniform("u_ScreenSize", Vector2(Display::width, Display::height));
-		_lightShaders[type]->setUniform("u_CameraPosition", Camera::getMainCamera()->transform->getWorldPosition());
+		_lightShaders[type]->setUniform("u_CameraPosition", _currentCamera->transform->getWorldPosition());
 
 		const auto& textureNames = _lightShaders[type]->getTextureUnits();
 		const auto& colorBuffers = _geometryBuffer.getColorBuffers();

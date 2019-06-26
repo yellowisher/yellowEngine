@@ -25,11 +25,11 @@ namespace yellowEngine
 	}
 
 
-	void Technique::renderScene()
+	void Technique::renderScene(Camera* camera)
 	{
 		for (auto technique : __techniques)
 		{
-			technique->_renderScene();
+			if (technique)technique->_renderScene(camera);
 		}
 	}
 

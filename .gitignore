@@ -7,6 +7,9 @@
 **/res/*
 !**/res/Shader/
 
+# Ignore imgui.ini files
+**/imgui.ini
+
 # User-specific files
 *.rsuser
 *.suo

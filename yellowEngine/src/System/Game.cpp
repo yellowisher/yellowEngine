@@ -54,9 +54,9 @@ namespace yellowEngine
 	}
 
 
-	void Game::render()
+	void Game::render(Camera* camera)
 	{
-		Technique::renderScene();
+		Technique::renderScene(camera);
 	}
 
 

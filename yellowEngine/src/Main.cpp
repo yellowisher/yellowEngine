@@ -146,7 +146,7 @@ int main()
 		glfwPollEvents();
 
 		game->update();
-		game->render();
+		game->render(Camera::getMainCamera());
 
 		glfwSwapBuffers(window);
 	}
