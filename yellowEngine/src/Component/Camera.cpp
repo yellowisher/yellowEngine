@@ -5,6 +5,8 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(Camera)
+
 	Camera* Camera::__mainCamera;
 
 
@@ -34,6 +36,12 @@ namespace yellowEngine
 
 	void Camera::onDestroy()
 	{
+	}
+
+
+	void Camera::onValueChanged()
+	{
+		dirty(Dirty_Matrix);
 	}
 
 

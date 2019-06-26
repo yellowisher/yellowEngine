@@ -28,6 +28,7 @@ namespace yellowEngine
 
 		Light(GameObject* gameObject);
 		~Light();
+		void onValueChanged();
 		Light* setType(LightType type);
 		void setCutoff(float inner, float outer);
 		float getCutoffCos() const;

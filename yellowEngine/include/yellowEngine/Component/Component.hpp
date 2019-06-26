@@ -52,7 +52,6 @@ namespace yellowEngine
 		static std::map <std::string, Component*(*)(GameObject*)>& getConstructors();
 		static std::vector <std::string>& getComponents();
 		static std::map<std::string, std::vector<Property>>& getProperties();
-		
 
 		GameObject* const gameObject;
 		Transform* const transform;
@@ -60,8 +59,9 @@ namespace yellowEngine
 		Component(GameObject* gameObject);
 		virtual ~Component();
 
-		virtual void onCreate();
-		virtual void onDestroy();
+		virtual void onCreate() {};
+		virtual void onDestroy() {};
+		virtual void onValueChanged() {};
 
 		void setActive(bool active);
 		bool getActive();

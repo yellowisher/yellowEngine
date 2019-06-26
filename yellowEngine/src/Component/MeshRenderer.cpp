@@ -6,6 +6,9 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(MeshRenderer)
+
+
 	MeshRenderer::MeshRenderer(GameObject* gameObject) :ObjectRenderer(gameObject)
 	{
 		_mesh = nullptr;
@@ -21,6 +24,16 @@ namespace yellowEngine
 	}
 
 
+	void MeshRenderer::onValueChanged()
+	{
+		if (_prevTechnique != nullptr)
+		{
+			_prevTechnique->removeRenderer(this);
+		}
+		set(_mesh, _material);
+	}
+
+
 	MeshRenderer* MeshRenderer::set(Mesh* mesh, const Material& material)
 	{
 		_mesh = mesh;
@@ -30,6 +43,7 @@ namespace yellowEngine
 		{
 			_material._technique->addRenderer(this);
 		}
+		_prevTechnique = _material._technique;
 		return this;
 	}
 

@@ -37,6 +37,12 @@ namespace yellowEngine
 	}
 
 
+	void Transform::onValueChanged()
+	{
+		dirty(Dirty_LocalMatrix);
+	}
+
+
 	Transform::~Transform()
 	{
 		while (!_children.empty())

@@ -9,6 +9,9 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(BoxCollider)
+
+
 	BoxCollider::BoxCollider(GameObject* gameObject) :
 		Collider(gameObject),
 		_pointsChanged(true)
@@ -19,6 +22,12 @@ namespace yellowEngine
 
 	BoxCollider::~BoxCollider()
 	{
+	}
+
+
+	void BoxCollider::onValueChanged()
+	{
+		set(_min.x, _min.y, _min.z, _max.x, _max.y, _max.z);
 	}
 
 

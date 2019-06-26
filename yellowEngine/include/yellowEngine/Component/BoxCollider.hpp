@@ -10,9 +10,15 @@ namespace yellowEngine
 {
 	class BoxCollider : public Collider
 	{
+		BEGIN_COMPONENT(BoxCollider)
+			PROPERTY(BoxCollider, Vector2, _min, "Min")
+			PROPERTY(BoxCollider, Vector2, _max, "Max")
+		END_COMPONENT
+
 	public:
 		BoxCollider(GameObject* gameObject);
 		~BoxCollider();
+		void onValueChanged() override;
 
 		Type getType() override;
 		bool isCollideWith(Collider* other) override;
@@ -39,6 +45,9 @@ namespace yellowEngine
 		bool _pointsChanged;
 		Vector3 _points[Num_Points];
 		Vector3 _worldPoints[Num_Points];
+
+		Vector3 _min;
+		Vector3 _max;
 
 		void set(float minx, float miny, float minz, float maxx, float maxy, float maxz);
 		bool projectionOverlap(BoxCollider* other);

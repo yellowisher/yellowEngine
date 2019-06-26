@@ -5,6 +5,9 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(SphereCollider)
+
+
 	SphereCollider::SphereCollider(GameObject* gameObject) :
 		Collider(gameObject),
 		radius(0.5f)

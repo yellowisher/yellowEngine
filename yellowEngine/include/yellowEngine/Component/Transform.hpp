@@ -36,6 +36,7 @@ namespace yellowEngine
 
 		void onCreate() override;
 		void onDestroy() override;
+		void onValueChanged() override;
 
 		Transform* getParent();
 		void addChild(Transform* child);

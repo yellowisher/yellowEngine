@@ -7,6 +7,10 @@ namespace yellowEngine
 {
 	class SphereCollider : public Collider
 	{
+		BEGIN_COMPONENT(SphereCollider)
+			PROPERTY(SphereCollider, float, radius, "Radius")
+		END_COMPONENT
+
 	public:
 		SphereCollider(GameObject* gameObject);
 		~SphereCollider();

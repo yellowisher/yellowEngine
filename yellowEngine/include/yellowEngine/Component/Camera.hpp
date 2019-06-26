@@ -13,6 +13,14 @@ namespace yellowEngine
 {
 	class Camera : public Component, public INotifiable
 	{
+		BEGIN_COMPONENT(Camera)
+			PROPERTY(Camera, Type, _type, "Type")
+			PROPERTY(Camera, float, _zNear, "Near")
+			PROPERTY(Camera, float, _zFar, "Far")
+			PROPERTY(Camera, float, _fov, "Field of View")
+		END_COMPONENT
+
+
 	private:
 		static Camera* __mainCamera;
 
@@ -29,6 +37,7 @@ namespace yellowEngine
 
 		void onCreate() override;
 		void onDestroy() override;
+		void onValueChanged() override;
 
 		void setPerspective(float fov, float zNear, float zFar);
 		void setOrthographic(float zNear, float zFar);

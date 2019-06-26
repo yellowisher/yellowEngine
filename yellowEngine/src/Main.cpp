@@ -120,6 +120,9 @@ int main()
 	sl->quadratic = 0.002f;
 	spotLightGo->addComponent<LightScript>();
 	spotLightGo->transform->setPosition(0, 10, 5);
+	//spotLightGo->transform->rotate(32, 57, 22);
+
+	auto rot = spotLightGo->transform->rotation;
 
 	//GameObject* lightGo = new GameObject();
 	//lightGo->addComponent<LightScript>();
@@ -135,6 +138,11 @@ int main()
 	auto ps = Component::getProperties();
 	auto cs = Component::getComponents();
 
+	Transform* tf = spotLightGo->transform;
+	Component* cp = tf;
+	auto prop = Component::getProperties()["Transform"][2];
+	size_t rotationOffset = prop.offset;
+	Quaternion rot2 = *(Quaternion*)((size_t)cp + rotationOffset);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();

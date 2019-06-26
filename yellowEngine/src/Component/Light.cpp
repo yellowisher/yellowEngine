@@ -40,6 +40,7 @@ namespace yellowEngine
 
 	Light* Light::setType(LightType type)
 	{
+		if (type == _type) return this;
 		for (int i = 0; i < __lights[_type].size(); i++)
 		{
 			if (__lights[_type][i] == this)
@@ -81,5 +82,12 @@ namespace yellowEngine
 	Vector3 Light::getDirection() const
 	{
 		return transform->getForward();
+	}
+
+
+	void Light::onValueChanged()
+	{
+		setType(_type);
+		if (_type == LightType_Spot) setCutoff(_cutoffDegree, _outerCutoffDegree);
 	}
 }
