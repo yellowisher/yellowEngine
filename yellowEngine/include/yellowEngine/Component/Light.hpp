@@ -10,6 +10,11 @@ namespace yellowEngine
 {
 	class Light : public Component
 	{
+		BEGIN_COMPONENT(Light)
+			PROPERTY(Light, LightType, _type, "Type")
+			PROPERTY(Light, Vector3, color, "Color")
+		END_COMPONENT
+
 	public:
 		enum LightType
 		{

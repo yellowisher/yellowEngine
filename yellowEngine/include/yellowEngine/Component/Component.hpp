@@ -2,7 +2,33 @@
 #define __H_COMPONENT__
 
 #include <map>
+#include <vector>
 #include <string>
+#include <cstddef>
+
+#define BEGIN_COMPONENT(cls) \
+	private:\
+		struct _StaticConstructor\
+		{\
+			_StaticConstructor()\
+			{\
+				Component::getConstructors()[#cls] = Component::createComponent<cls>;\
+				Component::getComponents().push_back(#cls);\
+				Component::getProperties().insert({ #cls, {} });\
+				auto& offsets = Component::getProperties()[#cls];
+
+#define PROPERTY(cls, type, field, name) \
+				offsets.push_back({ #type, name, offsetof(cls, field) });
+
+#define END_COMPONENT \
+			}\
+		};\
+		static _StaticConstructor __sc;
+
+#define COMPONENT_IMPL(cls) \
+	cls::_StaticConstructor cls::__sc;
+
+int main();
 
 namespace yellowEngine
 {
@@ -12,9 +38,21 @@ namespace yellowEngine
 	class Component
 	{
 		friend class GameObject;
+		friend int ::main();
 
 	public:
+		struct Property
+		{
+			std::string type;
+			std::string name;
+			size_t offset;
+		};
+
 		static Component* createComponent(const std::string& type, GameObject* gameObject);
+		static std::map <std::string, Component*(*)(GameObject*)>& getConstructors();
+		static std::vector <std::string>& getComponents();
+		static std::map<std::string, std::vector<Property>>& getProperties();
+		
 
 		GameObject* const gameObject;
 		Transform* const transform;
@@ -31,7 +69,6 @@ namespace yellowEngine
 	protected:
 		// store createComponent function pointers that can be referenced with string
 		template<class T> static Component* createComponent(GameObject* gameObject) { return new T(gameObject); }
-		static std::map <std::string, Component*(*)(GameObject*)> __constructors;
 
 	private:
 		bool _active;

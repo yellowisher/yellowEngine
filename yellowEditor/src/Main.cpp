@@ -35,6 +35,8 @@ GLuint sceneDataFlip[sceneWindowWidth * sceneWindowHeight * 3];
 
 #pragma endregion
 
+ImGuiWindowFlags baseFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+
 int main()
 {
 	if (!glfwInit()) return 1;
@@ -112,6 +114,10 @@ int main()
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
 	camera->transform->setPosition(0, 10, 5);
+	//
+
+	// ImGui style
+	ImGui::GetStyle().WindowRounding = 0.0f;
 	//
 
 	while (!glfwWindowShouldClose(mainWindow))
@@ -207,11 +213,10 @@ void SceneWindow()
 	glBindTexture(GL_TEXTURE_2D, sceneTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sceneWindowWidth, sceneWindowHeight, 0, GL_RGB, GL_UNSIGNED_INT, sceneDataFlip);
 
-	ImGuiWindowFlags windowFlags = 0;
-	windowFlags |= ImGuiWindowFlags_NoResize;
-	windowFlags |= ImGuiWindowFlags_NoCollapse;
+	ImGuiWindowFlags flags = baseFlag;
+	flags |= ImGuiWindowFlags_NoCollapse;
 
-	if (ImGui::Begin("Scene", nullptr, windowFlags))
+	if (ImGui::Begin("Scene", nullptr, flags))
 	{
 		ImGui::Image((void*)sceneTexture, ImVec2(sceneWindowWidth, sceneWindowHeight));
 	}
@@ -221,7 +226,7 @@ void SceneWindow()
 
 void HierarchyWindow()
 {
-	if (ImGui::Begin("Hierarchy"))
+	if (ImGui::Begin("Hierarchy", nullptr, baseFlag))
 	{
 		for (auto child : Transform::Root->getChildren())
 		{
@@ -259,7 +264,7 @@ void HierarchyNode(Transform* target)
 static const float spacing = 5.0f;
 void InsepctorWindow()
 {
-	if (ImGui::Begin("Inspector"))
+	if (ImGui::Begin("Inspector", nullptr, baseFlag))
 	{
 		if (selectedNode != nullptr)
 		{
@@ -283,7 +288,7 @@ void InsepctorWindow()
 
 void AssetWindow()
 {
-	if (ImGui::Begin("Asset"))
+	if (ImGui::Begin("Asset", nullptr, baseFlag))
 	{
 
 	}

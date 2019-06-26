@@ -132,6 +132,10 @@ int main()
 	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.6f;
 	//dirLight->transform->setRotation(45, 180, 0);
 
+	auto ps = Component::getProperties();
+	auto cs = Component::getComponents();
+
+
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);

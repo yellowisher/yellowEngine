@@ -4,6 +4,9 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(Transform)
+
+
 	Transform* Transform::Root = (new GameObject("Root"))->transform;
 
 

@@ -7,8 +7,8 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(Light)
 	std::vector<Light*> Light::__lights[Num_LightType];
-
 
 	const std::vector<Light*>& Light::getLights(LightType type)
 	{

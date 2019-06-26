@@ -16,6 +16,12 @@ namespace yellowEngine
 {
 	class Transform : public Component
 	{
+		BEGIN_COMPONENT(Transform)
+			PROPERTY(Transform, Vector3, _position, "Position")
+			PROPERTY(Transform, Vector3, _scale, "Scale")
+			PROPERTY(Transform, Quaternion, _rotation, "Rotation")
+		END_COMPONENT
+
 	public:
 		static Transform* Root;
 

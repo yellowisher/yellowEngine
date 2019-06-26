@@ -4,12 +4,32 @@
 
 namespace yellowEngine
 {
-	std::map <std::string, Component*(*)(GameObject*)> Component::__constructors;
-
-
 	Component* Component::createComponent(const std::string& type, GameObject* gameObject)
 	{
-		return __constructors[type](gameObject);
+		return getConstructors()[type](gameObject);
+	}
+
+
+	// Construct On First Use Idiom
+	// https://isocpp.org/wiki/faq/ctors#static-init-order
+	std::map<std::string, Component*(*)(GameObject*)>& Component::getConstructors()
+	{
+		static auto constructors = new std::map<std::string, Component*(*)(GameObject*)>();
+		return *constructors;
+	}
+
+
+	std::vector<std::string>& Component::getComponents()
+	{
+		static auto components = new std::vector<std::string>();
+		return *components;
+	}
+
+
+	std::map<std::string, std::vector<Component::Property>>& Component::getProperties()
+	{
+		static auto properties = new std::map<std::string, std::vector<Component::Property>>();
+		return *properties;
 	}
 
 
