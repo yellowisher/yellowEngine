@@ -102,9 +102,6 @@
     <ClCompile Include="src\System\EventNotifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Animation\AnimationClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

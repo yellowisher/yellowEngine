@@ -144,6 +144,7 @@ int main()
 	std::cout << Component::getTypeNameOf<BoxCollider>();
 
 	auto rot = spotLightGo->transform->rotation;
+	auto cs = Component::getComponents();
 	auto ps = Component::getProperties();
 
 	Transform* tf = spotLightGo->transform;

@@ -129,6 +129,7 @@ int main()
 		{
 			game->update();
 			game->render(Camera::getMainCamera());
+			ColliderManager::getInstance()->renderColliders();
 
 			glfwSwapBuffers(sceneWindow);
 			glReadPixels(0, 0, sceneWindowWidth, sceneWindowHeight, GL_RGB, GL_UNSIGNED_INT, sceneData);
@@ -327,7 +328,8 @@ void InsepctorWindow()
 				ImGui::OpenPopup("Components");
 				searchWord = "";
 			}
-			if (ImGui::BeginPopup("Components"))
+
+			if (ImGui::BeginPopup("Components", baseFlag))
 			{
 				if (ImGui::InputText("##Search", compBuff, buffSize))
 				{

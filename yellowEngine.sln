@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yellowEditor", "yellowEdito
 		{7031AE11-501A-4690-84B0-7BFB2CDD3514} = {7031AE11-501A-4690-84B0-7BFB2CDD3514}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x64.Build.0 = Release|x64
 		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x86.ActiveCfg = Release|Win32
 		{A06FC7B3-C96F-49CC-A117-4AA209DDBF63}.Release|x86.Build.0 = Release|Win32
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Debug|x64.ActiveCfg = Debug|x64
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Debug|x64.Build.0 = Debug|x64
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Debug|x86.ActiveCfg = Debug|Win32
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Debug|x86.Build.0 = Debug|Win32
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Release|x64.ActiveCfg = Release|x64
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Release|x64.Build.0 = Release|x64
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Release|x86.ActiveCfg = Release|Win32
+		{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

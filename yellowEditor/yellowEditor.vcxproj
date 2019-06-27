@@ -94,7 +94,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\lib;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\lib;C:\Users\yApy\source\repos\yellowEngine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3d.lib;yellowEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3d.lib;yellowEngine.lib;assimpd-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/WHOLEARCHIVE:yellowEngine.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
