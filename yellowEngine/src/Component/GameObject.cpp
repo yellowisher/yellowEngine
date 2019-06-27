@@ -11,6 +11,7 @@ namespace yellowEngine
 		transform(new Transform(this)),
 		_active(true)
 	{
+		_components.push_back(transform);
 	}
 
 
@@ -19,6 +20,7 @@ namespace yellowEngine
 		transform(new Transform(this)),
 		_active(true)
 	{
+		_components.push_back(transform);
 	}
 
 

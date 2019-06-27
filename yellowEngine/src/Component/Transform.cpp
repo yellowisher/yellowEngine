@@ -39,6 +39,7 @@ namespace yellowEngine
 
 	void Transform::onValueChanged()
 	{
+		_rotation = Quaternion(_eulerRotation);
 		dirty(Dirty_LocalMatrix);
 	}
 
@@ -171,25 +172,29 @@ namespace yellowEngine
 	void Transform::rotate(const Quaternion& rotation)
 	{
 		_rotation = rotation * _rotation;
+		_eulerRotation = _rotation.toEulerAngle();
 		dirty(Dirty_Rotation);
 	}
 
 
 	void Transform::setRotation(float x, float y, float z)
 	{
-		setRotation(Quaternion(Vector3(x, y, z)));
+		_eulerRotation = Vector3(x, y, z);
+		setRotation(Quaternion(Vector3(x, y, z)), false);
 	}
 
 
 	void Transform::setRotation(const Vector3& rotation)
 	{
-		setRotation(Quaternion(rotation));
+		_eulerRotation = rotation;
+		setRotation(Quaternion(rotation), false);
 	}
 
 
-	void Transform::setRotation(const Quaternion& rotation)
+	void Transform::setRotation(const Quaternion& rotation, bool updateEuler)
 	{
 		_rotation = rotation;
+		if (updateEuler) _eulerRotation = _rotation.toEulerAngle();
 		dirty(Dirty_Rotation);
 	}
 

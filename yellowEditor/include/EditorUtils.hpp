@@ -1,15 +1,15 @@
-#ifndef __H_EUTILS__
-#define __H_EUTILS__
+#ifndef __H_EDITORUTILS__
+#define __H_EDITORUTILS__
 
 #include <Windows.h>
 #include <Commdlg.h>
 #include <string>
 #include <vector>
 
-namespace yellowEngine
+namespace yellowEditor
 {
 	// file dialog for Windows from nanogui
-	std::string fileDialog(const std::vector<std::pair<std::string, std::string>> &filetypes, bool save)
+	inline std::string fileDialog(const std::vector<std::pair<std::string, std::string>> &filetypes, bool save)
 	{
 		static const int FILE_DIALOG_MAX_BUFFER = 16384;
 

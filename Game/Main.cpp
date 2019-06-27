@@ -145,7 +145,6 @@ int main()
 
 	auto rot = spotLightGo->transform->rotation;
 	auto ps = Component::getProperties();
-	auto cs = Component::getComponents();
 
 	Transform* tf = spotLightGo->transform;
 	Component* cp = tf;

@@ -19,7 +19,7 @@ namespace yellowEngine
 		BEGIN_COMPONENT(Transform)
 			PROPERTY(Transform, Vector3, _position, "Position")
 			PROPERTY(Transform, Vector3, _scale, "Scale")
-			PROPERTY(Transform, Quaternion, _rotation, "Rotation")
+			PROPERTY(Transform, Vector3, _eulerRotation, "Rotation")
 		END_COMPONENT
 
 	public:
@@ -55,7 +55,7 @@ namespace yellowEngine
 		void rotate(const Quaternion& rotation);
 		void setRotation(float x, float y, float z);
 		void setRotation(const Vector3& rotation);
-		void setRotation(const Quaternion& rotation);
+		void setRotation(const Quaternion& rotation, bool updateEuler = true);
 		void setScale(const Vector3& scale);
 		void setScale(float x, float y, float z);
 
@@ -96,6 +96,7 @@ namespace yellowEngine
 
 		Vector3 _position;
 		Vector3 _scale;
+		Vector3 _eulerRotation;
 		Quaternion _rotation;
 
 		void dirty(int bit);

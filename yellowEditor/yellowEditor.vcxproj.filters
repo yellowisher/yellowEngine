@@ -68,13 +68,13 @@
     <ClInclude Include="vendor\imgui\examples\imgui_impl_opengl3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Utils.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vendor\imgui\imgui_user.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Inspector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EditorUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

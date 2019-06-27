@@ -9,17 +9,9 @@
 #include <yellowEngine/Rendering/Material.hpp>
 #include <yellowEngine/Component/Component.hpp>
 
-namespace yellowEngine
+namespace yellowEditor
 {
-	void Inspector(Component* component);
-
-	static void Property(int value);
-	static void Property(float value);
-	static void Property(Vector2 value);
-	static void Property(Vector3 value);
-	static void Property(Vector4 value);
-	static void Property(Mesh* value);
-	static void Property(Material* value);
+	void InspectComponent(yellowEngine::Component* component);
 }
 
 #endif

@@ -10,7 +10,9 @@
 #include <iostream>
 #include <yellowEngine/yellowEngine.hpp>
 
-#include "Utils.hpp"
+#include "EditorUtils.hpp"
+#include "Inspector.hpp"
+
 
 using namespace yellowEngine;
 
@@ -244,15 +246,18 @@ void HierarchyNode(Transform* target)
 	flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 	if (target->getChildCount() == 0)flags |= ImGuiTreeNodeFlags_Leaf;
 	if (target == selectedNode) flags |= ImGuiTreeNodeFlags_Selected;
+	flags |= ImGuiTreeNodeFlags_AllowItemOverlap;
 
-	std::string uniqueName = target->gameObject->getName() + "##" + std::to_string((size_t)target);
+	std::string id = target->gameObject->getName() + "##" + std::to_string((size_t)target);
+	bool nodeOpend = ImGui::TreeNodeEx(id.c_str(), flags);
 
-	if (ImGui::TreeNodeEx(uniqueName.c_str(), flags))
+	if (ImGui::IsItemClicked())
 	{
-		if (ImGui::IsItemClicked())
-		{
-			selectedNode = target;
-		}
+		selectedNode = target;
+	}
+
+	if (nodeOpend)
+	{
 		for (auto child : target->getChildren())
 		{
 			HierarchyNode(child);
@@ -261,29 +266,95 @@ void HierarchyNode(Transform* target)
 	}
 }
 
+
 void InsepctorWindow()
 {
+	static GameObject* nameChangingObject = nullptr;
+	static const int buffSize = 64;
+	static char buff[buffSize] = "";
+	static char compBuff[buffSize] = "";
+	static std::string searchWord = "";
+
 	if (ImGui::Begin("Inspector", nullptr, baseFlag))
 	{
 		if (selectedNode != nullptr)
 		{
-			// transform example
-			if (ImGui::CollapsingHeader("Transform"))
+			// name editing
+			std::string objectName = selectedNode->gameObject->getName();
+			if (nameChangingObject)
 			{
-				ImGui::Text("Position"); ImGui::SameLine(0, spacing);
-				const char* names[] = { "X","Y","Z" };
-				ImGui::DragFloatNWithLabel(names, (float*)&selectedNode->position, 3, 0.05f);
-				//ImGui::PushItemWidth(-1);
-				//ImGui::DragFloat3("", (float*)&selectedNode->position, 0.05f);
-				//ImGui::PopItemWidth();
+				if (nameChangingObject == selectedNode->gameObject)
+				{
+					if (ImGui::InputText("", buff, buffSize, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+					{
+						nameChangingObject->setName(buff);
+						nameChangingObject = nullptr;
+					}
+
+					if (!ImGui::IsItemActive() && (ImGui::IsMouseClicked(0) || ImGui::IsMouseDragging()))
+					{
+						nameChangingObject = nullptr;
+					}
+				}
+				else
+				{
+					ImGui::LabelText("", objectName.c_str());
+					nameChangingObject = nullptr;
+				}
+			}
+			else
+			{
+				ImGui::LabelText("", objectName.c_str());
+				if (ImGui::IsItemClicked())
+				{
+					nameChangingObject = selectedNode->gameObject;
+					memset(buff, 0, buffSize);
+					memcpy(buff, objectName.c_str(), objectName.size());
+				}
 			}
 
+			// components
+			ImGui::Separator();
+			for (auto component : selectedNode->gameObject->getComponents())
+			{
+				yellowEditor::InspectComponent(component);
+			}
 
-			// handle components
+			// add component
+			ImGui::Separator();
+			if (ImGui::Button("Add Component"))
+			{
+				ImGui::OpenPopup("Components");
+				searchWord = "";
+			}
+			if (ImGui::BeginPopup("Components"))
+			{
+				if (ImGui::InputText("##Search", compBuff, buffSize))
+				{
+					searchWord = compBuff;
+				}
+
+				for (auto componentName : Component::getComponents())
+				{
+					if (componentName == "Transform")continue;
+
+					if (componentName.find(searchWord) != -1)
+					{
+						if (ImGui::Button(componentName.c_str()))
+						{
+							selectedNode->gameObject->addComponent(componentName);
+							ImGui::CloseCurrentPopup();
+							break;
+						}
+					}
+				}
+				ImGui::EndPopup();
+			}
 		}
 	}
 	ImGui::End();
 }
+
 
 void AssetWindow()
 {

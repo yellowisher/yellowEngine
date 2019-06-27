@@ -28,10 +28,10 @@ friend class Component;\
 #define END_COMPONENT \
 			}\
 		};\
-		static _StaticConstructor __sc;
+		static const _StaticConstructor __sc;
 
 #define COMPONENT_IMPL(cls) \
-	cls::_StaticConstructor cls::__sc;\
+	const cls::_StaticConstructor cls::__sc;\
 	const char* cls::__typeName = #cls;
 
 
@@ -55,6 +55,8 @@ namespace yellowEngine
 			size_t offset;
 		};
 
+
+		// TODO: move RTTI to each component, not hold as static method in Component
 		static Component* createComponent(const std::string& type, GameObject* gameObject);
 		static std::map<std::string, Component*(*)(GameObject*)>& getConstructors();
 		static std::vector<std::string>& getComponents();
