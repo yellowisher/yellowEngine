@@ -14,7 +14,7 @@ namespace yellowEngine
 	class Camera : public Component, public INotifiable
 	{
 		BEGIN_COMPONENT(Camera)
-			PROPERTY(Camera, Type, _type, "Type")
+			PROPERTY(Camera, CameraType, _type, "Type")
 			PROPERTY(Camera, float, _zNear, "Near")
 			PROPERTY(Camera, float, _zFar, "Far")
 			PROPERTY(Camera, float, _fov, "Field of View")
@@ -25,10 +25,10 @@ namespace yellowEngine
 		static Camera* __mainCamera;
 
 	public:
-		enum Type
+		enum CameraType
 		{
-			Type_Perspective,
-			Type_Orthographic
+			CameraType_Perspective,
+			CameraType_Orthographic
 		};
 		static Camera* getMainCamera();
 
@@ -64,7 +64,7 @@ namespace yellowEngine
 
 		EventListener _transformChangeListener;
 
-		Type _type;
+		CameraType _type;
 		float _zNear;
 		float _zFar;
 		float _fov;

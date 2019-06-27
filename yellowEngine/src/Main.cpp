@@ -122,7 +122,6 @@ int main()
 	spotLightGo->transform->setPosition(0, 10, 5);
 	//spotLightGo->transform->rotate(32, 57, 22);
 
-	auto rot = spotLightGo->transform->rotation;
 
 	//GameObject* lightGo = new GameObject();
 	//lightGo->addComponent<LightScript>();
@@ -135,6 +134,16 @@ int main()
 	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.6f;
 	//dirLight->transform->setRotation(45, 180, 0);
 
+	const char* name1 = Component::getTypeNameOf<Light>();
+	const char* name2 = sl->getTypeName();
+
+	std::cout << name1 << std::endl;
+	std::cout << name2 << std::endl;
+	std::cout << (name1 == name2) << std::endl;
+
+	std::cout << Component::getTypeNameOf<BoxCollider>();
+
+	auto rot = spotLightGo->transform->rotation;
 	auto ps = Component::getProperties();
 	auto cs = Component::getComponents();
 

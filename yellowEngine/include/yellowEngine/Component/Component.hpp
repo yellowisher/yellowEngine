@@ -7,6 +7,11 @@
 #include <cstddef>
 
 #define BEGIN_COMPONENT(cls) \
+friend class Component;\
+	private:\
+		static const char* __typeName;\
+	public:\
+		virtual const char* getTypeName() override { return __typeName; }\
 	private:\
 		struct _StaticConstructor\
 		{\
@@ -26,7 +31,9 @@
 		static _StaticConstructor __sc;
 
 #define COMPONENT_IMPL(cls) \
-	cls::_StaticConstructor cls::__sc;
+	cls::_StaticConstructor cls::__sc;\
+	const char* cls::__typeName = #cls;
+
 
 int main();
 
@@ -49,9 +56,11 @@ namespace yellowEngine
 		};
 
 		static Component* createComponent(const std::string& type, GameObject* gameObject);
-		static std::map <std::string, Component*(*)(GameObject*)>& getConstructors();
-		static std::vector <std::string>& getComponents();
+		static std::map<std::string, Component*(*)(GameObject*)>& getConstructors();
+		static std::vector<std::string>& getComponents();
 		static std::map<std::string, std::vector<Property>>& getProperties();
+		template <class T>
+		static const char* getTypeNameOf() { return T::__typeName; }
 
 		GameObject* const gameObject;
 		Transform* const transform;
@@ -63,6 +72,7 @@ namespace yellowEngine
 		virtual void onDestroy() {};
 		virtual void onValueChanged() {};
 
+		virtual const char* getTypeName() { return nullptr; }
 		void setActive(bool active);
 		bool getActive();
 

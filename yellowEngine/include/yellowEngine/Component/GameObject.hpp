@@ -29,6 +29,7 @@ namespace yellowEngine
 		template <typename T> T* getComponent();
 		template <typename T> T* addComponent();
 		Component* addComponent(const std::string& type);
+		const std::list<Component*>& getComponents() { return _components; }
 
 	private:
 		std::list<Component*> _components;
@@ -41,11 +42,15 @@ namespace yellowEngine
 	{
 		if (!std::is_base_of<Component, T>::value)return nullptr;
 
-		// TODO: implement RTTI rather than dynamic_cast
 		for (auto component : _components)
 		{
-			T* target = dynamic_cast<T*>(component);
-			if (target)return target;
+			if (Component::getTypeNameOf<T>() == component->getTypeName())
+			{
+				return dynamic_cast<T*>(component);
+			}
+			// dynamic_cast version
+			//T* target = dynamic_cast<T*>(component);
+			//if (target)return target;
 		}
 
 		return nullptr;
@@ -57,10 +62,8 @@ namespace yellowEngine
 		if (!std::is_base_of<Component, T>::value)return nullptr;
 
 		T* component = new T(this);
-		Component* comp = static_cast<Component*>(component);
-		comp->onCreate();
-		_components.push_back(comp);
-		// add to update list?
+		component->onCreate();
+		_components.push_back(component);
 		return component;
 	}
 }

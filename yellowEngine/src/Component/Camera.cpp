@@ -52,7 +52,7 @@ namespace yellowEngine
 
 	void Camera::setPerspective(float fov, float zNear, float zFar)
 	{
-		_type = Type_Perspective;
+		_type = CameraType_Perspective;
 		_fov = fov;
 		_zNear = zNear;
 		_zFar = zFar;
@@ -62,7 +62,7 @@ namespace yellowEngine
 
 	void Camera::setOrthographic(float zNear, float zFar)
 	{
-		_type = Type_Orthographic;
+		_type = CameraType_Orthographic;
 		_zNear = zNear;
 		_zFar = zFar;
 		dirty(Dirty_Projection);
@@ -113,7 +113,7 @@ namespace yellowEngine
 		if (_dirtyBits & Dirty_Projection)
 		{
 			_dirtyBits &= ~Dirty_Projection;
-			if (_type == Type_Perspective)
+			if (_type == CameraType_Perspective)
 			{
 				_pMatrix = Matrix::createPerspective(_fov, Display::aspectRatio, _zNear, _zFar);
 			}

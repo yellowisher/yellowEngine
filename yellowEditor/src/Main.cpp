@@ -261,7 +261,6 @@ void HierarchyNode(Transform* target)
 	}
 }
 
-static const float spacing = 5.0f;
 void InsepctorWindow()
 {
 	if (ImGui::Begin("Inspector", nullptr, baseFlag))
