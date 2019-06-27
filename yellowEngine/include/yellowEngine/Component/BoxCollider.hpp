@@ -24,9 +24,7 @@ namespace yellowEngine
 		bool isCollideWith(Collider* other) override;
 		void fillRenderingPoints(std::vector<Vector3>& lines) override;
 		AABB getBoundingBox() override;
-
 		void setSize(float x, float y, float z);
-		void setSize(Mesh* mesh);
 
 	private:
 		enum Point
@@ -42,18 +40,19 @@ namespace yellowEngine
 			Num_Points
 		};
 
-		bool _pointsChanged;
-		Vector3 _points[Num_Points];
-		Vector3 _worldPoints[Num_Points];
-
-		Vector3 _min;
-		Vector3 _max;
-
 		void set(float minx, float miny, float minz, float maxx, float maxy, float maxz);
+		void initSize(const AABB& bounds) override;
 		bool projectionOverlap(BoxCollider* other);
 		void updatePoints();
 		Vector2 getProjectedBounds(Vector3& a, Vector3& ab);
 		void onTransformChange() override;
+
+		bool _pointsChanged;
+		Vector3 _localPoints[Num_Points];
+		Vector3 _worldPoints[Num_Points];
+
+		Vector3 _min;
+		Vector3 _max;
 	};
 }
 

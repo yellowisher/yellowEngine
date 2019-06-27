@@ -44,6 +44,12 @@ namespace yellowEngine
 	}
 
 
+	// TODO: add center field and adjust size
+	void SphereCollider::initSize(const AABB& bounds)
+	{
+	}
+
+
 	bool SphereCollider::isCollideWith(Collider* other)
 	{
 		if (other->getType() == Type_Box)

@@ -41,6 +41,7 @@ namespace yellowEngine
 		EventListener _transformChangeListener;
 
 		virtual void onTransformChange() = 0;
+		virtual void initSize(const AABB& aabb) = 0;
 
 	private:
 		void notify(Event event, void* sender) override;

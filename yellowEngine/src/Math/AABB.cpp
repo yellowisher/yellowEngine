@@ -11,12 +11,12 @@ namespace yellowEngine
 	}
 
 
-	AABB::AABB(Vector3 min, Vector3 max) : _min(min), _max(max)
+	AABB::AABB(Vector3 min, Vector3 max) : min(min), max(max)
 	{
 	}
 
 
-	AABB::AABB(const AABB& copy) : _min(copy._min), _max(copy._max)
+	AABB::AABB(const AABB& copy) : min(copy.min), max(copy.max)
 	{
 	}
 
@@ -28,16 +28,16 @@ namespace yellowEngine
 
 	AABB AABB::combine(const AABB& a, const AABB& b)
 	{
-		Vector3 cmin = Vector3(Utils::min(a._min.x, b._min.x), Utils::min(a._min.y, b._min.y), Utils::min(a._min.z, b._min.z));
-		Vector3 cmax = Vector3(Utils::max(a._max.x, b._max.x), Utils::max(a._max.y, b._max.y), Utils::max(a._max.z, b._max.z));
+		Vector3 cmin = Vector3(Utils::min(a.min.x, b.min.x), Utils::min(a.min.y, b.min.y), Utils::min(a.min.z, b.min.z));
+		Vector3 cmax = Vector3(Utils::max(a.max.x, b.max.x), Utils::max(a.max.y, b.max.y), Utils::max(a.max.z, b.max.z));
 		return AABB(cmin, cmax);
 	}
 
 
 	AABB& AABB::operator=(const AABB& other)
 	{
-		_min = other._min;
-		_max = other._max;
+		min = other.min;
+		max = other.max;
 
 		return *this;
 	}
@@ -45,9 +45,9 @@ namespace yellowEngine
 
 	bool AABB::isCollideWith(const AABB& other)
 	{
-		if (_max.x < other._min.x || _min.x > other._max.x) return false;
-		if (_max.y < other._min.y || _min.y > other._max.y) return false;
-		if (_max.z < other._min.z || _min.z > other._max.z) return false;
+		if (max.x < other.min.x || min.x > other.max.x) return false;
+		if (max.y < other.min.y || min.y > other.max.y) return false;
+		if (max.z < other.min.z || min.z > other.max.z) return false;
 		return true;
 	}
 
@@ -55,28 +55,28 @@ namespace yellowEngine
 	bool AABB::contains(const AABB& other)
 	{
 		return
-			_min.x <= other._min.x && _min.y <= other._min.y && _min.z <= other._min.z &&
-			_max.x >= other._max.x && _max.y >= other._max.y && _max.z >= other._max.z;
+			min.x <= other.min.x && min.y <= other.min.y && min.z <= other.min.z &&
+			max.x >= other.max.x && max.y >= other.max.y && max.z >= other.max.z;
 	}
 
 
 	float AABB::perimeter()
 	{
-		return (_max.x - _min.x) + (_max.y - _min.y) + (_max.z - _min.z) * 4.0f;
+		return (max.x - min.x) + (max.y - min.y) + (max.z - min.z) * 4.0f;
 	}
 
 
 	float AABB::volume()
 	{
-		return (_max.x - _min.x) * (_max.y - _min.y) * (_max.z - _min.z);
+		return (max.x - min.x) * (max.y - min.y) * (max.z - min.z);
 	}
 
 
 	AABB& AABB::expand(float factor)
 	{
-		Vector3 amount = (_max - _min) * factor * 0.5f;
-		_max += amount;
-		_min -= amount;
+		Vector3 amount = (max - min) * factor * 0.5f;
+		max += amount;
+		min -= amount;
 
 		return *this;
 	}

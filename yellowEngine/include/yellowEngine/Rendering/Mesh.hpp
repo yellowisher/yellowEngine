@@ -6,6 +6,7 @@
 #include <map>
 
 #include "yellowEngine/Utility/Definitions.hpp"
+#include "yellowEngine/Math/AABB.hpp"
 #include "yellowEngine/Math/Vector2.hpp"
 #include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Rendering/VertexLayout.hpp"
@@ -36,19 +37,13 @@ namespace yellowEngine
 			float weights[MaxJointCount];
 		};
 
-		struct Bounds
-		{
-			Vector3 min;
-			Vector3 max;
-		};
-
 		static Mesh* create(const char* path);
 
 		unsigned int getVertexCount() const;
 		unsigned int getVertexBufferHandle() const;
 		unsigned int getElementBufferHandle() const;
 		const VertexLayout& getVertexLayout() const;
-		const Bounds& getBounds() const;
+		const AABB& getBounds() const;
 
 	private:
 		static Mesh* loadOBJ(const char* path);
@@ -63,7 +58,7 @@ namespace yellowEngine
 		unsigned int _elementBufferHandle;
 		unsigned int _vertexCount;
 		const VertexLayout _vertexLayout;
-		Bounds _bounds;
+		AABB _bounds;
 	};
 }
 

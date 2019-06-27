@@ -98,6 +98,7 @@ int main()
 
 	// init game
 	Game* game = new Game(width, height);
+	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
 	game->init();
 
 	glfwSetKeyCallback(window, game->glfwKeyCallback);
@@ -120,7 +121,17 @@ int main()
 	sl->quadratic = 0.002f;
 	spotLightGo->addComponent<LightScript>();
 	spotLightGo->transform->setPosition(0, 10, 5);
-	//spotLightGo->transform->rotate(32, 57, 22);
+
+
+	GameObject* b1 = new GameObject();
+	b1->addComponent<BoxCollider>();
+	b1->addComponent<LightScript>();
+
+	GameObject* b2 = new GameObject();
+	b2->addComponent<BoxCollider>();
+
+	GameObject* b3 = new GameObject();
+	b2->addComponent<BoxCollider>();
 
 
 	//GameObject* lightGo = new GameObject();
@@ -168,6 +179,7 @@ int main()
 
 		game->update();
 		game->render(Camera::getMainCamera());
+		ColliderManager::getInstance()->renderColliders();
 
 		glfwSwapBuffers(window);
 	}

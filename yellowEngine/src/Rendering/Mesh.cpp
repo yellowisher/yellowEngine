@@ -91,7 +91,7 @@ namespace yellowEngine
 	}
 
 
-	const Mesh::Bounds& Mesh::getBounds() const
+	const AABB& Mesh::getBounds() const
 	{
 		return _bounds;
 	}

@@ -22,12 +22,12 @@ namespace yellowEngine
 		AABB aabb = target->getBoundingBox();
 
 		Proxy* proxy = &_proxies[target];
-		proxy->points[X][Min]->value = aabb.min().x;
-		proxy->points[Y][Min]->value = aabb.min().y;
-		proxy->points[Z][Min]->value = aabb.min().z;
-		proxy->points[X][Max]->value = aabb.max().x;
-		proxy->points[Y][Max]->value = aabb.max().y;
-		proxy->points[Z][Max]->value = aabb.max().z;
+		proxy->points[X][Min]->value = aabb.min.x;
+		proxy->points[Y][Min]->value = aabb.min.y;
+		proxy->points[Z][Min]->value = aabb.min.z;
+		proxy->points[X][Max]->value = aabb.max.x;
+		proxy->points[Y][Max]->value = aabb.max.y;
+		proxy->points[Z][Max]->value = aabb.max.z;
 	}
 
 

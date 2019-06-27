@@ -24,6 +24,7 @@ namespace yellowEngine
 		float radius;
 
 	private:
+		void initSize(const AABB& bounds) override;
 		void onTransformChange();
 	};
 }

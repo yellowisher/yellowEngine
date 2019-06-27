@@ -16,7 +16,6 @@ namespace yellowEngine
 		Collider(gameObject),
 		_pointsChanged(true)
 	{
-		setSize(1.0f, 1.0f, 1.0f);
 	}
 
 
@@ -33,14 +32,14 @@ namespace yellowEngine
 
 	void BoxCollider::set(float minx, float miny, float minz, float maxx, float maxy, float maxz)
 	{
-		_points[Right_Top_Back] = Vector3(maxx, maxy, maxz);
-		_points[Right_Top_Front] = Vector3(maxx, maxy, minz);
-		_points[Right_Bottom_Back] = Vector3(maxx, miny, maxz);
-		_points[Right_Bottom_Front] = Vector3(maxx, miny, minz);
-		_points[Left_Top_Back] = Vector3(minx, maxy, maxz);
-		_points[Left_Top_Front] = Vector3(minx, maxy, minz);
-		_points[Left_Bottom_Back] = Vector3(minx, miny, maxz);
-		_points[Left_Bottom_Front] = Vector3(minx, miny, minz);
+		_localPoints[Right_Top_Back] = Vector3(maxx, maxy, maxz);
+		_localPoints[Right_Top_Front] = Vector3(maxx, maxy, minz);
+		_localPoints[Right_Bottom_Back] = Vector3(maxx, miny, maxz);
+		_localPoints[Right_Bottom_Front] = Vector3(maxx, miny, minz);
+		_localPoints[Left_Top_Back] = Vector3(minx, maxy, maxz);
+		_localPoints[Left_Top_Front] = Vector3(minx, maxy, minz);
+		_localPoints[Left_Bottom_Back] = Vector3(minx, miny, maxz);
+		_localPoints[Left_Bottom_Front] = Vector3(minx, miny, minz);
 
 		_pointsChanged = true;
 	}
@@ -53,16 +52,6 @@ namespace yellowEngine
 		float hz = z / 2.0f;
 
 		set(-hx, -hy, -hz, hx, hy, hz);
-	}
-
-
-	void BoxCollider::setSize(Mesh* mesh)
-	{
-		Mesh::Bounds bounds = mesh->getBounds();
-		Vector3& min = bounds.min;
-		Vector3& max = bounds.max;
-
-		set(min.x, min.y, min.z, max.x, max.y, max.z);
 	}
 
 
@@ -92,6 +81,14 @@ namespace yellowEngine
 		}
 
 		return AABB(min, max);
+	}
+
+
+	void BoxCollider::initSize(const AABB& bounds)
+	{
+		_min = bounds.min;
+		_max = bounds.max;
+		set(bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z);
 	}
 
 
@@ -126,7 +123,7 @@ namespace yellowEngine
 
 			for (int i = 0; i < Num_Points; i++)
 			{
-				_worldPoints[i] = matrix * _points[i];
+				_worldPoints[i] = matrix * _localPoints[i];
 			}
 		}
 	}
@@ -160,8 +157,8 @@ namespace yellowEngine
 			Vector3 boxScale = transform->getInverseMatrix().extractScale();
 			radius = Utils::max(boxScale.x, boxScale.y, boxScale.z) * radius;
 
-			Vector3& max = _points[Right_Top_Back];
-			Vector3& min = _points[Left_Bottom_Front];
+			Vector3& max = _localPoints[Right_Top_Back];
+			Vector3& min = _localPoints[Left_Bottom_Front];
 			Vector3 closestPoint;
 
 			if (center.x < min.x)closestPoint.x = min.x;

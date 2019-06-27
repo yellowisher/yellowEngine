@@ -35,9 +35,25 @@ GLuint sceneTexture;
 GLuint sceneData[sceneWindowWidth * sceneWindowHeight * 3];
 GLuint sceneDataFlip[sceneWindowWidth * sceneWindowHeight * 3];
 
+GLFWwindow* mainWindow;
+GLFWwindow* sceneWindow;
+Camera* editorCamera;
+Transform* editorCameraTransform;
+
 #pragma endregion
 
 ImGuiWindowFlags baseFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+
+double scrollY;
+void glfwScrollCallback(GLFWwindow* window, double x, double y)
+{
+	scrollY = y;
+}
+
+Vector3 rotation;
+float moveSpeed = 0.03f;
+float rotateSpeedX = 0.03f;
+float rotateSpeedY = 0.015f;
 
 int main()
 {
@@ -47,7 +63,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	GLFWwindow* mainWindow = glfwCreateWindow(mainWindowWidth, mainWindowHeight, "yellowEditor", NULL, NULL);
+	mainWindow = glfwCreateWindow(mainWindowWidth, mainWindowHeight, "yellowEditor", NULL, NULL);
 	glfwMakeContextCurrent(mainWindow);
 	glfwSwapInterval(1); // Enable vsync
 
@@ -61,6 +77,7 @@ int main()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -71,6 +88,8 @@ int main()
 
 	// main window initialize
 	glClearColor(255.0f / 255.0f, 225.0f / 255.0f, 144.0f / 255.0f, 1.0f);
+	glfwSetScrollCallback(mainWindow, glfwScrollCallback);
+
 	glGenTextures(1, &sceneTexture);
 	glBindTexture(GL_TEXTURE_2D, sceneTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -78,7 +97,7 @@ int main()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sceneWindowWidth, sceneWindowHeight, 0, GL_RGB, GL_UNSIGNED_INT, nullptr);
 
 	// scene window initialize
-	GLFWwindow* sceneWindow = glfwCreateWindow(sceneWindowWidth, sceneWindowHeight, "sceneWindow", NULL, NULL);
+	sceneWindow = glfwCreateWindow(sceneWindowWidth, sceneWindowHeight, "sceneWindow", NULL, NULL);
 	glfwMakeContextCurrent(sceneWindow);
 	glfwHideWindow(sceneWindow);
 
@@ -118,6 +137,12 @@ int main()
 	camera->transform->setPosition(0, 10, 5);
 	//
 
+	GameObject* editorCameraObject = new GameObject("Editor Camera");
+	editorCamera = editorCameraObject->addComponent<Camera>();
+	editorCamera->setPerspective(60.0f, 0.01f, 1000.0f);
+	editorCamera->transform->setPosition(0, 10, 5);
+	editorCameraTransform = editorCamera->transform;
+	
 	// ImGui style
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	//
@@ -128,7 +153,7 @@ int main()
 		glfwMakeContextCurrent(sceneWindow);
 		{
 			game->update();
-			game->render(Camera::getMainCamera());
+			game->render(editorCamera);
 			ColliderManager::getInstance()->renderColliders();
 
 			glfwSwapBuffers(sceneWindow);
@@ -147,6 +172,7 @@ int main()
 		// then update main window
 		glfwMakeContextCurrent(mainWindow);
 		{
+			scrollY = 0;
 			glfwPollEvents();
 			// Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
@@ -213,15 +239,68 @@ void MainMenuBar()
 
 void SceneWindow()
 {
+	static bool controllingCamera = false;
+	static Vector2 prevMousePosition;
+	double x, y;
+
 	glBindTexture(GL_TEXTURE_2D, sceneTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sceneWindowWidth, sceneWindowHeight, 0, GL_RGB, GL_UNSIGNED_INT, sceneDataFlip);
 
 	ImGuiWindowFlags flags = baseFlag;
 	flags |= ImGuiWindowFlags_NoCollapse;
 
+
 	if (ImGui::Begin("Scene", nullptr, flags))
 	{
 		ImGui::Image((void*)sceneTexture, ImVec2(sceneWindowWidth, sceneWindowHeight));
+
+		if (ImGui::IsItemClicked(1) || ImGui::IsItemClicked(2))
+		{
+			glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			controllingCamera = true;
+			glfwGetCursorPos(mainWindow, &x, &y);
+			prevMousePosition = Vector2((float)x, (float)y);
+		}
+
+		// handle mouse
+		if (controllingCamera || ImGui::IsItemHovered())
+		{
+			glfwGetCursorPos(mainWindow, &x, &y);
+			Vector2 newMousePosition = Vector2((float)x, (float)y);
+			Vector2 delta = newMousePosition - prevMousePosition;
+			Vector3 move;
+
+			if (glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_RIGHT))
+			{
+				rotation.x -= delta.y;
+				rotation.y -= delta.x;
+			}
+			if (glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_MIDDLE))
+			{
+				move.x = -delta.x;
+				move.y = delta.y;
+			}
+			move.z = (float)scrollY * 5.0f;
+
+			editorCameraTransform->setRotation(rotation * rotateSpeedX);
+
+			move = move * moveSpeed;
+			Vector3 movement = editorCameraTransform->getForward() * move.z;
+			movement += editorCameraTransform->getRight() * move.x;
+			movement += editorCameraTransform->getUp() * move.y;
+			editorCameraTransform->translate(movement);
+
+			prevMousePosition = newMousePosition;
+		}
+
+
+		if (ImGui::IsMouseReleased(1) || ImGui::IsMouseReleased(2))
+		{
+			glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			controllingCamera = false;
+		}
+
+
 	}
 	ImGui::End();
 }
@@ -233,6 +312,7 @@ void HierarchyWindow()
 	{
 		for (auto child : Transform::Root->getChildren())
 		{
+			if (child == editorCameraTransform)continue;
 			HierarchyNode(child);
 		}
 	}

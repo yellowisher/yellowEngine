@@ -1,5 +1,7 @@
 #include "yellowEngine/Collision/ColliderManager.hpp"
 #include "yellowEngine/Rendering/VertexLayout.hpp"
+#include "yellowEngine/Component/MeshRenderer.hpp"
+#include "yellowEngine/Component/SkinnedMeshRenderer.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 #include "yellowEngine/Component/Collider.hpp"
 
@@ -20,6 +22,25 @@ namespace yellowEngine
 	{
 		_transformChangeListener.setParent(this);
 		transform->transformChangeNotifier.addListener(&_transformChangeListener);
+
+		auto meshRenderer = gameObject->getComponent<MeshRenderer>();
+		Mesh* mesh;
+		if (meshRenderer && (mesh = meshRenderer->getMesh()))
+		{
+			initSize(mesh->getBounds());
+		}
+		else
+		{
+			auto skinnedRenderer = gameObject->getComponent<SkinnedMeshRenderer>();
+			if (skinnedRenderer && (mesh = skinnedRenderer->getMesh()))
+			{
+				initSize(mesh->getBounds());
+			}
+			else
+			{
+				initSize(AABB(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+			}
+		}
 
 		ColliderManager::getInstance()->colliderCreated(this);
 	}

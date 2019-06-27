@@ -25,17 +25,15 @@ namespace yellowEngine
 		float volume();
 		AABB& expand(float factor);
 
-		inline const Vector3& min() { return _min; }
-		inline const Vector3& max() { return _max; }
+		Vector3 min;
+		Vector3 max;
 		const Vector3& operator[](int i) const
 		{
-			if (i == 0)return _min;
-			return _max;
+			if (i == 0)return min;
+			return max;
 		}
 
 	private:
-		Vector3 _min;
-		Vector3 _max;
 	};
 }
 
