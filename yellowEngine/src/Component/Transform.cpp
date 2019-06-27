@@ -209,7 +209,7 @@ namespace yellowEngine
 
 	const Matrix& Transform::getLocalMatrix()
 	{
-		if (_dirtyBits | Dirty_LocalMatrix)
+		if (_dirtyBits & Dirty_LocalMatrix)
 		{
 			_dirtyBits &= ~Dirty_LocalMatrix;
 			_localMatrix =
@@ -223,7 +223,7 @@ namespace yellowEngine
 
 	const Matrix& Transform::getParentMatrix()
 	{
-		if (_dirtyBits | Dirty_Parent)
+		if (_dirtyBits & Dirty_Parent)
 		{
 			_dirtyBits &= ~Dirty_Parent;
 			if (_parent != Root)
@@ -237,7 +237,7 @@ namespace yellowEngine
 
 	const Matrix& Transform::getMatrix()
 	{
-		if (_dirtyBits | Dirty_Matrix)
+		if (_dirtyBits & Dirty_Matrix)
 		{
 			_matrix = getParentMatrix() * getLocalMatrix();
 		}
@@ -247,7 +247,7 @@ namespace yellowEngine
 
 	const Matrix& Transform::getInverseMatrix()
 	{
-		if (_dirtyBits | Dirty_InverseMatrix)
+		if (_dirtyBits & Dirty_InverseMatrix)
 		{
 			_dirtyBits &= ~Dirty_LocalMatrix;
 			_inverseMatrix = ~getMatrix();
