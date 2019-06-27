@@ -5,7 +5,6 @@
 namespace yellowEngine
 {
 	std::list<ObjectRenderer*> ObjectRenderer::_renderers;
-	Camera* ObjectRenderer::_currentCamera;
 
 
 	ObjectRenderer::ObjectRenderer(GameObject* gameObject) :Component(gameObject)
@@ -33,9 +32,8 @@ namespace yellowEngine
 	}
 
 
-	void ObjectRenderer::renderAll(Camera* camera, const char* vsPath, const char* fsPath)
+	void ObjectRenderer::renderAll(const char* vsPath, const char* fsPath)
 	{
-		_currentCamera = camera;
 		for (auto renderer : _renderers)
 		{
 			if (renderer->gameObject->getActive() && renderer->getActive())
@@ -43,11 +41,5 @@ namespace yellowEngine
 				renderer->render(vsPath, fsPath);
 			}
 		}
-	}
-
-
-	Camera* ObjectRenderer::getCurrentCamera()
-	{
-		return _currentCamera;
 	}
 }

@@ -1,8 +1,9 @@
 #include <glad/glad.h>
 
 #include "yellowEngine/Utility/Utils.hpp"
-#include "yellowEngine/Component/Transform.hpp"
+#include "yellowEngine/Collision/ColliderManager.hpp"
 #include "yellowEngine/Math/Matrix.hpp"
+#include "yellowEngine/Component/Transform.hpp"
 #include "yellowEngine/Component/SphereCollider.hpp"
 #include "yellowEngine/Component/BoxCollider.hpp"
 
@@ -42,6 +43,7 @@ namespace yellowEngine
 		_localPoints[Left_Bottom_Front] = Vector3(minx, miny, minz);
 
 		_pointsChanged = true;
+		ColliderManager::getInstance()->colliderUpdated(this);
 	}
 
 

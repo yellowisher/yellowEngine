@@ -31,6 +31,7 @@ namespace yellowEngine
 			CameraType_Orthographic
 		};
 		static Camera* getMainCamera();
+		static Camera* currentCamera;
 
 		Camera(GameObject* gameObject);
 		virtual ~Camera();
@@ -60,7 +61,7 @@ namespace yellowEngine
 			Dirty_Projection = 2,
 			Dirty_Matrix = Dirty_View | Dirty_Projection
 		};
-		char _dirtyBits;
+		unsigned char _dirtyBits;
 
 		EventListener _transformChangeListener;
 

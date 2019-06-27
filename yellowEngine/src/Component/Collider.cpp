@@ -23,6 +23,8 @@ namespace yellowEngine
 		_transformChangeListener.setParent(this);
 		transform->transformChangeNotifier.addListener(&_transformChangeListener);
 
+		ColliderManager::getInstance()->colliderCreated(this);
+
 		auto meshRenderer = gameObject->getComponent<MeshRenderer>();
 		Mesh* mesh;
 		if (meshRenderer && (mesh = meshRenderer->getMesh()))
@@ -41,8 +43,6 @@ namespace yellowEngine
 				initSize(AABB(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 			}
 		}
-
-		ColliderManager::getInstance()->colliderCreated(this);
 	}
 
 

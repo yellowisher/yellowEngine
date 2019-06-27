@@ -44,11 +44,11 @@ namespace yellowEngine
 				break;
 
 			case Uniform_ProjectionView:
-				_shader->setUniform(pair.uniform, ObjectRenderer::getCurrentCamera()->getMatrix());
+				_shader->setUniform(pair.uniform, Camera::currentCamera->getMatrix());
 				break;
 
 			case Uniform_CameraPosition:
-				_shader->setUniform(pair.uniform, ObjectRenderer::getCurrentCamera()->transform->getWorldPosition());
+				_shader->setUniform(pair.uniform, Camera::currentCamera->transform->getWorldPosition());
 				break;
 			}
 		}

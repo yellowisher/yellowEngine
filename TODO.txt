@@ -7,3 +7,6 @@ revisit:
 new:
 	Use data chunk in mesh class (not multiple structure)
 	Full serialization
+	Clean up editor
+	Create new object in editor
+	Asset loading

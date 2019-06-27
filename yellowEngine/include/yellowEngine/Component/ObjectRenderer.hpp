@@ -12,16 +12,12 @@ namespace yellowEngine
 	class ObjectRenderer : public Component
 	{
 	public:
-		static void renderAll(Camera* camera, const char* vsPath = nullptr, const char* fsPath = nullptr);
-
-		static Camera* getCurrentCamera();
+		static void renderAll(const char* vsPath = nullptr, const char* fsPath = nullptr);
 
 		ObjectRenderer(GameObject* gameObject);
 		virtual ~ObjectRenderer();
 
 		void render(const char* vsPath = nullptr, const char* fsPath = nullptr);
-
-		static Camera* _currentCamera;
 	protected:
 
 		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) = 0;

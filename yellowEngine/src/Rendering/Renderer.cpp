@@ -38,6 +38,7 @@ namespace yellowEngine
 
 	void Renderer::setData(const AABB& aabb)
 	{
+		data.clear();
 		// just calculating rendering points... I'm sorry if you tried to understand this
 		for (int i = 0; i < 4; i++)
 		{

@@ -33,8 +33,6 @@ namespace yellowEngine
 		Mesh* _meshes[Light::Num_LightType];
 		Shader* _lightShaders[Light::Num_LightType];
 		Shader* _stencilShader;
-
-		Camera* _currentCamera;
 	};
 }
 

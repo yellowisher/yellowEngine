@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include "yellowEngine/Component/Camera.hpp"
 #include "yellowEngine/Component/Collider.hpp"
 #include "yellowEngine/Rendering/Renderer.hpp"
 #include "yellowEngine/Collision/BroadPhase.hpp"
@@ -29,7 +30,7 @@ namespace yellowEngine
 		void colliderCreated(Collider* collider);
 		void colliderDestroyed(Collider* collider);
 		void colliderUpdated(Collider* collider);
-		void renderColliders();
+		void renderColliders(Camera* camera);
 
 	private:
 		enum PairType

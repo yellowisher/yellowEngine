@@ -90,8 +90,10 @@ namespace yellowEngine
 	}
 
 
-	void ColliderManager::renderColliders()
+	void ColliderManager::renderColliders(Camera* camera)
 	{
+		Camera::currentCamera = camera;
+
 		// render colliders
 		_wireFrameShader->setUniform(_colorUniform, _colliderColor);
 		for (auto collider : _colliders)

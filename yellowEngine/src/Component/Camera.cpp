@@ -7,7 +7,9 @@ namespace yellowEngine
 {
 	COMPONENT_IMPL(Camera)
 
+		
 	Camera* Camera::__mainCamera;
+	Camera* Camera::currentCamera;
 
 
 	Camera* Camera::getMainCamera()
@@ -17,7 +19,7 @@ namespace yellowEngine
 
 
 	Camera::Camera(GameObject* gameObject) :
-		Component(gameObject)
+		Component(gameObject), _dirtyBits(Dirty_Matrix)
 	{
 		if (__mainCamera == nullptr)
 		{

@@ -51,7 +51,7 @@ void glfwScrollCallback(GLFWwindow* window, double x, double y)
 }
 
 Vector3 rotation;
-float moveSpeed = 0.03f;
+float moveSpeed = 0.02f;
 float rotateSpeedX = 0.03f;
 float rotateSpeedY = 0.015f;
 
@@ -102,6 +102,7 @@ int main()
 	glfwHideWindow(sceneWindow);
 
 	Game* game = new Game(sceneWindowWidth, sceneWindowHeight);
+	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
 	game->init();
 
 	// scene loading code should be here
@@ -131,16 +132,28 @@ int main()
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.8f;
 	dirLight->transform->setRotation(45, 0, 0);
 
+
+
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
 	camera->transform->setPosition(0, 10, 5);
-	//
+	
+
+	GameObject* b1 = new GameObject("Box1");
+	b1->addComponent<BoxCollider>();
+
+	GameObject* b2 = new GameObject("Box2");
+	b2->addComponent<BoxCollider>();
+
+	GameObject* b3 = new GameObject("Box3");
+	b3->addComponent<BoxCollider>();
+
 
 	GameObject* editorCameraObject = new GameObject("Editor Camera");
 	editorCamera = editorCameraObject->addComponent<Camera>();
 	editorCamera->setPerspective(60.0f, 0.01f, 1000.0f);
-	editorCamera->transform->setPosition(0, 10, 5);
+	editorCamera->transform->setPosition(0, 0, 3);
 	editorCameraTransform = editorCamera->transform;
 	
 	// ImGui style
@@ -152,9 +165,11 @@ int main()
 		// update scene window first
 		glfwMakeContextCurrent(sceneWindow);
 		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 			game->update();
 			game->render(editorCamera);
-			ColliderManager::getInstance()->renderColliders();
+			ColliderManager::getInstance()->renderColliders(editorCamera);
 
 			glfwSwapBuffers(sceneWindow);
 			glReadPixels(0, 0, sceneWindowWidth, sceneWindowHeight, GL_RGB, GL_UNSIGNED_INT, sceneData);

@@ -70,8 +70,8 @@ public:
 
 int main()
 {
-	int width = 1280;
-	int height = 720;
+	int width = 800;
+	int height = 600;
 	const char* name = "yellowEngine";
 
 	// init glfw, glad
@@ -109,65 +109,33 @@ int main()
 	game->_inputManager->initMousePosition((float)x, (float)y);
 
 	////////// Scene
-	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
+	//Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
-	GameObject* go = model->instantiate("nanosuit");
-	go->transform->setPosition(0, 0, 0);
+	//GameObject* go = model->instantiate("nanosuit");
+	//go->transform->setPosition(0, 0, 0);
 
-	GameObject* spotLightGo = new GameObject();
-	Light* sl = spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
-	sl->diffuseIntensity = 1.0f;
-	sl->linear = 0.07f;
-	sl->quadratic = 0.002f;
-	spotLightGo->addComponent<LightScript>();
-	spotLightGo->transform->setPosition(0, 10, 5);
+	//GameObject* spotLightGo = new GameObject();
+	//Light* sl = spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
+	//sl->diffuseIntensity = 1.0f;
+	//sl->linear = 0.07f;
+	//sl->quadratic = 0.002f;
+	//spotLightGo->addComponent<LightScript>();
+	//spotLightGo->transform->setPosition(0, 10, 5);
 
 
-	GameObject* b1 = new GameObject();
+	GameObject* b1 = new GameObject("Box1");
 	b1->addComponent<BoxCollider>();
-	b1->addComponent<LightScript>();
 
-	GameObject* b2 = new GameObject();
+	GameObject* b2 = new GameObject("Box2");
 	b2->addComponent<BoxCollider>();
 
-	GameObject* b3 = new GameObject();
-	b2->addComponent<BoxCollider>();
-
-
-	//GameObject* lightGo = new GameObject();
-	//lightGo->addComponent<LightScript>();
-	//Light* light = lightGo->addComponent<Light>()->setType(Light::LightType_Point);
-	//light->linear = 0.007f;
-	//light->quadratic = 0.0002f;
-	//lightGo->transform->setPosition(0, 10, 5);
-
-	//GameObject* dirLight = new GameObject();
-	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.6f;
-	//dirLight->transform->setRotation(45, 180, 0);
-
-	const char* name1 = Component::getTypeNameOf<Light>();
-	const char* name2 = sl->getTypeName();
-
-	std::cout << name1 << std::endl;
-	std::cout << name2 << std::endl;
-	std::cout << (name1 == name2) << std::endl;
-
-	std::cout << Component::getTypeNameOf<BoxCollider>();
-
-	auto rot = spotLightGo->transform->rotation;
-	auto cs = Component::getComponents();
-	auto ps = Component::getProperties();
-
-	Transform* tf = spotLightGo->transform;
-	Component* cp = tf;
-	auto prop = Component::getProperties()["Transform"][2];
-	size_t rotationOffset = prop.offset;
-	Quaternion rot2 = *(Quaternion*)((size_t)cp + rotationOffset);
+	GameObject* b3 = new GameObject("Box3");
+	b3->addComponent<BoxCollider>();
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
-	camera->transform->setPosition(0, 10, 5);
+	camera->transform->setPosition(0, 0, 3);
 
 	new CameraScript();
 
@@ -177,9 +145,11 @@ int main()
 	{
 		glfwPollEvents();
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		game->update();
 		game->render(Camera::getMainCamera());
-		ColliderManager::getInstance()->renderColliders();
+		ColliderManager::getInstance()->renderColliders(Camera::getMainCamera());
 
 		glfwSwapBuffers(window);
 	}
