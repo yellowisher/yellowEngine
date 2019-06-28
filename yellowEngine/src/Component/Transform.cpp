@@ -64,7 +64,8 @@ namespace yellowEngine
 
 	void Transform::addChild(Transform* child)
 	{
-		if (child->_parent == this)return;
+		//if (child->_parent == this)return;
+
 		child->_parent->removeChild(child);
 
 		Matrix childToParent = getInverseMatrix() * child->getMatrix();
@@ -74,6 +75,7 @@ namespace yellowEngine
 		child->setScale(childToParent.extractScale());
 
 		child->_parent = this;
+		child->dirty(Dirty_All);
 		_children.push_back(child);
 	}
 
@@ -92,7 +94,7 @@ namespace yellowEngine
 
 				_children.erase(it);
 				child->_parent = Root;
-
+				child->dirty(Dirty_All);
 				return;
 			}
 		}
@@ -231,7 +233,7 @@ namespace yellowEngine
 		if (_dirtyBits & Dirty_Parent)
 		{
 			_dirtyBits &= ~Dirty_Parent;
-			if (_parent != Root)
+			if (_parent != nullptr)
 			{
 				_parentMatrix = _parent->getMatrix();
 			}
@@ -254,7 +256,7 @@ namespace yellowEngine
 	{
 		if (_dirtyBits & Dirty_InverseMatrix)
 		{
-			_dirtyBits &= ~Dirty_LocalMatrix;
+			_dirtyBits &= ~Dirty_InverseMatrix;
 			_inverseMatrix = ~getMatrix();
 		}
 		return _inverseMatrix;

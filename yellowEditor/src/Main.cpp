@@ -8,6 +8,8 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <string>
+#include <algorithm>
 #include <yellowEngine/yellowEngine.hpp>
 
 #include "EditorUtils.hpp"
@@ -314,8 +316,6 @@ void SceneWindow()
 			glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			controllingCamera = false;
 		}
-
-
 	}
 	ImGui::End();
 }
@@ -325,10 +325,41 @@ void HierarchyWindow()
 {
 	if (ImGui::Begin("Hierarchy", nullptr, baseFlag))
 	{
+		if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
+		{
+			ImGui::OpenPopup("Edit Menu");
+		}
+
+		if (ImGui::BeginPopup("Edit Menu"))
+		{
+			ImGui::Text("Edit Menu");
+			ImGui::Separator();
+			if (ImGui::Button("Create new GameObject"))
+			{
+				new GameObject();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
 		for (auto child : Transform::Root->getChildren())
 		{
 			if (child == editorCameraTransform)continue;
 			HierarchyNode(child);
+		}
+
+		ImGui::Dummy(ImGui::GetWindowSize());
+		if (ImGui::BeginDragDropTarget())
+		{
+			auto payload = ImGui::AcceptDragDropPayload("GameObject");
+			{
+				if (payload != nullptr)
+				{
+					Transform* ptr = *((Transform**)payload->Data);
+					Transform::Root->addChild(ptr);
+				}
+			}
+			ImGui::EndDragDropTarget();
 		}
 	}
 	ImGui::End();
@@ -341,15 +372,35 @@ void HierarchyNode(Transform* target)
 	ImGuiTreeNodeFlags flags = 0;
 	flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 	if (target->getChildCount() == 0)flags |= ImGuiTreeNodeFlags_Leaf;
-	if (target == selectedNode) flags |= ImGuiTreeNodeFlags_Selected;
 	flags |= ImGuiTreeNodeFlags_AllowItemOverlap;
 
-	std::string id = target->gameObject->getName() + "##" + std::to_string((size_t)target);
+	std::string id = "##" + std::to_string((size_t)target);
 	bool nodeOpend = ImGui::TreeNodeEx(id.c_str(), flags);
-
-	if (ImGui::IsItemClicked())
+	
+	bool selected = target == selectedNode;
+	ImGui::SameLine();
+	if (ImGui::Selectable(target->gameObject->getName().c_str(), &selected))
 	{
 		selectedNode = target;
+	}
+
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptPeekOnly))
+	{
+		ImGui::SetDragDropPayload("GameObject", &target, sizeof(target));
+		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		auto payload = ImGui::AcceptDragDropPayload("GameObject");
+		{
+			if (payload != nullptr)
+			{
+				Transform* ptr = *((Transform**)payload->Data);
+				target->addChild(ptr);
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	if (nodeOpend)
@@ -370,6 +421,7 @@ void InsepctorWindow()
 	static char buff[buffSize] = "";
 	static char compBuff[buffSize] = "";
 	static std::string searchWord = "";
+	static bool focus = false;
 
 	if (ImGui::Begin("Inspector", nullptr, baseFlag))
 	{
@@ -421,21 +473,30 @@ void InsepctorWindow()
 			if (ImGui::Button("Add Component"))
 			{
 				ImGui::OpenPopup("Components");
+				focus = true;
 				searchWord = "";
 			}
 
 			if (ImGui::BeginPopup("Components", baseFlag))
 			{
+				if (focus)
+				{
+					focus = false;
+					ImGui::SetKeyboardFocusHere();
+				}
 				if (ImGui::InputText("##Search", compBuff, buffSize))
 				{
 					searchWord = compBuff;
+					std::transform(searchWord.begin(), searchWord.end(), searchWord.begin(), ::tolower);
 				}
 
 				for (auto componentName : Component::getComponents())
 				{
 					if (componentName == "Transform")continue;
 
-					if (componentName.find(searchWord) != -1)
+					std::string lowerName = componentName;
+					std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
+					if (lowerName.find(searchWord) != -1)
 					{
 						if (ImGui::Button(componentName.c_str()))
 						{
@@ -457,7 +518,10 @@ void AssetWindow()
 {
 	if (ImGui::Begin("Asset", nullptr, baseFlag))
 	{
+		if (ImGui::IsItemClicked(1))
+		{
 
+		}
 	}
 	ImGui::End();
 }
