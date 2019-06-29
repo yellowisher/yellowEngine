@@ -54,8 +54,9 @@ void glfwScrollCallback(GLFWwindow* window, double x, double y)
 
 Vector3 rotation;
 float moveSpeed = 0.02f;
-float rotateSpeedX = 0.03f;
-float rotateSpeedY = 0.015f;
+float moveSpeedZ = 6.0f;
+float rotateSpeedX = 0.035f;
+float rotateSpeedY = 0.0175f;
 
 int main()
 {
@@ -297,7 +298,7 @@ void SceneWindow()
 				move.x = -delta.x;
 				move.y = delta.y;
 			}
-			move.z = (float)scrollY * 5.0f;
+			move.z = (float)scrollY * moveSpeedZ;
 
 			editorCameraTransform->setRotation(rotation * rotateSpeedX);
 
@@ -325,23 +326,6 @@ void HierarchyWindow()
 {
 	if (ImGui::Begin("Hierarchy", nullptr, baseFlag))
 	{
-		if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
-		{
-			ImGui::OpenPopup("Edit Menu");
-		}
-
-		if (ImGui::BeginPopup("Edit Menu"))
-		{
-			ImGui::Text("Edit Menu");
-			ImGui::Separator();
-			if (ImGui::Button("Create new GameObject"))
-			{
-				new GameObject();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
-
 		for (auto child : Transform::Root->getChildren())
 		{
 			if (child == editorCameraTransform)continue;
@@ -361,6 +345,23 @@ void HierarchyWindow()
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered())
+		{
+			ImGui::OpenPopup("Edit Menu");
+		}
+
+		if (ImGui::BeginPopup("Edit Menu"))
+		{
+			ImGui::Text("Edit Menu");
+			ImGui::Separator();
+			if (ImGui::Button("Create new GameObject"))
+			{
+				new GameObject();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
 	}
 	ImGui::End();
 }
@@ -371,17 +372,37 @@ void HierarchyNode(Transform* target)
 {
 	ImGuiTreeNodeFlags flags = 0;
 	flags |= ImGuiTreeNodeFlags_OpenOnArrow;
-	if (target->getChildCount() == 0)flags |= ImGuiTreeNodeFlags_Leaf;
 	flags |= ImGuiTreeNodeFlags_AllowItemOverlap;
+	if (target->getChildCount() == 0)flags |= ImGuiTreeNodeFlags_Leaf;
 
-	std::string id = "##" + std::to_string((size_t)target);
-	bool nodeOpend = ImGui::TreeNodeEx(id.c_str(), flags);
-	
+	ImGui::PushID((int)target);
+
+	bool nodeOpend = ImGui::TreeNodeEx("", flags);
+
 	bool selected = target == selectedNode;
 	ImGui::SameLine();
 	if (ImGui::Selectable(target->gameObject->getName().c_str(), &selected))
 	{
 		selectedNode = target;
+	}
+
+	if (ImGui::IsItemClicked(1))
+	{
+		ImGui::OpenPopup("GameObject Edit");
+		selectedNode = target;
+	}
+
+	if (ImGui::BeginPopup("GameObject Edit"))
+	{
+		ImGui::Text("Edit Menu");
+		ImGui::Separator();
+		if (ImGui::Button("Delete"))
+		{
+			if (target == selectedNode) selectedNode = nullptr;
+			delete(target->gameObject);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptPeekOnly))
@@ -411,6 +432,7 @@ void HierarchyNode(Transform* target)
 		}
 		ImGui::TreePop();
 	}
+	ImGui::PopID();
 }
 
 

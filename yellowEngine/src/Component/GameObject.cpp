@@ -39,8 +39,6 @@ namespace yellowEngine
 			_components.pop_back();
 			delete(last);
 		}
-		transform->onDestroy();
-		delete(transform);
 	}
 
 
