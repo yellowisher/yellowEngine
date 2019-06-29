@@ -15,6 +15,7 @@ namespace yellowEngine
 
 	Collider::~Collider()
 	{
+		ColliderManager::getInstance()->colliderDestroyed(this);
 	}
 
 
@@ -48,7 +49,6 @@ namespace yellowEngine
 
 	void Collider::onDestroy()
 	{
-		ColliderManager::getInstance()->colliderDestroyed(this);
 	}
 
 

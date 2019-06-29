@@ -19,7 +19,7 @@ namespace yellowEngine
 	Light::Light(GameObject* gameObject) :Component(gameObject)
 	{
 		color = Vector3(1.0f, 1.0f, 1.0f);
-		ambiendIntensity = 0.1f;
+		ambientIntensity = 0.1f;
 		diffuseIntensity = 1.0f;
 
 		setCutoff(12.5f, 17.5f);
@@ -40,15 +40,20 @@ namespace yellowEngine
 
 	Light* Light::setType(LightType type)
 	{
-		if (type == _type) return this;
-		for (int i = 0; i < __lights[_type].size(); i++)
+		bool found = false;
+		for (int lt = 0; lt < Num_LightType; lt++)
 		{
-			if (__lights[_type][i] == this)
+			for (int i = 0; i < __lights[lt].size(); i++)
 			{
-				__lights[_type][i] = __lights[_type].back();
-				__lights[_type].pop_back();
-				break;
+				if (__lights[lt][i] == this)
+				{
+					__lights[lt][i] = __lights[lt].back();
+					__lights[lt].pop_back();
+					found = true;
+					break;
+				}
 			}
+			if (found) break;
 		}
 
 		_type = type;

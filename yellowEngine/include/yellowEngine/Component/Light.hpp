@@ -13,6 +13,16 @@ namespace yellowEngine
 		BEGIN_COMPONENT(Light)
 			PROPERTY(Light, LightType, _type, "Type")
 			PROPERTY(Light, Vector3, color, "Color")
+			PROPERTY(Light, float, ambientIntensity, "Ambient Intensity")
+			PROPERTY(Light, float, diffuseIntensity, "Diffuse Intensity")
+			PROPERTY(Light, float, _cutoffDegree, "Cutoff Degree")
+			PROPERTY(Light, float, _outerCutoffDegree, "Outer Cutoff Degree")
+
+			BEGIN_ENUM(Light, LightType)
+				ENUM("Directional")
+				ENUM("Point")
+				ENUM("Spot")
+			END_ENUM
 		END_COMPONENT
 
 	public:
@@ -37,7 +47,7 @@ namespace yellowEngine
 		Vector3 getDirection() const;
 
 		Vector3 color;
-		float ambiendIntensity;
+		float ambientIntensity;
 		float diffuseIntensity;
 
 		float constant;

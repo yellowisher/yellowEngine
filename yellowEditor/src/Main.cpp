@@ -462,11 +462,25 @@ void InsepctorWindow()
 			}
 
 			// components
+			Component* removeComponent = nullptr;
 			ImGui::Separator();
 			for (auto component : selectedNode->gameObject->getComponents())
 			{
-				yellowEditor::InspectComponent(component);
+				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
+				ImGui::PushID(component);
+				if (ImGui::CollapsingHeader(component->getTypeName(), flags))
+				{
+					yellowEditor::InspectComponent(component);
+					ImGui::Dummy(ImVec2(10, 10));
+					ImGui::SameLine(ImGui::GetWindowWidth() - 30);
+					if (ImGui::Button("X", ImVec2(20, 20)))
+					{
+						removeComponent = component;
+					}
+				}
+				ImGui::PopID();
 			}
+			if (removeComponent) selectedNode->gameObject->removeComponent(removeComponent);
 
 			// add component
 			ImGui::Separator();

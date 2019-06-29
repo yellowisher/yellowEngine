@@ -6,6 +6,11 @@
 #include <string>
 #include <cstddef>
 
+// basic RTTI with macro
+// user has to manually register properties of component
+// there is big problem; memory of properties changed directly
+// TODO: change direct access memory to use getter and setter
+
 #define BEGIN_COMPONENT(cls) \
 friend class Component;\
 	private:\
@@ -24,6 +29,18 @@ friend class Component;\
 
 #define PROPERTY(cls, type, field, name) \
 				offsets.push_back({ #type, name, offsetof(cls, field) });
+
+#define BEGIN_ENUM(cls, type) \
+				{\
+					auto& cls##type = Component::getEnums()[#cls]; \
+					cls##type.insert({ #type, {} });\
+					auto& enums = cls##type[#type];\
+
+#define ENUM(name) \
+					enums.push_back(name);
+
+#define END_ENUM \
+				}
 
 #define END_COMPONENT \
 			}\
@@ -55,12 +72,14 @@ namespace yellowEngine
 			size_t offset;
 		};
 
-
 		// TODO: move RTTI to each component, not hold as static method in Component
 		static Component* createComponent(const std::string& type, GameObject* gameObject);
 		static std::map<std::string, Component*(*)(GameObject*)>& getConstructors();
 		static std::vector<std::string>& getComponents();
 		static std::map<std::string, std::vector<Property>>& getProperties();
+
+		// store enum {class, {enum, values}}
+		static std::map<std::string, std::map<std::string, std::vector<std::string>>>& getEnums();
 		template <class T>
 		static const char* getTypeNameOf() { return T::__typeName; }
 

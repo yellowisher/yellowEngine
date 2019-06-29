@@ -8,87 +8,106 @@
 using namespace yellowEngine;
 namespace yellowEditor
 {
-	enum PropertyType
-	{
-		PropertyType_Int,
-		PropertyType_Float,
-		PropertyType_Vector2,
-		PropertyType_Vector3,
-		PropertyType_Vector4,
-		PropertyType_Quaternion,
-		PropertyType_Mesh,
-		PropertyType_Material
-	};
 	static const float SpacingForLabel = 5.0f;
-	static std::map<std::string, int> propertyMap = {
-		{"int", PropertyType_Int},
-		{"float", PropertyType_Float},
-		{"Vector2", PropertyType_Vector2},
-		{"Vector3", PropertyType_Vector3},
-		{"Vector4", PropertyType_Vector4},
-		{"Quaternion", PropertyType_Quaternion},
-		{"Mesh", PropertyType_Mesh},
-		{"Material", PropertyType_Material},
+	static std::map<std::string, bool(*)(Component*, Component::Property)> handlers = {
+		{"float", property_float},
+		{"Vector2", property_Vector2 },
+		{"Vector3", property_Vector3},
+		{"Vector4", property_Vector4},
+		{"Mesh", property_Mesh},
+		{"Material", property_Material}
 	};
 
 	void InspectComponent(yellowEngine::Component* component)
 	{
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
-		ImGui::PushID(component);
-		if (ImGui::CollapsingHeader(component->getTypeName(), flags))
+		const auto& properties = yellowEngine::Component::getProperties()[component->getTypeName()];
+		for (auto prop : properties)
 		{
-			const auto& properties = yellowEngine::Component::getProperties()[component->getTypeName()];
-			for (auto prop : properties)
+			bool valueChanged = false;
+			auto it = handlers.find(prop.type);
+			if (it != handlers.end())
 			{
-				auto it = propertyMap.find(prop.type);
-				if (it != propertyMap.end())
+				// we know about the type
+				drawPropertyBase(prop);
+				valueChanged = handlers[prop.type](component, prop);
+				ImGui::PopID();
+			}
+			else
+			{
+				// we don't know about the type
+				// check if matching enums exists
+				const auto& enums = Component::getEnums()[component->getTypeName()];
+				auto it = enums.find(prop.type);
+				if (it != enums.end())
 				{
-					// if we know about the type
-					ImGui::PushID(prop.name.c_str());
-					ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
+					const auto& values = it->second;
+					drawPropertyBase(prop);
+					int* indexPtr = (int*)(((size_t)component) + prop.offset);
 
-					ImGui::LabelText("", prop.name.c_str()); ImGui::SameLine(0, SpacingForLabel);
-
-					//ImGui::BulletText(prop.name.c_str()); ImGui::SameLine(0, SpacingForLabel);
-
-
-					bool valueChanged = false;
-					switch (it->second)
+					if (ImGui::Button(values[*indexPtr].c_str())) ImGui::OpenPopup(prop.name.c_str());
+					if (ImGui::BeginPopup(prop.name.c_str()))
 					{
-						case PropertyType_Int:
-						case PropertyType_Float:
-						case PropertyType_Vector2:
-						case PropertyType_Vector3:
+						for (int i = 0; i < values.size(); i++)
 						{
-							static const char* names[] = { "X","Y","Z" };
-							valueChanged = ImGui::DragFloatNWithLabel(names, (float*)(((size_t)component) + prop.offset), 3, 0.05f);
-							break;
+							if (ImGui::Selectable(values[i].c_str()))
+							{
+								*indexPtr = i;
+								valueChanged = true;
+							}
 						}
-						case PropertyType_Vector4:
-						case PropertyType_Quaternion:
-						{
-							static const char* names[] = { "X", "Y", "Z" };
-							Quaternion* rotation = (Quaternion*)(((size_t)component) + prop.offset);
-							Vector3 value = rotation->toEulerAngle();
-							valueChanged = ImGui::DragFloatNWithLabel(names, (float*)&value, 3, 0.05f);
-							if (valueChanged)*rotation = Quaternion(value);
-							break;
-						}
-
-						case PropertyType_Mesh:
-						case PropertyType_Material:
-							break;
+						ImGui::EndPopup();
 					}
-
-					if (valueChanged) component->onValueChanged();
 					ImGui::PopID();
 				}
-				else
-				{
-					// we don't know about the type; custom type or enum
-				}
 			}
+			if (valueChanged) component->onValueChanged();
 		}
-		ImGui::PopID();
+
+	}
+
+	static void drawPropertyBase(Component::Property prop)
+	{
+		ImGui::PushID(prop.name.c_str());
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
+		ImGui::LabelText("", prop.name.c_str()); ImGui::SameLine(0, SpacingForLabel);
+	}
+
+
+	static bool property_float(Component* comp, Component::Property prop)
+	{
+		static const char* names[] = { "" };
+		return ImGui::DragFloatNWithLabel(names, (float*)(((size_t)comp) + prop.offset), 1, 0.05f);
+	}
+
+
+	static bool property_Vector2(Component* comp, Component::Property prop)
+	{
+		static const char* names[] = { "X","Y" };
+		return ImGui::DragFloatNWithLabel(names, (float*)(((size_t)comp) + prop.offset), 2, 0.05f);
+	}
+
+
+	static bool property_Vector3(Component* comp, Component::Property prop)
+	{
+		static const char* names[] = { "X","Y","Z" };
+		return ImGui::DragFloatNWithLabel(names, (float*)(((size_t)comp) + prop.offset), 3, 0.05f);
+	}
+
+
+	static bool property_Vector4(Component* comp, Component::Property prop)
+	{
+		return false;
+	}
+
+
+	static bool property_Mesh(Component* comp, Component::Property prop)
+	{
+		return false;
+	}
+
+
+	static bool property_Material(Component* comp, Component::Property prop)
+	{
+		return false;
 	}
 }

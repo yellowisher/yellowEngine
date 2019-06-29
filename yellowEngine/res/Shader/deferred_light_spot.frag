@@ -11,7 +11,7 @@ struct SpotLight
 	float outerCutoffCos;
 
 	vec3 color;
-	float ambiendIntensity;
+	float ambientIntensity;
 	float diffuseIntensity;
 };
 
@@ -42,7 +42,7 @@ void main()
 	float dist = length(fragToLightDir);
 	fragToLightDir = normalize(fragToLightDir);
 
-	vec3 ambient = u_Light.color * u_Light.ambiendIntensity * color.rgb;
+	vec3 ambient = u_Light.color * u_Light.ambientIntensity * color.rgb;
 
 	float diff = max(dot(normal, fragToLightDir), 0.0);
 	vec3 diffuse = u_Light.color * u_Light.diffuseIntensity * color.rgb * diff;

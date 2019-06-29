@@ -75,4 +75,18 @@ namespace yellowEngine
 		_components.push_back(component);
 		return component;
 	}
+
+
+	void GameObject::removeComponent(Component* target)
+	{
+		for (auto it = _components.begin(); it != _components.end(); ++it)
+		{
+			if (*it == target)
+			{
+				_components.erase(it);
+				delete(target);
+				return;
+			}
+		}
+	}
 }

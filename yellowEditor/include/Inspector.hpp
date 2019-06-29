@@ -9,9 +9,18 @@
 #include <yellowEngine/Rendering/Material.hpp>
 #include <yellowEngine/Component/Component.hpp>
 
+using namespace yellowEngine;
 namespace yellowEditor
 {
 	void InspectComponent(yellowEngine::Component* component);
+
+	static void drawPropertyBase(Component::Property prop);
+	static bool	property_float(Component* comp, Component::Property prop);
+	static bool	property_Vector2(Component* comp, Component::Property prop);
+	static bool	property_Vector3(Component* comp, Component::Property prop);
+	static bool	property_Vector4(Component* comp, Component::Property prop);
+	static bool	property_Mesh(Component* comp, Component::Property prop);
+	static bool	property_Material(Component* comp, Component::Property prop);
 }
 
 #endif

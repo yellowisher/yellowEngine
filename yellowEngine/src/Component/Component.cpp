@@ -32,6 +32,12 @@ namespace yellowEngine
 		return *properties;
 	}
 
+	std::map<std::string, std::map<std::string, std::vector<std::string>>>& Component::getEnums()
+	{
+		static auto enums = new std::map<std::string, std::map<std::string, std::vector<std::string>>>();
+		return *enums;
+	}
+
 
 	Component::Component(GameObject* gameObject) :gameObject(gameObject), transform(gameObject->transform)
 	{

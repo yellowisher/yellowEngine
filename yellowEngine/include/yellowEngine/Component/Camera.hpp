@@ -18,6 +18,11 @@ namespace yellowEngine
 			PROPERTY(Camera, float, _zNear, "Near")
 			PROPERTY(Camera, float, _zFar, "Far")
 			PROPERTY(Camera, float, _fov, "Field of View")
+
+			BEGIN_ENUM(Camera, CameraType)
+				ENUM("Perspective")
+				ENUM("Orthographic")
+			END_ENUM
 		END_COMPONENT
 
 
