@@ -7,6 +7,8 @@
 
 namespace yellowEngine
 {
+	COMPONENT_IMPL(Animator)
+
 	std::vector<Animator*> Animator::__animators;
 
 

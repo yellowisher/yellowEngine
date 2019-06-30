@@ -50,6 +50,7 @@
 #include "System/Event.hpp"
 #include "System/EventListener.hpp"
 #include "System/EventNotifier.hpp"
+#include "System/SceneManager.hpp"
 #include "System/InputManager.hpp"
 #include "System/Game.hpp"
 #include "System/IUpdatable.hpp"

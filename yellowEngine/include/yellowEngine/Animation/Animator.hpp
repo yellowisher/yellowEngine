@@ -13,6 +13,9 @@ namespace yellowEngine
 {
 	class Animator : public Component
 	{
+		BEGIN_COMPONENT(Animator)
+		END_COMPONENT
+
 		using Key = AnimationClip::Key;
 		using Value = AnimationClip::Value;
 		using KeyFrame = AnimationClip::KeyFrame;

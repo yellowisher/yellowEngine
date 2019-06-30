@@ -17,6 +17,7 @@
 
 
 using namespace yellowEngine;
+using namespace yellowEditor;
 
 void MainMenuBar();
 void SceneWindow();
@@ -233,8 +234,16 @@ void MainMenuBar()
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("New")) {}
-			if (ImGui::MenuItem("Open", "Ctrl+O")) { }
-			if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+			if (ImGui::MenuItem("Open", "Ctrl+O"))
+			{
+				std::string path = fileDialog({ { ".json","as" } }, true);
+				SceneManager::loadScene(path.c_str());
+			}
+			if (ImGui::MenuItem("Save", "Ctrl+S"))
+			{
+				std::string path = fileDialog({ { ".json","as" } }, true);
+				SceneManager::saveScene(path.c_str());
+			}
 			if (ImGui::MenuItem("Save As..")) {}
 			ImGui::Separator();
 			ImGui::EndMenu();

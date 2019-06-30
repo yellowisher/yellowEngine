@@ -6,7 +6,8 @@ namespace yellowEngine
 	class SceneManager
 	{
 	public:
-		static void loadScene(const char* fileName);
+		static void loadScene(const char* path);
+		static void saveScene(const char* path);
 	};
 }
 

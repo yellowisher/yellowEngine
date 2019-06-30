@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\EditorUtils.cpp" />
     <ClCompile Include="src\Inspector.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="vendor\imgui\examples\imgui_impl_glfw.cpp" />
