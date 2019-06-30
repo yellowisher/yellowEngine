@@ -2,11 +2,11 @@ revisit:
 	GameObject copy constructor
 	Remove _currentCamera on Renderer class; use UBO instead (should I?)
 	Change all u_Model to u_World (more meaningful to me)
+	Remove ambient lighting in deferred shading spotlight
 	
 
 new:
 	Use data chunk in mesh class (not multiple structure)
 	Full serialization
 	Clean up editor
-	Create new object in editor
 	Asset loading

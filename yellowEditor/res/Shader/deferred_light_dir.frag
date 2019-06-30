@@ -7,7 +7,7 @@ struct DirLight
 	vec3 direction;
 
 	vec3 color;
-	float ambiendIntensity;
+	float ambientIntensity;
 	float diffuseIntensity;
 };
 
@@ -26,7 +26,7 @@ void main()
 	vec4 color         = texture(u_ColorMap, texCoord);
 	vec3 normal        = normalize(texture(u_NormalMap, texCoord).xyz);
 
-	vec3 ambient = u_Light.color * u_Light.ambiendIntensity * color.rgb;
+	vec3 ambient = u_Light.color * u_Light.ambientIntensity * color.rgb;
 
 	float diff = max(dot(normal, -u_Light.direction), 0.0);
 	vec3 diffuse = u_Light.color * u_Light.diffuseIntensity * color.rgb * diff;
