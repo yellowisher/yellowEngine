@@ -25,7 +25,7 @@ namespace yellowEngine
 		{
 			__mainCamera = this;
 		}
-		setPerspective(60.0f, 0.01f, 100.0f);
+		setPerspective(60.0f, 0.01f, 1000.0f);
 	}
 
 

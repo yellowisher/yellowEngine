@@ -35,8 +35,6 @@ namespace yellowEngine
 	{
 		_inputManager = new InputManager();
 		_colliderManager = ColliderManager::create(broadPhaseType);
-
-		glEnable(GL_CULL_FACE);
 	}
 
 

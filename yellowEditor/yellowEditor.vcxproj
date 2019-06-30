@@ -130,9 +130,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EditorUtils.cpp" />
+    <ClCompile Include="src\Window.cpp" />
+    <ClCompile Include="src\Window_Asset.cpp" />
+    <ClCompile Include="src\Window_Base.cpp" />
+    <ClCompile Include="src\Window_Hierarchy.cpp" />
     <ClCompile Include="src\Inspector.cpp" />
+    <ClCompile Include="src\Window_Inspector.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Window_Scene.cpp" />
     <ClCompile Include="vendor\imgui\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="vendor\imgui\examples\imgui_impl_opengl3.cpp" />
     <ClCompile Include="vendor\imgui\imgui.cpp" />
@@ -142,8 +149,15 @@
     <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Editor.hpp" />
+    <ClInclude Include="include\Window.hpp" />
+    <ClInclude Include="include\Window_Asset.hpp" />
+    <ClInclude Include="include\Window_Base.hpp" />
+    <ClInclude Include="include\Window_Hierarchy.hpp" />
     <ClInclude Include="include\Inspector.hpp" />
     <ClInclude Include="include\EditorUtils.hpp" />
+    <ClInclude Include="include\Window_Inspector.hpp" />
+    <ClInclude Include="include\Window_Scene.hpp" />
     <ClInclude Include="vendor\imgui\examples\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui\examples\imgui_impl_opengl3.h" />
     <ClInclude Include="vendor\imgui\imconfig.h" />
