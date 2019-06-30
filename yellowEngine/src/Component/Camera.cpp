@@ -38,6 +38,7 @@ namespace yellowEngine
 
 	void Camera::onDestroy()
 	{
+		if (__mainCamera == this) __mainCamera = nullptr;
 	}
 
 

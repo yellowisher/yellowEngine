@@ -66,6 +66,19 @@ namespace yellowEngine
 	}
 
 
+	GameObject* GameObject::find(const std::string& name)
+	{
+		for (auto child : Transform::Root->getChildren())
+		{
+			if (child->gameObject->_name == name)
+			{
+				return child->gameObject;
+			}
+		}
+		return nullptr;
+	}
+
+
 	Component* GameObject::addComponent(const std::string& type)
 	{
 		Component* component = Component::createComponent(type, this);

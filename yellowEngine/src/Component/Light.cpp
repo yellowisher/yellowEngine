@@ -35,6 +35,15 @@ namespace yellowEngine
 
 	Light::~Light()
 	{
+		for (int i = 0; i < __lights[_type].size(); i++)
+		{
+			if (__lights[_type][i] == this)
+			{
+				__lights[_type][i] = __lights[_type].back();
+				__lights[_type].pop_back();
+				break;
+			}
+		}
 	}
 
 

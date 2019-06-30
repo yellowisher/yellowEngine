@@ -53,6 +53,8 @@ namespace yellowEngine
 			delete(last->gameObject);
 		}
 		if (_parent)_parent->removeChild(this);
+
+		if (Root == this) Root = nullptr;
 	}
 
 

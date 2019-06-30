@@ -13,6 +13,8 @@ namespace yellowEngine
 	class GameObject
 	{
 	public:
+		static GameObject* find(const std::string& name);
+
 		Transform* const transform;
 
 		GameObject();

@@ -43,6 +43,7 @@ GLFWwindow* sceneWindow;
 Camera* editorCamera;
 Transform* editorCameraTransform;
 
+std::string editorCameraName = "__editorCamera__";
 #pragma endregion
 
 ImGuiWindowFlags baseFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
@@ -154,7 +155,7 @@ int main()
 	b3->addComponent<BoxCollider>();
 
 
-	GameObject* editorCameraObject = new GameObject("Editor Camera");
+	GameObject* editorCameraObject = new GameObject(editorCameraName.c_str());
 	editorCamera = editorCameraObject->addComponent<Camera>();
 	editorCamera->setPerspective(60.0f, 0.01f, 1000.0f);
 	editorCamera->transform->setPosition(0, 0, 3);
@@ -236,12 +237,16 @@ void MainMenuBar()
 			if (ImGui::MenuItem("New")) {}
 			if (ImGui::MenuItem("Open", "Ctrl+O"))
 			{
-				std::string path = fileDialog({ { ".json","as" } }, true);
+				std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, false);
 				SceneManager::loadScene(path.c_str());
+				
+				GameObject* camera = GameObject::find(editorCameraName);
+				editorCameraTransform = camera->transform;
+				editorCamera = camera->getComponent<Camera>();
 			}
 			if (ImGui::MenuItem("Save", "Ctrl+S"))
 			{
-				std::string path = fileDialog({ { ".json","as" } }, true);
+				std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, true);
 				SceneManager::saveScene(path.c_str());
 			}
 			if (ImGui::MenuItem("Save As..")) {}

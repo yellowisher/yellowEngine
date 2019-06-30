@@ -71,7 +71,15 @@ namespace yellowEngine
 		for (auto compJson : compsJson)
 		{
 			std::string compName = compJson["script"].asString();
-			Component* component = gameObject->addComponent(compName);
+			Component* component;
+			if (compName == "Transform")
+			{
+				component = gameObject->transform;
+			}
+			else
+			{
+				component = gameObject->addComponent(compName);
+			}
 
 			auto properties = Component::getProperties()[compName];
 			for (auto propJson : compJson["properties"])
