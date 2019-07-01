@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <Commdlg.h>
+#include <fileapi.h>
 
 #include "EditorUtils.hpp"
 
@@ -103,5 +104,11 @@ namespace yellowEditor
 		}
 
 		return result.empty() ? "" : result.front();
+	}
+
+
+	void createDirectory(std::string name)
+	{
+		CreateDirectory(name.c_str(), nullptr);
 	}
 }

@@ -26,6 +26,8 @@ namespace yellowEngine
 
 	void MeshRenderer::onValueChanged()
 	{
+		_mesh = Mesh::create(_meshPath.c_str());
+		_material = Material::create(_materialPath.c_str());
 		if (_prevTechnique != nullptr)
 		{
 			_prevTechnique->removeRenderer(this);
@@ -43,6 +45,8 @@ namespace yellowEngine
 			_material->_technique->addRenderer(this);
 		}
 		_prevTechnique = _material->_technique;
+		_meshPath = _mesh->getPath();
+		_materialPath = _material->getPath();
 		return this;
 	}
 

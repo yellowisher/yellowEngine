@@ -1,3 +1,7 @@
+#include <iostream>
+#include <fstream>
+#include <json/json.h>
+
 #include "Window_Asset.hpp"
 #include "Window_Hierarchy.hpp"
 #include "Window_Inspector.hpp"
@@ -18,6 +22,8 @@ namespace yellowEditor
 	Editor::Editor(Window& editorWindow, Window& gameWindow, GLuint sceneTexture)
 		:_editorWindow(editorWindow), _gameWindow(gameWindow), _sceneTexture(sceneTexture)
 	{
+		Init_AssetWindow();
+
 		if (__instance == nullptr)
 		{
 			__instance = this;
@@ -42,6 +48,7 @@ namespace yellowEditor
 
 		// init other
 		glfwSetScrollCallback(editorWindow.handle, glfwScrollCallback);
+		//Init_AssetWindow();
 	}
 
 
@@ -120,6 +127,16 @@ namespace yellowEditor
 		__instance->_editorCamera->transform->setPosition(0, 0, 5);
 	}
 
+	std::string& Editor::getProjectRoot()
+	{
+		return __instance->_projectRoot;
+	}
+
+	std::string& Editor::getAssetPath()
+	{
+		return __instance->_assetPath;
+	}
+
 
 	static void DrawMainMenuBar()
 	{
@@ -127,20 +144,34 @@ namespace yellowEditor
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New")) {}
+				if (ImGui::MenuItem("New"))
+				{
+					std::string path = fileDialog({ { "yep","Yellow Engine Project" } }, true);
+					size_t separator = path.find_last_of("\\");
+
+					Editor::getProjectRoot() = path.substr(0, separator);
+					Editor::getAssetPath() = Editor::getProjectRoot() + "\\Asset";
+
+					Json::Value root;
+					root["name"] = path.substr(separator + 1, path.length() - 1 - separator);
+
+					std::ofstream ofs(path + ".yep", std::ifstream::binary);
+					auto writer = Json::StyledStreamWriter();
+					writer.write(ofs, root);
+					createDirectory(Editor::getProjectRoot() + "\\Asset");
+
+					LoadAsset();
+				}
 				if (ImGui::MenuItem("Open", "Ctrl+O"))
 				{
-					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, false);
-					SceneManager::loadScene(path.c_str());
+					std::string path = fileDialog({ { "yep","Yellow Engine Project" } }, false);
+					Editor::getProjectRoot() = path.substr(0, path.find_last_of("\\"));
+					Editor::getAssetPath() = Editor::getProjectRoot() + "\\Asset";
 
-					//GameObject* camera = GameObject::find(editorCameraName);
-					//editorCameraTransform = camera->transform;
-					//editorCamera = camera->getComponent<Camera>();
+					LoadAsset();
 				}
 				if (ImGui::MenuItem("Save", "Ctrl+S"))
 				{
-					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, true);
-					SceneManager::saveScene(path.c_str());
 				}
 				if (ImGui::MenuItem("Save As..")) {}
 				ImGui::Separator();

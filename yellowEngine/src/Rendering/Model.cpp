@@ -401,7 +401,10 @@ namespace yellowEngine
 			copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
 		}
 
-		mesh = new Mesh(layout, aiMesh->mNumVertices, vertices, 3 * aiMesh->mNumFaces, indices);
+		std::string meshPath = _directory;
+		meshPath.append(aiMesh->mName.C_Str());
+
+		mesh = new Mesh(meshPath.c_str(), layout, aiMesh->mNumVertices, vertices, 3 * aiMesh->mNumFaces, indices);
 
 		// create material
 		aiString materialPath = aiString(_directory);
@@ -409,8 +412,6 @@ namespace yellowEngine
 		materialPath.Append(".mat");
 
 		Material* material = new Material(materialPath.C_Str());
-
-		material->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
 
 		aiMaterial* aMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 		aiString texturePath;

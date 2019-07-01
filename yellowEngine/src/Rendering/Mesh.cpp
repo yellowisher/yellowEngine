@@ -29,11 +29,13 @@ namespace yellowEngine
 	}
 
 
-	Mesh::Mesh(const VertexLayout& vertexLayout,
+	Mesh::Mesh(
+		const char* path, const VertexLayout& vertexLayout,
 		int vertexCount, void* vertexData,
 		int indexCount, void* indexData) :
 		_vertexLayout(vertexLayout)
 	{
+		_path = path;
 		_vertexCount = indexCount;
 
 		glGenBuffers(1, &_vertexBufferHandle);
@@ -94,6 +96,11 @@ namespace yellowEngine
 	const AABB& Mesh::getBounds() const
 	{
 		return _bounds;
+	}
+
+	std::string Mesh::getPath()
+	{
+		return _path;
 	}
 
 
@@ -261,7 +268,10 @@ namespace yellowEngine
 
 		VertexLayout layout(usages);
 
-		Mesh* mesh = new Mesh(layout, ((int)data.size() * sizeof(float) / layout.getVertexSize()), &data[0], (int)verticesIndex.size(), &verticesIndex[0]);
+		Mesh* mesh = new Mesh(
+			path, layout, 
+			(int)data.size() * sizeof(float) / layout.getVertexSize(), &data[0], 
+			(int)verticesIndex.size(), &verticesIndex[0]);
 		return mesh;
 	}
 

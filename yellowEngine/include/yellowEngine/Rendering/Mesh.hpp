@@ -28,15 +28,6 @@ namespace yellowEngine
 			bool operator<(const Vertex& vertex) const;
 		};
 
-		struct SkinnedVertex
-		{
-			Vector3 position;
-			Vector3 normal;
-			Vector2 uv;
-			float joints[MaxJointCount];
-			float weights[MaxJointCount];
-		};
-
 		static Mesh* create(const char* path);
 
 		unsigned int getVertexCount() const;
@@ -44,16 +35,18 @@ namespace yellowEngine
 		unsigned int getElementBufferHandle() const;
 		const VertexLayout& getVertexLayout() const;
 		const AABB& getBounds() const;
+		std::string getPath();
 
 	private:
 		static Mesh* loadOBJ(const char* path);
-		Mesh(const VertexLayout& vertexLayout,
+		Mesh(const char* path, const VertexLayout& vertexLayout,
 			int vertexCount, void* vertexData,
 			int indexCount, void* indexData);
 		~Mesh();
 
 		static std::map<std::string, Mesh*> __meshCache;
 
+		std::string _path;
 		unsigned int _vertexBufferHandle;
 		unsigned int _elementBufferHandle;
 		unsigned int _vertexCount;

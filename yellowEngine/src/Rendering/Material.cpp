@@ -80,6 +80,8 @@ namespace yellowEngine
 
 	Material::Material(const char* path)
 	{
+		_path = path;
+		setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/default.vert", "Shader/default.frag");
 		_technique = nullptr;
 		_materialCache.insert({ path, this });
 
@@ -160,6 +162,11 @@ namespace yellowEngine
 	void Material::unbind()
 	{
 		VertexLayoutBinding::unbind();
+	}
+
+	std::string Material::getPath()
+	{
+		return _path;
 	}
 
 

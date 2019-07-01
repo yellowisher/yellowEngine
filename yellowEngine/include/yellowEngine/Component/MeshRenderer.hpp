@@ -15,8 +15,8 @@ namespace yellowEngine
 	class MeshRenderer : public ObjectRenderer
 	{
 		BEGIN_COMPONENT(MeshRenderer)
-			PROPERTY(MeshRenderer, Mesh, _mesh, "Mesh")
-			PROPERTY(MeshRenderer, Material, _material, "Material")
+			PROPERTY(MeshRenderer, Mesh, _meshPath, "Mesh")
+			PROPERTY(MeshRenderer, Material, _materialPath, "Material")
 		END_COMPONENT
 
 	public:
@@ -29,6 +29,9 @@ namespace yellowEngine
 		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) override;
 
 	protected:
+		std::string _meshPath;
+		std::string _materialPath;
+
 		Mesh* _mesh;
 		Material* _material;
 		Technique* _prevTechnique;

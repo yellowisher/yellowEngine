@@ -16,7 +16,9 @@ namespace yellowEditor
 				HierarchyNode(child);
 			}
 
-			ImGui::Dummy(ImGui::GetWindowSize());
+			ImVec2 dummySize = ImGui::GetWindowSize();
+			dummySize.y *= 0.3f;
+			ImGui::Dummy(dummySize);
 			if (ImGui::BeginDragDropTarget())
 			{
 				auto payload = ImGui::AcceptDragDropPayload("GameObject");
@@ -39,7 +41,8 @@ namespace yellowEditor
 			{
 				ImGui::Text("Edit Menu");
 				ImGui::Separator();
-				if (ImGui::Button("Create new GameObject"))
+
+				if (ImGui::Selectable("Create new GameObject"))
 				{
 					new GameObject();
 					ImGui::CloseCurrentPopup();
@@ -79,7 +82,7 @@ namespace yellowEditor
 		{
 			ImGui::Text("Edit Menu");
 			ImGui::Separator();
-			if (ImGui::Button("Delete"))
+			if (ImGui::Selectable("Delete"))
 			{
 				if (target == Editor::getSelectedTransform()) Editor::getSelectedTransform() = nullptr;
 				delete(target->gameObject);

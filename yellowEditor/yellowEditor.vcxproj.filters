@@ -123,7 +123,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="res\Shader\color.vert" />
-  </ItemGroup>
 </Project>

@@ -28,6 +28,7 @@ namespace yellowEditor
 			if (it != handlers.end())
 			{
 				// we know about the type
+				ImGui::PushID(prop.name.c_str());
 				drawPropertyBase(prop);
 				valueChanged = handlers[prop.type](component, prop);
 				ImGui::PopID();
@@ -41,6 +42,7 @@ namespace yellowEditor
 				if (it != enums.end())
 				{
 					const auto& values = it->second;
+					ImGui::PushID(prop.name.c_str());
 					drawPropertyBase(prop);
 					int* indexPtr = (int*)(((size_t)component) + prop.offset);
 
@@ -67,7 +69,6 @@ namespace yellowEditor
 
 	static void drawPropertyBase(Component::Property prop)
 	{
-		ImGui::PushID(prop.name.c_str());
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
 		ImGui::LabelText("", prop.name.c_str()); ImGui::SameLine(0, SpacingForLabel);
 	}
@@ -89,8 +90,15 @@ namespace yellowEditor
 
 	static bool property_Vector3(Component* comp, Component::Property prop)
 	{
-		static const char* names[] = { "X","Y","Z" };
-		return ImGui::DragFloatNWithLabel(names, (float*)(((size_t)comp) + prop.offset), 3, 0.05f);
+		if (prop.name.find("Color") != -1)
+		{
+			return ImGui::ColorEdit3("", (float*)(((size_t)comp) + prop.offset));
+		}
+		else
+		{
+			static const char* names[] = { "X","Y","Z" };
+			return ImGui::DragFloatNWithLabel(names, (float*)(((size_t)comp) + prop.offset), 3, 0.05f);
+		}
 	}
 
 
@@ -102,12 +110,15 @@ namespace yellowEditor
 
 	static bool property_Mesh(Component* comp, Component::Property prop)
 	{
+		std::string* meshPath = (std::string*)((size_t)comp + prop.offset);
 		return false;
 	}
 
 
 	static bool property_Material(Component* comp, Component::Property prop)
 	{
+		std::string* materialPath = (std::string*)((size_t)comp + prop.offset);
+		ImGui::Button(materialPath->c_str());
 		return false;
 	}
 }

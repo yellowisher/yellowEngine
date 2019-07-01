@@ -27,8 +27,10 @@ namespace yellowEditor
 		static GLuint getSceneTexture();	
 		static Camera* getEditorCamera();
 		static void createEditorCamera();
-
 		static const char* editorCameraName;
+
+		static std::string& getProjectRoot();
+		static std::string& getAssetPath();
 
 	private:
 		static Editor* __instance;
@@ -44,6 +46,9 @@ namespace yellowEditor
 		GLuint _sceneTexture;
 		Transform* _selectedTransform;
 		Camera* _editorCamera;
+
+		std::string _projectRoot;
+		std::string _assetPath;
 	};
 }
 

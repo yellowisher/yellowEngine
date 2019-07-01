@@ -54,21 +54,21 @@ int main()
 	gameDataFlipped = new GLuint[gameWindow.width * gameWindow.height * 3];
 
 #pragma region Scene
-	Mesh* boxMesh = Mesh::create("Mesh/cube.obj");
-	Material* boxMaterial = new Material("asdasd");
+	//Mesh* boxMesh = Mesh::create("Mesh/cube.obj");
+	//Material* boxMaterial = new Material("asdasd");
 
-	boxMaterial->setProperty("u_Material.diffuse", Texture::create("Texture/container2.png"));
-	boxMaterial->setProperty("u_Material.specular", Texture::create("Texture/container2_specular.png"));
-	boxMaterial->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
+	//boxMaterial->setProperty("u_Material.diffuse", Texture::create("Texture/container2.png"));
+	//boxMaterial->setProperty("u_Material.specular", Texture::create("Texture/container2_specular.png"));
+	//boxMaterial->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
 
-	GameObject* box = new GameObject("Box1");
-	auto renderer = box->addComponent<MeshRenderer>();
-	renderer->set(boxMesh, boxMaterial);
+	//GameObject* box = new GameObject("Box1");
+	//auto renderer = box->addComponent<MeshRenderer>();
+	//renderer->set(boxMesh, boxMaterial);
 
-	//Model* sphere = Model::create("Mesh/sphere.obj");
-	//sphere->instantiate("Sphere");
+	Model* sphere = Model::create("Mesh/sphere.obj");
+	sphere->instantiate("Sphere");
 
-	/*GameObject* sp = sphere->instantiate("Sphere1");
+	GameObject* sp = sphere->instantiate("Sphere1");
 
 
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
@@ -90,7 +90,7 @@ int main()
 
 	parent1->transform->addChild(child1->transform);
 	parent1->transform->addChild(child2->transform);
-	parent1->transform->addChild(child3->transform);*/
+	parent1->transform->addChild(child3->transform);
 
 	GameObject* dirLight = new GameObject();
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.8f;
