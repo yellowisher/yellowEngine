@@ -50,12 +50,14 @@ namespace yellowEngine
 		void setProperty(const char* name, Vector3 value);
 		void setProperty(const char* name, Vector4 value);
 		void setProperty(const char* name, Matrix value);
+		
+		Material(const char* path);
+		~Material();
 
 	private:
 		static std::map<std::string, Material*> _materialCache;
 
-		Material(const char* path);
-		~Material();
+
 
 		Technique* _technique;
 		const char* _defaultVsPath;

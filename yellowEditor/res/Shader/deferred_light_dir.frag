@@ -34,7 +34,7 @@ void main()
 	vec3 fragToCamera = normalize(u_CameraPosition - worldPosition);
 	vec3 halfVector = normalize(-u_Light.direction + fragToCamera);
 	float spec = clamp(pow(dot(normal, halfVector), 32), 0.0, 1.0);
-	vec3 specular = vec3(color.a * spec);
+	vec3 specular = vec3(color.a * spec * u_Light.diffuseIntensity);
 
 	vec3 combined = ambient + diffuse + specular;
 

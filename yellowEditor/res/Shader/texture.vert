@@ -14,7 +14,7 @@ uniform mat4 u_ProjectionView;
 void main()
 {
 	v_WorldFragPosition = vec3(u_Model * vec4(a_Position, 1.0));
-	v_Normal            = normalize(u_Model * vec4(a_Normal, 1.0)).xyz;
+	v_Normal            = normalize(vec3(u_Model * vec4(a_Normal, 0)));
 	v_TexCoord          = a_TexCoord0;
     gl_Position         = u_ProjectionView * u_Model * vec4(a_Position, 1.0);
 }

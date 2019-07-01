@@ -51,7 +51,7 @@ void main()
 	vec3 halfVector = normalize(fragToLightDir + fragToCamera);
 	// where to set shiness?
 	float spec = clamp(pow(dot(normal, halfVector), 32), 0.0, 1.0);
-	vec3 specular = vec3(color.a * spec);
+	vec3 specular = vec3(color.a * spec * u_Light.diffuseIntensity);
 
 	// should make sure where is Z+ direction...
 	float theta = dot(-fragToLightDir, u_Light.direction); 

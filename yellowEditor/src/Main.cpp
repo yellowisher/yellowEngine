@@ -54,8 +54,19 @@ int main()
 	gameDataFlipped = new GLuint[gameWindow.width * gameWindow.height * 3];
 
 #pragma region Scene
-	Model* sphere = Model::create("Mesh/sphere.obj");
-	sphere->instantiate("Sphere");
+	Mesh* boxMesh = Mesh::create("Mesh/cube.obj");
+	Material* boxMaterial = new Material("asdasd");
+
+	boxMaterial->setProperty("u_Material.diffuse", Texture::create("Texture/container2.png"));
+	boxMaterial->setProperty("u_Material.specular", Texture::create("Texture/container2_specular.png"));
+	boxMaterial->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
+
+	GameObject* box = new GameObject("Box1");
+	auto renderer = box->addComponent<MeshRenderer>();
+	renderer->set(boxMesh, boxMaterial);
+
+	//Model* sphere = Model::create("Mesh/sphere.obj");
+	//sphere->instantiate("Sphere");
 
 	/*GameObject* sp = sphere->instantiate("Sphere1");
 

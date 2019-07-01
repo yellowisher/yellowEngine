@@ -242,7 +242,7 @@ namespace yellowEngine
 					}
 				}
 			}
-			while (input != '\n')
+			while (!fin.eof() && input != '\n')
 			{
 				fin.get(input);
 			}
