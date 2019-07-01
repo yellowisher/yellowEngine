@@ -54,6 +54,12 @@ int main()
 	gameDataFlipped = new GLuint[gameWindow.width * gameWindow.height * 3];
 
 #pragma region Scene
+	Model* sphere = Model::create("Mesh/sphere.obj");
+	sphere->instantiate("Sphere");
+
+	/*GameObject* sp = sphere->instantiate("Sphere1");
+
+
 	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
 	GameObject* nano = model->instantiate("Model");
@@ -73,29 +79,23 @@ int main()
 
 	parent1->transform->addChild(child1->transform);
 	parent1->transform->addChild(child2->transform);
-	parent1->transform->addChild(child3->transform);
+	parent1->transform->addChild(child3->transform);*/
 
 	GameObject* dirLight = new GameObject();
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.8f;
 	dirLight->transform->setRotation(45, 0, 0);
 
-	GameObject* cameraGo = new GameObject();
-	Camera* camera = cameraGo->addComponent<Camera>();
-	camera->setPerspective(60.0f, 0.01f, 1000.0f);
-	camera->transform->setPosition(0, 10, 5);
+	//GameObject* b1 = new GameObject("Box1");
+	//b1->addComponent<BoxCollider>();
 
-	GameObject* b1 = new GameObject("Box1");
-	b1->addComponent<BoxCollider>();
+	//GameObject* b2 = new GameObject("Box2");
+	//b2->addComponent<BoxCollider>();
 
-	GameObject* b2 = new GameObject("Box2");
-	b2->addComponent<BoxCollider>();
-
-	GameObject* b3 = new GameObject("Box3");
-	b3->addComponent<BoxCollider>();
+	//GameObject* b3 = new GameObject("Box3");
+	//b3->addComponent<BoxCollider>();
 
 	editor->createEditorCamera();
 #pragma endregion
-
 
 	while (!glfwWindowShouldClose(editorWindow.handle))
 	{

@@ -271,6 +271,7 @@ namespace yellowEngine
 
 		_lightShaders[type]->setUniform("u_ScreenSize", Vector2(Display::width, Display::height));
 		_lightShaders[type]->setUniform("u_CameraPosition", Camera::currentCamera->transform->getWorldPosition());
+		auto v = Camera::currentCamera->transform->getWorldPosition();
 
 		const auto& textureNames = _lightShaders[type]->getTextureUnits();
 		const auto& colorBuffers = _geometryBuffer.getColorBuffers();

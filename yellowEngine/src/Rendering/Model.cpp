@@ -100,7 +100,7 @@ namespace yellowEngine
 					{
 						joints.push_back({ node->transform,node->offset });
 					}
-					renderer->set(node->mesh, node->material, joints, rootObject->transform);
+					//renderer->set(node->mesh, node->material, joints, rootObject->transform);
 				}
 
 				for (auto child : node->children)
@@ -284,7 +284,7 @@ namespace yellowEngine
 	}
 
 
-	std::pair<Mesh*, Material> Model::createMesh(aiMesh* aiMesh, const aiScene* scene, Node* currentNode)
+	std::pair<Mesh*, Material*> Model::createMesh(aiMesh* aiMesh, const aiScene* scene, Node* currentNode)
 	{	
 		// Model class already caching model itself
 		// there is no need to cache in Mesh class
@@ -292,244 +292,144 @@ namespace yellowEngine
 		Mesh* mesh = nullptr;
 		std::vector<AttributeUsage> attributes;
 
-		//if (aiMesh->HasPositions())
-		//{
-		//	attributes.push_back(Attr_Position);
-		//}
-		//if (aiMesh->HasNormals())
-		//{
-		//	attributes.push_back(Attr_Normal);
-		//}
-		//if (aiMesh->HasTextureCoords(0))
-		//{
-		//	attributes.push_back(Attr_TexCoord0);
-		//}
-		//if (aiMesh->HasBones())
-		//{
-		//	attributes.push_back(Attr_Joints);
-		//	attributes.push_back(Attr_Weights);
-		//}
-
-		//VertexLayout layout(attributes);
-		//int stride = layout.getVertexSize() / sizeof(float);
-
-		//int jointOffset = 0;
-		//int weightOffset = 0;
-
-		//float* vertices = new float[stride * aiMesh->mNumVertices];
-		//for (auto attrPair : layout.getAttributes())
-		//{
-		//	const auto& attribute = attrPair.second;
-		//	int cursor = attribute.offset / sizeof(float);
-		//	switch (attribute.usage)
-		//	{
-		//		case Attr_Position:
-		//		{
-		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
-		//			{
-		//				vertices[cursor] = aiMesh->mVertices[i].x;
-		//				vertices[cursor + 1] = aiMesh->mVertices[i].y;
-		//				vertices[cursor + 2] = aiMesh->mVertices[i].z;
-		//			}
-		//		}
-		//		break;
-
-		//		case Attr_Normal:
-		//		{
-		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
-		//			{
-		//				vertices[cursor] = aiMesh->mNormals[i].x;
-		//				vertices[cursor + 1] = aiMesh->mNormals[i].y;
-		//				vertices[cursor + 2] = aiMesh->mNormals[i].z;
-		//			}
-		//		}
-		//		break;
-
-		//		case Attr_TexCoord0:
-		//		{
-		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
-		//			{
-		//				vertices[cursor] = aiMesh->mTextureCoords[0][i].x;
-		//				vertices[cursor + 1] = aiMesh->mTextureCoords[0][i].y;
-		//			}
-		//		}
-		//		break;
-
-		//		case Attr_Joints:
-		//		case Attr_Weights:
-		//		{
-
-		//			for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
-		//			{
-		//				for (int j = 0; j < MaxJointCount; j++)
-		//				{
-		//					vertices[cursor + j] = NullWeight;
-		//				}
-		//			}
-		//		}
-		//		break;
-		//	}
-		//}
-
-		//int* indices = new int[3 * aiMesh->mNumFaces];
-		//for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
-		//{
-		//	indices[i * 3    ] = aiMesh->mFaces[i].mIndices[0];
-		//	indices[i * 3 + 1] = aiMesh->mFaces[i].mIndices[1];
-		//	indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
-		//}
-
-		//currentNode->jointNodes.resize(aiMesh->mNumBones);
-		//for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
-		//{
-		//	Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
-		//	currentNode->jointNodes[b] = jointNode;
-		//	for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
-		//	{
-		//		int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
-		//		int vi_j = stride * vi + jointOffset;
-		//		int vi_w = stride * vi + weightOffset;
-
-		//		int wi = 0;
-		//		while (wi < MaxJointCount && vertices[vi_w + wi] != NullWeight) wi++;
-		//		if (wi >= MaxJointCount) continue;
-
-		//		vertices[vi_j + wi] = (float)b;
-		//		vertices[vi_w + wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
-		//	}
-
-		//	copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
-		//}
-
-
-
-
-
+		if (aiMesh->HasPositions())
+		{
+			attributes.push_back(Attr_Position);
+		}
+		if (aiMesh->HasNormals())
+		{
+			attributes.push_back(Attr_Normal);
+		}
+		if (aiMesh->HasTextureCoords(0))
+		{
+			attributes.push_back(Attr_TexCoord0);
+		}
 		if (aiMesh->HasBones())
 		{
-			std::vector<Mesh::SkinnedVertex> vertices(aiMesh->mNumVertices);
-			std::vector<unsigned int> indices(aiMesh->mNumFaces * 3);
-
-			for (unsigned int i = 0; i < aiMesh->mNumVertices; i++)
-			{
-				vertices[i].position.x = aiMesh->mVertices[i].x;
-				vertices[i].position.y = aiMesh->mVertices[i].y;
-				vertices[i].position.z = aiMesh->mVertices[i].z;
-
-				if (aiMesh->HasNormals())
-				{
-					vertices[i].normal.x = aiMesh->mNormals[i].x;
-					vertices[i].normal.y = aiMesh->mNormals[i].y;
-					vertices[i].normal.z = aiMesh->mNormals[i].z;
-				}
-
-				if (aiMesh->HasTextureCoords(0))
-				{
-					vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
-					vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
-				}
-
-				for (int j = 0; j < MaxJointCount; j++)
-				{
-					vertices[i].joints[j] = 0;
-					vertices[i].weights[j] = NullWeight;
-				}
-			}
-
-			for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
-			{
-				indices[i * 3]	   = aiMesh->mFaces[i].mIndices[0];
-				indices[i * 3 + 1] = aiMesh->mFaces[i].mIndices[1];
-				indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
-			}
-
-			currentNode->jointNodes.resize(aiMesh->mNumBones);
-			for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
-			{
-				Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
-				currentNode->jointNodes[b] = jointNode;
-				for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
-				{
-					int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
-
-					int wi = 0;
-					while (wi < MaxJointCount && vertices[vi].weights[wi] != NullWeight) wi++;
-					if (wi >= MaxJointCount) continue;
-
-					vertices[vi].joints[wi] = (float)b;
-					vertices[vi].weights[wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
-				}
-
-				copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
-			}
-
-			VertexLayout layout({
-				Attr_Position,
-				Attr_Normal,
-				Attr_TexCoord0,
-				Attr_Joints,
-				Attr_Weights,
-				});
-
-			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
+			attributes.push_back(Attr_Joints);
+			attributes.push_back(Attr_Weights);
 		}
-		else
+
+		VertexLayout layout(attributes);
+		int stride = layout.getVertexSize() / sizeof(float);
+
+		int jointOffset = 0;
+		int weightOffset = 0;
+
+		float* vertices = new float[stride * aiMesh->mNumVertices];
+		for (auto attrPair : layout.getAttributes())
 		{
-			std::vector<Mesh::Vertex> vertices(aiMesh->mNumVertices);
-			std::vector<unsigned int> indices(aiMesh->mNumFaces * 3);
-
-			for (unsigned int i = 0; i < aiMesh->mNumVertices; i++)
+			const auto& attribute = attrPair.second;
+			int cursor = attribute.offset / sizeof(float);
+			switch (attribute.usage)
 			{
-				vertices[i].position.x = aiMesh->mVertices[i].x;
-				vertices[i].position.y = aiMesh->mVertices[i].y;
-				vertices[i].position.z = aiMesh->mVertices[i].z;
+				case Attr_Position:
+				{
+					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+					{
+						vertices[cursor] = aiMesh->mVertices[i].x;
+						vertices[cursor + 1] = aiMesh->mVertices[i].y;
+						vertices[cursor + 2] = aiMesh->mVertices[i].z;
+					}
+				}
+				break;
 
-				vertices[i].normal.x = aiMesh->mNormals[i].x;
-				vertices[i].normal.y = aiMesh->mNormals[i].y;
-				vertices[i].normal.z = aiMesh->mNormals[i].z;
+				case Attr_Normal:
+				{
+					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+					{
+						vertices[cursor] = aiMesh->mNormals[i].x;
+						vertices[cursor + 1] = aiMesh->mNormals[i].y;
+						vertices[cursor + 2] = aiMesh->mNormals[i].z;
+					}
+				}
+				break;
 
-				vertices[i].uv.x = aiMesh->mTextureCoords[0][i].x;
-				vertices[i].uv.y = aiMesh->mTextureCoords[0][i].y;
+				case Attr_TexCoord0:
+				{
+					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+					{
+						vertices[cursor] = aiMesh->mTextureCoords[0][i].x;
+						vertices[cursor + 1] = aiMesh->mTextureCoords[0][i].y;
+					}
+				}
+				break;
+
+				case Attr_Joints:
+				case Attr_Weights:
+				{
+
+					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+					{
+						for (int j = 0; j < MaxJointCount; j++)
+						{
+							vertices[cursor + j] = NullWeight;
+						}
+					}
+				}
+				break;
+			}
+		}
+
+		int* indices = new int[3 * aiMesh->mNumFaces];
+		for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
+		{
+			indices[i * 3    ] = aiMesh->mFaces[i].mIndices[0];
+			indices[i * 3 + 1] = aiMesh->mFaces[i].mIndices[1];
+			indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
+		}
+
+		currentNode->jointNodes.resize(aiMesh->mNumBones);
+		for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
+		{
+			Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
+			currentNode->jointNodes[b] = jointNode;
+			for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
+			{
+				int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
+				int vi_j = stride * vi + jointOffset;
+				int vi_w = stride * vi + weightOffset;
+
+				int wi = 0;
+				while (wi < MaxJointCount && vertices[vi_w + wi] != NullWeight) wi++;
+				if (wi >= MaxJointCount) continue;
+
+				vertices[vi_j + wi] = (float)b;
+				vertices[vi_w + wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
 			}
 
-			for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
-			{
-				indices[i * 3]	   = aiMesh->mFaces[i].mIndices[0];
-				indices[i * 3 + 1] = aiMesh->mFaces[i].mIndices[1];
-				indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
-			}
-
-			VertexLayout layout({
-				Attr_Position,
-				Attr_Normal,
-				Attr_TexCoord0,
-				});
-
-			mesh = new Mesh(layout, (int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
+			copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
 		}
 
-		Material mat;
-		mat.setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
+		mesh = new Mesh(layout, aiMesh->mNumVertices, vertices, 3 * aiMesh->mNumFaces, indices);
 
-		aiMaterial* material = scene->mMaterials[aiMesh->mMaterialIndex];
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		// create material
+		aiString materialPath = aiString(_directory);
+		materialPath.Append(aiMesh->mName.C_Str());
+		materialPath.Append(".mat");
+
+		Material* material = new Material(materialPath.C_Str());
+
+		material->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
+
+		aiMaterial* aMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
+		aiString texturePath;
+		if (aMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
 		{
-			aiString path;
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-			path = _directory + path.C_Str();
+			aMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+			texturePath = _directory + texturePath.C_Str();
 
-			mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.diffuse");
+			material->setProperty("u_Material.diffuse", Texture::create(texturePath.C_Str(), true));
 		}
 
-		if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+		if (aMaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
 		{
-			aiString path;
-			material->GetTexture(aiTextureType_SPECULAR, 0, &path);
-			path = _directory + path.C_Str();
+			aMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texturePath);
+			texturePath = _directory + texturePath.C_Str();
 
-			mat.addTexture(Texture::create(path.C_Str(), true), "u_Material.specular");
+			material->setProperty("u_Material.specular", Texture::create(texturePath.C_Str(), true));
 		}
-		return { mesh, mat };
+		return { mesh, material };
 	}
 
 

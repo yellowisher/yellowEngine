@@ -10,6 +10,7 @@ layout (location = 2) out vec4 o_DiffuseSpecular;
 
 struct Material
 {
+	vec3 color;
 	sampler2D diffuse;
 	sampler2D specular;
 };
@@ -20,6 +21,6 @@ void main()
 {
 	o_WorldFragPosition   = v_WorldFragPosition;
 	o_Normal              = normalize(v_Normal);
-	o_DiffuseSpecular.rgb = texture(u_Material.diffuse,  v_TexCoord).rgb;
+	o_DiffuseSpecular.rgb = texture(u_Material.diffuse,  v_TexCoord).rgb * u_Material.color;
 	o_DiffuseSpecular.a   = texture(u_Material.specular, v_TexCoord).r;
 }

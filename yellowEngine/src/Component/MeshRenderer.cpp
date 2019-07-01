@@ -17,9 +17,9 @@ namespace yellowEngine
 
 	MeshRenderer::~MeshRenderer()
 	{
-		if (_material._technique != nullptr)
+		if (_material->_technique != nullptr)
 		{
-			_material._technique->removeRenderer(this);
+			_material->_technique->removeRenderer(this);
 		}
 	}
 
@@ -34,16 +34,15 @@ namespace yellowEngine
 	}
 
 
-	MeshRenderer* MeshRenderer::set(Mesh* mesh, const Material& material)
+	MeshRenderer* MeshRenderer::set(Mesh* mesh, Material* material)
 	{
 		_mesh = mesh;
 		_material = material;
-		_material.attachTo(gameObject, mesh);
-		if (_material._technique != nullptr)
+		if (_material->_technique != nullptr)
 		{
-			_material._technique->addRenderer(this);
+			_material->_technique->addRenderer(this);
 		}
-		_prevTechnique = _material._technique;
+		_prevTechnique = _material->_technique;
 		return this;
 	}
 
@@ -52,7 +51,7 @@ namespace yellowEngine
 	{
 		if (_mesh == nullptr) return;
 
-		_material.bind(vsPath, fsPath);
+		_material->bind(this, vsPath, fsPath);
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 		//_material.unbind();
 	}

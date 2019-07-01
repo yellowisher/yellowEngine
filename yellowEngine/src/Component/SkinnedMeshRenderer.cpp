@@ -15,8 +15,8 @@ namespace yellowEngine
 	SkinnedMeshRenderer* SkinnedMeshRenderer::set(Mesh* mesh, const Material& material, std::vector<std::pair<Transform*, Matrix>> joints, Transform* modelRoot)
 	{
 		_mesh = mesh;
-		_material = material;
-		_material.attachTo(gameObject, mesh);
+		//_material = material;
+		//_material.attachTo(gameObject, mesh);
 			
 		_modelRoot = modelRoot;
 		//_jointUniform = _material.getShader()->getUniform("u_Joints[0]");

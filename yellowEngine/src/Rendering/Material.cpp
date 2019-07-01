@@ -1,12 +1,92 @@
+#include <iostream>
+#include <fstream>
+#include <json/json.h>
+
+#include "yellowEngine/Component/MeshRenderer.hpp"
 #include "yellowEngine/Rendering/VertexLayoutBinding.hpp"
 #include "yellowEngine/Rendering/Material.hpp"
 
 
 namespace yellowEngine
 {
-	Material::Material()
+	enum Primitive
+	{
+		Primitive_Float,
+		Primitive_Texture,
+		Primitive_Color
+	};
+
+	static std::map<std::string, Primitive> primitiveToString = {
+		{"float", Primitive_Float},
+		{"texture", Primitive_Texture},
+		{"color", Primitive_Color}
+	};
+
+	std::map<std::string, Material*> Material::_materialCache;
+
+	Material* Material::create(const char* path)
+	{
+		auto it = _materialCache.find(path);
+		if (it != _materialCache.end())
+		{
+			return it->second;
+		}
+
+		std::ifstream document(path, std::ifstream::binary);
+
+		Json::Reader reader;
+		Json::Value json;
+		if (!reader.parse(document, json))
+		{
+			std::cout << "Material json parseing failed" << std::endl;
+			return nullptr;
+		}
+
+		Material* material = new Material(path);
+		for (auto propJson : json["properties"])
+		{
+			auto it = primitiveToString.find(propJson["type"].asString());
+			if (it != primitiveToString.end())
+			{
+				std::string name = propJson["name"].asString();
+				switch (it->second)
+				{
+					case Primitive_Float:
+					{
+						material->setProperty(name.c_str(), propJson["value"].asFloat());
+						break;
+					}
+					case Primitive_Texture:
+					{
+						std::string path = propJson["value"].asString();
+						material->setProperty(name.c_str(), Texture::create(path.c_str()));
+						break;
+					}
+					case Primitive_Color:
+					{
+						Vector3 value;
+						value.x = propJson["value"]["r"].asFloat();
+						value.y = propJson["value"]["g"].asFloat();
+						value.z = propJson["value"]["b"].asFloat();
+						material->setProperty(name.c_str(), value);
+						break;
+					}
+				}
+			}
+		}
+		return material;
+	}
+
+
+	Material::Material(const char* path)
 	{
 		_technique = nullptr;
+		_materialCache.insert({ path, this });
+
+		// set default values
+		setProperty("u_Material.color", Vector3(1.0f, 1.0f, 1.0f));
+		setProperty("u_Material.diffuse", Texture::create("Texture/default_diffuse.png"));
+		setProperty("u_Material.specular", Texture::create("Texture/default_specular.png"));
 	}
 
 
@@ -23,21 +103,7 @@ namespace yellowEngine
 	}
 
 
-	Material* Material::attachTo(GameObject* gameObject, Mesh* mesh)
-	{
-		_gameObject = gameObject;
-		_mesh = mesh;
-		return this;
-	}
-
-
-	void Material::addTexture(Texture* texture, const char* usage)
-	{
-		_textures.insert({ usage, texture });
-	}
-
-
-	void Material::bind(const char* vsPath, const char* fsPath)
+	void Material::bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath)
 	{
 		if (vsPath == nullptr) vsPath = _defaultVsPath;
 		if (fsPath == nullptr) fsPath = _defaultFsPath;
@@ -45,7 +111,7 @@ namespace yellowEngine
 		Shader* shader = Shader::create(vsPath, fsPath);
 
 		// update auto binding uniforms (like model matrix)
-		shader->updateUniforms(_gameObject);
+		shader->updateUniforms(meshRenderer->gameObject);
 
 		for (auto uniformPair : shader->getUniforms())
 		{
@@ -87,7 +153,7 @@ namespace yellowEngine
 			it->second->bind();
 		}
 
-		VertexLayoutBinding::create(_mesh, shader)->bind();
+		VertexLayoutBinding::create(meshRenderer->getMesh(), shader)->bind();
 	}
 
 
@@ -130,5 +196,11 @@ namespace yellowEngine
 	void Material::setProperty(const char* name, Matrix value)
 	{
 		_properties[name].matrixValue = value;
+	}
+
+
+	void Material::setProperty(const char* name, Texture* texture)
+	{
+		_textures[name] = texture;
 	}
 }

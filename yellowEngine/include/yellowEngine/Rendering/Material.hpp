@@ -11,8 +11,11 @@
 
 namespace yellowEngine
 {
+	class MeshRenderer;
+
 	class Material
 	{
+		friend class Model;
 		friend class MeshRenderer;
 		friend class Technique;
 
@@ -34,14 +37,13 @@ namespace yellowEngine
 			};
 		};
 
-		Material();
-		~Material();
+		static Material* create(const char* path);
+
 		void setTechnique(Technique* technique, const char* defaultVsPath, const char* defaultFsPath);
-		Material* attachTo(GameObject* gameObject, Mesh* mesh);
-		void addTexture(Texture* texture, const char* usage);
-		void bind(const char* vsPath = nullptr, const char* fsPath = nullptr);
+		void bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath);
 		void unbind();
 
+		void setProperty(const char* name, Texture* texture);
 		void setProperty(const char* name, int value);
 		void setProperty(const char* name, float value);
 		void setProperty(const char* name, Vector2 value);
@@ -50,8 +52,10 @@ namespace yellowEngine
 		void setProperty(const char* name, Matrix value);
 
 	private:
-		GameObject* _gameObject;
-		Mesh* _mesh;
+		static std::map<std::string, Material*> _materialCache;
+
+		Material(const char* path);
+		~Material();
 
 		Technique* _technique;
 		const char* _defaultVsPath;

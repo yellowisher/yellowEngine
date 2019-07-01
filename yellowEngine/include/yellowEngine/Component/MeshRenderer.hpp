@@ -25,12 +25,12 @@ namespace yellowEngine
 		virtual void onValueChanged() override;
 
 		Mesh* getMesh() { return _mesh; }
-		MeshRenderer* set(Mesh* mesh, const Material& material);
+		MeshRenderer* set(Mesh* mesh, Material* material);
 		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) override;
 
 	protected:
 		Mesh* _mesh;
-		Material _material;
+		Material* _material;
 		Technique* _prevTechnique;
 	};
 }

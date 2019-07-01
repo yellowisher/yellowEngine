@@ -35,7 +35,7 @@ namespace yellowEngine
 				Mesh* mesh;
 				aiMesh* aiMesh;
 			};
-			Material material;
+			Material* material;
 
 			Vector3 position;
 			Vector3 scale;
@@ -59,7 +59,7 @@ namespace yellowEngine
 		~Model();
 		Node* buildTree(aiNode* aiNode, const aiScene* scene);
 		void fillMesh(Node* node, const aiScene* scene);
-		std::pair<Mesh*, Material> createMesh(aiMesh* mesh, const aiScene* scene, Node* currentNode);
+		std::pair<Mesh*, Material*> createMesh(aiMesh* mesh, const aiScene* scene, Node* currentNode);
 		void copyMatrix(aiMatrix4x4& aiMatrix, Matrix& matrix);
 
 		std::string _directory;
