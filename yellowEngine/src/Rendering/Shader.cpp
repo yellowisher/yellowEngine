@@ -78,10 +78,7 @@ namespace yellowEngine
 		std::string shader;
 		const char* shaderCode;
 
-		std::string vsPathString = Game::getAssetPath(vsPath);
-		std::string fsPathString = Game::getAssetPath(fsPath);
-
-		shader = readSourceFile(vsPathString.c_str());
+		shader = readSourceFile(vsPath);
 		shaderCode = shader.c_str();
 		vs = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vs, 1, &shaderCode, NULL);
@@ -95,7 +92,7 @@ namespace yellowEngine
 			return nullptr;
 		}
 
-		shader = readSourceFile(fsPathString.c_str());
+		shader = readSourceFile(fsPath);
 		shaderCode = shader.c_str();
 		fs = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fs, 1, &shaderCode, NULL);

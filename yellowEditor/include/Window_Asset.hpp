@@ -7,7 +7,7 @@ namespace yellowEditor
 {
 	void DrawWindow_Asset();
 	void Init_AssetWindow();
-	void LoadAsset();
+	void LoadAsset(bool init = false);
 }
 
 #endif

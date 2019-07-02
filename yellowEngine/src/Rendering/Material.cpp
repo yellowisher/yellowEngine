@@ -7,6 +7,7 @@
 #include "yellowEngine/Rendering/Material.hpp"
 
 
+// TODO: rework material serialization method; not bunch of enum
 namespace yellowEngine
 {
 	enum Primitive
@@ -16,13 +17,14 @@ namespace yellowEngine
 		Primitive_Color
 	};
 
-	static std::map<std::string, Primitive> primitiveToString = {
+	static std::map<std::string, Primitive> stringToPrimitive = {
 		{"float", Primitive_Float},
 		{"texture", Primitive_Texture},
 		{"color", Primitive_Color}
 	};
 
 	std::map<std::string, Material*> Material::_materialCache;
+
 
 	Material* Material::create(const char* path)
 	{
@@ -45,8 +47,8 @@ namespace yellowEngine
 		Material* material = new Material(path);
 		for (auto propJson : json["properties"])
 		{
-			auto it = primitiveToString.find(propJson["type"].asString());
-			if (it != primitiveToString.end())
+			auto it = stringToPrimitive.find(propJson["type"].asString());
+			if (it != stringToPrimitive.end())
 			{
 				std::string name = propJson["name"].asString();
 				switch (it->second)
@@ -77,18 +79,62 @@ namespace yellowEngine
 		return material;
 	}
 
+	void Material::saveAsFile(Material* material, const char* path)
+	{
+		Json::Value json;
+
+		// create default material
+		if (material == nullptr)
+		{
+			material = new Material("default");
+		}
+
+		for (auto& nameTexturePair : material->_textures)
+		{
+			Json::Value propJson;
+			propJson["name"] = nameTexturePair.first;
+			propJson["type"] = "string";
+			propJson["value"] = nameTexturePair.second->getName();
+			json["properties"].append(propJson);
+		}
+
+		for (auto& namePropPair : material->_properties)
+		{
+			Json::Value propJson;
+			propJson["name"] = namePropPair.first;
+			propJson["type"] = namePropPair.second.type;
+			auto primitive = stringToPrimitive[namePropPair.second.type];
+			switch (primitive)
+			{
+				case Primitive_Float:
+					propJson["value"] = namePropPair.second.floatValue;
+					break;
+				case Primitive_Color:
+					propJson["value"]["r"] = namePropPair.second.colorValue.x;
+					propJson["value"]["g"] = namePropPair.second.colorValue.y;
+					propJson["value"]["b"] = namePropPair.second.colorValue.z;
+					break;
+			}
+			json["properties"].append(propJson);
+		}
+
+		std::ofstream ofs(path, std::ifstream::binary);
+		auto writer = Json::StyledStreamWriter();
+		writer.write(ofs, json);
+	}
+
 
 	Material::Material(const char* path)
 	{
 		_path = path;
-		setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/default.vert", "Shader/default.frag");
+		setTechnique(Technique::getTechnique(TechniqueType_Deferred), "./res/Shader/default.vert", "./res/Shader/default.frag");
 		_technique = nullptr;
 		_materialCache.insert({ path, this });
 
 		// set default values
 		setProperty("u_Material.color", Vector3(1.0f, 1.0f, 1.0f));
-		setProperty("u_Material.diffuse", Texture::create("Texture/default_diffuse.png"));
-		setProperty("u_Material.specular", Texture::create("Texture/default_specular.png"));
+		setProperty("u_Material.diffuse", Texture::create("./res/Texture/default_diffuse.png"));
+		setProperty("u_Material.specular", Texture::create("./res/Texture/default_specular.png"));
 	}
 
 
@@ -128,17 +174,8 @@ namespace yellowEngine
 				case GL_FLOAT:
 					shader->setUniform(uniformPair.first, it->second.floatValue);
 					break;
-				case GL_FLOAT_VEC2:
-					shader->setUniform(uniformPair.first, it->second.vector2Value);
-					break;
 				case GL_FLOAT_VEC3:
-					shader->setUniform(uniformPair.first, it->second.vector3Value);
-					break;
-				case GL_FLOAT_VEC4:
-					shader->setUniform(uniformPair.first, it->second.vector4Value);
-					break;
-				case GL_FLOAT_MAT4:
-					shader->setUniform(uniformPair.first, it->second.matrixValue);
+					shader->setUniform(uniformPair.first, it->second.colorValue);
 					break;
 				default:
 					continue;
@@ -173,36 +210,21 @@ namespace yellowEngine
 	void Material::setProperty(const char* name, int value)
 	{
 		_properties[name].intValue = value;
+		_properties[name].type = "int";
 	}
 
 
 	void Material::setProperty(const char* name, float value)
 	{
 		_properties[name].floatValue = value;
-	}
-
-
-	void Material::setProperty(const char* name, Vector2 value)
-	{
-		_properties[name].vector2Value = value;
+		_properties[name].type = "float";
 	}
 
 
 	void Material::setProperty(const char* name, Vector3 value)
 	{
-		_properties[name].vector3Value = value;
-	}
-
-
-	void Material::setProperty(const char* name, Vector4 value)
-	{
-		_properties[name].vector4Value = value;
-	}
-
-
-	void Material::setProperty(const char* name, Matrix value)
-	{
-		_properties[name].matrixValue = value;
+		_properties[name].colorValue = value;
+		_properties[name].type = "color";
 	}
 
 

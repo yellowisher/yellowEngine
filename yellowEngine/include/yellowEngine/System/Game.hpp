@@ -19,8 +19,6 @@ namespace yellowEngine
 		friend int ::main();
 
 	public:
-		static std::string getAssetPath(const char* fileName);
-		
 		static void addUpdatable(IUpdatable* target);
 		static void removeUpdatable(IUpdatable* target);
 		static void trimUpdatable();

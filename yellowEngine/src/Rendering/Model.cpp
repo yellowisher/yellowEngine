@@ -114,19 +114,16 @@ namespace yellowEngine
 	}
 
 
-	Model* Model::create(const char* path, bool absolute)
+	Model* Model::create(const char* path)
 	{
-		std::string fullpath = path;
-		if (!absolute) fullpath = Game::getAssetPath(path).c_str();
-
-		auto it = __modelCache.find(fullpath);
+		auto it = __modelCache.find(path);
 		if (it != __modelCache.end())
 		{
 			return it->second;
 		}
 
-		Model* model = loadFBX(fullpath.c_str());
-		__modelCache.insert({ fullpath, model });
+		Model* model = loadFBX(path);
+		__modelCache.insert({ path, model });
 		return model;
 	}
 
@@ -409,7 +406,7 @@ namespace yellowEngine
 		// create material
 		aiString materialPath = aiString(_directory);
 		materialPath.Append(aiMesh->mName.C_Str());
-		materialPath.Append(".mat");
+		materialPath.Append(".yem");
 
 		Material* material = new Material(materialPath.C_Str());
 

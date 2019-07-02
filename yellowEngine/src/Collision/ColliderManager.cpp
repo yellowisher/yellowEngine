@@ -22,7 +22,7 @@ namespace yellowEngine
 		else if (type == BroadPhaseType_SAP)_broadPhase = new BroadPhase_SAP();
 		else if (type == BroadPhaseType_BVH)_broadPhase = new BroadPhase_BVH();
 
-		_wireFrameShader = Shader::create("Shader/wireframe.vert", "Shader/wireframe.frag");
+		_wireFrameShader = Shader::create("./res/Shader/wireframe.vert", "./res/Shader/wireframe.frag");
 		_colorUniform = _wireFrameShader->getUniform("u_LineColor");
 		VertexLayout layout = VertexLayout({ Attr_Position });
 		_renderer = Renderer(layout, _wireFrameShader);

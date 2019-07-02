@@ -20,16 +20,16 @@ namespace yellowEngine
 		_geometryBuffer.addDepthStencilAttachment(Display::width, Display::height);
 		_geometryBuffer.init();
 
-		_geometryFsPath = "Shader/deferred_geometry.frag";
+		_geometryFsPath = "./res/Shader/deferred_geometry.frag";
 
-		_meshes[Light::LightType_Dir  ] = Mesh::create("Mesh/quad.obj");
-		_meshes[Light::LightType_Spot ] = Mesh::create("Mesh/cone.obj");
-		_meshes[Light::LightType_Point] = Mesh::create("Mesh/sphere.obj");
+		_meshes[Light::LightType_Dir  ] = Mesh::create("./res/Mesh/quad.obj");
+		_meshes[Light::LightType_Spot ] = Mesh::create("./res/Mesh/cone.obj");
+		_meshes[Light::LightType_Point] = Mesh::create("./res/Mesh/sphere.obj");
 
-		_lightShaders[Light::LightType_Dir  ] = Shader::create("Shader/deferred_light.vert", "Shader/deferred_light_dir.frag");
-		_lightShaders[Light::LightType_Spot ] = Shader::create("Shader/deferred_light.vert", "Shader/deferred_light_spot.frag");
-		_lightShaders[Light::LightType_Point] = Shader::create("Shader/deferred_light.vert", "Shader/deferred_light_point.frag");
-		_stencilShader = Shader::create("Shader/null.vert", "Shader/null.frag");
+		_lightShaders[Light::LightType_Dir  ] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_dir.frag");
+		_lightShaders[Light::LightType_Spot ] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_spot.frag");
+		_lightShaders[Light::LightType_Point] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_point.frag");
+		_stencilShader = Shader::create("./res/Shader/null.vert", "./res/Shader/null.frag");
 	}
 
 

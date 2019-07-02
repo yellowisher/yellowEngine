@@ -35,6 +35,8 @@ namespace yellowEngine
 		int indexCount, void* indexData) :
 		_vertexLayout(vertexLayout)
 	{
+		__meshCache.insert({ path, this });
+
 		_path = path;
 		_vertexCount = indexCount;
 
@@ -98,6 +100,7 @@ namespace yellowEngine
 		return _bounds;
 	}
 
+
 	std::string Mesh::getPath()
 	{
 		return _path;
@@ -115,7 +118,6 @@ namespace yellowEngine
 		Mesh* mesh = nullptr;
 
 		mesh = loadOBJ(path);
-		if (mesh != nullptr)__meshCache.insert({ path, mesh });
 		return mesh;
 	}
 
@@ -142,12 +144,11 @@ namespace yellowEngine
 		std::vector<float> data;
 		data.reserve(1024);
 
-		std::string pathString = Game::getAssetPath(path);
-		fin.open(pathString);
+		fin.open(path);
 
 		if (fin.fail())
 		{
-			cout << "Cannot open file " << pathString << endl;
+			cout << "Cannot open file " << path << endl;
 			return nullptr;
 		}
 
@@ -263,8 +264,8 @@ namespace yellowEngine
 
 		std::vector<AttributeUsage> usages;
 		usages.push_back(Attr_Position);
-		if (hasNormal)usages.push_back(Attr_Normal);
-		if (hasUV)usages.push_back(Attr_TexCoord0);
+		if (hasNormal) usages.push_back(Attr_Normal);
+		if (hasUV) usages.push_back(Attr_TexCoord0);
 
 		VertexLayout layout(usages);
 

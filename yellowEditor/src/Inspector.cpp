@@ -111,7 +111,27 @@ namespace yellowEditor
 	static bool property_Mesh(Component* comp, Component::Property prop)
 	{
 		std::string* meshPath = (std::string*)((size_t)comp + prop.offset);
-		return false;
+		ImGui::Button(meshPath->c_str());
+		bool changed = false;
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			auto payload = ImGui::AcceptDragDropPayload("Asset");
+			{
+				if (payload != nullptr)
+				{
+					//std::string path = *((std::string*)(&payload->Data));
+					char* path = (char*)payload->Data;
+					if (Mesh::create(path) != nullptr)
+					{
+						*meshPath = path;
+						changed = true;
+					}
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+		return changed;
 	}
 
 
@@ -119,6 +139,24 @@ namespace yellowEditor
 	{
 		std::string* materialPath = (std::string*)((size_t)comp + prop.offset);
 		ImGui::Button(materialPath->c_str());
-		return false;
+		bool changed = false;
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			auto payload = ImGui::AcceptDragDropPayload("Asset");
+			{
+				if (payload != nullptr)
+				{
+					char* path = (char*)payload->Data;
+					if (Material::create(path) != nullptr)
+					{
+						*materialPath = path;
+						changed = true;
+					}
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+		return changed;
 	}
 }

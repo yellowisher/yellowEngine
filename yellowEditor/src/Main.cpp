@@ -65,13 +65,13 @@ int main()
 	//auto renderer = box->addComponent<MeshRenderer>();
 	//renderer->set(boxMesh, boxMaterial);
 
-	Model* sphere = Model::create("Mesh/sphere.obj");
+	Model* sphere = Model::create("./res/Mesh/sphere.obj");
 	sphere->instantiate("Sphere");
 
 	GameObject* sp = sphere->instantiate("Sphere1");
 
 
-	Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
+	Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 
 	GameObject* nano = model->instantiate("Model");
 	GameObject* spotLightGo = new GameObject();

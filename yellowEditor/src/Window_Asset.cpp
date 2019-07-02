@@ -18,13 +18,15 @@ namespace yellowEditor
 	static GLuint folderTexture;
 	static GLuint fileTexture;
 
+	static std::string draggingPath = "";
+
 	void Init_AssetWindow()
 	{
 		int width, height, channels;
 
 		//stbi_set_flip_vertically_on_load(true);
 
-		unsigned char* data = stbi_load("./res/Texture/folder.png", &width, &height, &channels, 0);
+		unsigned char* data = stbi_load(".\\res\\Texture\\folder.png", &width, &height, &channels, 0);
 		glGenTextures(1, &folderTexture);
 		glBindTexture(GL_TEXTURE_2D, folderTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -32,7 +34,7 @@ namespace yellowEditor
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		stbi_image_free(data);
 
-		data = stbi_load("./res/Texture/file.png", &width, &height, &channels, 0);
+		data = stbi_load(".\\res\\Texture\\file.png", &width, &height, &channels, 0);
 		glGenTextures(1, &fileTexture);
 		glBindTexture(GL_TEXTURE_2D, fileTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -58,11 +60,13 @@ namespace yellowEditor
 				{
 					if (ImGui::MenuItem("Material"))
 					{
-
+						std::string newMaterial = workingDirectory + "\\New Material.yem";
+						Material::saveAsFile(nullptr, newMaterial.c_str());
+						files.push_back("New Material.yem");
 					}
 					if (ImGui::MenuItem("Folder"))
 					{
-						std::string newDirectory = workingDirectory + "/Mew Folder";
+						std::string newDirectory = workingDirectory + "\\New Folder";
 						createDirectory(newDirectory);
 						directories.push_back("New Folder");
 					}
@@ -79,21 +83,45 @@ namespace yellowEditor
 			{
 				ImGui::PushID(n);
 
+				bool isFolder = false;
 				std::string name;
-				GLuint texture;
+				std::string path;
 				if (n < directories.size())
 				{
-					name = directories[n];
-					texture = folderTexture;
+					name = path = directories[n];
+					isFolder = true;
 				}
 				else
 				{
-					name = files[n - directories.size()];
-					texture = fileTexture;
+					name = path = files[n - directories.size()];
 				}
 
 				ImGui::BeginGroup();
-				ImGui::ImageButtonCustom((ImTextureID)texture, buttonSize);
+
+				ImGui::ImageButtonCustom((ImTextureID)(isFolder ? folderTexture : fileTexture), buttonSize);
+				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered() && isFolder)
+				{
+					// just appending \\.. might lead to crash
+					if (path == "..")
+					{
+						workingDirectory = workingDirectory.substr(0, workingDirectory.find_last_of("\\"));
+					}
+					else
+					{
+						workingDirectory += "\\" + path;
+					}
+					LoadAsset();
+					ImGui::EndGroup();
+					ImGui::PopID();
+					break;
+				}
+
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptPeekOnly))
+				{
+					draggingPath = workingDirectory + "\\" + path;
+					ImGui::SetDragDropPayload("Asset", draggingPath.c_str(), draggingPath.length() + 1);
+					ImGui::EndDragDropSource();
+				}
 
 				// in case too long file name
 				if (ImGui::CalcTextSize(name.c_str()).x > buttonSize.x)
@@ -123,13 +151,13 @@ namespace yellowEditor
 	}
 
 
-	void LoadAsset()
+	void LoadAsset(bool init)
 	{
 		directories.clear();
 		files.clear();
 
-		workingDirectory = Editor::getAssetPath();
-		std::string path = workingDirectory + "/*.*";
+		if (init) workingDirectory = Editor::getAssetPath();
+		std::string path = workingDirectory + "\\*.*";
 		WIN32_FIND_DATA ffd;
 		HANDLE hFind = FindFirstFile(path.c_str(), &ffd);
 		if (hFind == INVALID_HANDLE_VALUE)

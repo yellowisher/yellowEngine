@@ -160,7 +160,7 @@ namespace yellowEditor
 					writer.write(ofs, root);
 					createDirectory(Editor::getProjectRoot() + "\\Asset");
 
-					LoadAsset();
+					LoadAsset(true);
 				}
 				if (ImGui::MenuItem("Open", "Ctrl+O"))
 				{
@@ -168,7 +168,7 @@ namespace yellowEditor
 					Editor::getProjectRoot() = path.substr(0, path.find_last_of("\\"));
 					Editor::getAssetPath() = Editor::getProjectRoot() + "\\Asset";
 
-					LoadAsset();
+					LoadAsset(true);
 				}
 				if (ImGui::MenuItem("Save", "Ctrl+S"))
 				{
@@ -180,7 +180,7 @@ namespace yellowEditor
 
 			if (ImGui::BeginMenu("Edit"))
 			{
-				if (ImGui::MenuItem("Undo", "CTRL+Z")) { std::cout << "!"; }
+				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
 				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
 				ImGui::Separator();
 				if (ImGui::MenuItem("Cut", "CTRL+X")) {}

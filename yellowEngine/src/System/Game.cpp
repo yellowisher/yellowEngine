@@ -79,12 +79,6 @@ namespace yellowEngine
 	}
 
 
-	std::string Game::getAssetPath(const char* fileName)
-	{
-		return __instance->_assetPath + fileName;
-	}
-
-
 	void Game::addUpdatable(IUpdatable* target)
 	{
 		__instance->_updatables.push_back(target);

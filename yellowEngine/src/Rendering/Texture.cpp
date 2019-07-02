@@ -11,9 +11,10 @@ namespace yellowEngine
 	map<string, Texture*> Texture::__textureCache;
 
 
-	Texture::Texture(int internalFormat, int width, int height, int format, GLenum type,
+	Texture::Texture(const char* name, int internalFormat, int width, int height, int format, GLenum type,
 					 int wrap, int filter, bool generateMipMap, const void* data)
 	{
+		_name = name;
 		glGenTextures(1, &_id);
 		glBindTexture(GL_TEXTURE_2D, _id);
 
@@ -34,12 +35,9 @@ namespace yellowEngine
 	}
 
 
-	Texture* Texture::create(const char* path, bool absolute, int wrap, int filter)
+	Texture* Texture::create(const char* path, int wrap, int filter)
 	{
-		std::string fullpath = path;
-		if (!absolute) fullpath = Game::getAssetPath(path);
-
-		auto it = __textureCache.find(fullpath);
+		auto it = __textureCache.find(path);
 		if (it != __textureCache.end())
 		{
 			return it->second;
@@ -48,11 +46,11 @@ namespace yellowEngine
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
 
-		unsigned char* data = stbi_load(fullpath.c_str(), &width, &height, &channels, 0);
+		unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
 
 		if (!data)
 		{
-			Utils::print(("Cannot read file " + fullpath).c_str());
+			Utils::print("Cannot read textrue file");
 			return nullptr;
 		}
 
@@ -61,10 +59,12 @@ namespace yellowEngine
 		else if (channels == 3)format = GL_RGB;
 		else if (channels == 4)format = GL_RGBA;
 
-		Texture* texture = new Texture(format, width, height, format, GL_UNSIGNED_BYTE, wrap, filter, true, data);
+		Texture* texture = new Texture(
+			path, format, width, height,
+			format, GL_UNSIGNED_BYTE, wrap, filter, true, data);
 		stbi_image_free(data);
 
-		__textureCache.insert({ fullpath, texture });
+		__textureCache.insert({ path, texture });
 		return texture;
 	}
 

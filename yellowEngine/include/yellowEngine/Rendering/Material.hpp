@@ -23,21 +23,19 @@ namespace yellowEngine
 		struct Property
 		{
 			Property() {};
-			Property(const Property& copy) { memcpy(this, &copy, sizeof(Property)); }
 			~Property() {};
 
+			std::string type;
 			union
 			{
 				int intValue;
 				float floatValue;
-				Vector2 vector2Value;
-				Vector3 vector3Value;
-				Vector4 vector4Value;
-				Matrix matrixValue;
+				Vector3 colorValue;
 			};
 		};
 
 		static Material* create(const char* path);
+		static void saveAsFile(Material* material, const char* path);
 
 		void setTechnique(Technique* technique, const char* defaultVsPath, const char* defaultFsPath);
 		void bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath);
@@ -47,10 +45,7 @@ namespace yellowEngine
 		void setProperty(const char* name, Texture* texture);
 		void setProperty(const char* name, int value);
 		void setProperty(const char* name, float value);
-		void setProperty(const char* name, Vector2 value);
 		void setProperty(const char* name, Vector3 value);
-		void setProperty(const char* name, Vector4 value);
-		void setProperty(const char* name, Matrix value);
 		
 	private:
 		static std::map<std::string, Material*> _materialCache;

@@ -13,19 +13,21 @@ namespace yellowEngine
 	{
 		friend class FrameBuffer;
 	public:
-		static Texture* create(const char* path, bool absolute = false, int wrap = GL_REPEAT, int filter = GL_NEAREST);
+		static Texture* create(const char* path, int wrap = GL_REPEAT, int filter = GL_NEAREST);
 
 		void bind();
 		void unbind();
+		const std::string& getName() { return _name; }
 
 	private:
 		static map<string, Texture*> __textureCache;
 
-		Texture(int internalFormat, int width, int height, int format,  GLenum type,
+		Texture(const char* name, int internalFormat, int width, int height, int format, GLenum type,
 				int wrap = GL_REPEAT, int filter = GL_NEAREST, bool generateMipMap = false, const void* data = nullptr);
 		~Texture();
 		
 		unsigned int _id;
+		std::string _name;
 	};
 }
 

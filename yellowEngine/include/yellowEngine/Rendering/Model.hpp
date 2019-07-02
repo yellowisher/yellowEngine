@@ -20,7 +20,7 @@ namespace yellowEngine
 	class Model
 	{
 	public:
-		static Model* create(const char* path, bool absolute = false);
+		static Model* create(const char* path);
 		
 		GameObject* instantiate(const char* name);
 		const std::map<std::string, AnimationClip*>& getClips() { return _clips; }

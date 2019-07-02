@@ -20,7 +20,7 @@ namespace yellowEngine
 	void FrameBuffer::addColorAttachment(
 		const char* usage, int internalFormat, int width, int height, int format, GLenum type)
 	{
-		_colorBuffers.push_back({ usage,  new Texture(internalFormat, width, height, format, type) });
+		_colorBuffers.push_back({ usage,  new Texture(usage, internalFormat, width, height, format, type) });
 	}
 
 
