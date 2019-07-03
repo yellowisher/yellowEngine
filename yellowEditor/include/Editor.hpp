@@ -23,7 +23,8 @@ namespace yellowEditor
 		static ImGuiWindowFlags getBaseWindowFlag();
 		static const Window& getEditorWindow();
 		static const Window& getGameWindow();
-		static Transform*& getSelectedTransform();
+		static Transform* getSelectedTransform();
+		static std::string getSelectedAsset();
 		static GLuint getSceneTexture();	
 		static Camera* getEditorCamera();
 		static void createEditorCamera();
@@ -31,6 +32,9 @@ namespace yellowEditor
 
 		static std::string& getProjectRoot();
 		static std::string& getAssetPath();
+
+		static void selectHierarchyItem(Transform* item);
+		static void selectAssetItem(std::string item);
 
 	private:
 		static Editor* __instance;
@@ -44,8 +48,10 @@ namespace yellowEditor
 		Window& _editorWindow;
 		Window& _gameWindow;
 		GLuint _sceneTexture;
-		Transform* _selectedTransform;
 		Camera* _editorCamera;
+		
+		Transform* _selectedTransform;
+		std::string _selectedAsset;
 
 		std::string _projectRoot;
 		std::string _assetPath;

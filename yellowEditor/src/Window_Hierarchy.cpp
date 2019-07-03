@@ -29,6 +29,24 @@ namespace yellowEditor
 						Transform::Root->addChild(ptr);
 					}
 				}
+
+				payload = ImGui::AcceptDragDropPayload("Asset");
+				if (payload != nullptr)
+				{
+					char* path = (char*)payload->Data;
+					if(
+						strstr(path, ".fbx") != nullptr ||
+						strstr(path, ".blend") != nullptr ||
+						strstr(path, ".obj") != nullptr)
+					{
+						Model* model = Model::create(path);
+						if (model != nullptr)
+						{
+							model->instantiate("New Model");
+						}
+					}
+				}
+
 				ImGui::EndDragDropTarget();
 			}
 
@@ -69,13 +87,13 @@ namespace yellowEditor
 		ImGui::SameLine();
 		if (ImGui::Selectable(target->gameObject->getName().c_str(), &selected))
 		{
-			Editor::getSelectedTransform() = target;
+			Editor::selectHierarchyItem(target);
 		}
 
 		if (ImGui::IsItemClicked(1))
 		{
 			ImGui::OpenPopup("GameObject Edit");
-			Editor::getSelectedTransform() = target;
+			Editor::selectHierarchyItem(target);
 		}
 
 		if (ImGui::BeginPopup("GameObject Edit"))
@@ -84,7 +102,7 @@ namespace yellowEditor
 			ImGui::Separator();
 			if (ImGui::Selectable("Delete"))
 			{
-				if (target == Editor::getSelectedTransform()) Editor::getSelectedTransform() = nullptr;
+				if (target == Editor::getSelectedTransform()) Editor::selectHierarchyItem(nullptr);
 				delete(target->gameObject);
 				ImGui::CloseCurrentPopup();
 			}

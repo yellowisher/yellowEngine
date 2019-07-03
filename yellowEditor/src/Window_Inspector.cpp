@@ -114,6 +114,16 @@ namespace yellowEditor
 					ImGui::EndPopup();
 				}
 			}
+			else if (Editor::getSelectedAsset().length() != 0)
+			{
+				std::string asset = Editor::getSelectedAsset();
+				std::string ext = asset.substr(asset.length() - 3, 3);
+
+				if (ext == "yem")
+				{
+					InspectMaterial(Material::create(Editor::getSelectedAsset().c_str()));
+				}
+			}
 		}
 		ImGui::End();
 	}

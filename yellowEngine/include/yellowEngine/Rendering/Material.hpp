@@ -20,9 +20,19 @@ namespace yellowEngine
 		friend class Technique;
 
 	public:
+		enum Primitive
+		{
+			Primitive_Float,
+			Primitive_Texture,
+			Primitive_Color
+		};
+
+		static std::map<std::string, Primitive> stringToPrimitive;
+
 		struct Property
 		{
 			Property() {};
+			Property(const Property& copy) { type = copy.type; colorValue = copy.colorValue; }
 			~Property() {};
 
 			std::string type;
@@ -41,6 +51,8 @@ namespace yellowEngine
 		void bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath);
 		void unbind();
 		std::string getPath();
+		std::map<std::string, Property> getProperties() { return _properties; }
+		std::map<std::string, Texture*> getTextures() { return _textures; };
 
 		void setProperty(const char* name, Texture* texture);
 		void setProperty(const char* name, int value);

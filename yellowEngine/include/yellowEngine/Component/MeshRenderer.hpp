@@ -25,6 +25,7 @@ namespace yellowEngine
 		virtual void onValueChanged() override;
 
 		Mesh* getMesh() { return _mesh; }
+		Material* getMaterial() { return _material; }
 		MeshRenderer* set(Mesh* mesh, Material* material);
 		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) override;
 

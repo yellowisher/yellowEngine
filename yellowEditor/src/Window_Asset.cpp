@@ -19,6 +19,9 @@ namespace yellowEditor
 	static GLuint fileTexture;
 
 	static std::string draggingPath = "";
+	static bool changingName = false;
+	static const int buffSize = 64;
+	static char buff[buffSize] = "";
 
 	void Init_AssetWindow()
 	{
@@ -47,6 +50,7 @@ namespace yellowEditor
 	{
 		if (ImGui::Begin("Asset", nullptr, Editor::getBaseWindowFlag()))
 		{
+			if (!ImGui::IsWindowFocused()) { changingName = false; }
 			if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered())
 			{
 				ImGui::OpenPopup("AssetPopup");
@@ -98,7 +102,8 @@ namespace yellowEditor
 
 				ImGui::BeginGroup();
 
-				ImGui::ImageButtonCustom((ImTextureID)(isFolder ? folderTexture : fileTexture), buttonSize);
+				bool selected = Editor::getSelectedAsset() == workingDirectory + "\\" + path;
+				ImGui::ImageButtonCustom((ImTextureID)(isFolder ? folderTexture : fileTexture), buttonSize, selected);
 				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered() && isFolder)
 				{
 					// just appending \\.. might lead to crash
@@ -115,6 +120,10 @@ namespace yellowEditor
 					ImGui::PopID();
 					break;
 				}
+				else if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered() && !isFolder)
+				{
+					Editor::selectAssetItem(workingDirectory + "\\" + path);
+				}
 
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptPeekOnly))
 				{
@@ -123,22 +132,46 @@ namespace yellowEditor
 					ImGui::EndDragDropSource();
 				}
 
-				// in case too long file name
-				if (ImGui::CalcTextSize(name.c_str()).x > buttonSize.x)
+				if (selected && ImGui::IsKeyDown(GLFW_KEY_F2))
 				{
-					float left = buttonSize.x - ImGui::CalcTextSize("...").x;
-					for (int i = 1; i < name.length(); i++)
+					changingName = true;
+					memset(buff, 0, buffSize);
+					memcpy(buff, path.c_str(), path.size());
+				}
+
+				if (selected && changingName)
+				{
+					float cursor = ImGui::GetCursorPosX() + buttonSize.x / 2.0f - ImGui::CalcTextSize(name.c_str()).x / 2.0f;
+					ImGui::SetCursorPosX(cursor);
+					ImGui::SetNextItemWidth(ImGui::CalcTextSize(name.c_str()).x);
+					if (ImGui::InputText("", buff, buffSize, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
 					{
-						if (ImGui::CalcTextSize(name.c_str(), name.c_str() + i).x > left)
-						{
-							name = name.substr(0, i) + "...";
-							break;
-						}
+						std::string oldName = workingDirectory + "\\" + path;
+						std::string newName = workingDirectory + "\\" + std::string(buff);
+						rename(oldName.c_str(), newName.c_str());
+						changingName = false;
+						LoadAsset();
 					}
 				}
-				float cursor = ImGui::GetCursorPosX() + buttonSize.x / 2.0f - ImGui::CalcTextSize(name.c_str()).x / 2.0f;
-				ImGui::SetCursorPosX(cursor);
-				ImGui::Text(name.c_str());
+				else
+				{
+					// in case too long file name
+					if (ImGui::CalcTextSize(name.c_str()).x > buttonSize.x)
+					{
+						float left = buttonSize.x - ImGui::CalcTextSize("..").x;
+						for (int i = 1; i < name.length(); i++)
+						{
+							if (ImGui::CalcTextSize(name.c_str(), name.c_str() + i).x > left)
+							{
+								name = name.substr(0, i + 1) + "..";
+								break;
+							}
+						}
+					}
+					float cursor = ImGui::GetCursorPosX() + buttonSize.x / 2.0f - ImGui::CalcTextSize(name.c_str()).x / 2.0f;
+					ImGui::SetCursorPosX(cursor);
+					ImGui::Text(name.c_str());
+				}
 				ImGui::EndGroup();
 
 				float last_button_x2 = ImGui::GetItemRectMax().x;

@@ -13,8 +13,9 @@ using namespace yellowEngine;
 namespace yellowEditor
 {
 	void InspectComponent(yellowEngine::Component* component);
+	void InspectMaterial(Material* material);
 
-	static void drawPropertyBase(Component::Property prop);
+	static void drawPropertyBase(const char* name, float width = 0.3f);
 	static bool	property_float(Component* comp, Component::Property prop);
 	static bool	property_Vector2(Component* comp, Component::Property prop);
 	static bool	property_Vector3(Component* comp, Component::Property prop);

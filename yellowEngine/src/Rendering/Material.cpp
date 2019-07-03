@@ -10,21 +10,12 @@
 // TODO: rework material serialization method; not bunch of enum
 namespace yellowEngine
 {
-	enum Primitive
-	{
-		Primitive_Float,
-		Primitive_Texture,
-		Primitive_Color
-	};
-
-	static std::map<std::string, Primitive> stringToPrimitive = {
-		{"float", Primitive_Float},
-		{"texture", Primitive_Texture},
-		{"color", Primitive_Color}
-	};
-
 	std::map<std::string, Material*> Material::_materialCache;
-
+	std::map<std::string, Material::Primitive> Material::stringToPrimitive = {
+		{"float", Material::Primitive_Float},
+		{"texture", Material::Primitive_Texture},
+		{"color", Material::Primitive_Color}
+	};
 
 	Material* Material::create(const char* path)
 	{
@@ -132,7 +123,8 @@ namespace yellowEngine
 		_materialCache.insert({ path, this });
 
 		// set default values
-		setProperty("u_Material.color", Vector3(1.0f, 1.0f, 1.0f));
+		setProperty("u_Material.diffuseColor", Vector3(1.0f, 1.0f, 1.0f));
+		setProperty("u_Material.specularColor", Vector3(1.0f, 1.0f, 1.0f));
 		setProperty("u_Material.diffuse", Texture::create("./res/Texture/default_diffuse.png"));
 		setProperty("u_Material.specular", Texture::create("./res/Texture/default_specular.png"));
 	}

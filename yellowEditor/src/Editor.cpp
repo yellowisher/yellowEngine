@@ -29,6 +29,7 @@ namespace yellowEditor
 			__instance = this;
 		}
 		_selectedTransform = nullptr;
+		_selectedAsset = "";
 
 		const char* glsl_version = "#version 330";
 
@@ -102,9 +103,15 @@ namespace yellowEditor
 	}
 
 
-	Transform*& Editor::getSelectedTransform()
+	Transform* Editor::getSelectedTransform()
 	{
 		return __instance->_selectedTransform;
+	}
+
+
+	std::string Editor::getSelectedAsset()
+	{
+		return __instance->_selectedAsset;
 	}
 
 
@@ -127,14 +134,30 @@ namespace yellowEditor
 		__instance->_editorCamera->transform->setPosition(0, 0, 5);
 	}
 
+
 	std::string& Editor::getProjectRoot()
 	{
 		return __instance->_projectRoot;
 	}
 
+
 	std::string& Editor::getAssetPath()
 	{
 		return __instance->_assetPath;
+	}
+
+
+	void Editor::selectHierarchyItem(Transform* item)
+	{
+		__instance->_selectedAsset.clear();
+		__instance->_selectedTransform = item;
+	}
+
+
+	void Editor::selectAssetItem(std::string item)
+	{
+		__instance->_selectedTransform = nullptr;
+		__instance->_selectedAsset = item;
 	}
 
 
@@ -175,6 +198,23 @@ namespace yellowEditor
 				}
 				if (ImGui::MenuItem("Save As..")) {}
 				ImGui::Separator();
+
+				if (ImGui::MenuItem("New Scene"))
+				{
+					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, true);
+					LoadAsset();
+				}
+				if (ImGui::MenuItem("Open Scene"))
+				{
+					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, false);
+					SceneManager::loadScene(path.c_str());
+				}
+				if (ImGui::MenuItem("Save Scene"))
+				{
+					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, true);
+					SceneManager::saveScene(path.append(".yes").c_str());
+					LoadAsset();
+				}
 				ImGui::EndMenu();
 			}
 

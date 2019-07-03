@@ -29,7 +29,7 @@ namespace yellowEditor
 			{
 				// we know about the type
 				ImGui::PushID(prop.name.c_str());
-				drawPropertyBase(prop);
+				drawPropertyBase(prop.name.c_str());
 				valueChanged = handlers[prop.type](component, prop);
 				ImGui::PopID();
 			}
@@ -43,7 +43,7 @@ namespace yellowEditor
 				{
 					const auto& values = it->second;
 					ImGui::PushID(prop.name.c_str());
-					drawPropertyBase(prop);
+					drawPropertyBase(prop.name.c_str());
 					int* indexPtr = (int*)(((size_t)component) + prop.offset);
 
 					if (ImGui::Button(values[*indexPtr].c_str())) ImGui::OpenPopup(prop.name.c_str());
@@ -67,10 +67,61 @@ namespace yellowEditor
 
 	}
 
-	static void drawPropertyBase(Component::Property prop)
+	void InspectMaterial(Material* material)
 	{
-		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.3f);
-		ImGui::LabelText("", prop.name.c_str()); ImGui::SameLine(0, SpacingForLabel);
+		std::string mat = "u_Material.";
+		bool valueChanged = false;
+		for (auto namePropPair : material->getProperties())
+		{
+			std::string prettyName = namePropPair.first.substr(mat.length());
+			ImGui::PushID(namePropPair.first.c_str());
+			drawPropertyBase(prettyName.c_str());
+			switch (Material::stringToPrimitive[namePropPair.second.type])
+			{
+				case Material::Primitive_Float:
+				{
+					static const char* names[] = { "" };
+					float value = namePropPair.second.floatValue;
+					if (ImGui::DragFloatNWithLabel(names, &value, 1, 0.05f))
+					{
+						material->setProperty(namePropPair.first.c_str(), value);
+						valueChanged = true;
+					}
+					break;
+				}
+				case Material::Primitive_Color:
+				{
+					Vector3 color = namePropPair.second.colorValue;
+					if (ImGui::ColorEdit3("", color.v))
+					{
+						material->setProperty(namePropPair.first.c_str(), color);
+						valueChanged = true;
+					}
+					break;
+				}
+			}
+			ImGui::PopID();
+		}
+
+		for (auto nameTexturePair : material->getTextures())
+		{
+			std::string prettyName = nameTexturePair.first.substr(mat.length());
+			ImGui::PushID(nameTexturePair.first.c_str());
+			drawPropertyBase(prettyName.c_str());
+			ImGui::Button(nameTexturePair.second->getName().c_str());
+			ImGui::PopID();
+		}
+
+		if (valueChanged)
+		{
+			Material::saveAsFile(material, material->getPath().c_str());
+		}
+	}
+
+	static void drawPropertyBase(const char* name, float width)
+	{
+		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * width);
+		ImGui::LabelText("", name); ImGui::SameLine(0, SpacingForLabel);
 	}
 
 
@@ -120,12 +171,14 @@ namespace yellowEditor
 			{
 				if (payload != nullptr)
 				{
-					//std::string path = *((std::string*)(&payload->Data));
 					char* path = (char*)payload->Data;
-					if (Mesh::create(path) != nullptr)
+					if (strstr(path, ".obj") != nullptr)
 					{
-						*meshPath = path;
-						changed = true;
+						if (Mesh::create(path) != nullptr)
+						{
+							*meshPath = path;
+								changed = true;
+						}
 					}
 				}
 			}
@@ -148,10 +201,13 @@ namespace yellowEditor
 				if (payload != nullptr)
 				{
 					char* path = (char*)payload->Data;
-					if (Material::create(path) != nullptr)
+					if (strstr(path, ".yem") != nullptr)
 					{
-						*materialPath = path;
-						changed = true;
+						if (Material::create(path) != nullptr)
+						{
+							*materialPath = path;
+							changed = true;
+						}
 					}
 				}
 			}

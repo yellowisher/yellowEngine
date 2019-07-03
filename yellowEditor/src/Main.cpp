@@ -9,8 +9,8 @@
 using namespace yellowEngine;
 using namespace yellowEditor;
 
-GLuint* gameData;
-GLuint* gameDataFlipped;
+GLubyte* gameData;
+GLubyte* gameDataFlipped;
 GLuint sceneTexture;
 
 int main()
@@ -38,7 +38,7 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, sceneTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow.width, gameWindow.height, 0, GL_RGB, GL_UNSIGNED_INT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow.width, gameWindow.height, 0, GL_RGB, GL_BYTE, nullptr);
 
 	Editor* editor = new Editor(editorWindow, gameWindow, sceneTexture);
 
@@ -50,8 +50,8 @@ int main()
 	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
 	game->init();
 
-	gameData        = new GLuint[gameWindow.width * gameWindow.height * 3];
-	gameDataFlipped = new GLuint[gameWindow.width * gameWindow.height * 3];
+	gameData        = new GLubyte[gameWindow.width * gameWindow.height * 3];
+	gameDataFlipped = new GLubyte[gameWindow.width * gameWindow.height * 3];
 
 #pragma region Scene
 	//Mesh* boxMesh = Mesh::create("Mesh/cube.obj");
@@ -64,6 +64,15 @@ int main()
 	//GameObject* box = new GameObject("Box1");
 	//auto renderer = box->addComponent<MeshRenderer>();
 	//renderer->set(boxMesh, boxMaterial);
+
+	Model* chairModel = Model::create("./res/Mesh/chair/trn_ChairSimple.fbx");
+	GameObject* chair = chairModel->instantiate("chair");
+	auto albeo = Texture::create("./res/Mesh/chair/trn_ChairSimple_AlbedoTransparency.png");
+	auto spec = Texture::create("./res/Mesh/chair/trn_ChairSimple_MetallicSmoothness.png");
+
+	auto mr = chair->transform->getChild(0)->gameObject->getComponent<MeshRenderer>();
+	mr->getMaterial()->setProperty("u_Material.diffuse", albeo);
+	mr->getMaterial()->setProperty("u_Material.specular", spec);
 
 	Model* sphere = Model::create("./res/Mesh/sphere.obj");
 	sphere->instantiate("Sphere");
@@ -122,14 +131,14 @@ int main()
 			glfwSwapBuffers(gameWindow.handle);
 		}
 
-		glReadPixels(0, 0, gameWindow.width, gameWindow.height, GL_RGB, GL_UNSIGNED_INT, gameData);
+		glReadPixels(0, 0, gameWindow.width, gameWindow.height, GL_RGB, GL_BYTE, gameData);
 		// flip y axis of scene data
 		for (int y = 0; y < gameWindow.height; y++)
 		{
 			memcpy(
 				gameDataFlipped + (y * gameWindow.width * 3),
 				gameData		+ ((gameWindow.height - 1 - y) * gameWindow.width * 3),
-				gameWindow.width * 3 * sizeof(GLuint));
+				gameWindow.width * 3 * sizeof(GLubyte));
 		}
 
 		// then update main window
@@ -137,7 +146,7 @@ int main()
 		{
 			// copy data into texture
 			glBindTexture(GL_TEXTURE_2D, sceneTexture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow.width, gameWindow.height, 0, GL_RGB, GL_UNSIGNED_INT, gameDataFlipped);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameWindow.width, gameWindow.height, 0, GL_RGB, GL_BYTE, gameDataFlipped);
 
 			glfwPollEvents();
 			glClear(GL_COLOR_BUFFER_BIT);
