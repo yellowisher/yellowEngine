@@ -13,6 +13,13 @@ namespace yellowEngine
 
 	Technique_Deferred::Technique_Deferred()
 	{
+		// shadow frame buffer
+		_shadowBuffer.addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
+		_shadowBuffer.init();
+
+		_shadowMappingShader = Shader::create("./res/Shader/shadow.vert", "./res/Shader/shadow.frag");
+
+		// shading frame buffer
 		_geometryBuffer.addColorAttachment("u_PositionMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		_geometryBuffer.addColorAttachment("u_NormalMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		_geometryBuffer.addColorAttachment("u_ColorMap", GL_RGBA, Display::width, Display::height, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -29,7 +36,7 @@ namespace yellowEngine
 		_lightShaders[Light::LightType_Dir  ] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_dir.frag");
 		_lightShaders[Light::LightType_Spot ] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_spot.frag");
 		_lightShaders[Light::LightType_Point] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_point.frag");
-		_stencilShader = Shader::create("./res/Shader/null.vert", "./res/Shader/null.frag");
+		_nullShader = Shader::create("./res/Shader/null.vert", "./res/Shader/null.frag");
 	}
 
 
@@ -37,11 +44,39 @@ namespace yellowEngine
 	{
 	}
 
-
+	static Matrix lightMatrix;
 	void Technique_Deferred::_renderScene(Camera* camera)
 	{
 		Camera::currentCamera = camera;
 
+		// shadow
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+
+		Matrix lightProjection = Matrix::createOrthographic(10.0f, 10.0f, 0.1f, 100.0f);
+		Matrix lightView = Light::getLights(Light::LightType_Dir)[0]->transform->getInverseMatrix();
+
+		Transform* cam = Light::getLights(Light::LightType_Dir)[0]->transform;
+		Matrix lookAt = Matrix::lookAt(cam->position, cam->position + cam->getForward(), Vector3::up);
+
+		lightMatrix = lightProjection * lightView;
+		//lightMatrix = lightProjection * lookAt;
+
+		_shadowMappingShader->bind();
+		_shadowMappingShader->setUniform("u_LightProjView", lightMatrix);
+
+		_shadowBuffer.bindForDrawing();
+
+		glViewport(0, 0, Display::width, Display::height);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		_shadowBuffer.getShadowTexture()->bind();
+
+		ObjectRenderer::renderAll("./res/Shader/shadow.vert", "./res/Shader/shadow.frag");
+		glDepthMask(GL_FALSE);
+		_shadowBuffer.unbind();
+
+		//shading
 		_geometryBuffer.bindForDrawing();
 		_geometryBuffer.setDrawBuffer(Final);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -68,6 +103,7 @@ namespace yellowEngine
 		glDisable(GL_STENCIL_TEST);
 		
 		_geometryBuffer.setDrawBuffer(Final);
+
 		dirLightPass();
 
 		_geometryBuffer.unbind();
@@ -115,7 +151,7 @@ namespace yellowEngine
 
 	void Technique_Deferred::spotLightStencilPass(const Light* light)
 	{
-		_stencilShader->bind();
+		_nullShader->bind();
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
@@ -140,10 +176,10 @@ namespace yellowEngine
 		float scaleZ = depth / 2.0f;
 		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(scaleXY, scaleXY, scaleZ));
 
-		_stencilShader->setUniform("u_ProjViewWorld", pvw);
+		_nullShader->setUniform("u_ProjViewWorld", pvw);
 
 		auto type = Light::LightType_Spot;
-		VertexLayoutBinding::create(_meshes[type], _stencilShader)->bind();
+		VertexLayoutBinding::create(_meshes[type], _nullShader)->bind();
 		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
 	}
 
@@ -195,7 +231,7 @@ namespace yellowEngine
 
 	void Technique_Deferred::pointStencilPass(const Light* light)
 	{
-		_stencilShader->bind();
+		_nullShader->bind();
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
@@ -214,10 +250,10 @@ namespace yellowEngine
 		float radius = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
 
 		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(radius, radius, radius));
-		_stencilShader->setUniform("u_ProjViewWorld", pvw);
+		_nullShader->setUniform("u_ProjViewWorld", pvw);
 
 		auto type = Light::LightType_Point;
-		VertexLayoutBinding::create(_meshes[type], _stencilShader)->bind();
+		VertexLayoutBinding::create(_meshes[type], _nullShader)->bind();
 		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
 	}
 
@@ -269,13 +305,15 @@ namespace yellowEngine
 
 		_lightShaders[type]->bind();
 
-		_lightShaders[type]->setUniform("u_ScreenSize", Vector2(Display::width, Display::height));
+		// shadow 
+		_lightShaders[type]->setUniform("u_LightProjView", lightMatrix);
 		_lightShaders[type]->setUniform("u_CameraPosition", Camera::currentCamera->transform->getWorldPosition());
 		auto v = Camera::currentCamera->transform->getWorldPosition();
 
+		int i = 0;
 		const auto& textureNames = _lightShaders[type]->getTextureUnits();
 		const auto& colorBuffers = _geometryBuffer.getColorBuffers();
-		for (int i = 0; i < textureNames.size(); i++)
+		for (; i < textureNames.size(); i++)
 		{
 			for (auto it = colorBuffers.begin(); it != colorBuffers.end(); ++it)
 			{
@@ -287,6 +325,10 @@ namespace yellowEngine
 				}
 			}
 		}
+
+		// shdow map
+		glActiveTexture(GL_TEXTURE0 + i - 1);
+		_shadowBuffer.getShadowTexture()->bind();
 
 		VertexLayoutBinding::create(_meshes[type], _lightShaders[type])->bind();
 	}

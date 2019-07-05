@@ -17,6 +17,16 @@ namespace yellowEngine
 	}
 
 
+	Vector3 Vector3::cross(const Vector3 & v0, const Vector3 v1)
+	{
+		Vector3 result;
+		result.x = v0.y * v1.z - v0.z * v1.y;
+		result.y = v0.z * v1.x - v0.x * v1.z;
+		result.z = v0.x * v1.y - v0.y * v1.z;
+		return result;
+	}
+
+
 	Vector3::Vector3()
 	{
 		set(0, 0, 0);

@@ -28,11 +28,15 @@ namespace yellowEngine
 		void pointLightPass(const Light* light);
 		void lightPassBase(Light::LightType type);
 
+		// TODO: separate shadow and shading passes
+		FrameBuffer _shadowBuffer;
+
 		FrameBuffer _geometryBuffer;
 		const char* _geometryFsPath;
 		Mesh* _meshes[Light::Num_LightType];
 		Shader* _lightShaders[Light::Num_LightType];
-		Shader* _stencilShader;
+		Shader* _shadowMappingShader;
+		Shader* _nullShader;
 	};
 }
 

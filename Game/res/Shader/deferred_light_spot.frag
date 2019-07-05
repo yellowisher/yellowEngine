@@ -11,7 +11,7 @@ struct SpotLight
 	float outerCutoffCos;
 
 	vec3 color;
-	float ambiendIntensity;
+	float ambientIntensity;
 	float diffuseIntensity;
 };
 
@@ -42,7 +42,7 @@ void main()
 	float dist = length(fragToLightDir);
 	fragToLightDir = normalize(fragToLightDir);
 
-	vec3 ambient = u_Light.color * u_Light.ambiendIntensity * color.rgb;
+	vec3 ambient = u_Light.color * u_Light.ambientIntensity * color.rgb;
 
 	float diff = max(dot(normal, fragToLightDir), 0.0);
 	vec3 diffuse = u_Light.color * u_Light.diffuseIntensity * color.rgb * diff;
@@ -51,7 +51,7 @@ void main()
 	vec3 halfVector = normalize(fragToLightDir + fragToCamera);
 	// where to set shiness?
 	float spec = clamp(pow(dot(normal, halfVector), 32), 0.0, 1.0);
-	vec3 specular = vec3(color.a * spec);
+	vec3 specular = vec3(color.a * spec * u_Light.diffuseIntensity);
 
 	// should make sure where is Z+ direction...
 	float theta = dot(-fragToLightDir, u_Light.direction); 
@@ -69,5 +69,4 @@ void main()
 		dist * dist * u_Attenuation.quadratic;
 
 	o_FragColor = vec4(combined / attenuation, 1.0);
-	//o_FragColor = vec4(vec3(1.0, 1.0, 1.0) + (combined / attenuation)*0.00001, 1.0);
 }

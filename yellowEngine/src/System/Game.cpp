@@ -41,6 +41,7 @@ namespace yellowEngine
 	void Game::update()
 	{
 		_colliderManager->detect();
+		Animator::proceedAll();
 
 		for (auto updatable : _updatables)
 		{

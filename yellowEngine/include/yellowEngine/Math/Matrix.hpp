@@ -20,6 +20,8 @@ namespace yellowEngine
 		static Matrix createTranslation(Vector3 translation);
 		static Matrix createRotation(Quaternion rotation);
 		static Matrix createScale(Vector3 scale);
+		static Matrix lookAt(Vector3 eye, Vector3 target, Vector3 up);
+		static Matrix lookAtDir(Vector3 eye, Vector3 dir, Vector3 up);
 
 		float determinant() const;
 		Vector3 extractTranslation() const;

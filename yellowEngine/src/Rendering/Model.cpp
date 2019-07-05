@@ -100,7 +100,7 @@ namespace yellowEngine
 					{
 						joints.push_back({ node->transform,node->offset });
 					}
-					//renderer->set(node->mesh, node->material, joints, rootObject->transform);
+					renderer->set(node->mesh, node->material, joints, rootObject->transform);
 				}
 
 				for (auto child : node->children)
@@ -310,9 +310,6 @@ namespace yellowEngine
 		VertexLayout layout(attributes);
 		int stride = layout.getVertexSize() / sizeof(float);
 
-		int jointOffset = 0;
-		int weightOffset = 0;
-
 		float* vertices = new float[stride * aiMesh->mNumVertices];
 		for (auto attrPair : layout.getAttributes())
 		{
@@ -324,7 +321,7 @@ namespace yellowEngine
 				{
 					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
 					{
-						vertices[cursor] = aiMesh->mVertices[i].x;
+						vertices[cursor    ] = aiMesh->mVertices[i].x;
 						vertices[cursor + 1] = aiMesh->mVertices[i].y;
 						vertices[cursor + 2] = aiMesh->mVertices[i].z;
 					}
@@ -335,7 +332,7 @@ namespace yellowEngine
 				{
 					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
 					{
-						vertices[cursor] = aiMesh->mNormals[i].x;
+						vertices[cursor    ] = aiMesh->mNormals[i].x;
 						vertices[cursor + 1] = aiMesh->mNormals[i].y;
 						vertices[cursor + 2] = aiMesh->mNormals[i].z;
 					}
@@ -346,7 +343,7 @@ namespace yellowEngine
 				{
 					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
 					{
-						vertices[cursor] = aiMesh->mTextureCoords[0][i].x;
+						vertices[cursor    ] = aiMesh->mTextureCoords[0][i].x;
 						vertices[cursor + 1] = aiMesh->mTextureCoords[0][i].y;
 					}
 				}
@@ -376,26 +373,32 @@ namespace yellowEngine
 			indices[i * 3 + 2] = aiMesh->mFaces[i].mIndices[2];
 		}
 
-		currentNode->jointNodes.resize(aiMesh->mNumBones);
-		for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
+		if (aiMesh->HasBones())
 		{
-			Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
-			currentNode->jointNodes[b] = jointNode;
-			for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
+			int jointOffset = layout.getAttr("a_Joints").offset / sizeof(float);
+			int weightOffset = layout.getAttr("a_Weights").offset / sizeof(float);
+
+			currentNode->jointNodes.resize(aiMesh->mNumBones);
+			for (unsigned int b = 0; b < aiMesh->mNumBones; b++)
 			{
-				int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
-				int vi_j = stride * vi + jointOffset;
-				int vi_w = stride * vi + weightOffset;
+				Node* jointNode = _nodes[aiMesh->mBones[b]->mName.C_Str()];
+				currentNode->jointNodes[b] = jointNode;
+				for (unsigned int w = 0; w < aiMesh->mBones[b]->mNumWeights; w++)
+				{
+					int vi = aiMesh->mBones[b]->mWeights[w].mVertexId;
+					int vi_j = stride * vi + jointOffset;
+					int vi_w = stride * vi + weightOffset;
 
-				int wi = 0;
-				while (wi < MaxJointCount && vertices[vi_w + wi] != NullWeight) wi++;
-				if (wi >= MaxJointCount) continue;
+					int wi = 0;
+					while (wi < MaxJointCount && vertices[vi_w + wi] != NullWeight) wi++;
+					if (wi >= MaxJointCount) continue;
 
-				vertices[vi_j + wi] = (float)b;
-				vertices[vi_w + wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
+					vertices[vi_j + wi] = (float)b;
+					vertices[vi_w + wi] = aiMesh->mBones[b]->mWeights[w].mWeight;
+				}
+
+				copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
 			}
-
-			copyMatrix(aiMesh->mBones[b]->mOffsetMatrix, jointNode->offset);
 		}
 
 		std::string meshPath = _directory;
@@ -409,6 +412,10 @@ namespace yellowEngine
 		materialPath.Append(".yem");
 
 		Material* material = new Material(materialPath.C_Str());
+		if (aiMesh->HasBones())
+		{
+			material->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "./res/Shader/skeletal.vert", "./res/Shader/default.frag");
+		}
 
 		aiMaterial* aMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 		aiString texturePath;
@@ -417,7 +424,11 @@ namespace yellowEngine
 			aMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
 			texturePath = _directory + texturePath.C_Str();
 
-			material->setProperty("u_Material.diffuse", Texture::create(texturePath.C_Str(), true));
+			auto texture = Texture::create(texturePath.C_Str());
+			if (texture)
+			{
+				material->setProperty("u_Material.diffuse", texture);
+			}
 		}
 
 		if (aMaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
@@ -425,7 +436,11 @@ namespace yellowEngine
 			aMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texturePath);
 			texturePath = _directory + texturePath.C_Str();
 
-			material->setProperty("u_Material.specular", Texture::create(texturePath.C_Str(), true));
+			auto texture = Texture::create(texturePath.C_Str());
+			if (texture)
+			{
+				material->setProperty("u_Material.specular", texture);
+			}
 		}
 		return { mesh, material };
 	}

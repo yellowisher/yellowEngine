@@ -65,16 +65,15 @@ int main()
 	//auto renderer = box->addComponent<MeshRenderer>();
 	//renderer->set(boxMesh, boxMaterial);
 
-	Model* chairModel = Model::create("./res/Mesh/chair/trn_ChairSimple.fbx");
-	GameObject* chair = chairModel->instantiate("chair");
-	auto albeo = Texture::create("./res/Mesh/chair/trn_ChairSimple_AlbedoTransparency.png");
-	auto spec = Texture::create("./res/Mesh/chair/trn_ChairSimple_MetallicSmoothness.png");
+	//Model* animModel = Model::create("./res/Mesh/base.fbx");
+	//GameObject* animGo = animModel->instantiate("Anim");
+	//auto anim = animGo->addComponent<Animator>();
+	//auto it = animModel->getClips().begin();
 
-	auto mr = chair->transform->getChild(0)->gameObject->getComponent<MeshRenderer>();
-	mr->getMaterial()->setProperty("u_Material.diffuse", albeo);
-	mr->getMaterial()->setProperty("u_Material.specular", spec);
+	//animGo->transform->setScale(0.05f, 0.05f, 0.05f);
+	//anim->play((++it)->second);
 
-	Model* sphere = Model::create("./res/Mesh/sphere.obj");
+	/*Model* sphere = Model::create("./res/Mesh/sphere.obj");
 	sphere->instantiate("Sphere");
 
 	GameObject* sp = sphere->instantiate("Sphere1");
@@ -90,20 +89,24 @@ int main()
 	sl->quadratic = 0.002f;
 	spotLightGo->transform->setPosition(0, 10, 5);
 
-	auto parent1 = new GameObject("Parent1");
-	auto parent2 = new GameObject("Parent2");
+	*/
 
-	auto child1 = new GameObject("Child1");
-	auto child2 = new GameObject("Child2");
-	auto child3 = new GameObject("Child1");
 
-	parent1->transform->addChild(child1->transform);
-	parent1->transform->addChild(child2->transform);
-	parent1->transform->addChild(child3->transform);
+	Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
+	GameObject* nano = model->instantiate("Model");
+	nano->transform->setScale(0.3, 0.3, 0.3);
+
+	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
+	GameObject* box = new GameObject("box");
+	Material* boxMaterial = new Material("asdasd");
+
+	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
+	box->transform->setScale(10, 0.1, 10);
+
 
 	GameObject* dirLight = new GameObject();
-	dirLight->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity = 0.8f;
-	dirLight->transform->setRotation(45, 0, 0);
+	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
+	dirLight->transform->setRotation(-45, 0, 0);
 
 	//GameObject* b1 = new GameObject("Box1");
 	//b1->addComponent<BoxCollider>();

@@ -4,11 +4,13 @@ const int MAX_JOINTS = 100;
 
 in vec3 a_Position;
 in vec3 a_Normal;
+in vec2 a_TexCoord0;
 in vec4 a_Joints;
 in vec4 a_Weights;
 
+out vec3 v_WorldFragPosition;
 out vec3 v_Normal;
-out vec3 v_FragPosition;
+out vec2 v_TexCoord;
   
 uniform mat4 u_Model;
 uniform mat4 u_ProjectionView;
@@ -23,8 +25,8 @@ void main()
 
 	mat4 model = u_Model * jointMatrix;
 
-	v_Normal = normalize(mat3(transpose(inverse(model))) * a_Normal);
-	v_FragPosition = vec3(model * vec4(a_Position, 1.0));
-
-    gl_Position = u_ProjectionView * model * vec4(a_Position, 1.0);
+	v_WorldFragPosition = vec3(model * vec4(a_Position, 1.0));
+	v_Normal            = normalize(vec3(model * vec4(a_Normal, 0)));
+	v_TexCoord          = a_TexCoord0;
+    gl_Position         = u_ProjectionView * model * vec4(a_Position, 1.0);
 }

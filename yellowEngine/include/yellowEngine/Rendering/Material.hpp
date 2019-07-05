@@ -48,7 +48,7 @@ namespace yellowEngine
 		static void saveAsFile(Material* material, const char* path);
 
 		void setTechnique(Technique* technique, const char* defaultVsPath, const char* defaultFsPath);
-		void bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath);
+		Shader* bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath);
 		void unbind();
 		std::string getPath();
 		std::map<std::string, Property> getProperties() { return _properties; }
@@ -58,12 +58,12 @@ namespace yellowEngine
 		void setProperty(const char* name, int value);
 		void setProperty(const char* name, float value);
 		void setProperty(const char* name, Vector3 value);
-		
-	private:
-		static std::map<std::string, Material*> _materialCache;
 
 		Material(const char* path);
 		~Material();
+		
+	private:
+		static std::map<std::string, Material*> _materialCache;
 
 		std::string _path;
 		Technique* _technique;

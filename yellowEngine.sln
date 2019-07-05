@@ -11,6 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yellowEditor", "yellowEdito
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{0F1382A3-CAD0-4A95-B4C3-A4CC376240BD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7031AE11-501A-4690-84B0-7BFB2CDD3514} = {7031AE11-501A-4690-84B0-7BFB2CDD3514}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

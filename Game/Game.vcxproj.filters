@@ -19,4 +19,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Shader\depth_test.vert" />
+    <None Include="res\Shader\depth_test.frag" />
+    <None Include="res\Shader\deferred_light_dir_noshadow.frag" />
+  </ItemGroup>
 </Project>

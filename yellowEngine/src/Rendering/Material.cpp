@@ -119,7 +119,6 @@ namespace yellowEngine
 	{
 		_path = path;
 		setTechnique(Technique::getTechnique(TechniqueType_Deferred), "./res/Shader/default.vert", "./res/Shader/default.frag");
-		_technique = nullptr;
 		_materialCache.insert({ path, this });
 
 		// set default values
@@ -143,7 +142,7 @@ namespace yellowEngine
 	}
 
 
-	void Material::bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath)
+	Shader* Material::bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath)
 	{
 		if (vsPath == nullptr) vsPath = _defaultVsPath;
 		if (fsPath == nullptr) fsPath = _defaultFsPath;
@@ -185,6 +184,7 @@ namespace yellowEngine
 		}
 
 		VertexLayoutBinding::create(meshRenderer->getMesh(), shader)->bind();
+		return shader;
 	}
 
 

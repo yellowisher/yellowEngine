@@ -14,6 +14,7 @@ namespace yellowEngine
 	Texture::Texture(const char* name, int internalFormat, int width, int height, int format, GLenum type,
 					 int wrap, int filter, bool generateMipMap, const void* data)
 	{
+		Utils::printGLError("Texture creating begin");
 		_name = name;
 		glGenTextures(1, &_id);
 		glBindTexture(GL_TEXTURE_2D, _id);
@@ -27,6 +28,7 @@ namespace yellowEngine
 
 		// lazy initialization?
 		if (generateMipMap) glGenerateMipmap(GL_TEXTURE_2D);
+		Utils::printGLError("Texture creating end");
 	}
 
 

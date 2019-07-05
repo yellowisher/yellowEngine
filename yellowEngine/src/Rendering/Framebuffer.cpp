@@ -9,6 +9,7 @@ namespace yellowEngine
 	{
 		_depthBuffer = nullptr;
 		_depthStencilBuffer = nullptr;
+		_depthTexture = nullptr;
 	}
 
 
@@ -30,6 +31,14 @@ namespace yellowEngine
 	}
 
 
+	void FrameBuffer::addDepthTexture(const char* uniqueName, int width, int height)
+	{
+		_depthTexture = new Texture(
+			uniqueName, GL_DEPTH_COMPONENT, width, height, GL_DEPTH_COMPONENT, GL_FLOAT,
+			GL_REPEAT, GL_NEAREST);
+	}
+
+
 	void FrameBuffer::addDepthStencilAttachment(int width, int height)
 	{
 		_depthStencilBuffer = new RenderBuffer(GL_DEPTH32F_STENCIL8, width, height);
@@ -39,7 +48,7 @@ namespace yellowEngine
 	void FrameBuffer::init()
 	{
 		glGenFramebuffers(1, &_frameBufferHandle);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferHandle);
+		glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferHandle);
 
 		for (int i = 0; i < _colorBuffers.size(); i++)
 		{
@@ -54,6 +63,12 @@ namespace yellowEngine
 		{
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilBuffer->_renderBufferHandle);
 		}
+		if (_depthTexture)
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthTexture->_id, 0);
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		}
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE)
@@ -62,7 +77,13 @@ namespace yellowEngine
 			Utils::print("FrameBuffer not complete!");
 		}
 
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+
+	void FrameBuffer::bind()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferHandle);
 	}
 
 

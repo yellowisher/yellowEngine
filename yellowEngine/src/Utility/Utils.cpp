@@ -4,7 +4,7 @@ namespace yellowEngine
 {
 	namespace Utils
 	{
-		void printGLError(const char* file, int line)
+		void printGLError(const char* point)
 		{
 			GLenum glError = glGetError();
 			while (glError != GL_NO_ERROR)
@@ -35,7 +35,7 @@ namespace yellowEngine
 						break;
 				}
 
-				std::cout << file << " " << line << " " << errorString << std::endl;
+				std::cout << point << " " << errorString << std::endl;
 				glError = glGetError();
 			}
 		}

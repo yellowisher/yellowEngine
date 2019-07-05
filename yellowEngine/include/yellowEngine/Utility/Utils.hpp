@@ -63,7 +63,7 @@ namespace yellowEngine
 			std::cout << message << std::endl;
 		}
 
-		void printGLError(const char* file, int line);
+		void printGLError(const char* point);
 	}
 }
 

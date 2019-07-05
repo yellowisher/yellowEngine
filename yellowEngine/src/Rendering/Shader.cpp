@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cassert>
 
 #include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Rendering/Shader.hpp"
@@ -172,36 +173,42 @@ namespace yellowEngine
 
 	void Shader::setUniform(const std::string& name, int value, int index)
 	{
+		assert(_uniforms.find(name) != _uniforms.end());
 		setUniform(&_uniforms[name], value, index);
 	}
 
 
 	void Shader::setUniform(const std::string& name, float value, int index)
 	{
+		assert(_uniforms.find(name) != _uniforms.end());
 		setUniform(&_uniforms[name], value, index);
 	}
 
 
 	void Shader::setUniform(const std::string& name, const Vector2 & value, int index)
 	{
+		assert(_uniforms.find(name) != _uniforms.end());
 		setUniform(&_uniforms[name], value, index);
 	}
 
 
 	void Shader::setUniform(const std::string& name, const Vector3 & value, int index)
 	{
+		assert(_uniforms.find(name) != _uniforms.end());
 		setUniform(&_uniforms[name], value, index);
 	}
 
 
 	void Shader::setUniform(const std::string& name, const Vector4 & value, int index)
 	{
+		assert(_uniforms.find(name) != _uniforms.end());
 		setUniform(&_uniforms[name], value, index);
 	}
 
 
 	void Shader::setUniform(const std::string& name, const Matrix & value, int index)
 	{
+		assert(_uniforms.find(name) != _uniforms.end());
 		setUniform(&_uniforms[name], value, index);
 	}
 

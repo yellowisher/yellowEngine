@@ -96,6 +96,45 @@ namespace yellowEngine
 	}
 
 
+	Matrix Matrix::lookAt(Vector3 eye, Vector3 target, Vector3 up)
+	{
+		return lookAtDir(eye, target - eye, up);
+	}
+
+
+	Matrix Matrix::lookAtDir(Vector3 eye, Vector3 dir, Vector3 up)
+	{
+		Matrix matrix;
+
+		Vector3 forward = dir;
+		forward.normalize();
+
+		Vector3 side = Vector3::cross(forward, up);
+		side.normalize();
+
+		up = Vector3::cross(side, forward);
+		up.normalize();
+
+		matrix[0] = side.x;
+		matrix[1] = up.x;
+		matrix[2] = -forward.x;
+
+		matrix[4] = side.y;
+		matrix[5] = up.y;
+		matrix[6] = -forward.y;
+
+		matrix[8] = side.z;
+		matrix[9] = up.z;
+		matrix[10] = -forward.z;
+
+		matrix[12] = -(side * eye);
+		matrix[13] = -(up * eye);
+		matrix[14] = (forward * eye);
+		matrix[15] = 1.0f;
+		return matrix;
+	}
+
+
 	float Matrix::determinant() const
 	{
 		float a0 = _m[0] * _m[5] - _m[1] * _m[4];

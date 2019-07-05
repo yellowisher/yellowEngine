@@ -11,8 +11,8 @@ public:
 	void update() override
 	{
 		static const float moveSpeed = 0.06f;
-		static const float rotateSpeedX = 0.016f;
-		static const float rotateSpeedY = 0.008f;
+		static const float rotateSpeedX = 0.032f;
+		static const float rotateSpeedY = 0.016f;
 		static Vector3 rotation = Vector3(0, 0, 0);
 
 		// translate
@@ -70,8 +70,8 @@ public:
 
 int main()
 {
-	int width = 800;
-	int height = 600;
+	int width = 1440;
+	int height = 900;
 	const char* name = "yellowEngine";
 
 	// init glfw, glad
@@ -109,28 +109,28 @@ int main()
 	game->_inputManager->initMousePosition((float)x, (float)y);
 
 	////////// Scene
-	//Model* model = Model::create("Mesh/nanosuit/nanosuit.obj");
 
-	//GameObject* go = model->instantiate("nanosuit");
-	//go->transform->setPosition(0, 0, 0);
+	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
+	//GameObject* nano = model->instantiate("Model");
+	//nano->transform->setScale(0.3, 0.3, 0.3);
 
-	//GameObject* spotLightGo = new GameObject();
-	//Light* sl = spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
-	//sl->diffuseIntensity = 1.0f;
-	//sl->linear = 0.07f;
-	//sl->quadratic = 0.002f;
-	//spotLightGo->addComponent<LightScript>();
-	//spotLightGo->transform->setPosition(0, 10, 5);
+	Model* model1 = Model::create("./res/Mesh/cube.obj");
+	GameObject* nano1 = model1->instantiate("Model");
+	nano1->transform->setPosition(0, -0.5, 0);
 
+	Material* boxMaterial = new Material("asdasd");
 
-	GameObject* b1 = new GameObject("Box1");
-	b1->addComponent<BoxCollider>();
+	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
+	GameObject* box = new GameObject("box");
 
-	GameObject* b2 = new GameObject("Box2");
-	b2->addComponent<BoxCollider>();
+	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
+	box->transform->setScale(10, 0.1, 10);
+	box->transform->setPosition(0, -1, 0);
 
-	GameObject* b3 = new GameObject("Box3");
-	b3->addComponent<BoxCollider>();
+	GameObject* dirLight = new GameObject();
+	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
+	dirLight->transform->setPosition(0, 5, 5);
+	dirLight->transform->setRotation(-45, 30, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
@@ -149,7 +149,6 @@ int main()
 
 		game->update();
 		game->render(Camera::getMainCamera());
-		ColliderManager::getInstance()->renderColliders(Camera::getMainCamera());
 
 		glfwSwapBuffers(window);
 	}
