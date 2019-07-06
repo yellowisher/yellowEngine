@@ -54,6 +54,7 @@
 #include "System/InputManager.hpp"
 #include "System/Game.hpp"
 #include "System/IUpdatable.hpp"
+#include "System/Display.hpp"
 
 // utility
 #include "Utility/ObjectPool.hpp"

@@ -154,6 +154,7 @@
     <ClCompile Include="src\Math\Vector2.cpp" />
     <ClCompile Include="src\Math\Vector3.cpp" />
     <ClCompile Include="src\Math\Vector4.cpp" />
+    <ClCompile Include="src\Rendering\CubeMap.cpp" />
     <ClCompile Include="src\Rendering\FrameBuffer.cpp" />
     <ClCompile Include="src\Rendering\Material.cpp" />
     <ClCompile Include="src\Rendering\Mesh.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="include\yellowEngine\Math\Vector2.hpp" />
     <ClInclude Include="include\yellowEngine\Math\Vector3.hpp" />
     <ClInclude Include="include\yellowEngine\Math\Vector4.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\CubeMap.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\FrameBuffer.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Material.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Mesh.hpp" />

@@ -20,22 +20,18 @@ namespace yellowEngine
 	private:
 		virtual void _renderScene(Camera* camera) override;
 
+		void shadowMappingPass(Light* light);
 		void geometryPass();
-		void dirLightPass();
-		void spotLightStencilPass(const Light* light);
-		void spotLightPass(const Light* light);
-		void pointStencilPass(const Light* light);
-		void pointLightPass(const Light* light);
-		void lightPassBase(Light::LightType type);
 
-		// TODO: separate shadow and shading passes
-		FrameBuffer _shadowBuffer;
+		void stencilPass(Light* light);
+		void lightPass(Light* light);
 
 		FrameBuffer _geometryBuffer;
 		const char* _geometryFsPath;
 		Mesh* _meshes[Light::Num_LightType];
 		Shader* _lightShaders[Light::Num_LightType];
 		Shader* _shadowMappingShader;
+		Shader* _pointShadowMappingShader;
 		Shader* _nullShader;
 	};
 }

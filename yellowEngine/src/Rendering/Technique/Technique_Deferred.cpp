@@ -6,18 +6,14 @@
 
 namespace yellowEngine
 {
-	static constexpr float MinLightContrib = 5.0f;
 	static constexpr int Final = 3;
 	static constexpr int RenderTargetBegin = 0;
 	static constexpr int RenderTargetCount = 3;
 
 	Technique_Deferred::Technique_Deferred()
 	{
-		// shadow frame buffer
-		_shadowBuffer.addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
-		_shadowBuffer.init();
-
 		_shadowMappingShader = Shader::create("./res/Shader/shadow.vert", "./res/Shader/shadow.frag");
+		_pointShadowMappingShader = Shader::create("./res/Shader/shadow_point.vert", "./res/Shader/shadow_point.frag");
 
 		// shading frame buffer
 		_geometryBuffer.addColorAttachment("u_PositionMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
@@ -29,12 +25,12 @@ namespace yellowEngine
 
 		_geometryFsPath = "./res/Shader/deferred_geometry.frag";
 
-		_meshes[Light::LightType_Dir  ] = Mesh::create("./res/Mesh/quad.obj");
-		_meshes[Light::LightType_Spot ] = Mesh::create("./res/Mesh/cone.obj");
+		_meshes[Light::LightType_Dir] = Mesh::create("./res/Mesh/quad.obj");
+		_meshes[Light::LightType_Spot] = Mesh::create("./res/Mesh/cone.obj");
 		_meshes[Light::LightType_Point] = Mesh::create("./res/Mesh/sphere.obj");
 
-		_lightShaders[Light::LightType_Dir  ] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_dir.frag");
-		_lightShaders[Light::LightType_Spot ] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_spot.frag");
+		_lightShaders[Light::LightType_Dir] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_dir.frag");
+		_lightShaders[Light::LightType_Spot] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_spot.frag");
 		_lightShaders[Light::LightType_Point] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_point.frag");
 		_nullShader = Shader::create("./res/Shader/null.vert", "./res/Shader/null.frag");
 	}
@@ -44,67 +40,53 @@ namespace yellowEngine
 	{
 	}
 
-	static Matrix lightMatrix;
+
 	void Technique_Deferred::_renderScene(Camera* camera)
 	{
 		Camera::currentCamera = camera;
 
-		// shadow
-		glDepthMask(GL_TRUE);
-		glEnable(GL_DEPTH_TEST);
+		// shadow mapping pass
+		glCullFace(GL_FRONT);
+		for (int type = 0; type < Light::Num_LightType; type++)
+		{
+			for (auto light : Light::getLights((Light::LightType)type))
+			{
+				shadowMappingPass(light);
+			}
+		}
+		glCullFace(GL_BACK);
 
-		Matrix lightProjection = Matrix::createOrthographic(10.0f, 10.0f, 0.1f, 100.0f);
-		Matrix lightView = Light::getLights(Light::LightType_Dir)[0]->transform->getInverseMatrix();
-
-		Transform* cam = Light::getLights(Light::LightType_Dir)[0]->transform;
-		Matrix lookAt = Matrix::lookAt(cam->position, cam->position + cam->getForward(), Vector3::up);
-
-		lightMatrix = lightProjection * lightView;
-		//lightMatrix = lightProjection * lookAt;
-
-		_shadowMappingShader->bind();
-		_shadowMappingShader->setUniform("u_LightProjView", lightMatrix);
-
-		_shadowBuffer.bindForDrawing();
-
+		// restore view port
+		FrameBuffer::unbind();
 		glViewport(0, 0, Display::width, Display::height);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glActiveTexture(GL_TEXTURE0);
-		_shadowBuffer.getShadowTexture()->bind();
 
-		ObjectRenderer::renderAll("./res/Shader/shadow.vert", "./res/Shader/shadow.frag");
-		glDepthMask(GL_FALSE);
-		_shadowBuffer.unbind();
-
-		//shading
+		// clear last screen
 		_geometryBuffer.bindForDrawing();
 		_geometryBuffer.setDrawBuffer(Final);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		_geometryBuffer.setDrawBuffer(RenderTargetBegin, RenderTargetCount);
 		geometryPass();
 
+		// light passes
+		glDepthMask(GL_FALSE);
 		glEnable(GL_STENCIL_TEST);
 		for (auto light : Light::getLights(Light::LightType_Point))
 		{
-			_geometryBuffer.setDrawBuffer(-1);
-			pointStencilPass(light);
-			_geometryBuffer.setDrawBuffer(Final);
-			pointLightPass(light);
+			stencilPass(light);
+			lightPass(light);
 		}
 
 		for (auto light : Light::getLights(Light::LightType_Spot))
 		{
-			_geometryBuffer.setDrawBuffer(-1);
-			spotLightStencilPass(light);
-			_geometryBuffer.setDrawBuffer(Final);
-			spotLightPass(light);
+			stencilPass(light);
+			lightPass(light);
 		}
 		glDisable(GL_STENCIL_TEST);
-		
-		_geometryBuffer.setDrawBuffer(Final);
 
-		dirLightPass();
+		for (auto light : Light::getLights(Light::LightType_Dir))
+		{
+			lightPass(light);
+		}
 
 		_geometryBuffer.unbind();
 		_geometryBuffer.bindForReading();
@@ -113,202 +95,132 @@ namespace yellowEngine
 		glBlitFramebuffer(0, 0, Display::width, Display::height,
 						  0, 0, Display::width, Display::height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
+		glDepthMask(GL_TRUE);
+
 		// should restore buffer
 		_geometryBuffer.unbind();
 	}
 
 
+	void Technique_Deferred::shadowMappingPass(Light* light)
+	{
+		static std::pair< Vector3, Vector3> dirUpPairs[] = {
+			{Vector3( 1.0f,  0.0f,  0.0f), Vector3(0.0f, -1.0f,  0.0f)},
+			{Vector3(-1.0f,  0.0f,  0.0f), Vector3(0.0f, -1.0f,  0.0f)},
+			{Vector3( 0.0f,  1.0f,  0.0f), Vector3(0.0f,  0.0f,  1.0f)},
+			{Vector3( 0.0f, -1.0f,  0.0f), Vector3(0.0f,  0.0f,  -1.0f)},
+			{Vector3( 0.0f,  0.0f,  1.0f), Vector3(0.0f, -1.0f,  0.0f)},
+			{Vector3( 0.0f,  0.0f, -1.0f), Vector3(0.0f, -1.0f,  0.0f)}
+		};
+
+		auto shadowBuffer = light->getShadowBuffer();
+		shadowBuffer->bindForDrawing();
+		glViewport(0, 0, shadowBuffer->getDepthMapWidth(), shadowBuffer->getDepthMapHeight());
+
+		if (light->getType() == Light::LightType_Point)
+		{
+			glCullFace(GL_BACK);
+
+			_pointShadowMappingShader->bind();
+			Vector3 eye = light->transform->getWorldPosition();
+
+			glClearColor(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+			
+			for (unsigned int i = 0; i < 6; i++)
+			{
+				Matrix projection = light->getProjMatrix();
+				Matrix view = Matrix::lookAtDir(eye, dirUpPairs[i].first, dirUpPairs[i].second);
+				
+				_pointShadowMappingShader->setUniform("u_LightPosition", light->transform->getWorldPosition());
+				_pointShadowMappingShader->setUniform("u_LightProjView", projection * view);
+
+				GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
+				glFramebufferTexture2D(
+					GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face,
+					light->getShadowBuffer()->getDepthMapId(), 0);
+				glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				ObjectRenderer::renderAll("./res/Shader/shadow_point.vert", "./res/Shader/shadow_point.frag");
+			}
+			glClearColor(0, 0, 0, 0);
+			glCullFace(GL_FRONT);
+		}
+		else
+		{
+			_shadowMappingShader->bind();
+			_shadowMappingShader->setUniform("u_LightProjView", light->getProjViewMatrix());
+
+			glClear(GL_DEPTH_BUFFER_BIT);
+			ObjectRenderer::renderAll("./res/Shader/shadow.vert", "./res/Shader/shadow.frag");
+		}
+	}
+
+
 	void Technique_Deferred::geometryPass()
 	{
-		glDepthMask(GL_TRUE);
+		_geometryBuffer.setDrawBuffer(RenderTargetBegin, RenderTargetCount);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-
 		ObjectRenderer::renderAll(nullptr, _geometryFsPath);
-
-		glDepthMask(GL_FALSE);
 	}
 
 
-	void Technique_Deferred::dirLightPass()
+	void Technique_Deferred::stencilPass(Light* light)
 	{
-		auto type = Light::LightType_Dir;
-		lightPassBase(Light::LightType_Dir);
+		_geometryBuffer.setDrawBuffer(-1);
 
-		for (auto light : Light::getLights(type))
+		glStencilMask(GL_TRUE);
+		glDisable(GL_CULL_FACE);
+		glClear(GL_STENCIL_BUFFER_BIT);
+
+		glStencilFunc(GL_ALWAYS, 0, 0);
+
+		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+
+		_nullShader->bind();
+
+		auto type = light->getType();
+		float range = light->getRange();
+		Vector3 scale;
+		if (type == Light::LightType_Spot)
 		{
-			_lightShaders[type]->setUniform("u_ProjViewWorld", Matrix::identity);
-			_lightShaders[type]->setUniform("u_Light.direction", light->transform->getForward());
-			_lightShaders[type]->setUniform("u_Light.color", light->color);
-			_lightShaders[type]->setUniform("u_Light.ambientIntensity", light->ambientIntensity);
-			_lightShaders[type]->setUniform("u_Light.diffuseIntensity", light->diffuseIntensity);
+			float cos2 = light->getOuterCutoffCos() * light->getOuterCutoffCos();
+			float sin2 = 1.0f - cos2;
 
-			glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
+			scale.x = scale.y = range * sqrtf(sin2 / cos2);
+			scale.z = range / 2.0f;
 		}
-		glDisable(GL_BLEND);
-	}
-
-
-	void Technique_Deferred::spotLightStencilPass(const Light* light)
-	{
-		_nullShader->bind();
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glClear(GL_STENCIL_BUFFER_BIT);
-
-		glStencilFunc(GL_ALWAYS, 0, 0);
-
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-
-		const float& C = light->constant;
-		const float& L = light->linear;
-		const float& Q = light->quadratic;
+		else
+		{
+			scale.x = scale.y = scale.z = range;
+		}
 
 		Matrix pv = Camera::currentCamera->getMatrix();
-		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
-		float depth = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
-
-		float cos2 = light->getOuterCutoffCos() * light->getOuterCutoffCos();
-		float sin2 = 1.0f - cos2;
-
-		float scaleXY = depth * sqrtf(sin2 / cos2);
-		float scaleZ = depth / 2.0f;
-		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(scaleXY, scaleXY, scaleZ));
+		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(scale);
 
 		_nullShader->setUniform("u_ProjViewWorld", pvw);
 
-		auto type = Light::LightType_Spot;
 		VertexLayoutBinding::create(_meshes[type], _nullShader)->bind();
 		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
-	}
 
-
-	void Technique_Deferred::spotLightPass(const Light* light)
-	{
-		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-
+		glStencilMask(GL_FALSE);
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-
-		auto type = Light::LightType_Spot;
-		lightPassBase(type);
-
-		const float& C = light->constant;
-		const float& L = light->linear;
-		const float& Q = light->quadratic;
-
-		_lightShaders[type]->setUniform("u_Attenuation.constant", C);
-		_lightShaders[type]->setUniform("u_Attenuation.linear", L);
-		_lightShaders[type]->setUniform("u_Attenuation.quadratic", Q);
-
-		Matrix pv = Camera::currentCamera->getMatrix();
-		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
-		float depth = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
-
-		float cos2 = light->getOuterCutoffCos() * light->getOuterCutoffCos();
-		float sin2 = 1.0f - cos2;
-
-		float scaleXY = depth * sqrtf(sin2 / cos2);
-		float scaleZ = depth / 2.0f;
-		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(scaleXY, scaleXY, scaleZ));
-
-		_lightShaders[type]->setUniform("u_ProjViewWorld", pvw);
-		_lightShaders[type]->setUniform("u_Light.position", light->transform->getWorldPosition());
-		_lightShaders[type]->setUniform("u_Light.direction", light->transform->getForward());
-		_lightShaders[type]->setUniform("u_Light.color", light->color);
-		_lightShaders[type]->setUniform("u_Light.ambientIntensity", light->ambientIntensity);
-		_lightShaders[type]->setUniform("u_Light.diffuseIntensity", light->diffuseIntensity);
-		_lightShaders[type]->setUniform("u_Light.cutoffCos", light->getCutoffCos());
-		_lightShaders[type]->setUniform("u_Light.outerCutoffCos", light->getOuterCutoffCos());
-
-		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
-
-		glCullFace(GL_BACK);
-		glDisable(GL_BLEND);
 	}
 
 
-	void Technique_Deferred::pointStencilPass(const Light* light)
+	void Technique_Deferred::lightPass(Light* light)
 	{
-		_nullShader->bind();
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glClear(GL_STENCIL_BUFFER_BIT);
+		_geometryBuffer.setDrawBuffer(Final);
 
-		glStencilFunc(GL_ALWAYS, 0, 0);
-
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-
-		const float& C = light->constant;
-		const float& L = light->linear;
-		const float& Q = light->quadratic;
-
-		Matrix pv = Camera::currentCamera->getMatrix();
-		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
-		float radius = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
-
-		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(radius, radius, radius));
-		_nullShader->setUniform("u_ProjViewWorld", pvw);
-
-		auto type = Light::LightType_Point;
-		VertexLayoutBinding::create(_meshes[type], _nullShader)->bind();
-		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
-	}
-
-
-	void Technique_Deferred::pointLightPass(const Light* light)
-	{
-		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-
-		auto type = Light::LightType_Point;
-		lightPassBase(type);
-
-		const float& C = light->constant;
-		const float& L = light->linear;
-		const float& Q = light->quadratic;
-
-		_lightShaders[type]->setUniform("u_Attenuation.constant", C);
-		_lightShaders[type]->setUniform("u_Attenuation.linear", L);
-		_lightShaders[type]->setUniform("u_Attenuation.quadratic", Q);
-
-		Matrix pv = Camera::currentCamera->getMatrix();
-		float lightMax = Utils::max(light->color.v[0], light->color.v[1], light->color.v[2]) * light->diffuseIntensity;
-		float radius = (-L + sqrtf(L * L - 4 * Q * (C - (256.0f / MinLightContrib) * C * lightMax))) / (2.0f * Q);
-
-		// should exclude scaling of light-containing game object?
-		Matrix pvw = pv * light->transform->getMatrix() * Matrix::createScale(Vector3(radius, radius, radius));
-
-		_lightShaders[type]->setUniform("u_ProjViewWorld", pvw);
-		_lightShaders[type]->setUniform("u_Light.position", light->transform->getWorldPosition());
-		_lightShaders[type]->setUniform("u_Light.color", light->color);
-		_lightShaders[type]->setUniform("u_Light.ambientIntensity", light->ambientIntensity);
-		_lightShaders[type]->setUniform("u_Light.diffuseIntensity", light->diffuseIntensity);
-
-		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
-
-		glCullFace(GL_BACK);
-		glDisable(GL_BLEND);
-	}
-
-
-	void Technique_Deferred::lightPassBase(Light::LightType type)
-	{
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 
+		auto type = light->getType();
 		_lightShaders[type]->bind();
-
-		// shadow 
-		_lightShaders[type]->setUniform("u_LightProjView", lightMatrix);
-		_lightShaders[type]->setUniform("u_CameraPosition", Camera::currentCamera->transform->getWorldPosition());
-		auto v = Camera::currentCamera->transform->getWorldPosition();
+		light->updateUniforms(_lightShaders[type]);
 
 		int i = 0;
 		const auto& textureNames = _lightShaders[type]->getTextureUnits();
@@ -326,10 +238,22 @@ namespace yellowEngine
 			}
 		}
 
-		// shdow map
 		glActiveTexture(GL_TEXTURE0 + i - 1);
-		_shadowBuffer.getShadowTexture()->bind();
+		light->getShadowBuffer()->bindDepthTexture();
 
 		VertexLayoutBinding::create(_meshes[type], _lightShaders[type])->bind();
+
+		if (light->getType() != Light::LightType_Dir)
+		{
+			glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+			glCullFace(GL_FRONT);
+		}
+
+		glDrawElements(GL_TRIANGLES, _meshes[type]->getVertexCount(), GL_UNSIGNED_INT, 0);
+
+		glCullFace(GL_BACK);
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 	}
 }

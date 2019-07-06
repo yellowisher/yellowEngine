@@ -33,7 +33,7 @@ namespace yellowEngine
 			glGetActiveUniform(_id, i, bufferSize, &length, &size, &type, name);
 			location = glGetUniformLocation(_id, name);
 
-			if (type == GL_SAMPLER_1D || type == GL_SAMPLER_2D || type == GL_SAMPLER_3D)
+			if (type == GL_SAMPLER_1D || type == GL_SAMPLER_2D || type == GL_SAMPLER_3D || type == GL_SAMPLER_CUBE)
 			{
 				glUniform1i(location, (int)_textureUnits.size());
 				_textureUnits.push_back(name);

@@ -1,12 +1,16 @@
 #include <glad/glad.h>
 
 #include "yellowEngine/Utility/Utils.hpp"
+#include "yellowEngine/System/Display.hpp"
+#include "yellowEngine/Component/Camera.hpp"
 #include "yellowEngine/Component/Light.hpp"
 #include "yellowEngine/Component/Transform.hpp"
 
 
 namespace yellowEngine
 {
+	static constexpr float MinLightContrib = 5.0f;
+
 	COMPONENT_IMPL(Light)
 	std::vector<Light*> Light::__lights[Num_LightType];
 
@@ -30,6 +34,12 @@ namespace yellowEngine
 
 		_type = LightType_Dir;
 		__lights[LightType_Dir].push_back(this);
+
+		castShadow = true;
+		// really should light holds frame buffer?
+		_shadowBuffer = new FrameBuffer();
+		_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
+		_shadowBuffer->init();
 	}
 
 
@@ -67,6 +77,39 @@ namespace yellowEngine
 
 		_type = type;
 		__lights[_type].push_back(this);
+
+
+		if (_shadowBuffer) delete(_shadowBuffer);
+
+		if (castShadow)
+		{
+			_shadowBuffer = new FrameBuffer();
+			if (_type == LightType_Dir)
+			{
+				_projectionMatrix = Matrix::createOrthographic(10.0f, 10.0f, -1.0f, 10.0f);
+				_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
+			}
+			else
+			{
+				// TODO:: calculate projection parameters based on attenuation range
+				_zNear = 1.0f;
+				_zFar = 100.0f;
+
+				if (_type == LightType_Spot)
+				{
+					_projectionMatrix = Matrix::createPerspective(90.0f, Display::aspectRatio, _zNear, _zFar);
+					_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
+				}
+				else
+				{
+					_projectionMatrix = Matrix::createPerspective(90.0f, 1.0f, _zNear, _zFar);
+					_shadowBuffer->addDepthAttachment(Display::width, Display::width);
+					_shadowBuffer->addDepthCubeMap(GL_R32F, Display::width, GL_RED, GL_FLOAT);
+				}
+			}
+
+			_shadowBuffer->init();
+		}
 		return this;
 	}
 
@@ -96,6 +139,80 @@ namespace yellowEngine
 	Vector3 Light::getDirection() const
 	{
 		return transform->getForward();
+	}
+
+
+	float Light::getRange()
+	{
+		float lightMax = Utils::max(color.v[0], color.v[1], color.v[2]) * diffuseIntensity;
+
+		return 
+			(-linear + sqrtf(linear * linear - 4 * quadratic * 
+			(constant - (256.0f / MinLightContrib) * constant * lightMax))) 
+			/ (2.0f * quadratic);
+	}
+
+
+	Matrix Light::getProjMatrix()
+	{
+		return _projectionMatrix;
+	}
+
+
+	Matrix Light::getProjViewMatrix()
+	{
+		return _projectionMatrix * transform->getInverseMatrix();
+	}
+
+
+	void Light::updateUniforms(Shader* shader)
+	{
+		shader->setUniform("u_Light.color", color);
+		shader->setUniform("u_Light.ambientIntensity", ambientIntensity);
+		shader->setUniform("u_Light.diffuseIntensity", diffuseIntensity);
+		shader->setUniform("u_CameraPosition", Camera::currentCamera->transform->getWorldPosition());
+
+		shader->setUniform("u_ScreenSize", Vector2(Display::width, Display::height));
+
+		if (_type == LightType_Dir)
+		{
+			shader->setUniform("u_ProjViewWorld", Matrix::identity);
+			shader->setUniform("u_LightProjView", getProjViewMatrix());
+			shader->setUniform("u_Light.direction", transform->getForward());
+		}
+		else
+		{
+			shader->setUniform("u_Attenuation.constant", constant);
+			shader->setUniform("u_Attenuation.linear", linear);
+			shader->setUniform("u_Attenuation.quadratic", quadratic);
+			shader->setUniform("u_Light.position", transform->getWorldPosition());
+
+			Matrix pv = Camera::currentCamera->getMatrix();
+			float range = getRange();
+
+			if (_type == LightType_Spot)
+			{
+				float cos2 = _outerCutoffCos * _outerCutoffCos;
+				float sin2 = 1.0f - cos2;
+
+				float scaleXY = range * sqrtf(sin2 / cos2);
+				float scaleZ = range / 2.0f;
+				Matrix pvw = pv * transform->getMatrix() * Matrix::createScale(Vector3(scaleXY, scaleXY, scaleZ));
+
+				shader->setUniform("u_ProjViewWorld", pvw);
+				shader->setUniform("u_LightProjView", getProjViewMatrix());
+				shader->setUniform("u_Light.direction", transform->getForward());
+				shader->setUniform("u_Light.cutoffCos", getCutoffCos());
+				shader->setUniform("u_Light.outerCutoffCos", getOuterCutoffCos());
+			}
+			else
+			{
+				// should exclude scaling of light-containing game object?
+				Matrix pvw = pv * transform->getMatrix() * Matrix::createScale(Vector3(range, range, range));
+				shader->setUniform("u_ProjViewWorld", pvw);
+				//shader->setUniform("u_ZFar", _zFar);
+			}
+		}
 	}
 
 

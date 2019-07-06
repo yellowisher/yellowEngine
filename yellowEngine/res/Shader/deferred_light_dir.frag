@@ -1,5 +1,7 @@
 #version 330
 
+in vec2 v_TexCoord;
+
 out vec4 o_FragColor;
 
 struct DirLight
@@ -15,16 +17,14 @@ uniform sampler2D u_PositionMap;
 uniform sampler2D u_NormalMap;
 uniform sampler2D u_ColorMap;
 
-uniform vec2 u_ScreenSize;
 uniform DirLight u_Light;
 uniform vec3 u_CameraPosition;
 
 void main()
 {
-    vec2 texCoord      = gl_FragCoord.xy / u_ScreenSize;
-	vec3 worldPosition = texture(u_PositionMap, texCoord).xyz;
-	vec4 color         = texture(u_ColorMap, texCoord);
-	vec3 normal        = normalize(texture(u_NormalMap, texCoord).xyz);
+	vec3 worldPosition = texture(u_PositionMap, v_TexCoord).xyz;
+	vec4 color         = texture(u_ColorMap, v_TexCoord);
+	vec3 normal        = normalize(texture(u_NormalMap, v_TexCoord).xyz);
 
 	vec3 ambient = u_Light.color * u_Light.ambientIntensity * color.rgb;
 

@@ -10,11 +10,20 @@ namespace yellowEngine
 		_depthBuffer = nullptr;
 		_depthStencilBuffer = nullptr;
 		_depthTexture = nullptr;
+		_depthCubeMap = nullptr;
 	}
 
 
 	FrameBuffer::~FrameBuffer()
 	{
+		for (auto nameTexturePair : _colorBuffers)
+		{
+			delete(nameTexturePair.second);
+		}
+
+		if (_depthBuffer) delete(_depthBuffer);
+		if (_depthStencilBuffer) delete(_depthStencilBuffer);
+		if (_depthTexture) delete(_depthTexture);
 	}
 
 
@@ -28,20 +37,38 @@ namespace yellowEngine
 	void FrameBuffer::addDepthAttachment(int width, int height)
 	{
 		_depthBuffer = new RenderBuffer(GL_DEPTH_COMPONENT, width, height);
+
+		_depthMapWidth = width;
+		_depthMapHeight = height;
 	}
 
 
-	void FrameBuffer::addDepthTexture(const char* uniqueName, int width, int height)
+	void FrameBuffer::addDepthTexture(const char* name, int width, int height)
 	{
 		_depthTexture = new Texture(
-			uniqueName, GL_DEPTH_COMPONENT, width, height, GL_DEPTH_COMPONENT, GL_FLOAT,
-			GL_REPEAT, GL_NEAREST);
+			name, GL_DEPTH_COMPONENT, width, height, GL_DEPTH_COMPONENT, GL_FLOAT,
+			GL_CLAMP_TO_BORDER, GL_NEAREST);
+
+		float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+		_depthMapWidth = width;
+		_depthMapHeight = height;
 	}
 
 
 	void FrameBuffer::addDepthStencilAttachment(int width, int height)
 	{
 		_depthStencilBuffer = new RenderBuffer(GL_DEPTH32F_STENCIL8, width, height);
+
+		_depthMapWidth = width;
+		_depthMapHeight = height;
+	}
+
+
+	void FrameBuffer::addDepthCubeMap(int internalFormat, int width, int format, int type)
+	{
+		_depthCubeMap = new CubeMap(internalFormat, width, format, type);
 	}
 
 
@@ -69,6 +96,12 @@ namespace yellowEngine
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
 		}
+		if (_depthCubeMap)
+		{
+			//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _depthCubeMap->_cubeMapHandle, 0);
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		}
 
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE)
@@ -78,6 +111,19 @@ namespace yellowEngine
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+
+	GLuint FrameBuffer::getDepthMapId()
+	{
+		if (_depthTexture)
+		{
+			return _depthTexture->_id;
+		}
+		if (_depthCubeMap)
+		{
+			return _depthCubeMap->_cubeMapHandle;
+		}
 	}
 
 
@@ -137,5 +183,18 @@ namespace yellowEngine
 	const std::vector<std::pair<std::string, Texture*>>& FrameBuffer::getColorBuffers()
 	{
 		return _colorBuffers;
+	}
+
+
+	void FrameBuffer::bindDepthTexture()
+	{
+		if (_depthTexture)
+		{
+			_depthTexture->bind();
+		}
+		if (_depthCubeMap)
+		{
+			_depthCubeMap->bind();
+		}
 	}
 }

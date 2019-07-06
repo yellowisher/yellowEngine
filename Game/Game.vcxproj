@@ -124,9 +124,8 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Shader\deferred_light_dir_noshadow.frag" />
-    <None Include="res\Shader\depth_test.frag" />
-    <None Include="res\Shader\depth_test.vert" />
+    <None Include="res\Shader\shadow_point.frag" />
+    <None Include="res\Shader\shadow_point.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

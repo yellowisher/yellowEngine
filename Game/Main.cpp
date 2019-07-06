@@ -113,24 +113,52 @@ int main()
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
 	//nano->transform->setScale(0.3, 0.3, 0.3);
-
-	Model* model1 = Model::create("./res/Mesh/cube.obj");
-	GameObject* nano1 = model1->instantiate("Model");
-	nano1->transform->setPosition(0, -0.5, 0);
-
 	Material* boxMaterial = new Material("asdasd");
-
 	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
-	GameObject* box = new GameObject("box");
+	Mesh* sphere = Mesh::create("./res/Mesh/sphere.obj");
 
+	//Model* model1 = Model::create("./res/Mesh/cube.obj");
+	//GameObject* nano1 = model1->instantiate("Model");
+	//nano1->transform->setPosition(0, -0.5, 0);
+
+	Material* bm = new Material("asdasqwed");
+	bm->setProperty("u_Material.diffuseColor", Vector3(1.0, 0.7, 0));
+
+	//GameObject* box2 = new GameObject("box");
+	//box2->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	//box2->transform->setPosition(0, -1.5, 0);
+
+	GameObject* b3 = new GameObject("box");
+	b3->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	b3->transform->setPosition(0, -1.5, 2);
+
+	//GameObject* b4 = new GameObject("box");
+	//b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	//b4->transform->setPosition(1, -0.5, 1);
+
+	//GameObject* b5 = new GameObject("box");
+	//b5->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	//b5->transform->setPosition(-1, -0.5, 1);
+
+	GameObject* box = new GameObject("box");
 	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
 	box->transform->setScale(10, 0.1, 10);
-	box->transform->setPosition(0, -1, 0);
+	box->transform->setPosition(0, -2, 0);
 
 	GameObject* dirLight = new GameObject();
-	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
-	dirLight->transform->setPosition(0, 5, 5);
-	dirLight->transform->setRotation(-45, 30, 0);
+	dirLight->addComponent<Light>()->setType(Light::LightType_Point);
+	dirLight->transform->setPosition(0, 1, 0);
+	dirLight->addComponent<LightScript>();
+
+	//GameObject* d1 = new GameObject();
+	//d1->addComponent<Light>()->setType(Light::LightType_Spot);
+	//d1->transform->setPosition(0, -0.5, 3);
+	//d1->addComponent<LightScript>();
+
+	//GameObject* d2 = new GameObject();
+	//auto dlight = d2->addComponent<Light>()->setType(Light::LightType_Dir);
+	//d2->transform->setPosition(0, 0, 3);
+	//d2->transform->setRotation(-30, 30, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();
@@ -140,6 +168,11 @@ int main()
 	new CameraScript();
 
 	////////// Scene end
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glCullFace(GL_BACK);
+	glViewport(0, 0, Display::width, Display::height);
 
 	while (!glfwWindowShouldClose(window))
 	{

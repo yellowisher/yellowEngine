@@ -22,7 +22,7 @@ namespace yellowEngine
 		Vector3 result;
 		result.x = v0.y * v1.z - v0.z * v1.y;
 		result.y = v0.z * v1.x - v0.x * v1.z;
-		result.z = v0.x * v1.y - v0.y * v1.z;
+		result.z = v0.x * v1.y - v0.y * v1.x;
 		return result;
 	}
 

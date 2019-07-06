@@ -3,7 +3,10 @@
 
 #include <vector>
 
+#include "yellowEngine/Rendering/Shader.hpp"
+#include "yellowEngine/Rendering/FrameBuffer.hpp"
 #include "yellowEngine/Component/Component.hpp"
+#include "yellowEngine/Math/Matrix.hpp"
 #include "yellowEngine/Math/Vector3.hpp"
 
 namespace yellowEngine
@@ -40,12 +43,22 @@ namespace yellowEngine
 		~Light();
 		void onValueChanged();
 		Light* setType(LightType type);
+		Light::LightType getType() { return _type; }
 		void setCutoff(float inner, float outer);
 		float getCutoffCos() const;
 		float getOuterCutoffCos() const;
-
 		Vector3 getDirection() const;
+		float getRange();
 
+		// TODO: use dirty bit pattern
+		Matrix getProjMatrix();
+		Matrix getProjViewMatrix();
+		FrameBuffer* getShadowBuffer() { return _shadowBuffer; }
+		float getZnear() { return _zNear; }
+		float getZfar() { return _zFar; }
+		void updateUniforms(Shader* shader);
+
+		bool castShadow;
 		Vector3 color;
 		float ambientIntensity;
 		float diffuseIntensity;
@@ -58,12 +71,17 @@ namespace yellowEngine
 		static std::vector<Light*> __lights[Num_LightType];
 
 		LightType _type;
-		// only for spot light
+
 		float _cutoffDegree;
 		float _outerCutoffDegree;
 
 		float _cutoffCos;
 		float _outerCutoffCos;
+
+		Matrix _projectionMatrix;
+		FrameBuffer* _shadowBuffer;
+		float _zNear;
+		float _zFar;
 	};
 }
 
