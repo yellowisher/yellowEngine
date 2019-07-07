@@ -132,9 +132,9 @@ int main()
 	b3->addComponent<MeshRenderer>()->set(boxMesh, bm);
 	b3->transform->setPosition(0, -1.5, 2);
 
-	//GameObject* b4 = new GameObject("box");
-	//b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
-	//b4->transform->setPosition(1, -0.5, 1);
+	GameObject* b4 = new GameObject("box");
+	b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	b4->transform->setPosition(0, -1.5, 0.5);
 
 	//GameObject* b5 = new GameObject("box");
 	//b5->addComponent<MeshRenderer>()->set(boxMesh, bm);
@@ -145,20 +145,21 @@ int main()
 	box->transform->setScale(10, 0.1, 10);
 	box->transform->setPosition(0, -2, 0);
 
-	GameObject* dirLight = new GameObject();
-	dirLight->addComponent<Light>()->setType(Light::LightType_Point);
-	dirLight->transform->setPosition(0, 1, 0);
-	dirLight->addComponent<LightScript>();
+	//GameObject* dirLight = new GameObject();
+	//dirLight->addComponent<Light>()->setType(Light::LightType_Point);
+	//dirLight->transform->setPosition(0, 1, 0);
+	//dirLight->addComponent<LightScript>();
 
 	//GameObject* d1 = new GameObject();
 	//d1->addComponent<Light>()->setType(Light::LightType_Spot);
 	//d1->transform->setPosition(0, -0.5, 3);
 	//d1->addComponent<LightScript>();
 
-	//GameObject* d2 = new GameObject();
-	//auto dlight = d2->addComponent<Light>()->setType(Light::LightType_Dir);
-	//d2->transform->setPosition(0, 0, 3);
-	//d2->transform->setRotation(-30, 30, 0);
+	GameObject* d2 = new GameObject();
+	auto dlight = d2->addComponent<Light>()->setType(Light::LightType_Dir);
+	//dlight->diffuseIntensity = 0.5;
+	d2->transform->setPosition(0, 0, 3);
+	d2->transform->setRotation(-30, 30, 0);
 
 	GameObject* cameraGo = new GameObject();
 	Camera* camera = cameraGo->addComponent<Camera>();

@@ -40,6 +40,7 @@ namespace yellowEngine
 		int getId() { return _id; }
 
 		const std::vector<Attribute>& getAttributes();
+		int getTextureUnit(const std::string& name);
 		const std::vector<std::string>& getTextureUnits();
 		const std::map<std::string, Uniform>& getUniforms();
 		const Uniform* getUniform(std::string name);

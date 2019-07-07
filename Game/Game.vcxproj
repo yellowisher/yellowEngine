@@ -124,6 +124,10 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Shader\bloom.frag" />
+    <None Include="res\Shader\bloom.vert" />
+    <None Include="res\Shader\bloom_blur.frag" />
+    <None Include="res\Shader\bloom_blur.vert" />
     <None Include="res\Shader\shadow_point.frag" />
     <None Include="res\Shader\shadow_point.vert" />
   </ItemGroup>

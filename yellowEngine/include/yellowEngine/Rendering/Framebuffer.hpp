@@ -34,9 +34,10 @@ namespace yellowEngine
 		void setDrawBuffer(int index, int count = 1);
 		void setReadBuffer(int index);
 
-		unsigned int  getFrameBufferHandle() { return _frameBufferHandle; };
+		unsigned int getFrameBufferHandle() { return _frameBufferHandle; };
 		const std::vector<std::pair<std::string, Texture*>>& getColorBuffers();
 		void bindDepthTexture();
+		Texture* getColorTexture(int index) { return _colorBuffers[index].second; }
 
 	protected:
 		unsigned int _frameBufferHandle;

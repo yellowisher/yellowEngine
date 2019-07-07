@@ -14,6 +14,9 @@ namespace yellowEngine
 	class Technique_Deferred : public Technique
 	{
 	public:
+		static bool applyBloom;
+		static float exposure;
+
 		Technique_Deferred();
 		~Technique_Deferred();
 
@@ -27,12 +30,17 @@ namespace yellowEngine
 		void lightPass(Light* light);
 
 		FrameBuffer _geometryBuffer;
+		FrameBuffer _hdrBuffer;
+		FrameBuffer _blurBuffer;
+
 		const char* _geometryFsPath;
 		Mesh* _meshes[Light::Num_LightType];
 		Shader* _lightShaders[Light::Num_LightType];
 		Shader* _shadowMappingShader;
 		Shader* _pointShadowMappingShader;
+		Shader* _blurShader;
 		Shader* _nullShader;
+		Shader* _bloomShader;
 	};
 }
 

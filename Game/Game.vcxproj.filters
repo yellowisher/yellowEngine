@@ -22,5 +22,9 @@
   <ItemGroup>
     <None Include="res\Shader\shadow_point.vert" />
     <None Include="res\Shader\shadow_point.frag" />
+    <None Include="res\Shader\bloom_blur.vert" />
+    <None Include="res\Shader\bloom.vert" />
+    <None Include="res\Shader\bloom.frag" />
+    <None Include="res\Shader\bloom_blur.frag" />
   </ItemGroup>
 </Project>

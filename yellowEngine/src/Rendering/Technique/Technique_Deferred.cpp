@@ -6,22 +6,44 @@
 
 namespace yellowEngine
 {
-	static constexpr int Final = 3;
-	static constexpr int RenderTargetBegin = 0;
-	static constexpr int RenderTargetCount = 3;
+	static constexpr int GeometryColorBegin = 0;
+	static constexpr int GeometryColorCount = 3;
+
+	enum
+	{
+		HDR_Scene,
+		HDR_Bloom
+	};
+	enum
+	{
+		Blur_,
+		Blur_Result
+	};
+
+	static constexpr int BloomBlurCount = 10;
+
+	bool Technique_Deferred::applyBloom = false;
+	float Technique_Deferred::exposure = 1.0;
 
 	Technique_Deferred::Technique_Deferred()
 	{
 		_shadowMappingShader = Shader::create("./res/Shader/shadow.vert", "./res/Shader/shadow.frag");
 		_pointShadowMappingShader = Shader::create("./res/Shader/shadow_point.vert", "./res/Shader/shadow_point.frag");
 
-		// shading frame buffer
+		// deferred shading frame buffer
 		_geometryBuffer.addColorAttachment("u_PositionMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		_geometryBuffer.addColorAttachment("u_NormalMap", GL_RGB32F, Display::width, Display::height, GL_RGB, GL_FLOAT);
 		_geometryBuffer.addColorAttachment("u_ColorMap", GL_RGBA, Display::width, Display::height, GL_RGBA, GL_UNSIGNED_BYTE);
-		_geometryBuffer.addColorAttachment("Final", GL_RGBA, Display::width, Display::height, GL_RGBA, GL_UNSIGNED_BYTE);
 		_geometryBuffer.addDepthStencilAttachment(Display::width, Display::height);
 		_geometryBuffer.init();
+
+		_hdrBuffer.addColorAttachment("ColorBuffer", GL_RGB16F, Display::width, Display::height, GL_RGB, GL_FLOAT);
+		_hdrBuffer.addColorAttachment("BrightBuffer", GL_RGB16F, Display::width, Display::height, GL_RGB, GL_FLOAT);
+		_hdrBuffer.init();
+
+		_blurBuffer.addColorAttachment("First", GL_RGB16F, Display::width, Display::height, GL_RGB, GL_FLOAT);
+		_blurBuffer.addColorAttachment("Second", GL_RGB16F, Display::width, Display::height, GL_RGB, GL_FLOAT);
+		_blurBuffer.init();
 
 		_geometryFsPath = "./res/Shader/deferred_geometry.frag";
 
@@ -33,6 +55,8 @@ namespace yellowEngine
 		_lightShaders[Light::LightType_Spot] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_spot.frag");
 		_lightShaders[Light::LightType_Point] = Shader::create("./res/Shader/deferred_light.vert", "./res/Shader/deferred_light_point.frag");
 		_nullShader = Shader::create("./res/Shader/null.vert", "./res/Shader/null.frag");
+		_blurShader = Shader::create("./res/Shader/bloom_blur.vert", "./res/Shader/bloom_blur.frag");
+		_bloomShader = Shader::create("./res/Shader/bloom.vert", "./res/Shader/bloom.frag");
 	}
 
 
@@ -44,6 +68,9 @@ namespace yellowEngine
 	void Technique_Deferred::_renderScene(Camera* camera)
 	{
 		Camera::currentCamera = camera;
+
+		_hdrBuffer.bindForDrawing();
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		// shadow mapping pass
 		glCullFace(GL_FRONT);
@@ -59,11 +86,6 @@ namespace yellowEngine
 		// restore view port
 		FrameBuffer::unbind();
 		glViewport(0, 0, Display::width, Display::height);
-
-		// clear last screen
-		_geometryBuffer.bindForDrawing();
-		_geometryBuffer.setDrawBuffer(Final);
-		glClear(GL_COLOR_BUFFER_BIT);
 
 		geometryPass();
 
@@ -89,16 +111,53 @@ namespace yellowEngine
 		}
 
 		_geometryBuffer.unbind();
-		_geometryBuffer.bindForReading();
-		_geometryBuffer.setReadBuffer(Final);
 
-		glBlitFramebuffer(0, 0, Display::width, Display::height,
-						  0, 0, Display::width, Display::height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		// blurding
+		int horizontal = 0;
+		_blurShader->bind();
+
+		_blurBuffer.bindForDrawing();
+		for (int i = 0; i < BloomBlurCount; i++)
+		{
+			// actually horizontal and vertical are reversed
+			_blurShader->setUniform("u_Horizontal", horizontal);
+			_blurBuffer.setDrawBuffer(horizontal);
+
+			if (i == 0)
+			{
+				glActiveTexture(GL_TEXTURE0);
+				_hdrBuffer.getColorTexture(HDR_Bloom)->bind();
+			}
+			else
+			{
+				glActiveTexture(GL_TEXTURE0);
+				_blurBuffer.getColorTexture(1 - horizontal)->bind();
+			}
+
+			renderQuad(_blurShader);
+			horizontal = 1 - horizontal;
+		}
+
+		// blending with tone mapping and gamma correction
+		_bloomShader->bind();
+		_bloomShader->setUniform("u_ApplyBloom", applyBloom);
+		_bloomShader->setUniform("u_Exposure", exposure);
+
+		int sceneUnit = _bloomShader->getTextureUnit("u_Scene");
+		glActiveTexture(GL_TEXTURE0 + sceneUnit);
+		_hdrBuffer.getColorTexture(HDR_Scene)->bind();
+
+		int bloomUnit = _bloomShader->getTextureUnit("u_Bloom");
+		glActiveTexture(GL_TEXTURE0 + bloomUnit);
+		_blurBuffer.getColorTexture(Blur_Result)->bind();
+
+		FrameBuffer::unbind();
+		renderQuad(_bloomShader);
+
+		//glBlitFramebuffer(0, 0, Display::width, Display::height,
+		//				  0, 0, Display::width, Display::height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		glDepthMask(GL_TRUE);
-
-		// should restore buffer
-		_geometryBuffer.unbind();
 	}
 
 
@@ -159,7 +218,8 @@ namespace yellowEngine
 
 	void Technique_Deferred::geometryPass()
 	{
-		_geometryBuffer.setDrawBuffer(RenderTargetBegin, RenderTargetCount);
+		_geometryBuffer.bindForDrawing();
+		_geometryBuffer.setDrawBuffer(GeometryColorBegin, GeometryColorCount);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ObjectRenderer::renderAll(nullptr, _geometryFsPath);
 	}
@@ -211,7 +271,8 @@ namespace yellowEngine
 
 	void Technique_Deferred::lightPass(Light* light)
 	{
-		_geometryBuffer.setDrawBuffer(Final);
+		_hdrBuffer.bindForDrawing();
+		_hdrBuffer.setDrawBuffer(0, 2);
 
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);

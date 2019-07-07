@@ -124,6 +124,7 @@ namespace yellowEngine
 		{
 			return _depthCubeMap->_cubeMapHandle;
 		}
+		return 0;
 	}
 
 

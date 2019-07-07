@@ -149,6 +149,19 @@ namespace yellowEngine
 	}
 
 
+	int Shader::getTextureUnit(const std::string& name)
+	{
+		for (int i = 0; i < _textureUnits.size(); i++)
+		{
+			if (_textureUnits[i] == name)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+
 	const std::vector<std::string>& Shader::getTextureUnits()
 	{
 		return _textureUnits;

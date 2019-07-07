@@ -1,6 +1,7 @@
 #version 330
 
 out vec4 o_FragColor;
+out vec4 o_BrightColor;
 
 struct DirLight
 {
@@ -80,4 +81,7 @@ void main()
 	vec3 combined = ambient + (diffuse + specular) * (1.0 - shadow);
 
 	o_FragColor = vec4(combined, 1.0);
+	float brightness = dot(o_FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > 1.0) o_BrightColor = vec4(o_FragColor.rgb, 1.0);
+	else o_BrightColor = vec4(0, 0, 0, 0);
 }

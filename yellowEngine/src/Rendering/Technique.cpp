@@ -52,4 +52,12 @@ namespace yellowEngine
 			}
 		}
 	}
+
+
+	void Technique::renderQuad(Shader* shader)
+	{
+		static Mesh* quad = Mesh::create("./res/Mesh/quad.obj");
+		VertexLayoutBinding::create(quad, shader)->bind();
+		glDrawElements(GL_TRIANGLES, quad->getVertexCount(), GL_UNSIGNED_INT, 0);
+	}
 }

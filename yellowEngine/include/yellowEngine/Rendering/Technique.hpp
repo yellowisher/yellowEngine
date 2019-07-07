@@ -29,6 +29,7 @@ namespace yellowEngine
 		Technique() {};
 		virtual ~Technique() {};
 		virtual void _renderScene(Camera* camera) = 0;
+		void renderQuad(Shader* shader);
 
 	private:
 		static Technique* __techniques[Num_TechniqueType];
