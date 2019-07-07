@@ -38,15 +38,22 @@ namespace yellowEngine
 
 	MeshRenderer* MeshRenderer::set(Mesh* mesh, Material* material)
 	{
-		_mesh = mesh;
-		_material = material;
-		if (_material->_technique != nullptr)
+		if (mesh != nullptr)
 		{
-			_material->_technique->addRenderer(this);
+			_mesh = mesh;
+			_meshPath = _mesh->getPath();
 		}
-		_prevTechnique = _material->_technique;
-		_meshPath = _mesh->getPath();
-		_materialPath = _material->getPath();
+
+		if (material != nullptr)
+		{
+			_material = material;
+			if (_material->_technique != nullptr)
+			{
+				_material->_technique->addRenderer(this);
+			}
+			_prevTechnique = _material->_technique;
+			_materialPath = _material->getPath();
+		}
 		return this;
 	}
 
@@ -54,6 +61,7 @@ namespace yellowEngine
 	void MeshRenderer::_render(const char* vsPath, const char* fsPath)
 	{
 		if (_mesh == nullptr) return;
+		if (_material == nullptr) return;
 
 		_material->bind(this, vsPath, fsPath);
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);

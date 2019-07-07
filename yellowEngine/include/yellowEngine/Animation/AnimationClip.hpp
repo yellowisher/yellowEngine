@@ -8,6 +8,10 @@
 #include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Math/Quaternion.hpp"
 
+
+// TODO:: currently all fields are exposed as public
+// because in editor, animation handling window is not class, just a function.
+// So change editor window as class and just friend keyword later.
 namespace yellowEngine
 {
 	class AnimationClip
@@ -16,9 +20,6 @@ namespace yellowEngine
 		friend class Animator;
 
 	public:
-		static AnimationClip* create(const char* path);
-
-	private:
 		enum PropertyType
 		{
 			Property_Position,
@@ -45,6 +46,29 @@ namespace yellowEngine
 				Vector3 scale;
 			};
 		};
+
+		static PropertyType getProperty(std::string string)
+		{
+			static std::map<std::string, PropertyType> __types =
+			{
+				{"Position", {Property_Position}},
+				{"Rotation", {Property_Rotation}},
+				{"Scale", {Property_Scale}},
+			};
+
+			return __types[string];
+		}
+		
+		static std::string propertyToString(PropertyType prop)
+		{
+			static std::string __strings[] = {
+				"Position",
+				"Rotation",
+				"Scale"
+			};
+
+			return __strings[prop];
+		}
 
 		struct KeyFrame
 		{
@@ -76,26 +100,20 @@ namespace yellowEngine
 			}
 		};
 
-		static PropertyType getProperty(std::string string)
-		{
-			static std::map<std::string, PropertyType> __types =
-			{
-				{"position", {Property_Position}},
-				{"rotation", {Property_Rotation}},
-				{"scale", {Property_Scale}},
-			};
-
-			return __types[string];
-		}
-		static std::map<std::string, AnimationClip*> __clipCache;
+		static AnimationClip* create(const char* path);
+		static void saveClip(const char* path, int frameCount, std::map<Key, std::vector<KeyFrame>> channels);
 
 		AnimationClip();
 		~AnimationClip();
 
 		int _frameCount;
 		bool _isLooping;
+
 		// mapping {target, property} to {key frames}
 		std::map<Key, std::vector<KeyFrame>> _channels;
+
+	private:
+		static std::map<std::string, AnimationClip*> __clipCache;
 	};
 }
 

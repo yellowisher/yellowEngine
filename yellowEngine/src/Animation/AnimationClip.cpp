@@ -87,4 +87,64 @@ namespace yellowEngine
 		__clipCache.insert({ path, clip });
 		return clip;
 	}
+
+
+	void AnimationClip::saveClip(const char* path, int frameCount, std::map<Key, std::vector<KeyFrame>> channels)
+	{
+		Json::Value root;
+
+		root["frame_count"] = frameCount;
+		root["is_looping"] = true;
+
+		Json::Value channelsJson;
+
+		for (auto channel : channels)
+		{
+			Key key = channel.first;
+			std::vector<KeyFrame> keyFrames = channel.second;
+
+			Json::Value channelJson;
+			Json::Value keyFramesJson;
+			for (auto keyFrame : keyFrames)
+			{
+				Json::Value keyFrameJson;
+
+				Json::Value valueJson;
+				switch (key.prop)
+				{
+					case Property_Position:
+					case Property_Scale:
+					{
+						Vector3 value = keyFrame.value.vector3;
+						valueJson["x"] = value.x;
+						valueJson["y"] = value.y;
+						valueJson["z"] = value.z;
+						break;
+					}
+					case Property_Rotation:
+					{
+						Quaternion value = keyFrame.value.quaternion;
+						valueJson["x"] = value.x;
+						valueJson["y"] = value.y;
+						valueJson["z"] = value.z;
+						valueJson["w"] = value.w;
+						break;
+					}
+				}
+				keyFrameJson["frame"] = keyFrame.frame;
+				keyFrameJson["value"] = valueJson;
+
+				keyFramesJson.append(keyFrameJson);
+			}
+			channelJson["target"] = key.transformPath + propertyToString(key.prop);
+			channelJson["key_frames"] = keyFramesJson;
+			channelsJson.append(channelJson);
+		}
+
+		root["channels"] = channelsJson;
+
+		std::ofstream ofs(path, std::ifstream::binary);
+		auto writer = Json::StyledStreamWriter();
+		writer.write(ofs, root);
+	}
 }

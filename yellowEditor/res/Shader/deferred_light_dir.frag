@@ -1,6 +1,7 @@
 #version 330
 
 out vec4 o_FragColor;
+out vec4 o_BrightColor;
 
 struct DirLight
 {
@@ -21,8 +22,8 @@ uniform DirLight u_Light;
 uniform vec3 u_CameraPosition;
 uniform vec2 u_ScreenSize;
 
-const float EPSILON_FACTOR = 0;
-const float EPSILON_MAX = 0.00001;
+const float EPSILON_FACTOR = 0.05;
+const float EPSILON_MAX = 0.01;
 
 const int SHADOW_SAMPLE_RANGE = 1;
 const int NUM_SHADOW_SAMPLE = (2 * SHADOW_SAMPLE_RANGE + 1) * (2 * SHADOW_SAMPLE_RANGE + 1);
@@ -80,4 +81,7 @@ void main()
 	vec3 combined = ambient + (diffuse + specular) * (1.0 - shadow);
 
 	o_FragColor = vec4(combined, 1.0);
+	float brightness = dot(o_FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > 1.0) o_BrightColor = vec4(o_FragColor.rgb, 1.0);
+	else o_BrightColor = vec4(0, 0, 0, 0);
 }

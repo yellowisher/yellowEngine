@@ -110,6 +110,8 @@ int main()
 
 	////////// Scene
 
+	Model* m = Model::create("./res/Mesh/ehtan/Ethan.fbx");
+
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
 	//nano->transform->setScale(0.3, 0.3, 0.3);
