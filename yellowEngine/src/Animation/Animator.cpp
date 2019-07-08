@@ -12,7 +12,7 @@ namespace yellowEngine
 	std::vector<Animator*> Animator::__animators;
 
 
-	Animator::Animator(GameObject * gameObject) :Component(gameObject)
+	Animator::Animator(GameObject* gameObject) :Component(gameObject)
 	{
 		_currentClip = nullptr;
 		_frame = 0;
@@ -236,6 +236,38 @@ namespace yellowEngine
 			_currentClip = nullptr;
 			//_initialValues.clear();
 		}
+	}
+
+
+	void Animator::gotoFrame(int frame)
+	{
+		for (auto channel : _currentClip->_channels)
+		{
+			int bi = 0;
+			for (bi = 0; bi < channel.second.size() - 1; bi++)
+			{
+				if (channel.second[bi + 1].frame > frame)
+				{
+					break;
+				}
+			}
+
+			KeyFrame& begin = channel.second[bi];
+			KeyFrame& end = channel.second[bi + 1];
+
+			float factor = (float)(frame - begin.frame) / (float)(end.frame - begin.frame);
+
+			// maybe make structure for channel pair would be better
+			apply(channel.first, lerp(begin.value, end.value, factor, channel.first.prop));
+		}
+	}
+
+
+	void Animator::setClip(AnimationClip* clip)
+	{
+		_currentClip = clip;
+		_frame = 0;
+		_state = State_Stopped;
 	}
 
 

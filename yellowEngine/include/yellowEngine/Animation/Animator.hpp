@@ -32,6 +32,11 @@ namespace yellowEngine
 		void resume();
 		void stop();
 
+		// should be private and expose as friend for editor
+		Transform* getTransform(const std::string& target);
+		void gotoFrame(int frame);
+		void setClip(AnimationClip* clip);
+
 	private:
 		enum State
 		{
@@ -46,7 +51,6 @@ namespace yellowEngine
 		void proceed();
 		void apply(Key pair, Value value);
 		Value getValue(Key pair);
-		Transform* getTransform(const std::string& target);
 
 		State _state;
 		bool _paused;

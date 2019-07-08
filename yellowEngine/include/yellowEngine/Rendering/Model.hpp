@@ -23,6 +23,11 @@ namespace yellowEngine
 		static Model* create(const char* path);
 		
 		GameObject* instantiate(const char* name);
+		AnimationClip* getClip(int index) { 
+			auto it = _clips.begin();  
+			while (index-- > 0) it++;
+			return it->second;
+		}
 		const std::map<std::string, AnimationClip*>& getClips() { return _clips; }
 		
 	private:

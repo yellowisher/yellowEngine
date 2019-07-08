@@ -15,6 +15,7 @@ namespace yellowEngine
 		position(_position),
 		scale(_scale),
 		rotation(_rotation),
+		eulerRotation(_eulerRotation),
 		_parent(Root),
 		_scale(1.0f, 1.0f, 1.0f),
 		_dirtyBits(Dirty_All)

@@ -17,6 +17,18 @@ friend class Component;\
 		static const char* __typeName;\
 	public:\
 		virtual const char* getTypeName() override { return __typeName; }\
+		virtual Component::Property getProperty(const std::string& name)\
+		{\
+			auto& properties = Component::getProperties()[__typeName];\
+			for (auto prop : properties)\
+			{\
+				if (prop.name == name)\
+				{\
+					return prop;\
+				}\
+			}\
+			return {"NULL", "NULL", (size_t)0};\
+		}\
 	private:\
 		struct _StaticConstructor\
 		{\

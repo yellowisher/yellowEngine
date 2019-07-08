@@ -20,17 +20,24 @@ namespace yellowEditor
 
 	static std::string draggingPath = "";
 	static bool changingName = false;
-	static const int buffSize = 64;
+	static const int buffSize = 4;
 	static char buff[buffSize] = "";
 
 	using PropertyType = yellowEngine::AnimationClip::PropertyType;
 	static AnimationClip* clip = nullptr;
+	static Animator* animator = nullptr;
+	static int frameCount = 60;
+	static int _frame = 0;
+	static float animationLeftWidth = 0.3f;
 
 	// really should separate docks and windows...
 	static void DrawTab_Asset();
 	static void DrawTab_Animation();
 	static void AddProperty_Transform(Transform* target);
 	static void AddProperty_Child(Transform* target);
+	static void AddKeyFrame(Transform* target, int frame, 
+							AnimationClip::Key key, bool init = false);
+	static void CreateClip();
 
 	void Init_AssetWindow()
 	{
@@ -76,7 +83,7 @@ namespace yellowEditor
 			}
 		}
 		ImGui::End();
-	}
+ 	}
 
 
 	static void DrawTab_Asset()
@@ -216,47 +223,138 @@ namespace yellowEditor
 	static void DrawTab_Animation()
 	{
 		static const int frameBufferSize = 64;
-		static char frameBuffer[frameBufferSize] = "";
+		static char frameBuffer[frameBufferSize] = "60";
 		static int frameCount = 60;
 
-		ImGui::Text("Frame Count");
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, ImGui::GetWindowWidth() * animationLeftWidth);
+		ImGui::Text("Frame");
 		ImGui::SameLine();
+		ImGui::SetNextItemWidth(ImGui::CalcTextSize("00000000").x);
 		if (ImGui::InputText("##frame", frameBuffer, frameBufferSize, ImGuiInputTextFlags_CharsDecimal))
 		{
 			frameCount = atoi(frameBuffer);
 		}
 		ImGui::SameLine();
+		if (ImGui::Button("Play"))
+		{
+
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Pause"))
+		{
+
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop"))
+		{
+
+		}
+		//ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Save").x - 20);
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7, 0.4, 0.1, 1.0));
 		if (ImGui::Button("Save"))
 		{
 			// save animation clip here
 		}
-
-		ImVec2 windowSize = ImGui::GetContentRegionMax();
-		ImGuiWindowFlags hierarchyFlag = ImGuiWindowFlags_HorizontalScrollbar;
-		ImGui::BeginChild("Hierarchy##animation", ImVec2(windowSize.x * 0.3f, windowSize.y), true, hierarchyFlag);
+		ImGui::PopStyleColor();
 
 		Transform* transform = Editor::getSelectedTransform();
 		if (transform != nullptr)
 		{
-			// show all selected properties
-
-			if (ImGui::Button("Add Property"))
+			Animator* newAnimator = transform->gameObject->getComponent<Animator>();
+			if (newAnimator != nullptr)
 			{
-				ImGui::OpenPopup("add_property");
-			}
+				if (newAnimator != animator)
+				{
+					if (clip)
+					{
+						delete(clip);
+						clip = nullptr;
+					}
+					animator = newAnimator;
+					CreateClip();
+					animator->setClip(clip);
+				}
 
-			if (ImGui::BeginPopup("add_property"))
-			{
-				AddProperty_Child(transform);
-				AddProperty_Transform(transform);
-				ImGui::EndPopup();
+				// show all selected properties
+				ImGui::NextColumn();
+				ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+				if (ImGui::SliderInt("##frame_slider", &_frame, 0, frameCount - 1))
+				{
+					animator->gotoFrame(_frame);
+				}
+
+				ImGui::NextColumn();
+				for (auto keyChannelPair : clip->_channels)
+				{
+					auto& key = keyChannelPair.first;
+					auto& channel = keyChannelPair.second;
+
+					Transform* keyTransform = animator->getTransform(key.transformPath);
+					std::string propName = AnimationClip::propertyToString(key.prop);
+					std::string name = keyTransform->gameObject->getName() + ": " + propName;
+					
+					ImGui::Separator();
+					if (ImGui::TreeNodeEx(name.c_str()))
+					{
+						ImGui::Separator();
+						static const char* labels[3] = { "X", "Y", "Z" };
+
+						auto transformProp = keyTransform->getProperty(propName);
+						float* basePtr = (float*)((size_t)keyTransform + transformProp.offset);
+
+						for (int i = 0; i < 3; i++)
+						{
+							if (ImGui::TreeNodeEx(labels[i], ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf))
+							{
+								ImGui::SameLine();
+								ImGui::SetNextItemWidth(60);
+								ImGui::SetCursorPosX(ImGui::GetColumnWidth() - 80);
+								if (ImGui::DragFloat("" + i, basePtr + i, 0.05))
+								{
+									keyTransform->onValueChanged();
+									AddKeyFrame(keyTransform, _frame, key);
+								}
+								ImGui::TreePop();
+							}
+
+							ImGui::NextColumn();
+
+							auto& keyFrames = clip->_channels[key];
+							for (int i = 1; i < keyFrames.size() - 1; i++)
+							{
+								float ratio = (float)keyFrames[i].frame / frameCount;
+								ImGui::SetCursorPosX(ImGui::GetColumnWidth(0) + ratio * ImGui::GetColumnWidth());
+								ImGui::Bullet();
+								ImGui::SameLine();
+							}
+							ImGui::NextColumn();
+						}
+
+						ImGui::TreePop();
+					}
+				}
+
+				ImGui::Dummy(ImVec2(1, 10));
+				float width = ImGui::CalcTextSize("Add Property").x + 20;
+				ImGui::SetCursorPosX(ImGui::GetColumnWidth() * 0.5f - width * 0.5f);
+				ImGui::SetNextItemWidth(width);
+				if (ImGui::Button("Add Property"))
+				{
+					ImGui::OpenPopup("add_property");
+				}
+
+				if (ImGui::BeginPopup("add_property"))
+				{
+					AddProperty_Transform(transform);
+					AddProperty_Child(transform);
+					ImGui::EndPopup();
+				}
 			}
 		}
-		ImGui::EndChild();
 
-
-		ImGui::BeginChild("Clip##animation", ImVec2(windowSize.x * 0.7f, windowSize.y), true);
-		ImGui::EndChild();
+		ImGui::Columns(1);
 	}
 
 
@@ -268,35 +366,94 @@ namespace yellowEditor
 			const auto& properties = yellowEngine::Component::getProperties()[target->getTypeName()];
 			for (auto prop : properties)
 			{
-				ImGui::TreeNodeEx(prop.name.c_str(), ImGuiTreeNodeFlags_Leaf);
-				if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
+				if (ImGui::TreeNodeEx(prop.name.c_str(), ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf))
 				{
-					if (clip == nullptr)
+					if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
 					{
-						clip = new AnimationClip();
+						std::string path = "";
+						Transform* cursor = target;
+						while (cursor != Editor::getSelectedTransform())
+						{
+							path = cursor->gameObject->getName() + '/' + path;
+							cursor = cursor->getParent();
+						}
+
+						auto animProp = AnimationClip::getProperty(prop.name);
+						AnimationClip::Key key = { path,  animProp };
+
+						clip->_channels[key] = {};
+						AddKeyFrame(target, 0, key, true);
+						AddKeyFrame(target, frameCount, key, true);
+
+						ImGui::CloseCurrentPopup();
 					}
-
-					std::string path = "";
-					Transform* cursor = target;
-					while (cursor != Editor::getSelectedTransform())
-					{
-						path = cursor->gameObject->getName() + '/' + path;
-						cursor = cursor->getParent();
-					}
-
-					AnimationClip::Key key = { path, AnimationClip::getProperty(prop.name) };
-
-					// because of 
-					//clip->_channels[key] = {0,}
+					ImGui::TreePop();
 				}
 			}
+			ImGui::TreePop();
 		}
 	}
 
 
 	static void AddProperty_Child(Transform* target)
 	{
+		for (auto child : target->getChildren())
+		{
+			if(ImGui::TreeNodeEx(child->gameObject->getName().c_str()))
+			{
+				AddProperty_Transform(child);
+				AddProperty_Child(child);
+				ImGui::TreePop();
+			}
+		}
+	}
 
+
+	static void AddKeyFrame(Transform* target, int frame, 
+							AnimationClip::Key key, bool init)
+	{
+		auto& keyFrames = clip->_channels[key];
+
+		auto transformProp = target->getProperty(AnimationClip::propertyToString(key.prop));
+		float* basePtr = (float*)((size_t)target + transformProp.offset);
+
+		if (init)
+		{
+			keyFrames.push_back(AnimationClip::KeyFrame(frame, Vector3(basePtr[0], basePtr[1], basePtr[2])));
+			return;
+		}
+
+		auto it = keyFrames.begin();
+		auto last = keyFrames.end() - 1;
+		while (++it != last)
+		{
+			if (it->frame == frame)
+			{
+				it->value.vector3 = Vector3(basePtr[0], basePtr[1], basePtr[2]);
+				return;
+			}
+			if (it->frame > frame)
+			{
+				break;
+			}
+		}
+		keyFrames.insert(it, AnimationClip::KeyFrame(frame, Vector3(basePtr[0], basePtr[1], basePtr[2])));
+		
+		// if inserted key frame is last one, update end frame
+		if (it == last)
+		{
+			(keyFrames.end() - 1)->value.vector3 = Vector3(basePtr[0], basePtr[1], basePtr[2]);
+		}
+
+		int t = 5;
+	}
+
+
+	static void CreateClip()
+	{
+		clip = new AnimationClip();
+		clip->_frameCount = frameCount;
+		clip->_isLooping = true;
 	}
 
 

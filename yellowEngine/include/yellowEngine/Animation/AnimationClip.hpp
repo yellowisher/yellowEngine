@@ -72,7 +72,7 @@ namespace yellowEngine
 
 		struct KeyFrame
 		{
-			//KeyFrame() {};
+			KeyFrame() {};
 			KeyFrame(int frame, Vector3 value) :frame(frame), value(value) {}
 			KeyFrame(int frame, Quaternion value) :frame(frame), value(value) {}
 			~KeyFrame() {}

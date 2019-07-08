@@ -68,6 +68,30 @@ public:
 	}
 };
 
+class AnimationController : public IUpdatable, public Component
+{
+public:
+	AnimationController(GameObject* gameObject) : Component(gameObject) {}
+
+	void update() override
+	{
+		auto anim = gameObject->getComponent<Animator>();
+
+		auto clip0 = Model::create("./res/Mesh/base.fbx")->getClip(0);
+		auto clip1 = Model::create("./res/Mesh/base.fbx")->getClip(1);
+
+		if (InputManager::getKeyDown(GLFW_KEY_1))
+		{
+			anim->play(clip0);
+		}
+		if (InputManager::getKeyUp(GLFW_KEY_1))
+		{
+			anim->play(clip1);
+		}
+
+	}
+};
+
 int main()
 {
 	int width = 1440;
@@ -110,7 +134,13 @@ int main()
 
 	////////// Scene
 
-	Model* m = Model::create("./res/Mesh/ehtan/Ethan.fbx");
+	Model* m = Model::create("./res/Mesh/base.fbx");
+	GameObject* mg = m->instantiate("");
+	mg->transform->setScale(0.03, 0.03, 0.03);
+	auto anim = mg->addComponent<Animator>();
+	mg->addComponent<AnimationController>();
+	mg->transform->setRotation(-90, 0, 0);
+	mg->transform->setPosition(0, -1, 0);
 
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
@@ -130,13 +160,13 @@ int main()
 	//box2->addComponent<MeshRenderer>()->set(boxMesh, bm);
 	//box2->transform->setPosition(0, -1.5, 0);
 
-	GameObject* b3 = new GameObject("box");
-	b3->addComponent<MeshRenderer>()->set(boxMesh, bm);
-	b3->transform->setPosition(0, -1.5, 2);
+	//GameObject* b3 = new GameObject("box");
+	//b3->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	//b3->transform->setPosition(0, -1.5, 2);
 
-	GameObject* b4 = new GameObject("box");
-	b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
-	b4->transform->setPosition(0, -1.5, 0.5);
+	//GameObject* b4 = new GameObject("box");
+	//b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	//b4->transform->setPosition(0, -1.5, 0.5);
 
 	//GameObject* b5 = new GameObject("box");
 	//b5->addComponent<MeshRenderer>()->set(boxMesh, bm);

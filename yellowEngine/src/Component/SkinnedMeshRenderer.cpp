@@ -32,17 +32,20 @@ namespace yellowEngine
 
 		Shader* shader = _material->bind(this, vsPath, fsPath);
 
-		// update joint matrices
-		for (int i = 0; i < _joints.size(); i++)
+		if (vsPath == nullptr)
 		{
-			Matrix matrix;
-			Transform* cursor = _joints[i].first;
-			while (cursor != _modelRoot)
+			// update joint matrices
+			for (int i = 0; i < _joints.size(); i++)
 			{
-				matrix = cursor->getLocalMatrix() * matrix;
-				cursor = cursor->getParent();
+				Matrix matrix;
+				Transform* cursor = _joints[i].first;
+				while (cursor != _modelRoot)
+				{
+					matrix = cursor->getLocalMatrix() * matrix;
+					cursor = cursor->getParent();
+				}
+				shader->setUniform("u_Joints[0]", matrix * _joints[i].second, i);
 			}
-			shader->setUniform("u_Joints[0]", matrix * _joints[i].second, i);
 		}
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 	}

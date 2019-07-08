@@ -28,6 +28,7 @@ namespace yellowEngine
 		const Vector3& position;
 		const Vector3& scale;
 		const Quaternion& rotation;
+		const Vector3& eulerRotation;
 
 		EventNotifier transformChangeNotifier;
 
