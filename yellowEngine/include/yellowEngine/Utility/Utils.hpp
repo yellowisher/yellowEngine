@@ -53,6 +53,11 @@ namespace yellowEngine
 			return a > b ? b : a;
 		}
 
+		constexpr float abs(float n)
+		{
+			return n > 0 ? n : -n;
+		}
+
 		constexpr float lerp(float a, float b, float f)
 		{
 			return (1.0f - f) * a + f * b;

@@ -47,7 +47,7 @@ namespace yellowEngine
 
 		unsigned int getVertexSize() const;
 		size_t getAttrCount() const;
-		const std::map<std::string, Attribute>& getAttributes();
+		const std::map<std::string, Attribute>& getAttributes() const;
 
 		// mutable structure is evil!
 		const Attribute& getAttr(std::string name) const;

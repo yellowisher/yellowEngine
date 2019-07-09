@@ -32,21 +32,20 @@ namespace yellowEngine
 
 		Shader* shader = _material->bind(this, vsPath, fsPath);
 
-		if (vsPath == nullptr)
+		shader->setUniform("u_Skinning", true);
+		// update joint matrices
+		for (int i = 0; i < _joints.size(); i++)
 		{
-			// update joint matrices
-			for (int i = 0; i < _joints.size(); i++)
+			Matrix matrix;
+			Transform* cursor = _joints[i].first;
+			while (cursor != _modelRoot)
 			{
-				Matrix matrix;
-				Transform* cursor = _joints[i].first;
-				while (cursor != _modelRoot)
-				{
-					matrix = cursor->getLocalMatrix() * matrix;
-					cursor = cursor->getParent();
-				}
-				shader->setUniform("u_Joints[0]", matrix * _joints[i].second, i);
+				matrix = cursor->getLocalMatrix() * matrix;
+				cursor = cursor->getParent();
 			}
+			shader->setUniform("u_Joints[0]", matrix * _joints[i].second, i);
 		}
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
+		shader->setUniform("u_Skinning", false);
 	}
 }

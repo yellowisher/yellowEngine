@@ -136,6 +136,28 @@ namespace yellowEngine
 				auto fit = _frozenValues.find(key);
 				if (fit != _frozenValues.end())
 				{
+					// should match euler angle sides of frozan value and target value
+					// a better aproach would be adjust them only at transition start,
+					// but naive assumption that transition might not be that long is applied
+					// FIXME:: adjust frozen value only at frozening
+					if (key.prop == AnimationClip::Property_Rotation)
+					{
+						for (int v = 0; v < 3; v++)
+						{
+							if (Utils::abs(fit->second.vector3.v[v] - targetValue.vector3.v[v]) > 180.0f)
+							{
+								if (fit->second.vector3.v[v] > 0)
+								{
+									fit->second.vector3.v[v] -= 360.0f;
+								}
+								else
+								{
+									fit->second.vector3.v[v] += 360.0f;
+								}
+							}
+						}
+					}
+					
 					apply(key, lerp(fit->second, targetValue, factor, key.prop));
 				}
 				else

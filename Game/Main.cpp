@@ -5,7 +5,7 @@
 
 using namespace yellowEngine;
 
-class CameraScript : IUpdatable
+class CameraScript : Component
 {
 public:
 	void update() override
@@ -49,7 +49,7 @@ public:
 	}
 };
 
-class LightScript : public IUpdatable, public Component
+class LightScript : public Component
 {
 public:
 	LightScript(GameObject* gameObject) : Component(gameObject) {}
@@ -197,8 +197,7 @@ int main()
 	Camera* camera = cameraGo->addComponent<Camera>();
 	camera->setPerspective(60.0f, 0.01f, 1000.0f);
 	camera->transform->setPosition(0, 0, 3);
-
-	new CameraScript();
+	cameraGo->addComponent<CameraScript>();
 
 	////////// Scene end
 

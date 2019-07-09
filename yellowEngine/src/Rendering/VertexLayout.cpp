@@ -39,7 +39,7 @@ namespace yellowEngine
 	}
 
 
-	const std::map<std::string, VertexLayout::Attribute>& VertexLayout::getAttributes()
+	const std::map<std::string, VertexLayout::Attribute>& VertexLayout::getAttributes() const
 	{
 		return _attributes;
 	}

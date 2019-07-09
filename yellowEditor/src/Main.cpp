@@ -13,6 +13,30 @@ GLubyte* gameData;
 GLubyte* gameDataFlipped;
 GLuint sceneTexture;
 
+class AnimationController : public IUpdatable, public Component
+{
+public:
+	AnimationController(GameObject* gameObject) : Component(gameObject) {}
+
+	void update() override
+	{
+		auto anim = gameObject->getComponent<Animator>();
+
+		auto clip0 = Model::create("./res/Mesh/base.fbx")->getClip(0);
+		auto clip1 = Model::create("./res/Mesh/base.fbx")->getClip(1);
+
+		if (InputManager::getKeyDown(GLFW_KEY_1))
+		{
+			anim->play(clip0);
+		}
+		if (InputManager::getKeyUp(GLFW_KEY_1))
+		{
+			anim->play(clip1);
+		}
+
+	}
+};
+
 int main()
 {
 	if (!glfwInit()) return 1;
@@ -91,14 +115,21 @@ int main()
 
 	*/
 
+	Model* m = Model::create("./res/Mesh/base.fbx");
+	GameObject* mg = m->instantiate("qwe");
+	mg->transform->setScale(0.03, 0.03, 0.03);
+	auto anim = mg->addComponent<Animator>();
+	mg->addComponent<AnimationController>();
+	mg->transform->setRotation(-90, 0, 0);
+	mg->transform->setPosition(0, -1, 0);
 
-	Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
-	GameObject* nano = model->instantiate("Model");
-	nano->transform->setScale(0.3, 0.3, 0.3);
-	auto anim = nano->addComponent<Animator>();
+	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
+	//GameObject* nano = model->instantiate("Model");
+	//nano->transform->setScale(0.3, 0.3, 0.3);
+	//auto anim = nano->addComponent<Animator>();
 
-	auto clip = AnimationClip::create("./res/Animation/haha.yea");
-	anim->play(clip);
+	//auto clip = AnimationClip::create("./res/Animation/haha.yea");
+	//anim->play(clip);
 
 	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
 	GameObject* box = new GameObject("box");

@@ -42,14 +42,18 @@ namespace yellowEngine
 		glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBufferHandle());
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getElementBufferHandle());
 
-		auto attributes = shader->getAttributes();
-		const VertexLayout& meshLayout = mesh->getVertexLayout();
+		auto shaderAttrs = shader->getAttributes();
+		auto meshAttrs = mesh->getVertexLayout().getAttributes();
 
-		for (auto attribute : attributes)
+		for (auto shaderAttr : shaderAttrs)
 		{
-			auto meshAttr = meshLayout.getAttr(attribute.name);
-			glVertexAttribPointer(attribute.location, meshAttr.size, meshAttr.type, GL_FALSE, meshLayout.getVertexSize(), (void*)meshAttr.offset);
-			glEnableVertexAttribArray(attribute.location);
+			auto it = meshAttrs.find(shaderAttr.name);
+			if (it != meshAttrs.end())
+			{
+				auto& meshAttr = it->second;
+				glVertexAttribPointer(shaderAttr.location, it->second.size, meshAttr.type, GL_FALSE, mesh->getVertexLayout().getVertexSize(), (void*)meshAttr.offset);
+				glEnableVertexAttribArray(shaderAttr.location);
+			}
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);

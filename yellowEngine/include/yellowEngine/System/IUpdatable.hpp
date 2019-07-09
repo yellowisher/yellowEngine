@@ -1,22 +1,27 @@
 #ifndef __H_IUPDATABLE__
 #define __H_IUPDATABLE__
 
-#include "yellowEngine/System/Game.hpp"
-
 namespace yellowEngine
 {
+	class Game;
 	class IUpdatable
 	{
+		friend class Game;
 	public:
 		IUpdatable()
 		{
-			Game::addUpdatable(this);
+			onCreate(this);
 		}
 		virtual ~IUpdatable()
 		{
-			Game::removeUpdatable(this);
+			onDestroy(this);
 		}
+		virtual void start() = 0;
 		virtual void update() = 0;
+
+	private:
+		static void(*onCreate)(IUpdatable* updatable);
+		static void(*onDestroy)(IUpdatable* updatable);
 	};
 }
 

@@ -23,6 +23,9 @@ namespace yellowEngine
 		broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 
 		_assetPath = "./res/";
+
+		IUpdatable::onCreate = Game::addUpdatable;
+		IUpdatable::onDestroy = Game::removeUpdatable;
 	}
 
 
@@ -33,8 +36,14 @@ namespace yellowEngine
 
 	void Game::init()
 	{
+
 		_inputManager = new InputManager();
 		_colliderManager = ColliderManager::create(broadPhaseType);
+
+		for (auto updatable : _updatables)
+		{
+			if (updatable) updatable->start();
+		}
 	}
 
 

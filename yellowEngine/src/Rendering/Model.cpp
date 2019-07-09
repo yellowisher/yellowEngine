@@ -201,6 +201,7 @@ namespace yellowEngine
 							auto frame = channel->mRotationKeys[f];
 							Quaternion rotation(frame.mValue.x, frame.mValue.y, frame.mValue.z, frame.mValue.w);
 
+							auto v = rotation.toEulerAngle();
 							// FIXME:: should convert proper euler angle
 							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, rotation.toEulerAngle()));
 						}
@@ -414,10 +415,6 @@ namespace yellowEngine
 		materialPath.Append(".yem");
 
 		Material* material = new Material(materialPath.C_Str());
-		if (aiMesh->HasBones())
-		{
-			material->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "./res/Shader/skeletal.vert", "./res/Shader/default.frag");
-		}
 
 		aiMaterial* aMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 		aiString texturePath;
