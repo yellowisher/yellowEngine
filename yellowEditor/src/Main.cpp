@@ -95,6 +95,10 @@ int main()
 	Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	GameObject* nano = model->instantiate("Model");
 	nano->transform->setScale(0.3, 0.3, 0.3);
+	auto anim = nano->addComponent<Animator>();
+
+	auto clip = AnimationClip::create("./res/Animation/haha.yea");
+	anim->play(clip);
 
 	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
 	GameObject* box = new GameObject("box");

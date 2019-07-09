@@ -200,7 +200,9 @@ namespace yellowEngine
 						{
 							auto frame = channel->mRotationKeys[f];
 							Quaternion rotation(frame.mValue.x, frame.mValue.y, frame.mValue.z, frame.mValue.w);
-							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, rotation));
+
+							// FIXME:: should convert proper euler angle
+							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, rotation.toEulerAngle()));
 						}
 					}
 

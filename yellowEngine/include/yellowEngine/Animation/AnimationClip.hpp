@@ -30,19 +30,16 @@ namespace yellowEngine
 		struct Value
 		{
 			Value() {};
-			Value(const Value& copy) { quaternion = copy.quaternion; }
-			Value& operator=(const Value& other) { quaternion = other.quaternion; return *this; }
+			Value(const Value& copy) { vector3 = copy.vector3; }
+			Value& operator=(const Value& other) { vector3 = other.vector3; return *this; }
 			~Value() {};
 
 			Value(const Vector3 vector3) :vector3(vector3) {}
-			Value(const Quaternion quaternion) :quaternion(quaternion) {}
 			union
 			{
-				Quaternion quaternion;
-				Quaternion rotation;
-
 				Vector3 vector3;
 				Vector3 position;
+				Vector3 rotation;
 				Vector3 scale;
 			};
 		};
@@ -74,7 +71,6 @@ namespace yellowEngine
 		{
 			KeyFrame() {};
 			KeyFrame(int frame, Vector3 value) :frame(frame), value(value) {}
-			KeyFrame(int frame, Quaternion value) :frame(frame), value(value) {}
 			~KeyFrame() {}
 
 			int frame;
@@ -98,10 +94,15 @@ namespace yellowEngine
 				}
 				return transformPath < other.transformPath;
 			}
+
+			bool operator==(const Key& other) const
+			{
+				return transformPath == other.transformPath && prop == other.prop;
+			}
 		};
 
 		static AnimationClip* create(const char* path);
-		static void saveClip(const char* path, int frameCount, std::map<Key, std::vector<KeyFrame>> channels);
+		static void saveClip(const char* path, AnimationClip* clip);
 
 		AnimationClip();
 		~AnimationClip();

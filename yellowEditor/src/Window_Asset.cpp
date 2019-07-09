@@ -29,6 +29,9 @@ namespace yellowEditor
 	static int frameCount = 60;
 	static int _frame = 0;
 	static float animationLeftWidth = 0.3f;
+	static bool isPlaying = false;
+	static bool isDragging = false;
+	static std::pair<AnimationClip::Key, int> draggingNode;
 
 	// really should separate docks and windows...
 	static void DrawTab_Asset();
@@ -37,6 +40,8 @@ namespace yellowEditor
 	static void AddProperty_Child(Transform* target);
 	static void AddKeyFrame(Transform* target, int frame, 
 							AnimationClip::Key key, bool init = false);
+	static void AddKeyFrame(std::vector< AnimationClip::KeyFrame>& keyFrames, AnimationClip::KeyFrame keyFrame);
+	static float getSliderWidth(bool slider = true);
 	static void CreateClip();
 
 	void Init_AssetWindow()
@@ -234,28 +239,46 @@ namespace yellowEditor
 		if (ImGui::InputText("##frame", frameBuffer, frameBufferSize, ImGuiInputTextFlags_CharsDecimal))
 		{
 			frameCount = atoi(frameBuffer);
+			for (auto channel : clip->_channels)
+			{
+				(channel.second.end() - 1)->frame = frameCount;
+			}
+			
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Play"))
-		{
 
+		if (!isPlaying)
+		{
+			if (ImGui::Button("Play"))
+			{
+				isPlaying = true;
+			}
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Pause"))
+		else
 		{
-
+			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonHovered));
+			if (ImGui::Button("Pause"))
+			{
+				isPlaying = false;
+			}
+			ImGui::PopStyleColor();
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Stop"))
 		{
-
+			isPlaying = false;
+			_frame = 0;
+			if (animator)
+			{
+				animator->gotoFrame(0);
+			}
 		}
-		//ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("Save").x - 20);
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetColumnWidth() - ImGui::CalcTextSize("Save").x - 20);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7, 0.4, 0.1, 1.0));
 		if (ImGui::Button("Save"))
 		{
-			// save animation clip here
+			std::string path = fileDialog({ { "yea","Yellow Engine Animation" } }, true) + ".yea";
+			AnimationClip::saveClip(path.c_str(), clip);
 		}
 		ImGui::PopStyleColor();
 
@@ -277,9 +300,18 @@ namespace yellowEditor
 					animator->setClip(clip);
 				}
 
+				if (isPlaying)
+				{
+					if (++_frame == frameCount)
+					{
+						_frame = 0;
+					}
+					animator->gotoFrame(_frame);
+				}
+
 				// show all selected properties
 				ImGui::NextColumn();
-				ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
+				ImGui::SetNextItemWidth(getSliderWidth(true));
 				if (ImGui::SliderInt("##frame_slider", &_frame, 0, frameCount - 1))
 				{
 					animator->gotoFrame(_frame);
@@ -295,10 +327,10 @@ namespace yellowEditor
 					std::string propName = AnimationClip::propertyToString(key.prop);
 					std::string name = keyTransform->gameObject->getName() + ": " + propName;
 					
-					ImGui::Separator();
+					//ImGui::Separator();
 					if (ImGui::TreeNodeEx(name.c_str()))
 					{
-						ImGui::Separator();
+						//ImGui::Separator();
 						static const char* labels[3] = { "X", "Y", "Z" };
 
 						auto transformProp = keyTransform->getProperty(propName);
@@ -306,6 +338,7 @@ namespace yellowEditor
 
 						for (int i = 0; i < 3; i++)
 						{
+							ImGui::Separator();
 							if (ImGui::TreeNodeEx(labels[i], ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf))
 							{
 								ImGui::SameLine();
@@ -322,15 +355,65 @@ namespace yellowEditor
 							ImGui::NextColumn();
 
 							auto& keyFrames = clip->_channels[key];
-							for (int i = 1; i < keyFrames.size() - 1; i++)
+							for (int k = 0; k < keyFrames.size(); k++)
 							{
-								float ratio = (float)keyFrames[i].frame / frameCount;
-								ImGui::SetCursorPosX(ImGui::GetColumnWidth(0) + ratio * ImGui::GetColumnWidth());
-								ImGui::Bullet();
+								float ratio = (float)keyFrames[k].frame / (frameCount);
+								ImGui::SetCursorPosX(ImGui::GetColumnWidth(0) + ratio * (getSliderWidth()));
+
+								bool selected = (isDragging) && (draggingNode.first == key) && (draggingNode.second == k);
+
+								if (selected)
+								{
+									ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+									ImGui::Bullet();
+									ImGui::PopStyleColor();
+								}
+								else
+								{
+									ImGui::Bullet();
+								}
+
+								static float keyFrameStride = 0;
+								static float handledDelta = 0;
+								if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered())
+								{
+									isDragging = true;
+									draggingNode.first = key;
+									draggingNode.second = k;
+									keyFrameStride = (getSliderWidth()) / (frameCount);
+									handledDelta = 0;
+								}
+
+								if (selected && i == 2 && ImGui::IsMouseDragging(0))
+								{
+									float moveDelta = ImGui::GetMouseDragDelta(0).x - handledDelta;
+									int move = moveDelta / keyFrameStride;
+									if (move != 0)
+									{
+										handledDelta += move * keyFrameStride;
+										keyFrames[k].frame += move;
+										//animator->gotoFrame(_frame);
+									}
+								}
+
+								if (selected && isDragging && ImGui::IsMouseReleased(0))
+								{
+									int move = ImGui::GetMouseDragDelta(0).x / keyFrameStride;
+									if (move != 0)
+									{
+										auto kf = keyFrames[k];
+										keyFrames.erase(keyFrames.begin() + k);
+										AddKeyFrame(keyFrames, kf);
+									}
+
+									animator->gotoFrame(_frame);
+								}
+
 								ImGui::SameLine();
 							}
 							ImGui::NextColumn();
 						}
+						ImGui::Separator();
 
 						ImGui::TreePop();
 					}
@@ -352,6 +435,10 @@ namespace yellowEditor
 					ImGui::EndPopup();
 				}
 			}
+		}
+		if (ImGui::IsMouseReleased(0))
+		{
+			isDragging = false;
 		}
 
 		ImGui::Columns(1);
@@ -383,7 +470,7 @@ namespace yellowEditor
 
 						clip->_channels[key] = {};
 						AddKeyFrame(target, 0, key, true);
-						AddKeyFrame(target, frameCount, key, true);
+						AddKeyFrame(target, frameCount - 1, key, true);
 
 						ImGui::CloseCurrentPopup();
 					}
@@ -423,29 +510,35 @@ namespace yellowEditor
 			return;
 		}
 
+		AddKeyFrame(keyFrames, AnimationClip::KeyFrame(frame, Vector3(basePtr[0], basePtr[1], basePtr[2])));
+	}
+
+
+	static void AddKeyFrame(std::vector< AnimationClip::KeyFrame>& keyFrames, AnimationClip::KeyFrame keyFrame)
+	{
 		auto it = keyFrames.begin();
-		auto last = keyFrames.end() - 1;
-		while (++it != last)
+		for (; it != keyFrames.end(); ++it)
 		{
-			if (it->frame == frame)
+			if (it->frame == keyFrame.frame)
 			{
-				it->value.vector3 = Vector3(basePtr[0], basePtr[1], basePtr[2]);
+				it->value.vector3 = keyFrame.value.vector3;
 				return;
 			}
-			if (it->frame > frame)
+			if (it->frame > keyFrame.frame)
 			{
 				break;
 			}
 		}
-		keyFrames.insert(it, AnimationClip::KeyFrame(frame, Vector3(basePtr[0], basePtr[1], basePtr[2])));
-		
-		// if inserted key frame is last one, update end frame
-		if (it == last)
-		{
-			(keyFrames.end() - 1)->value.vector3 = Vector3(basePtr[0], basePtr[1], basePtr[2]);
-		}
+		keyFrames.insert(it, keyFrame);
+	}
 
-		int t = 5;
+
+
+	static float getSliderWidth(bool slider)
+	{
+		int offset = 0;
+		if (slider) ImGui::GetColumnWidth() - offset;
+		return ImGui::GetColumnWidth() - offset - ImGui::getBulletWidth();
 	}
 
 
@@ -454,6 +547,8 @@ namespace yellowEditor
 		clip = new AnimationClip();
 		clip->_frameCount = frameCount;
 		clip->_isLooping = true;
+		_frame = 0;
+		isPlaying = false;
 	}
 
 

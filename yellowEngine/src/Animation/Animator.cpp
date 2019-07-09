@@ -52,10 +52,8 @@ namespace yellowEngine
 		{
 			case AnimationClip::Property_Position:
 			case AnimationClip::Property_Scale:
-				result.vector3 = Vector3::lerp(a.vector3, b.vector3, factor);
-				break;
 			case AnimationClip::Property_Rotation:
-				result.quaternion = Quaternion::lerp(a.quaternion, b.quaternion, factor);
+				result.vector3 = Vector3::lerp(a.vector3, b.vector3, factor);
 				break;
 		}
 		return result;
@@ -64,7 +62,7 @@ namespace yellowEngine
 
 	void Animator::proceed()
 	{
-		if (++_frame > _currentClip->_frameCount)
+		if (++_frame >= _currentClip->_frameCount)
 		{
 			if (_currentClip->_isLooping)
 			{
@@ -81,23 +79,26 @@ namespace yellowEngine
 
 		if (_state == State_Playing)
 		{
-			for (auto channel : _currentClip->_channels)
+			for (auto keyChannelPair : _currentClip->_channels)
 			{
-				if (_frame > channel.second[_ends[channel.first]].frame)
+				auto key = keyChannelPair.first;
+				auto& channel = keyChannelPair.second;
+
+				if (_frame > channel[_ends[key]].frame)
 				{
-					_ends[channel.first]++;
+					_ends[key]++;
 				}
 
-				int ei = _ends[channel.first];
+				int ei = _ends[key];
 				int bi = ei - 1;
 
-				KeyFrame& begin = channel.second[bi];
-				KeyFrame& end = channel.second[ei];
+				KeyFrame& begin = channel[bi];
+				KeyFrame& end = channel[ei];
 
 				float factor = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
 
 				// maybe make structure for channel pair would be better
-				apply(channel.first, lerp(begin.value, end.value, factor, channel.first.prop));
+				apply(key, lerp(begin.value, end.value, factor, key.prop));
 			}
 		}
 		else if (_state == State_Transitioning)
@@ -114,29 +115,32 @@ namespace yellowEngine
 			*/
 
 			float factor = (float)_frame / (float)_transitionDelay;
-			for (auto channel : _currentClip->_channels)
+			for (auto keyChannelPair : _currentClip->_channels)
 			{
-				if (_frame > channel.second[_ends[channel.first]].frame)
+				auto key = keyChannelPair.first;
+				auto& channel = keyChannelPair.second;
+
+				if (_frame > channel[_ends[key]].frame)
 				{
-					_ends[channel.first]++;
+					_ends[key]++;
 				}
-				int ei = _ends[channel.first];
+				int ei = _ends[key];
 				int bi = ei - 1;
 
-				KeyFrame& begin = channel.second[bi];
-				KeyFrame& end = channel.second[ei];
+				KeyFrame& begin = channel[bi];
+				KeyFrame& end = channel[ei];
 
 				float factor_ = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
-				Value targetValue = lerp(begin.value, end.value, factor_, channel.first.prop);
+				Value targetValue = lerp(begin.value, end.value, factor_, key.prop);
 
-				auto fit = _frozenValues.find(channel.first);
+				auto fit = _frozenValues.find(key);
 				if (fit != _frozenValues.end())
 				{
-					apply(channel.first, lerp(fit->second, targetValue, factor, channel.first.prop));
+					apply(key, lerp(fit->second, targetValue, factor, key.prop));
 				}
 				else
 				{
-					apply(channel.first, targetValue);
+					apply(key, targetValue);
 				}
 			}
 
@@ -244,7 +248,7 @@ namespace yellowEngine
 		for (auto channel : _currentClip->_channels)
 		{
 			int bi = 0;
-			for (bi = 0; bi < channel.second.size() - 1; bi++)
+			for (bi = 0; bi < channel.second.size() - 2; bi++)
 			{
 				if (channel.second[bi + 1].frame > frame)
 				{
@@ -304,7 +308,7 @@ namespace yellowEngine
 				return Value(getTransform(key.transformPath)->position);
 
 			case AnimationClip::Property_Rotation:
-				return Value(getTransform(key.transformPath)->rotation);
+				return Value(getTransform(key.transformPath)->eulerRotation);
 
 			case AnimationClip::Property_Scale:
 				return Value(getTransform(key.transformPath)->scale);

@@ -58,29 +58,11 @@ namespace yellowEngine
 				int frame = keyFrame["frame"].asInt();
 				auto value = keyFrame["value"];
 
-				switch (prop)
-				{
-					case Property_Position:
-					case Property_Scale:
-					{
-						Vector3 vector3;
-						vector3.x = value["x"].asFloat();
-						vector3.y = value["y"].asFloat();
-						vector3.z = value["z"].asFloat();
-						frames.push_back(KeyFrame(frame, vector3));
-						break;
-					}
-					case Property_Rotation:
-					{
-						Quaternion quaternion;
-						quaternion.x = value["x"].asFloat();
-						quaternion.y = value["y"].asFloat();
-						quaternion.z = value["z"].asFloat();
-						quaternion.w = value["w"].asFloat();
-						frames.push_back(KeyFrame(frame, quaternion));
-						break;
-					}
-				}
+				Vector3 vector3;
+				vector3.x = value["x"].asFloat();
+				vector3.y = value["y"].asFloat();
+				vector3.z = value["z"].asFloat();
+				frames.push_back(KeyFrame(frame, vector3));
 			}
 		}
 
@@ -89,16 +71,16 @@ namespace yellowEngine
 	}
 
 
-	void AnimationClip::saveClip(const char* path, int frameCount, std::map<Key, std::vector<KeyFrame>> channels)
+	void AnimationClip::saveClip(const char* path, AnimationClip* clip)
 	{
 		Json::Value root;
 
-		root["frame_count"] = frameCount;
+		root["frame_count"] = clip->_frameCount;
 		root["is_looping"] = true;
 
 		Json::Value channelsJson;
 
-		for (auto channel : channels)
+		for (auto channel : clip->_channels)
 		{
 			Key key = channel.first;
 			std::vector<KeyFrame> keyFrames = channel.second;
@@ -110,27 +92,10 @@ namespace yellowEngine
 				Json::Value keyFrameJson;
 
 				Json::Value valueJson;
-				switch (key.prop)
-				{
-					case Property_Position:
-					case Property_Scale:
-					{
-						Vector3 value = keyFrame.value.vector3;
-						valueJson["x"] = value.x;
-						valueJson["y"] = value.y;
-						valueJson["z"] = value.z;
-						break;
-					}
-					case Property_Rotation:
-					{
-						Quaternion value = keyFrame.value.quaternion;
-						valueJson["x"] = value.x;
-						valueJson["y"] = value.y;
-						valueJson["z"] = value.z;
-						valueJson["w"] = value.w;
-						break;
-					}
-				}
+				Vector3 value = keyFrame.value.vector3;
+				valueJson["x"] = value.x;
+				valueJson["y"] = value.y;
+				valueJson["z"] = value.z;
 				keyFrameJson["frame"] = keyFrame.frame;
 				keyFrameJson["value"] = valueJson;
 
