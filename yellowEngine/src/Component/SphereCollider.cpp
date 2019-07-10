@@ -20,6 +20,12 @@ namespace yellowEngine
 	}
 
 
+	void SphereCollider::onCreate()
+	{
+		Collider::onCreate();
+	}
+
+
 	Collider::Type SphereCollider::getType()
 	{
 		static Type type = Type_Sphere;

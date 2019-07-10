@@ -6,8 +6,6 @@
 #include <string>
 #include <cstddef>
 
-#include "yellowEngine/System/IUpdatable.hpp"
-
 // basic RTTI with macro
 // user has to manually register properties of component
 // there is big problem; memory of properties changed directly
@@ -73,7 +71,7 @@ namespace yellowEngine
 	class GameObject;
 	class Transform;
 
-	class Component : public IUpdatable
+	class Component
 	{
 		friend class GameObject;
 
@@ -99,11 +97,10 @@ namespace yellowEngine
 		GameObject* const gameObject;
 		Transform* const transform;
 
+		Component() = delete;
 		Component(GameObject* gameObject);
 		virtual ~Component();
 
-		virtual void start() {};
-		virtual void update() {};
 		virtual void onCreate() {};
 		virtual void onDestroy() {};
 		virtual void onValueChanged() {};

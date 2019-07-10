@@ -41,9 +41,9 @@ namespace yellowEngine
 		Camera(GameObject* gameObject);
 		virtual ~Camera();
 
-		void onCreate() override;
-		void onDestroy() override;
-		void onValueChanged() override;
+		virtual void onCreate() override;
+		virtual void onDestroy() override;
+		virtual void onValueChanged() override;
 
 		void setPerspective(float fov, float zNear, float zFar);
 		void setOrthographic(float zNear, float zFar);

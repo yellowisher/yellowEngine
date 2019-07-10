@@ -10,18 +10,17 @@ namespace yellowEngine
 	public:
 		IUpdatable()
 		{
-			onCreate(this);
+			reportCreate(this);
 		}
 		virtual ~IUpdatable()
 		{
-			onDestroy(this);
+			reportDestroy(this);
 		}
-		virtual void start() = 0;
 		virtual void update() = 0;
 
 	private:
-		static void(*onCreate)(IUpdatable* updatable);
-		static void(*onDestroy)(IUpdatable* updatable);
+		static void(*reportCreate)(IUpdatable* updatable);
+		static void(*reportDestroy)(IUpdatable* updatable);
 	};
 }
 

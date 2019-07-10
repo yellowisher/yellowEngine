@@ -24,8 +24,8 @@ namespace yellowEngine
 
 		_assetPath = "./res/";
 
-		IUpdatable::onCreate = Game::addUpdatable;
-		IUpdatable::onDestroy = Game::removeUpdatable;
+		IUpdatable::reportCreate = Game::addUpdatable;
+		IUpdatable::reportDestroy = Game::removeUpdatable;
 	}
 
 
@@ -39,11 +39,6 @@ namespace yellowEngine
 
 		_inputManager = new InputManager();
 		_colliderManager = ColliderManager::create(broadPhaseType);
-
-		for (auto updatable : _updatables)
-		{
-			if (updatable) updatable->start();
-		}
 	}
 
 

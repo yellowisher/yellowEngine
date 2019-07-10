@@ -35,9 +35,9 @@ namespace yellowEngine
 		Transform(GameObject* gameObject);
 		virtual ~Transform();
 
-		void onCreate() override;
-		void onDestroy() override;
-		void onValueChanged() override;
+		virtual void onCreate() override;
+		virtual void onDestroy() override;
+		virtual void onValueChanged() override;
 
 		Transform* getParent();
 		void addChild(Transform* child);

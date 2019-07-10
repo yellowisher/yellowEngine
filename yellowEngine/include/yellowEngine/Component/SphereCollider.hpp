@@ -16,6 +16,8 @@ namespace yellowEngine
 		SphereCollider(GameObject* gameObject);
 		~SphereCollider();
 
+		virtual void onCreate() override;
+
 		Type getType() override;
 		bool isCollideWith(Collider* other) override;
 		void fillRenderingPoints(std::vector<Vector3>& lines) override;

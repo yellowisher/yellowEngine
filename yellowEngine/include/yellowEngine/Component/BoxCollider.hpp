@@ -18,7 +18,8 @@ namespace yellowEngine
 	public:
 		BoxCollider(GameObject* gameObject);
 		~BoxCollider();
-		void onValueChanged() override;
+		virtual void onCreate() override;
+		virtual void onValueChanged() override;
 
 		Type getType() override;
 		bool isCollideWith(Collider* other) override;

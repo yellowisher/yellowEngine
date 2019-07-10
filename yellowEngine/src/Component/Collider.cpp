@@ -10,6 +10,10 @@ namespace yellowEngine
 {
 	Collider::Collider(GameObject* gameObject) :Component(gameObject)
 	{
+		_transformChangeListener.setParent(this);
+		transform->transformChangeNotifier.addListener(&_transformChangeListener);
+
+		ColliderManager::getInstance()->colliderCreated(this);
 	}
 
 
@@ -21,11 +25,6 @@ namespace yellowEngine
 
 	void Collider::onCreate()
 	{
-		_transformChangeListener.setParent(this);
-		transform->transformChangeNotifier.addListener(&_transformChangeListener);
-
-		ColliderManager::getInstance()->colliderCreated(this);
-
 		auto meshRenderer = gameObject->getComponent<MeshRenderer>();
 		Mesh* mesh;
 		if (meshRenderer && (mesh = meshRenderer->getMesh()))

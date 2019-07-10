@@ -41,7 +41,7 @@ namespace yellowEngine
 
 		Light(GameObject* gameObject);
 		~Light();
-		void onValueChanged();
+		virtual void onValueChanged();
 		Light* setType(LightType type);
 		Light::LightType getType() { return _type; }
 		void setCutoff(float inner, float outer);

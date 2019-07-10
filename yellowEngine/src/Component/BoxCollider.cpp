@@ -25,6 +25,12 @@ namespace yellowEngine
 	}
 
 
+	void BoxCollider::onCreate()
+	{
+		Collider::onCreate();
+	}
+
+
 	void BoxCollider::onValueChanged()
 	{
 		set(_min.x, _min.y, _min.z, _max.x, _max.y, _max.z);

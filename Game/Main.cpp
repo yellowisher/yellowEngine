@@ -5,9 +5,11 @@
 
 using namespace yellowEngine;
 
-class CameraScript : Component
+class CameraScript : public Component, public IUpdatable
 {
 public:
+	CameraScript(GameObject* gameObject) : Component(gameObject) {}
+
 	void update() override
 	{
 		static const float moveSpeed = 0.06f;
@@ -49,7 +51,7 @@ public:
 	}
 };
 
-class LightScript : public Component
+class LightScript : public Component, public IUpdatable
 {
 public:
 	LightScript(GameObject* gameObject) : Component(gameObject) {}
@@ -134,13 +136,13 @@ int main()
 
 	////////// Scene
 
-	Model* m = Model::create("./res/Mesh/base.fbx");
-	GameObject* mg = m->instantiate("");
-	mg->transform->setScale(0.03, 0.03, 0.03);
+	Model* m = Model::create("./res/Mesh/KnightCharacter.fbx");
+	GameObject* mg = m->instantiate("wer");
+	//mg->transform->setScale(0.03, 0.03, 0.03);
 	auto anim = mg->addComponent<Animator>();
 	mg->addComponent<AnimationController>();
-	mg->transform->setRotation(-90, 0, 0);
-	mg->transform->setPosition(0, -1, 0);
+	//mg->transform->setRotation(-90, 0, 0);
+	//mg->transform->setPosition(0, -1, 0);
 
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
