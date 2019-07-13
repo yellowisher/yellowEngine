@@ -32,6 +32,7 @@ namespace yellowEngine
 
 		Shader* shader = _material->bind(this, vsPath, fsPath);
 
+		shader->setUniform("u_Model", _modelRoot->getMatrix());
 		shader->setUniform("u_Skinning", true);
 		// update joint matrices
 		for (int i = 0; i < _joints.size(); i++)

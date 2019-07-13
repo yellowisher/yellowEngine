@@ -14,6 +14,8 @@
 // So change editor window as class and just friend keyword later.
 namespace yellowEngine
 {
+	class Model;
+
 	class AnimationClip
 	{
 		friend class Model;
@@ -24,22 +26,26 @@ namespace yellowEngine
 		{
 			Property_Position,
 			Property_Rotation,
+			Property_EulerRotation,
 			Property_Scale
 		};
 
 		struct Value
 		{
 			Value() {};
-			Value(const Value& copy) { vector3 = copy.vector3; }
-			Value& operator=(const Value& other) { vector3 = other.vector3; return *this; }
+			Value(const Value& copy) { quaternion = copy.quaternion; }
+			Value& operator=(const Value& other) { quaternion = other.quaternion; return *this; }
 			~Value() {};
 
 			Value(const Vector3 vector3) :vector3(vector3) {}
+			Value(const Quaternion quaternion) :quaternion(quaternion) {}
 			union
 			{
+				Quaternion quaternion;
+				Quaternion rotation;
 				Vector3 vector3;
 				Vector3 position;
-				Vector3 rotation;
+				Vector3 eulerRotation;
 				Vector3 scale;
 			};
 		};
@@ -50,6 +56,7 @@ namespace yellowEngine
 			{
 				{"Position", {Property_Position}},
 				{"Rotation", {Property_Rotation}},
+				{"EulerRotation", {Property_EulerRotation}},
 				{"Scale", {Property_Scale}},
 			};
 
@@ -61,6 +68,7 @@ namespace yellowEngine
 			static std::string __strings[] = {
 				"Position",
 				"Rotation",
+				"EulerRotation",
 				"Scale"
 			};
 
@@ -70,10 +78,11 @@ namespace yellowEngine
 		struct KeyFrame
 		{
 			KeyFrame() {};
-			KeyFrame(int frame, Vector3 value) :frame(frame), value(value) {}
+			KeyFrame(float frame, Vector3 value) :frame(frame), value(value) {}
+			KeyFrame(float frame, Quaternion value) :frame(frame), value(value) {}
 			~KeyFrame() {}
 
-			int frame;
+			float frame;
 			Value value;
 		};
 

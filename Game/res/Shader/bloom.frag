@@ -22,6 +22,6 @@ void main()
 
 	vec3 result = vec3(1.0, 1.0, 1.0) - exp(-scene * u_Exposure);
 
-	result = pow(result, vec3(1.0 / gamma));
+	//result = pow(result, vec3(1.0 / gamma));
 	o_FragColor = vec4(result, 1.0);
 }

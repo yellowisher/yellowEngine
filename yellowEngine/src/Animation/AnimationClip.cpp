@@ -1,7 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <json/json.h>	
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
+#include "yellowEngine/Rendering/Model.hpp"
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/System/Game.hpp"
 #include "yellowEngine/Animation/AnimationClip.hpp"
 
@@ -55,7 +60,7 @@ namespace yellowEngine
 
 			for (auto keyFrame : channel["key_frames"])
 			{
-				int frame = keyFrame["frame"].asInt();
+				float frame = keyFrame["frame"].asFloat();
 				auto value = keyFrame["value"];
 
 				Vector3 vector3;

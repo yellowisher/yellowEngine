@@ -15,6 +15,9 @@ GLuint sceneTexture;
 
 class AnimationController : public IUpdatable, public Component
 {
+	BEGIN_COMPONENT(AnimationController)
+	END_COMPONENT
+
 public:
 	AnimationController(GameObject* gameObject) : Component(gameObject) {}
 
@@ -22,20 +25,14 @@ public:
 	{
 		auto anim = gameObject->getComponent<Animator>();
 
-		auto clip0 = Model::create("./res/Mesh/base.fbx")->getClip(0);
-		auto clip1 = Model::create("./res/Mesh/base.fbx")->getClip(1);
-
+		static float f = 0;
 		if (InputManager::getKeyDown(GLFW_KEY_1))
 		{
-			anim->play(clip0);
+			anim->gotoFrame((f += 0.5f));
 		}
-		if (InputManager::getKeyUp(GLFW_KEY_1))
-		{
-			anim->play(clip1);
-		}
-
 	}
 };
+COMPONENT_IMPL(AnimationController)
 
 int main()
 {
@@ -78,50 +75,24 @@ int main()
 	gameDataFlipped = new GLubyte[gameWindow.width * gameWindow.height * 3];
 
 #pragma region Scene
-	//Mesh* boxMesh = Mesh::create("Mesh/cube.obj");
-	//Material* boxMaterial = new Material("asdasd");
+	Material* mat = new Material("Infantry");
+	mat->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/RTS/blue.tga"));
 
-	//boxMaterial->setProperty("u_Material.diffuse", Texture::create("Texture/container2.png"));
-	//boxMaterial->setProperty("u_Material.specular", Texture::create("Texture/container2_specular.png"));
-	//boxMaterial->setTechnique(Technique::getTechnique(TechniqueType_Deferred), "Shader/texture.vert", "Shader/texture.frag");
-
-	//GameObject* box = new GameObject("Box1");
-	//auto renderer = box->addComponent<MeshRenderer>();
-	//renderer->set(boxMesh, boxMaterial);
-
-	//Model* animModel = Model::create("./res/Mesh/base.fbx");
-	//GameObject* animGo = animModel->instantiate("Anim");
-	//auto anim = animGo->addComponent<Animator>();
-	//auto it = animModel->getClips().begin();
-
-	//animGo->transform->setScale(0.05f, 0.05f, 0.05f);
-	//anim->play((++it)->second);
-
-	/*Model* sphere = Model::create("./res/Mesh/sphere.obj");
-	sphere->instantiate("Sphere");
-
-	GameObject* sp = sphere->instantiate("Sphere1");
-
-
-	Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
-
-	GameObject* nano = model->instantiate("Model");
-	GameObject* spotLightGo = new GameObject();
-	Light* sl = spotLightGo->addComponent<Light>()->setType(Light::LightType_Spot);
-	sl->diffuseIntensity = 1.0f;
-	sl->linear = 0.07f;
-	sl->quadratic = 0.002f;
-	spotLightGo->transform->setPosition(0, 10, 5);
-
-	*/
-
-	Model* m = Model::create("./res/Mesh/base.fbx");
-	GameObject* mg = m->instantiate("qwe");
-	mg->transform->setScale(0.03, 0.03, 0.03);
+	Model* m = Model::create("./res/Mesh/RTS/infantry.fbx");
+	GameObject* mg = m->instantiate("infantry", mat);
+	mg->transform->setScale(0.01, 0.01, 0.01);
 	auto anim = mg->addComponent<Animator>();
-	mg->addComponent<AnimationController>();
-	mg->transform->setRotation(-90, 0, 0);
-	mg->transform->setPosition(0, -1, 0);
+	anim->setSpeed(0.5f);
+	anim->play(m->getClip("archer_attack"));
+
+	//Model* q = Model::create("./res/Mesh/RTS/infantry_04_attack_A.FBX");
+	//auto qq = q->instantiate("Anim");
+
+	//auto anim = mg->addComponent<Animator>();
+	//auto clip = AnimationClip::create("./res/Mesh/RTS/infantry_04_attack_A.FBX", m);
+	//auto clip = m->getClip(0);
+
+	//anim->play(clip);
 
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");

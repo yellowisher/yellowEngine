@@ -249,20 +249,10 @@ namespace yellowEngine
 	{
 		if (_dirtyBits & Dirty_Matrix)
 		{
+			_dirtyBits &= ~Dirty_Matrix;
 			_matrix = getParentMatrix() * getLocalMatrix();
 		}
 		return _matrix;
-	}
-
-
-	const Matrix& Transform::getInverseMatrix()
-	{
-		if (_dirtyBits & Dirty_InverseMatrix)
-		{
-			_dirtyBits &= ~Dirty_InverseMatrix;
-			_inverseMatrix = ~getMatrix();
-		}
-		return _inverseMatrix;
 	}
 
 
@@ -276,10 +266,20 @@ namespace yellowEngine
 		return matrix;
 	}
 
+	const Matrix& Transform::getInverseMatrix()
+	{
+		if (_dirtyBits & Dirty_InverseMatrix)
+		{
+			_dirtyBits &= ~Dirty_InverseMatrix;
+			_inverseMatrix = ~getMatrix();
+		}
+		return _inverseMatrix;
+	}
+
 
 	void Transform::dirty(int dirtyBits)
 	{
-		dirtyBits |= Dirty_InverseMatrix;
+		dirtyBits |= Dirty_Matrix | Dirty_InverseMatrix;
 		_dirtyBits |= dirtyBits;
 
 		for (auto child : _children)

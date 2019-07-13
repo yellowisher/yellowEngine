@@ -22,8 +22,8 @@ uniform DirLight u_Light;
 uniform vec3 u_CameraPosition;
 uniform vec2 u_ScreenSize;
 
-const float EPSILON_FACTOR = 0;
-const float EPSILON_MAX = 0.00001;
+const float EPSILON_FACTOR = 0.05;
+const float EPSILON_MAX = 0.01;
 
 const int SHADOW_SAMPLE_RANGE = 1;
 const int NUM_SHADOW_SAMPLE = (2 * SHADOW_SAMPLE_RANGE + 1) * (2 * SHADOW_SAMPLE_RANGE + 1);

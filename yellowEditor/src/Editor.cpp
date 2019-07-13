@@ -42,7 +42,8 @@ namespace yellowEditor
 		// setting ImGui style
 		ImGui::StyleColorsDark();
 		ImGui::GetStyle().WindowRounding = 0.0f;
-		_baseWindowFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+		//_baseWindowFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+		_baseWindowFlag = 0;
 
 		ImGui_ImplGlfw_InitForOpenGL(editorWindow.handle, true);
 		ImGui_ImplOpenGL3_Init(glsl_version);

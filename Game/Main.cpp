@@ -79,18 +79,12 @@ public:
 	{
 		auto anim = gameObject->getComponent<Animator>();
 
-		auto clip0 = Model::create("./res/Mesh/base.fbx")->getClip(0);
-		auto clip1 = Model::create("./res/Mesh/base.fbx")->getClip(1);
-
+		static int t = 0;
 		if (InputManager::getKeyDown(GLFW_KEY_1))
 		{
-			anim->play(clip0);
+			Model* m = Model::create("./res/Mesh/RTS/infantry.fbx");
+			anim->play(m->getClip(t++));
 		}
-		if (InputManager::getKeyUp(GLFW_KEY_1))
-		{
-			anim->play(clip1);
-		}
-
 	}
 };
 
@@ -135,19 +129,31 @@ int main()
 	game->_inputManager->initMousePosition((float)x, (float)y);
 
 	////////// Scene
+	//Model* m = Model::create("./res/Mesh/RTS/TT_RTS_Character_customizable.FBX");
+	Material* mat = new Material("Infantry");
+	mat->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/RTS/blue.tga"));
 
-	Model* m = Model::create("./res/Mesh/KnightCharacter.fbx");
-	GameObject* mg = m->instantiate("wer");
-	//mg->transform->setScale(0.03, 0.03, 0.03);
+	Model* m = Model::create("./res/Mesh/RTS/infantry.fbx");
+	GameObject* mg = m->instantiate("infantry", mat);
+	mg->transform->setScale(0.01, 0.01, 0.01);
 	auto anim = mg->addComponent<Animator>();
+	anim->setSpeed(0.5f);
 	mg->addComponent<AnimationController>();
+
+	//mg->addComponent<AnimationController>();
+	//mg->transform->setScale(10,10,10);
 	//mg->transform->setRotation(-90, 0, 0);
 	//mg->transform->setPosition(0, -1, 0);
+	Material* boxMaterial = new Material("asdasd");
+
+
+	//Mesh* mm = Mesh::create("./res/Mesh/KnightCharacter.obj");
+	//GameObject* gg = new GameObject("123123");
+	//gg->addComponent<MeshRenderer>()->set(mm, boxMaterial);
 
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
 	//nano->transform->setScale(0.3, 0.3, 0.3);
-	Material* boxMaterial = new Material("asdasd");
 	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
 	Mesh* sphere = Mesh::create("./res/Mesh/sphere.obj");
 
@@ -174,10 +180,10 @@ int main()
 	//b5->addComponent<MeshRenderer>()->set(boxMesh, bm);
 	//b5->transform->setPosition(-1, -0.5, 1);
 
-	GameObject* box = new GameObject("box");
-	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
-	box->transform->setScale(10, 0.1, 10);
-	box->transform->setPosition(0, -2, 0);
+	//GameObject* box = new GameObject("box");
+	//box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
+	//box->transform->setScale(10, 0.1, 10);
+	//box->transform->setPosition(0, -2, 0);
 
 	//GameObject* dirLight = new GameObject();
 	//dirLight->addComponent<Light>()->setType(Light::LightType_Point);
@@ -190,7 +196,7 @@ int main()
 	//d1->addComponent<LightScript>();
 
 	GameObject* d2 = new GameObject();
-	auto dlight = d2->addComponent<Light>()->setType(Light::LightType_Dir);
+	auto dlight = d2->addComponent<Light>()->setType(Light::LightType_Dir)->diffuseIntensity;
 	//dlight->diffuseIntensity = 0.5;
 	d2->transform->setPosition(0, 0, 3);
 	d2->transform->setRotation(-30, 30, 0);
@@ -210,6 +216,7 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
+		Utils::printGLError("QWE");
 		glfwPollEvents();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

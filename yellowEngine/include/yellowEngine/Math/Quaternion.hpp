@@ -13,7 +13,7 @@ namespace yellowEngine
 		static const Quaternion identity;
 		static const Quaternion zero;
 
-		static Quaternion lerp(Quaternion& q0, Quaternion& q1, float delta);
+		static Quaternion lerp(Quaternion q0, Quaternion q1, float delta);
 
 		float x;
 		float y;

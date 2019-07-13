@@ -35,9 +35,7 @@ namespace yellowEngine
 		while (!_components.empty())
 		{
 			Component* last = _components.back();
-			last->onDestroy();
-			_components.pop_back();
-			delete(last);
+			removeComponent(_components.back());
 		}
 	}
 
@@ -88,12 +86,17 @@ namespace yellowEngine
 	}
 
 
+	// while game object destruction, last component deletion occurs first
 	void GameObject::removeComponent(Component* target)
 	{
-		for (auto it = _components.begin(); it != _components.end(); ++it)
+		auto it = _components.end();
+
+		while (it != _components.begin())
 		{
+			--it;
 			if (*it == target)
 			{
+				(*it)->onDestroy();
 				_components.erase(it);
 				delete(target);
 				return;

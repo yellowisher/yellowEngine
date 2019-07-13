@@ -63,8 +63,8 @@ namespace yellowEngine
 		const Matrix& getLocalMatrix();
 		const Matrix& getParentMatrix();	
 		const Matrix& getMatrix();
-		const Matrix& getInverseMatrix();
 		Matrix getMatrix(Transform* until);
+		const Matrix& getInverseMatrix();
 
 		const Vector3 getWorldPosition();
 		const Quaternion getWorldRotation();
@@ -81,8 +81,8 @@ namespace yellowEngine
 			Dirty_Scale = 4,
 			Dirty_LocalMatrix = Dirty_Translation | Dirty_Rotation | Dirty_Scale,
 			Dirty_Parent = 8,
-			Dirty_Matrix = Dirty_LocalMatrix | Dirty_Parent,
-			Dirty_InverseMatrix = 16,
+			Dirty_Matrix = 16,
+			Dirty_InverseMatrix = 32,
 			Dirty_All = (Dirty_InverseMatrix * 2 - 1),
 		};
 

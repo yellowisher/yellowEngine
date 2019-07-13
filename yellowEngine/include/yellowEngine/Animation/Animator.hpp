@@ -34,8 +34,11 @@ namespace yellowEngine
 
 		// should be private and expose as friend for editor
 		Transform* getTransform(const std::string& target);
-		void gotoFrame(int frame);
+		void gotoFrame(float frame);
 		void setClip(AnimationClip* clip);
+
+		void setSpeed(float speed);
+		float getSpeed();
 
 	private:
 		enum State
@@ -47,14 +50,15 @@ namespace yellowEngine
 
 		static std::vector<Animator*> __animators;
 
-		Value lerp(Value a, Value b, float factor, PropertyType type);
 		void proceed();
+		Value lerp(Value a, Value b, float factor, PropertyType type);
 		void apply(Key pair, Value value);
 		Value getValue(Key pair);
 
+		float _speed;
 		State _state;
 		bool _paused;
-		int _frame;
+		float _frame;
 		int _transitionDelay;
 		AnimationClip* _currentClip;
 		

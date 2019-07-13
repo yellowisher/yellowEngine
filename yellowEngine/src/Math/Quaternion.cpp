@@ -165,7 +165,7 @@ namespace yellowEngine
 		if (fabs(sinp) >= 1.0f) rotation.y = copysignf(Utils::pi / 2.0f, sinp);
 		else rotation.y = asin(sinp);
 		rotation.y = Utils::rad2deg(rotation.y);
-		//rotation.y = Utils::rad2deg(2.0f*(w*y - z * x));
+		//rotation.y = Utils::rad2deg(asin(2.0f*(w*y - z * x)));
 
 		float siny_cosp = 2.0f * (w * z + x * y);
 		float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
@@ -203,7 +203,7 @@ namespace yellowEngine
 	}
 
 
-	Quaternion Quaternion::lerp(Quaternion& q0, Quaternion& q1, float delta)
+	Quaternion Quaternion::lerp(Quaternion q0, Quaternion q1, float delta)
 	{
 		Quaternion result;
 		float delta_ = 1.0f - delta;
@@ -212,7 +212,7 @@ namespace yellowEngine
 		// https://alfonse.bitbucket.io/oldtut/Positioning/Tut08%20Interpolation.html
 		if (q0.x * q1.x + q0.y * q1.y + q0.z * q1.z + q0.w * q1.w < 0)
 		{
-			delta = -delta;
+			q0 = Quaternion(-q0.x, -q0.y, -q0.z, -q0.w);
 		}
 
 		result.x = delta_ * q0.x + delta * q1.x;

@@ -14,6 +14,7 @@ namespace yellowEngine
 
 	Animator::Animator(GameObject* gameObject) :Component(gameObject)
 	{
+		_speed = 1.0;
 		_currentClip = nullptr;
 		_frame = 0;
 		__animators.push_back(this);
@@ -48,12 +49,20 @@ namespace yellowEngine
 	AnimationClip::Value Animator::lerp(Value a, Value b, float factor, PropertyType type)
 	{
 		Value result;
+		if (factor == Utils::inf || factor == -Utils::inf)
+		{
+			return b.vector3;
+		}
+
 		switch (type)
 		{
 			case AnimationClip::Property_Position:
 			case AnimationClip::Property_Scale:
-			case AnimationClip::Property_Rotation:
+			case AnimationClip::Property_EulerRotation:
 				result.vector3 = Vector3::lerp(a.vector3, b.vector3, factor);
+				break;
+			case AnimationClip::Property_Rotation:
+				result.quaternion = Quaternion::lerp(a.quaternion, b.quaternion, factor);
 				break;
 		}
 		return result;
@@ -62,7 +71,7 @@ namespace yellowEngine
 
 	void Animator::proceed()
 	{
-		if (++_frame >= _currentClip->_frameCount)
+		if ((_frame += _speed) >= _currentClip->_frameCount - 1)
 		{
 			if (_currentClip->_isLooping)
 			{
@@ -84,7 +93,7 @@ namespace yellowEngine
 				auto key = keyChannelPair.first;
 				auto& channel = keyChannelPair.second;
 
-				if (_frame > channel[_ends[key]].frame)
+				if (_frame >= channel[_ends[key]].frame)
 				{
 					_ends[key]++;
 				}
@@ -96,6 +105,13 @@ namespace yellowEngine
 				KeyFrame& end = channel[ei];
 
 				float factor = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
+
+				if (_frame >= 34.0f &&
+					key.transformPath == "Bip001_$AssimpFbx$_Translation/Bip001_$AssimpFbx$_PreRotation/Bip001_$AssimpFbx$_Rotation/Bip001_$AssimpFbx$_Scaling/Bip001/Bip001 Pelvis/"
+					&& key.prop == AnimationClip::Property_Rotation)
+				{
+					int sdalj4glikesseorighszofdgjslerjgvafdkhjsfkhksjdf = 5;
+				}
 
 				// maybe make structure for channel pair would be better
 				apply(key, lerp(begin.value, end.value, factor, key.prop));
@@ -265,7 +281,7 @@ namespace yellowEngine
 	}
 
 
-	void Animator::gotoFrame(int frame)
+	void Animator::gotoFrame(float frame)
 	{
 		for (auto channel : _currentClip->_channels)
 		{
@@ -297,27 +313,37 @@ namespace yellowEngine
 	}
 
 
+	void Animator::setSpeed(float speed)
+	{
+		_speed = speed;
+	}
+
+
+	float Animator::getSpeed()
+	{
+		return _speed;
+	}
+
+
 	void Animator::apply(Key key, Value value)
 	{
 		switch (key.prop)
 		{
 			case AnimationClip::Property_Position:
-			{
 				getTransform(key.transformPath)->setPosition(value.position);
 				break;
-			}
 
 			case AnimationClip::Property_Rotation:
-			{
 				getTransform(key.transformPath)->setRotation(value.rotation);
 				break;
-			}
+
+			case AnimationClip::Property_EulerRotation:
+				getTransform(key.transformPath)->setRotation(value.eulerRotation);
+				break;
 
 			case AnimationClip::Property_Scale:
-			{
 				getTransform(key.transformPath)->setScale(value.scale);
 				break;
-			}
 		}
 	}
 
@@ -330,6 +356,9 @@ namespace yellowEngine
 				return Value(getTransform(key.transformPath)->position);
 
 			case AnimationClip::Property_Rotation:
+				return Value(getTransform(key.transformPath)->rotation);
+
+			case AnimationClip::Property_EulerRotation:
 				return Value(getTransform(key.transformPath)->eulerRotation);
 
 			case AnimationClip::Property_Scale:

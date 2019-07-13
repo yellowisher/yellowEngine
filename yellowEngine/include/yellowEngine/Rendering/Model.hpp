@@ -19,21 +19,30 @@ namespace yellowEngine
 {
 	class Model
 	{
+		friend class AnimationClip;
 	public:
 		static Model* create(const char* path);
-		
-		GameObject* instantiate(const char* name);
-		AnimationClip* getClip(int index) { 
-			auto it = _clips.begin();  
+
+		GameObject* instantiate(const char* name, Material* material = nullptr);
+		AnimationClip* getClip(int index)
+		{
+			auto it = _clips.begin();
 			while (index-- > 0) it++;
 			return it->second;
 		}
+		AnimationClip* getClip(const char* name)
+		{
+			auto it = _clips.find(name);
+			if (it != _clips.end()) return it->second;
+			return nullptr;
+		}
 		const std::map<std::string, AnimationClip*>& getClips() { return _clips; }
-		
+
 	private:
-		struct Node	
+		struct Node
 		{
 			std::string name;
+			bool hasBones;
 
 			union
 			{
@@ -46,15 +55,15 @@ namespace yellowEngine
 			Vector3 scale;
 			Quaternion rotation;
 			Matrix offset;
-			
+
 			Node* parent;
 			std::vector<Node*> children;
-			
+
 			// store instantiated transform
 			Transform* transform;
 			std::vector<Node*> jointNodes;
 		};
-		
+
 		static Model* loadFBX(std::string path);
 
 		static std::map<std::string, Model*> __modelCache;

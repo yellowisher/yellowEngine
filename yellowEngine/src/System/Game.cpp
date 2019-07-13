@@ -104,6 +104,7 @@ namespace yellowEngine
 				{
 					trimUpdatable();
 				}
+				return;
 			}
 		}
 	}

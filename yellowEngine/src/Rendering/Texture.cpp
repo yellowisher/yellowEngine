@@ -1,5 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <cstring>
 
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/System/Game.hpp"
@@ -47,7 +48,16 @@ namespace yellowEngine
 		}
 
 		int width, height, channels;
-		stbi_set_flip_vertically_on_load(true);
+		const char* ext = path + strlen(path) - 3;
+
+		if (_strcmpi(ext, "tga") == 0)
+		{
+			stbi_set_flip_vertically_on_load(false);
+		}
+		else
+		{
+			stbi_set_flip_vertically_on_load(true);
+		}
 
 		unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
 

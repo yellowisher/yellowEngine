@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <string>
+#include <cstring>
 #include <iostream>
 
 // for debugging code

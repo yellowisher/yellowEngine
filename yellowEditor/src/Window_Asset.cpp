@@ -33,12 +33,24 @@ namespace yellowEditor
 	static bool isDragging = false;
 	static std::pair<AnimationClip::Key, int> draggingNode;
 
+	static std::map<std::string, AnimationClip::PropertyType> stringToProperty = {
+		{"Position", AnimationClip::Property_Position},
+		{"Rotation", AnimationClip::Property_EulerRotation},
+		{"Scale", AnimationClip::Property_Scale}
+	};
+
+	static std::map<AnimationClip::PropertyType, std::string> propertyToString = {
+		{AnimationClip::Property_Position, "Position"},
+		{AnimationClip::Property_EulerRotation, "Rotation"},
+		{AnimationClip::Property_Scale, "Scale"}
+	};
+
 	// really should separate docks and windows...
 	static void DrawTab_Asset();
 	static void DrawTab_Animation();
 	static void AddProperty_Transform(Transform* target);
 	static void AddProperty_Child(Transform* target);
-	static void AddKeyFrame(Transform* target, int frame, 
+	static void AddKeyFrame(Transform* target, float frame, 
 							AnimationClip::Key key, bool init = false);
 	static void AddKeyFrame(std::vector< AnimationClip::KeyFrame>& keyFrames, AnimationClip::KeyFrame keyFrame);
 	static float getSliderWidth(bool slider = true);
@@ -69,7 +81,7 @@ namespace yellowEditor
 
 	void DrawWindow_Asset()
 	{
-		auto flag = Editor::getBaseWindowFlag() | ImGuiWindowFlags_NoTitleBar;
+		auto flag = Editor::getBaseWindowFlag() | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove;
 		if (ImGui::Begin("Asset", nullptr, flag))
 		{
 			if(ImGui::BeginTabBar("Tab"))
@@ -324,7 +336,7 @@ namespace yellowEditor
 					auto& channel = keyChannelPair.second;
 
 					Transform* keyTransform = animator->getTransform(key.transformPath);
-					std::string propName = AnimationClip::propertyToString(key.prop);
+					std::string propName = propertyToString[key.prop];
 					std::string name = keyTransform->gameObject->getName() + ": " + propName;
 					
 					//ImGui::Separator();
@@ -444,7 +456,6 @@ namespace yellowEditor
 		ImGui::Columns(1);
 	}
 
-
 	static void AddProperty_Transform(Transform* target)
 	{
 		// let all the components can be property?
@@ -465,7 +476,7 @@ namespace yellowEditor
 							cursor = cursor->getParent();
 						}
 
-						auto animProp = AnimationClip::getProperty(prop.name);
+						auto animProp = stringToProperty[prop.name];
 						AnimationClip::Key key = { path,  animProp };
 
 						clip->_channels[key] = {};
@@ -496,12 +507,12 @@ namespace yellowEditor
 	}
 
 
-	static void AddKeyFrame(Transform* target, int frame, 
+	static void AddKeyFrame(Transform* target, float frame, 
 							AnimationClip::Key key, bool init)
 	{
 		auto& keyFrames = clip->_channels[key];
 
-		auto transformProp = target->getProperty(AnimationClip::propertyToString(key.prop));
+		auto transformProp = target->getProperty(propertyToString[key.prop]);
 		float* basePtr = (float*)((size_t)target + transformProp.offset);
 
 		if (init)

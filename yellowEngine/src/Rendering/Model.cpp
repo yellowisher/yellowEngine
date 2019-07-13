@@ -37,12 +37,13 @@ namespace yellowEngine
 	}
 
 
-	GameObject* Model::instantiate(const char* name)
+	GameObject* Model::instantiate(const char* name, Material* material)
 	{
 		GameObject* rootObject = nullptr;
 		std::queue<std::pair<Node*, Transform*>> visitQueue;
 		visitQueue.push({ _root, nullptr });
 
+		bool hasBones = false;
 		while (!visitQueue.empty())
 		{
 			auto visit = visitQueue.front();
@@ -54,13 +55,14 @@ namespace yellowEngine
 			node->transform = gameObject->transform;
 			if (node->mesh)
 			{
-				if (_hasAnimation)
+				if (node->hasBones)
 				{
+					hasBones = true;
 					gameObject->addComponent<SkinnedMeshRenderer>();
 				}
 				else
 				{
-					gameObject->addComponent<MeshRenderer>()->set(node->mesh, node->material);
+					gameObject->addComponent<MeshRenderer>()->set(node->mesh, material ? material : node->material);
 				}
 			}
 
@@ -83,7 +85,7 @@ namespace yellowEngine
 			}
 		}
 
-		if (_hasAnimation)
+		if (hasBones)
 		{
 			visitQueue.push({ _root, nullptr });
 			while (!visitQueue.empty())
@@ -100,7 +102,7 @@ namespace yellowEngine
 					{
 						joints.push_back({ node->transform,node->offset });
 					}
-					renderer->set(node->mesh, node->material, joints, rootObject->transform);
+					renderer->set(node->mesh, material ? material : node->material, joints, rootObject->transform);
 				}
 
 				for (auto child : node->children)
@@ -156,15 +158,21 @@ namespace yellowEngine
 			for (unsigned int a = 0; a < scene->mNumAnimations; a++)
 			{
 				aiAnimation* animation = scene->mAnimations[a];
-				
+
 				AnimationClip* clip = new AnimationClip();
-				// TODO: where to find looping? and set play speed
+				// set play speed
 				clip->_frameCount = (int)animation->mDuration;
 				clip->_isLooping = true;
 				for (unsigned int c = 0; c < animation->mNumChannels; c++)
 				{
 					aiNodeAnim* channel = animation->mChannels[c];
 					auto targetNode = model->_nodes[channel->mNodeName.C_Str()];
+
+					// ignore channel of non-bone object
+					if (targetNode->aiMesh != nullptr)
+					{
+						continue;
+					}
 
 					std::string targetPath = targetNode->name + '/';
 					auto cursor = targetNode->parent;
@@ -184,8 +192,14 @@ namespace yellowEngine
 						for (unsigned int f = 0; f < channel->mNumPositionKeys; f++)
 						{
 							auto frame = channel->mPositionKeys[f];
-							Vector3 position(frame.mValue.x, frame.mValue.y, frame.mValue.z);
-							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, position));
+							Vector3 position = Vector3(frame.mValue.x, frame.mValue.y, frame.mValue.z);
+							frames.push_back(AnimationClip::KeyFrame(frame.mTime >= 0.0f ? frame.mTime : 0.0f, position));
+						}
+
+						const AnimationClip::KeyFrame& lastFrame = frames[frames.size() - 1];
+						if (Utils::abs(lastFrame.frame - clip->_frameCount) > 0.5f)
+						{
+							frames.push_back(AnimationClip::KeyFrame(clip->_frameCount - 1, lastFrame.value.vector3));
 						}
 					}
 
@@ -199,11 +213,14 @@ namespace yellowEngine
 						for (unsigned int f = 0; f < channel->mNumRotationKeys; f++)
 						{
 							auto frame = channel->mRotationKeys[f];
-							Quaternion rotation(frame.mValue.x, frame.mValue.y, frame.mValue.z, frame.mValue.w);
+							Quaternion rotation = Quaternion(frame.mValue.x, frame.mValue.y, frame.mValue.z, frame.mValue.w);
+							frames.push_back(AnimationClip::KeyFrame(frame.mTime >= 0.0f ? frame.mTime : 0.0f, rotation));
+						}
 
-							auto v = rotation.toEulerAngle();
-							// FIXME:: should convert proper euler angle
-							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, rotation.toEulerAngle()));
+						const AnimationClip::KeyFrame& lastFrame = frames[frames.size() - 1];
+						if (Utils::abs(lastFrame.frame - clip->_frameCount) > 0.5f)
+						{
+							frames.push_back(AnimationClip::KeyFrame(clip->_frameCount - 1, lastFrame.value.quaternion));
 						}
 					}
 
@@ -217,8 +234,14 @@ namespace yellowEngine
 						for (unsigned int f = 0; f < channel->mNumScalingKeys; f++)
 						{
 							auto frame = channel->mScalingKeys[f];
-							Vector3 scale(frame.mValue.x, frame.mValue.y, frame.mValue.z);
-							frames.push_back(AnimationClip::KeyFrame((int)frame.mTime, scale));
+							Vector3 scale = Vector3(frame.mValue.x, frame.mValue.y, frame.mValue.z);
+							frames.push_back(AnimationClip::KeyFrame(frame.mTime >= 0.0f ? frame.mTime : 0.0f, scale));
+						}
+
+						const AnimationClip::KeyFrame& lastFrame = frames[frames.size() - 1];
+						if (Utils::abs(lastFrame.frame - clip->_frameCount) > 0.5f)
+						{
+							frames.push_back(AnimationClip::KeyFrame(clip->_frameCount - 1, lastFrame.value.vector3));
 						}
 					}
 				}
@@ -285,7 +308,7 @@ namespace yellowEngine
 
 
 	std::pair<Mesh*, Material*> Model::createMesh(aiMesh* aiMesh, const aiScene* scene, Node* currentNode)
-	{	
+	{
 		// Model class already caching model itself
 		// there is no need to cache in Mesh class
 		// so create directly rather than call Mesh::create
@@ -306,6 +329,7 @@ namespace yellowEngine
 		}
 		if (aiMesh->HasBones())
 		{
+			currentNode->hasBones = true;
 			attributes.push_back(Attr_Joints);
 			attributes.push_back(Attr_Weights);
 		}
