@@ -203,7 +203,7 @@ namespace yellowEditor
 					std::string path = fileDialog({ { "yep","Yellow Engine Project" } }, false);
 					Editor::getProjectRoot() = path.substr(0, path.find_last_of("\\"));
 					Editor::getAssetPath() = Editor::getProjectRoot() + "\\Asset";
-
+					
 					LoadAsset(true);
 				}
 				if (ImGui::MenuItem("Save", "Ctrl+S"))

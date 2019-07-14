@@ -60,9 +60,9 @@ public:
 	{
 		if (InputManager::getKeyDown(GLFW_KEY_1))
 		{
-			Model* m = Model::create("./res/Mesh/base.fbx");
+			Model* m = Model::create("./res/Mesh/cube.obj");
 			//Model* m = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
-			//m->instantiate("qwe");
+			m->instantiate("qwe");
 		}
 
 
@@ -154,20 +154,23 @@ int main()
 	//mg->transform->setPosition(0, -1, 0);
 	Material* boxMaterial = new Material("asdasd");
 
-
-	//Mesh* mm = Mesh::create("./res/Mesh/KnightCharacter.obj");
-	//GameObject* gg = new GameObject("123123");
-	//gg->addComponent<MeshRenderer>()->set(mm, boxMaterial);
+	auto que = Model::create("./res/Mesh/quad.obj");
+	que->instantiate("tt");
 
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
 	//nano->transform->setScale(0.3, 0.3, 0.3);
-	//Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
+
+	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
 	//Mesh* sphere = Mesh::create("./res/Mesh/sphere.obj");
 
 	//Model* model1 = Model::create("./res/Mesh/cube.obj");
 	//GameObject* nano1 = model1->instantiate("Model");
 	//nano1->transform->setPosition(0, -0.5, 0);
+
+	//Model* model2 = Model::create("./res/Mesh/base.fbx");
+	//GameObject* nano2 = model2->instantiate("Model");
+	//nano2->transform->setScale(0.3, 0.3, 0.3);
 
 	//Material* bm = new Material("asdasqwed");
 	//bm->setProperty("u_Material.diffuseColor", Vector3(1.0, 0.7, 0));
@@ -177,10 +180,10 @@ int main()
 	//GameObject* box2 = new GameObject("box");
 	//box2->addComponent<MeshRenderer>()->set(boxMesh, bm);
 
-	//GameObject* b3 = new GameObject("box");
-	//b3->addComponent<MeshRenderer>()->set(boxMesh, wm);
-	//b3->transform->setPosition(0, -1, 0);
-	//b3->transform->setScale(10, 1, 10);
+	GameObject* b3 = new GameObject("box");
+	b3->addComponent<MeshRenderer>()->set(boxMesh, wm);
+	b3->transform->setPosition(0, -1, 0);
+	b3->transform->setScale(10, 1, 10);
 
 	//GameObject* b4 = new GameObject("box");
 	//b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
@@ -205,6 +208,9 @@ int main()
 	//d1->transform->setPosition(0, -0.5, 3);
 	//d1->addComponent<LightScript>();
 
+	Material* texmat = new Material("tm");
+	texmat->setProperty("u_Material.diffuse", Texture::create("./res/Texture/folder.png"));
+
 	GameObject* d2 = new GameObject();
 	auto dlight = d2->addComponent<Light>()->setType(Light::LightType_Dir);
 	d2->transform->setPosition(0, 0, 3);
@@ -225,6 +231,15 @@ int main()
 		glfwPollEvents();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		if (++f == 30)
+		{
+			Model* m1 = Model::create("./res/Mesh/hqad.obj");
+			Model* m = Model::create("./res/Mesh/heu.obj");
+			//m->instantiate("qweqwe");
+
+			Model::create("./res/Mesh/quad.obj")->instantiate("qweqwe", texmat);
+		}
 
 		game->update();
 		game->render(Camera::getMainCamera());

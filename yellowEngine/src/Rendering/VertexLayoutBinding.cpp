@@ -56,6 +56,10 @@ namespace yellowEngine
 				glVertexAttribPointer(shaderAttr.location, it->second.size, meshAttr.type, GL_FALSE, mesh->getVertexLayout().getVertexSize(), (void*)meshAttr.offset);
 				glEnableVertexAttribArray(shaderAttr.location);
 			}
+			else
+			{
+				glDisableVertexAttribArray(shaderAttr.location);
+			}
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);

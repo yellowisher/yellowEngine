@@ -66,6 +66,6 @@ namespace yellowEngine
 
 		_material->bind(this, vsPath, fsPath);
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
-		//_material.unbind();
+		//_material->unbind();
 	}
 }

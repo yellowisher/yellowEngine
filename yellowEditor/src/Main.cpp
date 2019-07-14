@@ -40,6 +40,7 @@ int main()
 	if (!glfwInit()) return 1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	Window editorWindow(1440, 900, "yellowEditor");
 	Window gameWindow(800, 600, "gameWindow");
@@ -125,6 +126,10 @@ int main()
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
 	dirLight->transform->setRotation(-45, 45, 0);
 
+	auto dmdm=Mesh::create("./res/Mesh/quad.obj");
+	GameObject* dd = new GameObject("qwe");
+	dd->addComponent<MeshRenderer>()->set(dmdm, boxMaterial);
+
 	//GameObject* dirLight2 = new GameObject();
 	//dirLight2->addComponent<Light>()->setType(Light::LightType_Dir);
 	//dirLight2->transform->setRotation(-45, -45, 0);
@@ -139,7 +144,10 @@ int main()
 	//b3->addComponent<BoxCollider>();
 
 	editor->createEditorCamera();
+
 #pragma endregion
+
+	int f = 0;
 
 	while (!glfwWindowShouldClose(editorWindow.handle))
 	{

@@ -218,10 +218,12 @@ namespace yellowEngine
 
 	void Technique_Deferred::geometryPass()
 	{
+		glDisable(GL_CULL_FACE);
 		_geometryBuffer.bindForDrawing();
 		_geometryBuffer.setDrawBuffer(GeometryColorBegin, GeometryColorCount);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ObjectRenderer::renderAll(nullptr, _geometryFsPath);
+		glEnable(GL_CULL_FACE);
 	}
 
 

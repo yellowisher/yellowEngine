@@ -40,6 +40,9 @@ namespace yellowEngine
 		_path = path;
 		_vertexCount = indexCount;
 
+		// should unbind vao before bind ebo for bufferData
+		glBindVertexArray(NULL);
+
 		glGenBuffers(1, &_vertexBufferHandle);
 		glGenBuffers(1, &_elementBufferHandle);
 

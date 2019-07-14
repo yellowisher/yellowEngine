@@ -43,7 +43,7 @@ namespace yellowEditor
 						Model* model = Model::create(path);
 						if (model != nullptr)
 						{
-							//model->instantiate("New Model");
+							model->instantiate("New Model");
 						}
 						Editor::setEditorContext();
 					}
