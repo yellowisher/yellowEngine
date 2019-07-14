@@ -266,6 +266,18 @@ namespace yellowEngine
 		return matrix;
 	}
 
+
+	Matrix Transform::getTRMatrix()
+	{
+		Matrix matrix = Matrix::createTranslation(position) * Matrix::createRotation(rotation);
+		if (_parent != nullptr)
+		{
+			matrix = _parent->getTRMatrix() * matrix;
+		}
+		return matrix;
+	}
+
+
 	const Matrix& Transform::getInverseMatrix()
 	{
 		if (_dirtyBits & Dirty_InverseMatrix)

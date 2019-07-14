@@ -23,7 +23,7 @@ namespace yellowEditor
 		double x, y;
 
 		ImGuiWindowFlags flags = Editor::getBaseWindowFlag();
-		flags |= ImGuiWindowFlags_NoCollapse;
+		flags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
 		if (ImGui::Begin("Scene", nullptr, flags))
 		{

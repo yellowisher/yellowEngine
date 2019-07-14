@@ -130,9 +130,17 @@ namespace yellowEditor
 
 	void Editor::createEditorCamera()
 	{
-		GameObject* gameObject = new GameObject(editorCameraName);
-		__instance->_editorCamera = gameObject->addComponent<Camera>();
-		__instance->_editorCamera->transform->setPosition(0, 0, 5);
+		GameObject* gameObject = GameObject::find(editorCameraName);
+		if (gameObject == nullptr)
+		{
+			gameObject = new GameObject(editorCameraName);
+			__instance->_editorCamera = gameObject->addComponent<Camera>();
+			__instance->_editorCamera->transform->setPosition(0, 0, 5);
+		}
+		else
+		{
+			__instance->_editorCamera = gameObject->getComponent<Camera>();
+		}
 	}
 
 
@@ -214,13 +222,24 @@ namespace yellowEditor
 
 				if (ImGui::MenuItem("New Scene"))
 				{
-					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, true);
-					LoadAsset();
+					Editor::setGameContext();
+
+					Editor::selectHierarchyItem(nullptr);
+					SceneManager::clearScene();
+					Editor::createEditorCamera();
+
+					Editor::setEditorContext();
+
 				}
 				if (ImGui::MenuItem("Open Scene"))
 				{
 					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, false);
+					Editor::setGameContext();
+
 					SceneManager::loadScene(path.c_str());
+					Editor::createEditorCamera();
+
+					Editor::setEditorContext();
 				}
 				if (ImGui::MenuItem("Save Scene"))
 				{

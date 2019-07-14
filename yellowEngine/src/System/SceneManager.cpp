@@ -27,8 +27,8 @@ namespace yellowEngine
 		{"Vector2",  {{"x", Primitive_Float}, {"y",Primitive_Float}}},
 		{"Vector3",  {{"x", Primitive_Float}, {"y",Primitive_Float}, {"z",Primitive_Float}}},
 		{"Vector4",  {{"x", Primitive_Float}, {"y",Primitive_Float}, {"z",Primitive_Float}, {"w",Primitive_Float}}},
-		//{"Mesh",	 {{"path", Primitive_String}}},
-		//{"Material", {{"path", Primitive_String}}}
+		{"Mesh",	 {{"path", Primitive_String}}},
+		{"Material", {{"path", Primitive_String}}}
 	};
 
 	// reading functions
@@ -38,6 +38,15 @@ namespace yellowEngine
 	// writing functions
 	static void fillComponents(GameObject* gameObject, Json::Value& goJson);
 	static void fillChildren(Transform* parent, Json::Value& goJson);
+
+
+	void SceneManager::clearScene()
+	{
+		delete(Transform::Root->gameObject);
+		Transform::Root = nullptr;
+		Transform::Root = (new GameObject("Root"))->transform;
+	}
+
 
 	void SceneManager::loadScene(const char* path)
 	{
@@ -52,9 +61,7 @@ namespace yellowEngine
 		}
 
 		// clear scene first
-		delete(Transform::Root->gameObject);
-		Transform::Root = nullptr;
-		Transform::Root = (new GameObject("Root"))->transform;
+		clearScene();
 
 		for (auto goJson : root["gameObjects"])
 		{

@@ -66,6 +66,9 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Gizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\imgui\imconfig.h">
@@ -122,9 +125,14 @@
     <ClInclude Include="include\Window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Gizmo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\shadow.vert" />
     <None Include="res\Shader\shadow.frag" />
+    <None Include="res\Shader\gizmo.vert" />
+    <None Include="res\Shader\gizmo.frag" />
   </ItemGroup>
 </Project>

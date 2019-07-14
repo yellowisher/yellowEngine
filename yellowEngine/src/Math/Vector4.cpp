@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include "yellowEngine/Math/Vector3.hpp"
 #include "yellowEngine/Math/Vector4.hpp"
 
 
@@ -14,6 +15,11 @@ namespace yellowEngine
 	Vector4::Vector4(float x, float y, float z, float w) :x(x), y(y), z(z), w(w)
 	{
 
+	}
+
+
+	Vector4::Vector4(const Vector3& vector, float w) : x(vector.x), y(vector.y), z(vector.z), w(w)
+	{
 	}
 
 
@@ -82,9 +88,16 @@ namespace yellowEngine
 	}
 
 
+	Vector4& Vector4::operator= (const Vector3& vector)
+	{
+		set(vector.x, vector.y, vector.z, 1.0f);
+		return *this;
+	}
+
+
 	Vector4& Vector4::operator= (const Vector4& vector)
 	{
-		set(0, 0, 0, 0);
+		set(vector.x, vector.y, vector.z, vector.w);
 		return *this;
 	}
 

@@ -46,6 +46,7 @@ namespace yellowEngine
 
 		static Material* create(const char* path);
 		static void saveAsFile(Material* material, const char* path);
+		static Material* getDefaultMaterial();
 
 		void setTechnique(Technique* technique, const char* defaultVsPath, const char* defaultFsPath);
 		Shader* bind(MeshRenderer* meshRenderer, const char* vsPath, const char* fsPath);

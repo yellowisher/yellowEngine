@@ -58,13 +58,17 @@ public:
 
 	void update() override
 	{
+		static Light* light;
 		if (InputManager::getKeyDown(GLFW_KEY_1))
 		{
-			Model* m = Model::create("./res/Mesh/cube.obj");
-			//Model* m = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
-			m->instantiate("qwe");
+			auto g = new GameObject();
+			light = g->addComponent<Light>();
 		}
-
+		if (InputManager::getKeyDown(GLFW_KEY_2))
+		{
+			light->ambientIntensity -= 0.05;
+			light->onValueChanged();
+		}
 
 		Vector3 move = Vector3::zero;
 		if (InputManager::getKey(GLFW_KEY_L)) move.x -= 1.0f;

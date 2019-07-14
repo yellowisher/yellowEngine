@@ -4,6 +4,7 @@
 #include <yellowEngine/yellowEngine.hpp>
 
 #include "Window.hpp"
+#include "Gizmo.hpp"
 #include "Editor.hpp"
 
 using namespace yellowEngine;
@@ -12,28 +13,6 @@ using namespace yellowEditor;
 GLubyte* gameData;
 GLubyte* gameDataFlipped;
 GLuint sceneTexture;
-
-
-class AnimationController : public IUpdatable, public Component
-{
-	BEGIN_COMPONENT(AnimationController)
-	END_COMPONENT
-
-public:
-	AnimationController(GameObject* gameObject) : Component(gameObject) {}
-
-	void update() override
-	{
-		auto anim = gameObject->getComponent<Animator>();
-
-		static float f = 0;
-		if (InputManager::getKeyDown(GLFW_KEY_1))
-		{
-			anim->gotoFrame((f += 0.5f));
-		}
-	}
-};
-COMPONENT_IMPL(AnimationController)
 
 int main()
 {
@@ -76,48 +55,13 @@ int main()
 	gameData        = new GLubyte[gameWindow.width * gameWindow.height * 3];
 	gameDataFlipped = new GLubyte[gameWindow.width * gameWindow.height * 3];
 
+	InitGizmo();
+
 #pragma region Scene
-	Material* mat = new Material("blue");
-	mat->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/RTS/materials/TT_RTS_Units_blue.tga"));
-	//
-	//Model* m = Model::create("./res/Mesh/RTS/infantry.fbx");
-	//GameObject* mg = m->instantiate("infantry", mat);
-	//mg->transform->setScale(0.01, 0.01, 0.01);
-	//auto anim = mg->addComponent<Animator>();
-	//mg->addComponent<AnimationController>();
-	//anim->setSpeed(0.5f);
-	//anim->play(m->getClip("archer_attack"));
-	//
-	//Model* cm = Model::create("./res/Mesh/RTS/cavalry.fbx");
-	//GameObject* cg = cm->instantiate("cavalry", mat);
-	//cg->transform->setScale(0.01, 0.01, 0.01);
-	//auto canim = cg->addComponent<Animator>();
-	//canim->play(cm->getClip("cavalry_attack"));
-
-	//Model* q = Model::create("./res/Mesh/RTS/infantry_04_attack_A.FBX");
-	//auto qq = q->instantiate("Anim");
-
-	//auto anim = mg->addComponent<Animator>();
-	//auto clip = AnimationClip::create("./res/Mesh/RTS/infantry_04_attack_A.FBX", m);
-	//auto clip = m->getClip(0);
-
-	//anim->play(clip);
-
-	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
-	//GameObject* nano = model->instantiate("Model");
-	//nano->transform->setScale(0.3, 0.3, 0.3);
-	//auto anim = nano->addComponent<Animator>();
-
-	//auto clip = AnimationClip::create("./res/Animation/haha.yea");
-	//anim->play(clip);
 
 	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
 	GameObject* box = new GameObject("box");
 	Material* boxMaterial = new Material("asdasd");
-
-	GameObject* bb = new GameObject("Cube");
-	bb->addComponent<MeshRenderer>()->set(boxMesh, mat);
-	bb->transform->setPosition(0, 0.5, 0);
 
 	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
 	box->transform->setScale(10, 0.1, 10);
@@ -130,24 +74,9 @@ int main()
 	GameObject* dd = new GameObject("qwe");
 	dd->addComponent<MeshRenderer>()->set(dmdm, boxMaterial);
 
-	//GameObject* dirLight2 = new GameObject();
-	//dirLight2->addComponent<Light>()->setType(Light::LightType_Dir);
-	//dirLight2->transform->setRotation(-45, -45, 0);
-
-	//GameObject* b1 = new GameObject("Box1");
-	//b1->addComponent<BoxCollider>();
-
-	//GameObject* b2 = new GameObject("Box2");
-	//b2->addComponent<BoxCollider>();
-
-	//GameObject* b3 = new GameObject("Box3");
-	//b3->addComponent<BoxCollider>();
-
 	editor->createEditorCamera();
 
 #pragma endregion
-
-	int f = 0;
 
 	while (!glfwWindowShouldClose(editorWindow.handle))
 	{
@@ -159,6 +88,7 @@ int main()
 			game->update();
 			game->render(editor->getEditorCamera());
 			ColliderManager::getInstance()->renderColliders(editor->getEditorCamera());
+			DrawGizmo();
 
 			glfwSwapBuffers(gameWindow.handle);
 		}

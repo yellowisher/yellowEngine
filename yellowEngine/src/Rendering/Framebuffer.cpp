@@ -16,8 +16,6 @@ namespace yellowEngine
 
 	FrameBuffer::~FrameBuffer()
 	{
-		glDeleteFramebuffers(1, &_frameBufferHandle);
-
 		for (auto nameTexturePair : _colorBuffers)
 		{
 			delete(nameTexturePair.second);
@@ -27,6 +25,8 @@ namespace yellowEngine
 		if (_depthStencilBuffer) delete(_depthStencilBuffer);
 		if (_depthTexture) delete(_depthTexture);
 		if (_depthCubeMap) delete(_depthCubeMap);
+
+		glDeleteFramebuffers(1, &_frameBufferHandle);
 	}
 
 

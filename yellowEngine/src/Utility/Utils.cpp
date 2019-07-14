@@ -39,5 +39,17 @@ namespace yellowEngine
 				glError = glGetError();
 			}
 		}
+
+		const char* getExtension(const char* path)
+		{
+			int cursor = strlen(path) - 1;
+
+			while (path[cursor] != '.')
+			{
+				cursor--;
+			}
+
+			return path + cursor + 1;
+		}
 	}
 }

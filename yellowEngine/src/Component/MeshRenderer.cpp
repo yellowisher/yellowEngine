@@ -13,6 +13,11 @@ namespace yellowEngine
 	MeshRenderer::MeshRenderer(GameObject* gameObject) :ObjectRenderer(gameObject)
 	{
 		_mesh = nullptr;
+		_material = Material::getDefaultMaterial();
+
+		_material->_technique->addRenderer(this);
+		_prevTechnique = _material->_technique;
+		_materialPath = _material->getPath();
 	}
 
 

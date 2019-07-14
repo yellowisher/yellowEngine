@@ -3,21 +3,36 @@
 
 namespace yellowEditor
 {
-	static void HierarchyNode(Transform* target);
+	static struct Shape
+	{
+		Mesh* mesh;
+		std::string name;
+	};
 
+	static void HierarchyNode(Transform* target);
 
 	void DrawWindow_Hierarchy()
 	{
+		static Shape shapes[] = {
+			{Mesh::create("./res/Mesh/cube.obj"), "Cube"},
+			{Mesh::create("./res/Mesh/quad.obj"), "Quad"},
+			{Mesh::create("./res/Mesh/sphere.obj"), "Sphere"},
+			{Mesh::create("./res/Mesh/cone.obj"), "Cone"}
+		};
+
 		if (ImGui::Begin("Hierarchy", nullptr, Editor::getBaseWindowFlag()))
 		{
 			for (auto child : Transform::Root->getChildren())
 			{
-				if (child == Editor::getEditorCamera()->transform)continue;
+				if (child == Editor::getEditorCamera()->transform) continue;
 				HierarchyNode(child);
 			}
 
+			float leftHeight = ImGui::GetWindowHeight() - ImGui::GetCursorPosY() - 10;
+			leftHeight = Utils::max(leftHeight, ImGui::GetWindowHeight() * 0.2f);
+
 			ImVec2 dummySize = ImGui::GetWindowSize();
-			dummySize.y *= 0.3f;
+			dummySize.y = leftHeight;
 			ImGui::Dummy(dummySize);
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -34,10 +49,12 @@ namespace yellowEditor
 				if (payload != nullptr)
 				{
 					char* path = (char*)payload->Data;
-					if(
-						strstr(path, ".fbx") != nullptr ||
-						strstr(path, ".blend") != nullptr ||
-						strstr(path, ".obj") != nullptr)
+					const char* ext = Utils::getExtension(path);
+					if (
+						_strcmpi(ext, "obj") == 0 ||
+						_strcmpi(ext, "fbx") == 0 ||
+						_strcmpi(ext, "blend") == 0
+						)
 					{
 						Editor::setGameContext();
 						Model* model = Model::create(path);
@@ -62,10 +79,25 @@ namespace yellowEditor
 				ImGui::Text("Edit Menu");
 				ImGui::Separator();
 
-				if (ImGui::Selectable("Create new GameObject"))
+				if (ImGui::Selectable("New GameObject"))
 				{
 					new GameObject();
 					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::BeginMenu("3D Shape"))
+				{
+					for (auto shape : shapes)
+					{
+						if (ImGui::MenuItem(shape.name.c_str()))
+						{
+							auto go = new GameObject(shape.name.c_str());
+							go->addComponent<MeshRenderer>()->set(shape.mesh);
+							ImGui::CloseCurrentPopup();
+						}
+					}
+
+					ImGui::EndMenu();
 				}
 				ImGui::EndPopup();
 			}

@@ -105,7 +105,9 @@ namespace yellowEditor
 						{
 							if (ImGui::Button(componentName.c_str()))
 							{
+								Editor::setGameContext();
 								Editor::getSelectedTransform()->gameObject->addComponent(componentName);
+								Editor::setEditorContext();
 								ImGui::CloseCurrentPopup();
 								break;
 							}

@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EditorUtils.cpp" />
+    <ClCompile Include="src\Gizmo.cpp" />
     <ClCompile Include="src\Window.cpp" />
     <ClCompile Include="src\Window_Asset.cpp" />
     <ClCompile Include="src\Window_Base.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Editor.hpp" />
+    <ClInclude Include="include\Gizmo.hpp" />
     <ClInclude Include="include\Window.hpp" />
     <ClInclude Include="include\Window_Asset.hpp" />
     <ClInclude Include="include\Window_Base.hpp" />
@@ -169,6 +171,8 @@
     <ClInclude Include="vendor\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Shader\gizmo.frag" />
+    <None Include="res\Shader\gizmo.vert" />
     <None Include="res\Shader\shadow.frag" />
     <None Include="res\Shader\shadow.vert" />
   </ItemGroup>

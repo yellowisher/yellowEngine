@@ -26,7 +26,7 @@ namespace yellowEngine
 
 		Mesh* getMesh() { return _mesh; }
 		Material* getMaterial() { return _material; }
-		MeshRenderer* set(Mesh* mesh, Material* material);
+		MeshRenderer* set(Mesh* mesh, Material* material = nullptr);
 		virtual void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) override;
 
 	protected:

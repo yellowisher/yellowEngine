@@ -64,6 +64,7 @@ namespace yellowEngine
 		const Matrix& getParentMatrix();	
 		const Matrix& getMatrix();
 		Matrix getMatrix(Transform* until);
+		Matrix getTRMatrix();
 		const Matrix& getInverseMatrix();
 
 		const Vector3 getWorldPosition();

@@ -70,6 +70,7 @@ namespace yellowEngine
 		}
 
 		void printGLError(const char* point);
+		const char* getExtension(const char* path);
 	}
 }
 

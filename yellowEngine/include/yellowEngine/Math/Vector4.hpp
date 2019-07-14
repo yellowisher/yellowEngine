@@ -3,6 +3,7 @@
 
 namespace yellowEngine
 {
+	class Vector3;
 	class Vector4
 	{
 	public:
@@ -20,6 +21,7 @@ namespace yellowEngine
 
 		Vector4();
 		Vector4(float x, float y, float z, float w);
+		Vector4(const Vector3& vector, float w);
 		Vector4(const Vector4& vector);
 		~Vector4();
 		void set(float x, float y, float z, float w);
@@ -29,6 +31,7 @@ namespace yellowEngine
 		Vector4 operator*(float value) const;
 		Vector4 operator/(float value) const;
 
+		Vector4& operator= (const Vector3& vector);
 		Vector4& operator= (const Vector4& vector);
 		Vector4& operator+= (const Vector4& vector);
 		Vector4& operator-= (const Vector4& vector);

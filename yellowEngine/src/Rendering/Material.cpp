@@ -18,6 +18,14 @@ namespace yellowEngine
 		{"color", Material::Primitive_Color}
 	};
 
+
+	Material* Material::getDefaultMaterial()
+	{
+		static Material* defaultMaterial = new Material("default_material");
+		return defaultMaterial;
+	}
+
+
 	Material* Material::create(const char* path)
 	{
 		auto it = _materialCache.find(path);
