@@ -10,6 +10,7 @@ namespace yellowEditor
 {
 	static const float SpacingForLabel = 5.0f;
 	static std::map<std::string, bool(*)(Component*, Component::Property)> handlers = {
+		{"bool", property_bool},
 		{"float", property_float},
 		{"Vector2", property_Vector2 },
 		{"Vector3", property_Vector3},
@@ -122,6 +123,12 @@ namespace yellowEditor
 	{
 		ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * width);
 		ImGui::LabelText("", name); ImGui::SameLine(0, SpacingForLabel);
+	}
+
+
+	static bool property_bool(Component* comp, Component::Property prop)
+	{
+		return ImGui::Checkbox("", (bool*)(((size_t)comp) + prop.offset));
 	}
 
 

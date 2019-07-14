@@ -5,6 +5,7 @@ out vec4 o_BrightColor;
 
 struct DirLight
 {
+	bool castShadow;
 	vec3 direction;
 
 	vec3 color;
@@ -22,8 +23,8 @@ uniform DirLight u_Light;
 uniform vec3 u_CameraPosition;
 uniform vec2 u_ScreenSize;
 
-const float EPSILON_FACTOR = 0.05;
-const float EPSILON_MAX = 0.001;
+const float EPSILON_FACTOR = 0.0005;
+const float EPSILON_MAX = 0.00001;
 
 const int SHADOW_SAMPLE_RANGE = 1;
 const int NUM_SHADOW_SAMPLE = (2 * SHADOW_SAMPLE_RANGE + 1) * (2 * SHADOW_SAMPLE_RANGE + 1);
@@ -51,31 +52,35 @@ void main()
 
 
 	// Shadow
-	vec4 lightPosition = u_LightProjView * vec4(worldPosition, 1.0);
-	vec3 shadowCoord   = lightPosition.xyz;
-	shadowCoord = shadowCoord * 0.5 + 0.5;
-
 	float shadow = 0;
-	if(shadowCoord.z < 1.0)
-	{
-		float currentDepth = shadowCoord.z;
 
-		vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
-		for(int dx = -SHADOW_SAMPLE_RANGE; dx <= SHADOW_SAMPLE_RANGE; dx++)
+	if(u_Light.castShadow)
+	{
+		vec4 lightPosition = u_LightProjView * vec4(worldPosition, 1.0);
+		vec3 shadowCoord   = lightPosition.xyz;
+		shadowCoord = shadowCoord * 0.5 + 0.5;
+
+		if(shadowCoord.z < 1.0)
 		{
-			for(int dy = -SHADOW_SAMPLE_RANGE; dy <= SHADOW_SAMPLE_RANGE; dy++)
+			float currentDepth = shadowCoord.z;
+
+			vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+			for(int dx = -SHADOW_SAMPLE_RANGE; dx <= SHADOW_SAMPLE_RANGE; dx++)
 			{
-				float visibleDepth = texture(u_ShadowMap, shadowCoord.xy + vec2(dx, dy) * texelSize).r;
-				float epsilon = max(EPSILON_FACTOR * (1.0 - normDotFragToLight), EPSILON_MAX);
-				if(currentDepth - epsilon > visibleDepth)
+				for(int dy = -SHADOW_SAMPLE_RANGE; dy <= SHADOW_SAMPLE_RANGE; dy++)
 				{
-					// because of light volume, only directional light consider
-					// global ambient lighting. So it's fair to reduce shadow about ambient intensity.
-					shadow += 0.5; //(1.0 - u_Light.ambientIntensity);
+					float visibleDepth = texture(u_ShadowMap, shadowCoord.xy + vec2(dx, dy) * texelSize).r;
+					float epsilon = max(EPSILON_FACTOR * (1.0 - normDotFragToLight), EPSILON_MAX);
+					if(currentDepth - epsilon > visibleDepth)
+					{
+						// because of light volume, only directional light consider
+						// global ambient lighting. So it's fair to reduce shadow about ambient intensity.
+						shadow += 0.5; //(1.0 - u_Light.ambientIntensity);
+					}
 				}
 			}
+			shadow /= NUM_SHADOW_SAMPLE;
 		}
-		shadow /= NUM_SHADOW_SAMPLE;
 	}
 
 	vec3 combined = ambient + (diffuse + specular) * (1.0 - shadow);

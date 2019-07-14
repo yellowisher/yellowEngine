@@ -78,7 +78,7 @@ namespace yellowEngine
 		{
 			for (auto light : Light::getLights((Light::LightType)type))
 			{
-				shadowMappingPass(light);
+				if(light->castShadow) shadowMappingPass(light);
 			}
 		}
 		glCullFace(GL_BACK);
@@ -299,8 +299,11 @@ namespace yellowEngine
 			}
 		}
 
-		glActiveTexture(GL_TEXTURE0 + i - 1);
-		light->getShadowBuffer()->bindDepthTexture();
+		if (light->castShadow)
+		{
+			glActiveTexture(GL_TEXTURE0 + i - 1);
+			light->getShadowBuffer()->bindDepthTexture();
+		}
 
 		VertexLayoutBinding::create(_meshes[type], _lightShaders[type])->bind();
 

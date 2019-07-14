@@ -4,6 +4,8 @@ out vec4 o_FragColor;
 
 struct SpotLight
 {
+	bool castShadow;
+
 	vec3 position;
 	vec3 direction;
 
@@ -73,30 +75,34 @@ void main()
 	specular *= intensity;
 
 	// Shadow
-	vec4 lightPosition = u_LightProjView * vec4(worldPosition, 1.0);
-	vec3 shadowCoord   = lightPosition.xyz / lightPosition.w;
-	shadowCoord = shadowCoord * 0.5 + 0.5;
-
 	float shadow = 0;
-	if(shadowCoord.z < 1.0)
+
+	if(u_Light.castShadow)
 	{
-		float currentDepth = shadowCoord.z;
+		vec4 lightPosition = u_LightProjView * vec4(worldPosition, 1.0);
+		vec3 shadowCoord   = lightPosition.xyz / lightPosition.w;
+		shadowCoord = shadowCoord * 0.5 + 0.5;
 
-		vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
-		for(int dx = -SHADOW_SAMPLE_RANGE; dx <= SHADOW_SAMPLE_RANGE; dx++)
+		if(shadowCoord.z < 1.0)
 		{
-			for(int dy = -SHADOW_SAMPLE_RANGE; dy <= SHADOW_SAMPLE_RANGE; dy++)
-			{
-				float visibleDepth = texture(u_ShadowMap, shadowCoord.xy + vec2(dx, dy) * texelSize).r;
+			float currentDepth = shadowCoord.z;
 
-				float epsilon = max(EPSILON_FACTOR * (1.0 - normDotFragToLight), EPSILON_MAX);
-				if(currentDepth - epsilon > visibleDepth)
+			vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+			for(int dx = -SHADOW_SAMPLE_RANGE; dx <= SHADOW_SAMPLE_RANGE; dx++)
+			{
+				for(int dy = -SHADOW_SAMPLE_RANGE; dy <= SHADOW_SAMPLE_RANGE; dy++)
 				{
-					shadow += 1.0;
+					float visibleDepth = texture(u_ShadowMap, shadowCoord.xy + vec2(dx, dy) * texelSize).r;
+
+					float epsilon = max(EPSILON_FACTOR * (1.0 - normDotFragToLight), EPSILON_MAX);
+					if(currentDepth - epsilon > visibleDepth)
+					{
+						shadow += 1.0;
+					}
 				}
 			}
+			shadow /= SHADOW_SAMPLE_RANGE;
 		}
-		shadow /= SHADOW_SAMPLE_RANGE;
 	}
 
 	vec3 combined = ambient + (diffuse + specular) * (1.0 - shadow);

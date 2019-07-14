@@ -34,12 +34,15 @@ namespace yellowEngine
 
 		_type = LightType_Dir;
 		__lights[LightType_Dir].push_back(this);
+		_projectionMatrix = Matrix::createOrthographic(10.0f, 10.0f, -1.0f, 10.0f);
 
 		castShadow = true;
 		// really should light holds frame buffer?
 		_shadowBuffer = new FrameBuffer();
 		_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
 		_shadowBuffer->init();
+
+		valueChanged = false;
 	}
 
 
@@ -78,38 +81,8 @@ namespace yellowEngine
 		_type = type;
 		__lights[_type].push_back(this);
 
-
-		if (_shadowBuffer) delete(_shadowBuffer);
-
-		if (castShadow)
-		{
-			_shadowBuffer = new FrameBuffer();
-			if (_type == LightType_Dir)
-			{
-				_projectionMatrix = Matrix::createOrthographic(10.0f, 10.0f, -1.0f, 10.0f);
-				_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
-			}
-			else
-			{
-				// TODO:: calculate projection parameters based on attenuation range
-				_zNear = 1.0f;
-				_zFar = 100.0f;
-
-				if (_type == LightType_Spot)
-				{
-					_projectionMatrix = Matrix::createPerspective(90.0f, Display::aspectRatio, _zNear, _zFar);
-					_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
-				}
-				else
-				{
-					_projectionMatrix = Matrix::createPerspective(90.0f, 1.0f, _zNear, _zFar);
-					_shadowBuffer->addDepthAttachment(Display::width, Display::width);
-					_shadowBuffer->addDepthCubeMap(GL_R32F, Display::width, GL_RED, GL_FLOAT);
-				}
-			}
-
-			_shadowBuffer->init();
-		}
+		valueChanged = true;
+		
 		return this;
 	}
 
@@ -165,9 +138,56 @@ namespace yellowEngine
 	}
 
 
+	FrameBuffer* Light::getShadowBuffer()
+	{
+		if (valueChanged)
+		{
+			valueChanged = false;
+			if (_shadowBuffer)
+			{
+				delete(_shadowBuffer);
+				_shadowBuffer = nullptr;
+			}
+
+			if (castShadow)
+			{
+				_shadowBuffer = new FrameBuffer();
+				if (_type == LightType_Dir)
+				{
+					_projectionMatrix = Matrix::createOrthographic(10.0f, 10.0f, -1.0f, 10.0f);
+					_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
+				}
+				else
+				{
+					// TODO:: calculate projection parameters based on attenuation range
+					_zNear = 1.0f;
+					_zFar = 100.0f;
+
+					if (_type == LightType_Spot)
+					{
+						_projectionMatrix = Matrix::createPerspective(90.0f, Display::aspectRatio, _zNear, _zFar);
+						_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
+					}
+					else
+					{
+						_projectionMatrix = Matrix::createPerspective(90.0f, 1.0f, _zNear, _zFar);
+						_shadowBuffer->addDepthAttachment(Display::width, Display::width);
+						_shadowBuffer->addDepthCubeMap(GL_R32F, Display::width, GL_RED, GL_FLOAT);
+					}
+				}
+
+				_shadowBuffer->init();
+			}
+		}
+
+		return _shadowBuffer;
+	}
+
+
 	void Light::updateUniforms(Shader* shader)
 	{
 		shader->setUniform("u_Light.color", color);
+		shader->setUniform("u_Light.castShadow", castShadow);
 		shader->setUniform("u_Light.ambientIntensity", ambientIntensity);
 		shader->setUniform("u_Light.diffuseIntensity", diffuseIntensity);
 		shader->setUniform("u_CameraPosition", Camera::currentCamera->transform->getWorldPosition());
@@ -210,7 +230,6 @@ namespace yellowEngine
 				// should exclude scaling of light-containing game object?
 				Matrix pvw = pv * transform->getMatrix() * Matrix::createScale(Vector3(range, range, range));
 				shader->setUniform("u_ProjViewWorld", pvw);
-				//shader->setUniform("u_ZFar", _zFar);
 			}
 		}
 	}

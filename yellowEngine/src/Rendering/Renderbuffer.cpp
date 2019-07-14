@@ -16,6 +16,7 @@ namespace yellowEngine
 
 	RenderBuffer::~RenderBuffer()
 	{
+		glDeleteRenderbuffers(1, &_renderBufferHandle);
 	}
 
 

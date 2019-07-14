@@ -4,6 +4,7 @@ out vec4 o_FragColor;
 
 struct PointLight
 {
+	bool castShadow;
 	vec3 position;
 
 	vec3 color;
@@ -56,16 +57,18 @@ void main()
 	vec3 specular = vec3(color.a * spec * u_Light.diffuseIntensity);
 
 	// Shadow
-	vec3 lightToFrag = worldPosition - u_Light.position;
-
 	float shadow = 0;
-	float currentDepth = length(lightToFrag);
 
-	float visibleDepth = texture(u_ShadowMap, lightToFrag).r;
-
-	if(currentDepth - EPSILON > visibleDepth)
+	if(u_Light.castShadow)
 	{
-		shadow += 1.0;
+		vec3 lightToFrag = worldPosition - u_Light.position;
+		float currentDepth = length(lightToFrag);
+		float visibleDepth = texture(u_ShadowMap, lightToFrag).r;
+
+		if(currentDepth - EPSILON > visibleDepth)
+		{
+			shadow += 1.0;
+		}
 	}
 
 	vec3 combined = ambient + (diffuse + specular) * (1.0 - shadow);

@@ -16,6 +16,8 @@ namespace yellowEngine
 
 	FrameBuffer::~FrameBuffer()
 	{
+		glDeleteFramebuffers(1, &_frameBufferHandle);
+
 		for (auto nameTexturePair : _colorBuffers)
 		{
 			delete(nameTexturePair.second);
@@ -24,6 +26,7 @@ namespace yellowEngine
 		if (_depthBuffer) delete(_depthBuffer);
 		if (_depthStencilBuffer) delete(_depthStencilBuffer);
 		if (_depthTexture) delete(_depthTexture);
+		if (_depthCubeMap) delete(_depthCubeMap);
 	}
 
 
@@ -74,6 +77,8 @@ namespace yellowEngine
 
 	void FrameBuffer::init()
 	{
+		Utils::printGLError("Begin frame buffer init");
+
 		glGenFramebuffers(1, &_frameBufferHandle);
 		glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferHandle);
 
@@ -111,6 +116,8 @@ namespace yellowEngine
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		Utils::printGLError("End frame buffer init");
 	}
 
 

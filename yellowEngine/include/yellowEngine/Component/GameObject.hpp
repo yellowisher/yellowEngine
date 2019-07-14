@@ -43,18 +43,25 @@ namespace yellowEngine
 
 	template <typename T> T* GameObject::getComponent()
 	{
-		if (!std::is_base_of<Component, T>::value)return nullptr;
-
+		// c++ rtti version
 		for (auto component : _components)
 		{
-			if (Component::getTypeNameOf<T>() == component->getTypeName())
-			{
-				return dynamic_cast<T*>(component);
-			}
-			// dynamic_cast version
-			//T* target = dynamic_cast<T*>(component);
-			//if (target)return target;
+			T* target = dynamic_cast<T*>(component);
+			if (target)return target;
 		}
+
+		// custom rtti version
+		//const auto& childToParent = Component::getParents();
+		//auto typeName = Component::getTypeNameOf<T>();
+		//if (childToParent.find(typeName) == childToParent.end()) return nullptr;
+
+		//for (auto component : _components)
+		//{
+		//	if (Component::isInstanceOf(component->getTypeName(), typeName))
+		//	{
+		//		return component;
+		//	}
+		//}
 
 		return nullptr;
 	}

@@ -47,7 +47,6 @@ namespace yellowEngine
 
 	Component::~Component()
 	{
-		int i = 5;
 	}
 
 

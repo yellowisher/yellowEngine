@@ -13,6 +13,7 @@ GLubyte* gameData;
 GLubyte* gameDataFlipped;
 GLuint sceneTexture;
 
+
 class AnimationController : public IUpdatable, public Component
 {
 	BEGIN_COMPONENT(AnimationController)
@@ -75,15 +76,22 @@ int main()
 	gameDataFlipped = new GLubyte[gameWindow.width * gameWindow.height * 3];
 
 #pragma region Scene
-	Material* mat = new Material("Infantry");
-	mat->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/RTS/blue.tga"));
-
-	Model* m = Model::create("./res/Mesh/RTS/infantry.fbx");
-	GameObject* mg = m->instantiate("infantry", mat);
-	mg->transform->setScale(0.01, 0.01, 0.01);
-	auto anim = mg->addComponent<Animator>();
-	anim->setSpeed(0.5f);
-	anim->play(m->getClip("archer_attack"));
+	Material* mat = new Material("blue");
+	mat->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/RTS/materials/TT_RTS_Units_blue.tga"));
+	//
+	//Model* m = Model::create("./res/Mesh/RTS/infantry.fbx");
+	//GameObject* mg = m->instantiate("infantry", mat);
+	//mg->transform->setScale(0.01, 0.01, 0.01);
+	//auto anim = mg->addComponent<Animator>();
+	//mg->addComponent<AnimationController>();
+	//anim->setSpeed(0.5f);
+	//anim->play(m->getClip("archer_attack"));
+	//
+	//Model* cm = Model::create("./res/Mesh/RTS/cavalry.fbx");
+	//GameObject* cg = cm->instantiate("cavalry", mat);
+	//cg->transform->setScale(0.01, 0.01, 0.01);
+	//auto canim = cg->addComponent<Animator>();
+	//canim->play(cm->getClip("cavalry_attack"));
 
 	//Model* q = Model::create("./res/Mesh/RTS/infantry_04_attack_A.FBX");
 	//auto qq = q->instantiate("Anim");
@@ -106,13 +114,21 @@ int main()
 	GameObject* box = new GameObject("box");
 	Material* boxMaterial = new Material("asdasd");
 
+	GameObject* bb = new GameObject("Cube");
+	bb->addComponent<MeshRenderer>()->set(boxMesh, mat);
+	bb->transform->setPosition(0, 0.5, 0);
+
 	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
 	box->transform->setScale(10, 0.1, 10);
 
 
 	GameObject* dirLight = new GameObject();
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
-	dirLight->transform->setRotation(-45, 0, 0);
+	dirLight->transform->setRotation(-45, 45, 0);
+
+	//GameObject* dirLight2 = new GameObject();
+	//dirLight2->addComponent<Light>()->setType(Light::LightType_Dir);
+	//dirLight2->transform->setRotation(-45, -45, 0);
 
 	//GameObject* b1 = new GameObject("Box1");
 	//b1->addComponent<BoxCollider>();

@@ -106,13 +106,6 @@ namespace yellowEngine
 
 				float factor = (float)(_frame - begin.frame) / (float)(end.frame - begin.frame);
 
-				if (_frame >= 34.0f &&
-					key.transformPath == "Bip001_$AssimpFbx$_Translation/Bip001_$AssimpFbx$_PreRotation/Bip001_$AssimpFbx$_Rotation/Bip001_$AssimpFbx$_Scaling/Bip001/Bip001 Pelvis/"
-					&& key.prop == AnimationClip::Property_Rotation)
-				{
-					int sdalj4glikesseorighszofdgjslerjgvafdkhjsfkhksjdf = 5;
-				}
-
 				// maybe make structure for channel pair would be better
 				apply(key, lerp(begin.value, end.value, factor, key.prop));
 			}

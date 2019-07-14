@@ -16,6 +16,7 @@ namespace yellowEngine
 		BEGIN_COMPONENT(Light)
 			PROPERTY(Light, LightType, _type, "Type")
 			PROPERTY(Light, Vector3, color, "Color")
+			PROPERTY(Light, bool, castShadow, "Cast Shadow");
 			PROPERTY(Light, float, ambientIntensity, "Ambient Intensity")
 			PROPERTY(Light, float, diffuseIntensity, "Diffuse Intensity")
 			PROPERTY(Light, float, _cutoffDegree, "Cutoff Degree")
@@ -53,7 +54,7 @@ namespace yellowEngine
 		// TODO: use dirty bit pattern
 		Matrix getProjMatrix();
 		Matrix getProjViewMatrix();
-		FrameBuffer* getShadowBuffer() { return _shadowBuffer; }
+		FrameBuffer* getShadowBuffer();
 		float getZnear() { return _zNear; }
 		float getZfar() { return _zFar; }
 		void updateUniforms(Shader* shader);
@@ -82,6 +83,8 @@ namespace yellowEngine
 		FrameBuffer* _shadowBuffer;
 		float _zNear;
 		float _zFar;
+
+		bool valueChanged;
 	};
 }
 
