@@ -12,19 +12,18 @@ namespace yellowEngine
 	{
 		_transformChangeListener.setParent(this);
 		transform->transformChangeNotifier.addListener(&_transformChangeListener);
-
-		ColliderManager::getInstance()->colliderCreated(this);
 	}
 
 
 	Collider::~Collider()
 	{
-		ColliderManager::getInstance()->colliderDestroyed(this);
 	}
 
 
 	void Collider::onCreate()
 	{
+		ColliderManager::getInstance()->colliderCreated(this);
+
 		auto meshRenderer = gameObject->getComponent<MeshRenderer>();
 		Mesh* mesh;
 		if (meshRenderer && (mesh = meshRenderer->getMesh()))
@@ -48,6 +47,7 @@ namespace yellowEngine
 
 	void Collider::onDestroy()
 	{
+		ColliderManager::getInstance()->colliderDestroyed(this);
 	}
 
 

@@ -60,9 +60,9 @@ public:
 	{
 		if (InputManager::getKeyDown(GLFW_KEY_1))
 		{
-			auto l = gameObject->getComponent<Light>();
-			l->castShadow = !l->castShadow;
-			l->onValueChanged();
+			Model* m = Model::create("./res/Mesh/base.fbx");
+			//Model* m = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
+			//m->instantiate("qwe");
 		}
 
 
@@ -162,25 +162,25 @@ int main()
 	//Model* model = Model::create("./res/Mesh/nanosuit/nanosuit.obj");
 	//GameObject* nano = model->instantiate("Model");
 	//nano->transform->setScale(0.3, 0.3, 0.3);
-	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
-	Mesh* sphere = Mesh::create("./res/Mesh/sphere.obj");
+	//Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
+	//Mesh* sphere = Mesh::create("./res/Mesh/sphere.obj");
 
 	//Model* model1 = Model::create("./res/Mesh/cube.obj");
 	//GameObject* nano1 = model1->instantiate("Model");
 	//nano1->transform->setPosition(0, -0.5, 0);
 
-	Material* bm = new Material("asdasqwed");
-	bm->setProperty("u_Material.diffuseColor", Vector3(1.0, 0.7, 0));
+	//Material* bm = new Material("asdasqwed");
+	//bm->setProperty("u_Material.diffuseColor", Vector3(1.0, 0.7, 0));
 
 	Material* wm = new Material("QWE");
 
-	GameObject* box2 = new GameObject("box");
-	box2->addComponent<MeshRenderer>()->set(boxMesh, bm);
+	//GameObject* box2 = new GameObject("box");
+	//box2->addComponent<MeshRenderer>()->set(boxMesh, bm);
 
-	GameObject* b3 = new GameObject("box");
-	b3->addComponent<MeshRenderer>()->set(boxMesh, wm);
-	b3->transform->setPosition(0, -1, 0);
-	b3->transform->setScale(10, 1, 10);
+	//GameObject* b3 = new GameObject("box");
+	//b3->addComponent<MeshRenderer>()->set(boxMesh, wm);
+	//b3->transform->setPosition(0, -1, 0);
+	//b3->transform->setScale(10, 1, 10);
 
 	//GameObject* b4 = new GameObject("box");
 	//b4->addComponent<MeshRenderer>()->set(boxMesh, bm);
@@ -219,9 +219,9 @@ int main()
 
 	////////// Scene end
 
+	int f = 0;
 	while (!glfwWindowShouldClose(window))
 	{
-		Utils::printGLError("QWE");
 		glfwPollEvents();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -121,7 +121,6 @@ int main()
 	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
 	box->transform->setScale(10, 0.1, 10);
 
-
 	GameObject* dirLight = new GameObject();
 	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
 	dirLight->transform->setRotation(-45, 45, 0);

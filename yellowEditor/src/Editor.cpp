@@ -162,6 +162,18 @@ namespace yellowEditor
 	}
 
 
+	void Editor::setGameContext()
+	{
+		glfwMakeContextCurrent(__instance->_gameWindow.handle);
+	}
+
+
+	void Editor::setEditorContext()
+	{
+		glfwMakeContextCurrent(__instance->_editorWindow.handle);
+	}
+
+
 	static void DrawMainMenuBar()
 	{
 		if (ImGui::BeginMainMenuBar())

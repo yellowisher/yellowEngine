@@ -210,16 +210,19 @@ namespace yellowEditor
 			}
 			else
 			{
-				// in case too long file name
-				if (ImGui::CalcTextSize(name.c_str()).x > buttonSize.x)
+				if (!selected)
 				{
-					float left = buttonSize.x - ImGui::CalcTextSize("..").x;
-					for (int i = 1; i < name.length(); i++)
+					// in case too long file name
+					if (ImGui::CalcTextSize(name.c_str()).x > buttonSize.x + 10)
 					{
-						if (ImGui::CalcTextSize(name.c_str(), name.c_str() + i).x > left)
+						float left = buttonSize.x - ImGui::CalcTextSize("..").x;
+						for (int i = 1; i < name.length(); i++)
 						{
-							name = name.substr(0, i + 1) + "..";
-							break;
+							if (ImGui::CalcTextSize(name.c_str(), name.c_str() + i).x > left)
+							{
+								name = name.substr(0, i + 1) + "..";
+								break;
+							}
 						}
 					}
 				}

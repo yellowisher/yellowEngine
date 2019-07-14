@@ -36,6 +36,9 @@ namespace yellowEditor
 		static void selectHierarchyItem(Transform* item);
 		static void selectAssetItem(std::string item);
 
+		static void setGameContext();
+		static void setEditorContext();
+
 	private:
 		static Editor* __instance;
 

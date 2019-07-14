@@ -145,7 +145,9 @@ namespace yellowEngine
 
 		// feed temporal information for building scene hierachy
 		model->_hasAnimation = scene->HasAnimations();
-		model->_directory = path.substr(0, path.find_last_of('/') + 1);
+		int index = path.find_last_of("\\");
+		if (index == -1) index = path.find_last_of("/");
+		model->_directory = path.substr(0, index + 1);
 
 		model->_root = model->buildTree(scene->mRootNode, scene);
 

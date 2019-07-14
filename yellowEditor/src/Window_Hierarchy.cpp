@@ -39,11 +39,13 @@ namespace yellowEditor
 						strstr(path, ".blend") != nullptr ||
 						strstr(path, ".obj") != nullptr)
 					{
+						Editor::setGameContext();
 						Model* model = Model::create(path);
 						if (model != nullptr)
 						{
-							model->instantiate("New Model");
+							//model->instantiate("New Model");
 						}
+						Editor::setEditorContext();
 					}
 				}
 

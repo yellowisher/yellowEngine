@@ -36,6 +36,8 @@ namespace yellowEngine
 
 		auto binding = new VertexLayoutBinding();
 
+		Utils::printGLError("Begin vertex layout binding");
+
 		glGenVertexArrays(1, &binding->_vertexArrayHandle);
 		glBindVertexArray(binding->_vertexArrayHandle);
 
@@ -58,6 +60,8 @@ namespace yellowEngine
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindVertexArray(NULL);
+
+		Utils::printGLError("End vertex layout binding");
 
 		__bindingCache.insert({ key,binding });
 

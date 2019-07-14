@@ -17,6 +17,7 @@ namespace yellowEngine
 		~SphereCollider();
 
 		virtual void onCreate() override;
+		virtual void onDestroy() override;
 
 		Type getType() override;
 		bool isCollideWith(Collider* other) override;

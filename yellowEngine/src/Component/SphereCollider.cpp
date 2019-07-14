@@ -26,6 +26,12 @@ namespace yellowEngine
 	}
 
 
+	void SphereCollider::onDestroy()
+	{
+		Collider::onDestroy();
+	}
+
+
 	Collider::Type SphereCollider::getType()
 	{
 		static Type type = Type_Sphere;

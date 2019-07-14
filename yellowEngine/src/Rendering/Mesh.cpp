@@ -35,7 +35,7 @@ namespace yellowEngine
 		int indexCount, void* indexData) :
 		_vertexLayout(vertexLayout)
 	{
-		__meshCache.insert({ path, this });
+		//__meshCache.insert({ path, this });
 
 		_path = path;
 		_vertexCount = indexCount;
@@ -118,6 +118,7 @@ namespace yellowEngine
 		Mesh* mesh = nullptr;
 
 		mesh = loadOBJ(path);
+		__meshCache.insert({ path, mesh });
 		return mesh;
 	}
 

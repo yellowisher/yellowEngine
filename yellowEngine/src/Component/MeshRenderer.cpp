@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
 

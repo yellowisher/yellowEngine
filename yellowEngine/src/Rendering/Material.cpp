@@ -2,6 +2,7 @@
 #include <fstream>
 #include <json/json.h>
 
+#include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/Component/MeshRenderer.hpp"
 #include "yellowEngine/Rendering/VertexLayoutBinding.hpp"
 #include "yellowEngine/Rendering/Material.hpp"
@@ -184,6 +185,7 @@ namespace yellowEngine
 		}
 
 		VertexLayoutBinding::create(meshRenderer->getMesh(), shader)->bind();
+
 		return shader;
 	}
 
