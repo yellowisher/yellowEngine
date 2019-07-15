@@ -1,4 +1,5 @@
 #include <type_traits>
+#include <cassert>
 
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
@@ -33,37 +34,57 @@ namespace yellowEngine
 		}
 	}
 
+	// because of SkinnedMeshRenderer, two pass cloning
+	// first, clone all child objects
+	// second, fill all components
+	GameObject* GameObject::clone()
+	{
+		GameObject* newObject = cloneObjects();
+		transform->getParent()->addChild(newObject->transform);
 
-	GameObject* GameObject::clone(bool first)
+		newObject->cloneComponents(this);
+
+		return newObject;
+	}
+
+
+	GameObject* GameObject::cloneObjects()
 	{
 		GameObject* newObject = new GameObject(_name.c_str());
 
 		for (auto child : transform->getChildren())
 		{
-			GameObject* newChild = child->gameObject->clone(false);
+			GameObject* newChild = child->gameObject->cloneObjects();
 			newObject->transform->addChild(newChild->transform);
 		}
 
-		for (auto component : _components)
+		return newObject;
+	}
+
+
+	void GameObject::cloneComponents(GameObject* original)
+	{
+		for (auto component : original->_components)
 		{
+			Component* newComponent = nullptr;
 			if (strcmp(component->getTypeName(), "Transform") == 0)
 			{
-				transform->clone(newObject->transform);
-				newObject->transform->onValueChanged();
+				newComponent = transform;
 			}
 			else
 			{
-				Component* newComponent = newObject->addComponent(component->getTypeName());
-				component->clone(newComponent);
-				newComponent->onValueChanged();
+				newComponent = addComponent(component->getTypeName());
 			}
+
+			component->clone(newComponent);
+			newComponent->onValueChanged();
 		}
 
-		if (first)
+		assert(transform->getChildCount() == original->transform->getChildCount());
+		for (int i = 0; i < transform->getChildCount(); i++)
 		{
-			transform->getParent()->addChild(newObject->transform);
+			transform->getChild(i)->gameObject->cloneComponents(original->transform->getChild(i)->gameObject);
 		}
-		return newObject;
 	}
 
 

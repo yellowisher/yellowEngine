@@ -98,11 +98,14 @@ namespace yellowEngine
 				if (renderer != nullptr)
 				{
 					std::vector<std::pair<Transform*, Matrix>> joints;
+					std::map<std::string, int> jointIndices;
+
 					for (auto node : node->jointNodes)
 					{
+						jointIndices[node->name] = joints.size();;
 						joints.push_back({ node->transform,node->offset });
 					}
-					renderer->set(node->mesh, material ? material : node->material, joints, rootObject->transform);
+					renderer->set(node->mesh, material ? material : node->material, joints, jointIndices, rootObject->transform);
 				}
 
 				for (auto child : node->children)

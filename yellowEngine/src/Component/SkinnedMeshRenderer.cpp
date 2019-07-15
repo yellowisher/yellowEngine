@@ -1,3 +1,6 @@
+#include <queue>
+#include <cassert>
+
 #include "yellowEngine/Component/SkinnedMeshRenderer.hpp"
 
 namespace yellowEngine
@@ -15,12 +18,17 @@ namespace yellowEngine
 	}
 
 
-	SkinnedMeshRenderer* SkinnedMeshRenderer::set(Mesh* mesh, Material* material, std::vector<std::pair<Transform*, Matrix>> joints, Transform* modelRoot)
+	SkinnedMeshRenderer* SkinnedMeshRenderer::set(
+		Mesh* mesh, Material* material, 
+		std::vector<std::pair<Transform*, Matrix>> joints, 
+		std::map<std::string, int> jointIndices,
+		Transform* modelRoot)
 	{
 		MeshRenderer::set(mesh, material);
 
 		_modelRoot = modelRoot;
 		_joints = joints;
+		_jointIndices = jointIndices;
 		return this;
 	}
 
@@ -48,5 +56,59 @@ namespace yellowEngine
 		}
 		glDrawElements(GL_TRIANGLES, _mesh->getVertexCount(), GL_UNSIGNED_INT, 0);
 		shader->setUniform("u_Skinning", false);
+	}
+
+
+	void SkinnedMeshRenderer::clone(Component* target)
+	{
+		Component::clone(target);
+
+		SkinnedMeshRenderer* targetSMR = dynamic_cast<SkinnedMeshRenderer*>(target);
+		
+		Transform* root = targetSMR->transform;
+		while (root->gameObject->getName() != _modelRoot->gameObject->getName())
+		{
+			root = root->getParent();
+		}
+
+		targetSMR->_modelRoot = root;
+
+		// FIXME:
+		// at this point, I don't come up with any other idea of 
+		// re-link joints without changing joint storeage structure
+		// so with belief of all joints name are different (which is naive)
+		// link them with their name
+
+		targetSMR->_jointIndices = _jointIndices;
+
+		std::queue<Transform*> visitQueue;
+		visitQueue.push(root);
+		int leftCount = _jointIndices.size();
+
+		targetSMR->_joints.resize(_joints.size());
+		while (!visitQueue.empty())
+		{
+			Transform* visit = visitQueue.front();
+			visitQueue.pop();
+
+			std::string jName = visit->gameObject->getName();
+			auto jit = _jointIndices.find(jName);
+			if (jit != _jointIndices.end())
+			{
+				targetSMR->_joints[jit->second] = { visit, _joints[jit->second].second };
+
+				if (--leftCount == 0)
+				{
+					break;
+				}
+			}
+
+			for (auto child : visit->getChildren())
+			{
+				visitQueue.push(child);
+			}
+		}
+
+		assert(leftCount == 0);
 	}
 }

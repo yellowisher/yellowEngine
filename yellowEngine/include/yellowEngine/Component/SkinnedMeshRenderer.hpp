@@ -20,13 +20,21 @@ namespace yellowEngine
 
 		SkinnedMeshRenderer* set(
 			Mesh* mesh, Material* material,
-			std::vector<std::pair<Transform*, Matrix>> joints, Transform* modelRoot);
+			std::vector<std::pair<Transform*, Matrix>> joints,
+			std::map<std::string, int> jointIndices,
+			Transform* modelRoot);
 		void _render(const char* vsPath = nullptr, const char* fsPath = nullptr) override;
 
 	private:
+		// because SkinnedMeshRenderer holds corresponding joint transforms and its offset matrix,
+		// cloning the component is not just memcpying members
+		// so SkinnedMeshRenderer needs its own version of clone
+		virtual void clone(Component* target) override;
+
 		Transform* _modelRoot;
 		//const Uniform* _jointUniform;
 		std::vector<std::pair<Transform*, Matrix>> _joints;
+		std::map<std::string, int> _jointIndices;
 	};
 }
 

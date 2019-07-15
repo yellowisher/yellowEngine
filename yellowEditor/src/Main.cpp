@@ -14,6 +14,24 @@ GLubyte* gameData;
 GLubyte* gameDataFlipped;
 GLuint sceneTexture;
 
+
+Model* mmmm;
+class Test : public Component
+{
+public:
+	BEGIN_COMPONENT(Test)
+	END_COMPONENT
+
+	Test(GameObject* g) :Component(g) {}
+	void onCreate() override
+	{
+		Animator* anim = gameObject->getComponent<Animator>();
+		anim->play(mmmm->getClip(2));
+	}
+};
+
+COMPONENT_IMPL(Test)
+
 int main()
 {
 	if (!glfwInit()) return 1;
@@ -75,7 +93,7 @@ int main()
 	//dd->addComponent<MeshRenderer>()->set(dmdm, boxMaterial);
 	editor->createEditorCamera();
 	editor->setWelcomeScene();
-
+	mmmm = Model::create("./res/Mesh/infantry.fbx");
 #pragma endregion
 
 	while (!glfwWindowShouldClose(editorWindow.handle))

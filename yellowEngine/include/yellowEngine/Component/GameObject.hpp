@@ -23,7 +23,7 @@ namespace yellowEngine
 		GameObject(const GameObject& copy) = delete;
 		GameObject& operator=(const GameObject& copy) = delete;
 
-		GameObject* clone(bool first = true);
+		GameObject* clone();
 
 		void setActive(bool active);
 		bool getActive();
@@ -37,6 +37,9 @@ namespace yellowEngine
 		const std::list<Component*>& getComponents() { return _components; }
 
 	private:
+		GameObject* cloneObjects();
+		void cloneComponents(GameObject* original);
+
 		std::list<Component*> _components;
 		std::string _name;
 		bool _active;
