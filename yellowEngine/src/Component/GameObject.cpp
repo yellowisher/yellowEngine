@@ -24,12 +24,6 @@ namespace yellowEngine
 	}
 
 
-	GameObject::GameObject(const GameObject& copy) : _name(copy._name + "(clone)"), transform(new Transform(this))
-	{
-		// TODO: copy all members
-	}
-
-
 	GameObject::~GameObject()
 	{
 		for (auto it = _components.rbegin(); it != _components.rend(); ++it)
@@ -37,6 +31,39 @@ namespace yellowEngine
 			(*it)->onDestroy();
 			delete(*it);
 		}
+	}
+
+
+	GameObject* GameObject::clone(bool first)
+	{
+		GameObject* newObject = new GameObject(_name.c_str());
+
+		for (auto child : transform->getChildren())
+		{
+			GameObject* newChild = child->gameObject->clone(false);
+			newObject->transform->addChild(newChild->transform);
+		}
+
+		for (auto component : _components)
+		{
+			if (strcmp(component->getTypeName(), "Transform") == 0)
+			{
+				transform->clone(newObject->transform);
+				newObject->transform->onValueChanged();
+			}
+			else
+			{
+				Component* newComponent = newObject->addComponent(component->getTypeName());
+				component->clone(newComponent);
+				newComponent->onValueChanged();
+			}
+		}
+
+		if (first)
+		{
+			transform->getParent()->addChild(newObject->transform);
+		}
+		return newObject;
 	}
 
 

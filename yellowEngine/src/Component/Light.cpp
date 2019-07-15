@@ -34,7 +34,7 @@ namespace yellowEngine
 
 		_type = LightType_Dir;
 		__lights[LightType_Dir].push_back(this);
-		_projectionMatrix = Matrix::createOrthographic(10.0f, 10.0f, -1.0f, 10.0f);
+		_projectionMatrix = Matrix::createOrthographic(50.0f, 50.0f, -1.0f, 50.0f);
 
 		castShadow = true;
 		// really should light holds frame buffer?
@@ -154,7 +154,7 @@ namespace yellowEngine
 				_shadowBuffer = new FrameBuffer();
 				if (_type == LightType_Dir)
 				{
-					_projectionMatrix = Matrix::createOrthographic(10.0f, 10.0f, -1.0f, 10.0f);
+					_projectionMatrix = Matrix::createOrthographic(50.0f, 50.0f, -1.0f, 50.0f);
 					_shadowBuffer->addDepthTexture("u_ShadowDepthMap", Display::width, Display::height);
 				}
 				else

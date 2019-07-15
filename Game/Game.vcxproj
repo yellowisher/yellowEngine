@@ -122,6 +122,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scripts\Building.cpp" />
+    <ClCompile Include="Scripts\Spawner.cpp" />
+    <ClCompile Include="Scripts\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\bloom.frag" />
@@ -130,6 +133,12 @@
     <None Include="res\Shader\bloom_blur.vert" />
     <None Include="res\Shader\shadow_point.frag" />
     <None Include="res\Shader\shadow_point.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scripts\Building.hpp" />
+    <ClInclude Include="Scripts\IDamageable.hpp" />
+    <ClInclude Include="Scripts\Spawner.hpp" />
+    <ClInclude Include="Scripts\Unit.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -227,6 +227,7 @@ namespace yellowEditor
 					Editor::selectHierarchyItem(nullptr);
 					SceneManager::clearScene();
 					Editor::createEditorCamera();
+					Editor::setWelcomeScene();
 
 					Editor::setEditorContext();
 
@@ -262,5 +263,17 @@ namespace yellowEditor
 			}
 		}
 		ImGui::EndMainMenuBar();
+	}
+
+
+	void Editor::setWelcomeScene()
+	{
+		GameObject* light = new GameObject("Light");
+		light->addComponent<Light>();
+		light->transform->setPosition(0, 3, 3);
+		light->transform->setRotation(-45, -45, 0);
+
+		GameObject* cube = new GameObject("Cube");
+		cube->addComponent<MeshRenderer>()->set(Mesh::create("./res/Mesh/cube.obj"));
 	}
 }

@@ -113,6 +113,12 @@ namespace yellowEngine
 	{
 		return !(*this == vector);
 	}
+		
+
+	float Vector2::operator*(const Vector2& vector) const
+	{
+		return x * vector.x + y * vector.y;
+	}
 
 
 	void Vector2::normalize()

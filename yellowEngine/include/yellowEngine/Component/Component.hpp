@@ -40,7 +40,7 @@ friend class Component;\
 				auto& offsets = Component::getProperties()[#cls];
 
 #define PROPERTY(cls, type, field, name) \
-				offsets.push_back({ #type, name, offsetof(cls, field) });
+				offsets.push_back({ #type, name, offsetof(cls, field), sizeof(type) });
 
 #define BEGIN_ENUM(cls, type) \
 				{\
@@ -81,6 +81,7 @@ namespace yellowEngine
 			std::string type;
 			std::string name;
 			size_t offset;
+			size_t size;
 		};
 
 		// TODO: move RTTI to each component, not hold as static method in Component
@@ -112,6 +113,7 @@ namespace yellowEngine
 	protected:
 		// store createComponent function pointers that can be referenced with string
 		template<class T> static Component* createComponent(GameObject* gameObject) { return new T(gameObject); }
+		virtual void clone(Component* target);
 
 	private:
 		bool _active;

@@ -59,22 +59,22 @@ int main()
 
 #pragma region Scene
 
-	Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
-	GameObject* box = new GameObject("box");
-	Material* boxMaterial = new Material("asdasd");
+	//Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
+	//GameObject* box = new GameObject("box");
+	//Material* boxMaterial = new Material("asdasd");
 
-	box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
-	box->transform->setScale(10, 0.1, 10);
+	//box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
+	//box->transform->setScale(1, 0.1, 1);
 
-	GameObject* dirLight = new GameObject();
-	dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
-	dirLight->transform->setRotation(-45, 45, 0);
+	//GameObject* dirLight = new GameObject();
+	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
+	//dirLight->transform->setRotation(-45, 45, 0);
 
-	auto dmdm=Mesh::create("./res/Mesh/quad.obj");
-	GameObject* dd = new GameObject("qwe");
-	dd->addComponent<MeshRenderer>()->set(dmdm, boxMaterial);
-
+	//auto dmdm=Mesh::create("./res/Mesh/quad.obj");
+	//GameObject* dd = new GameObject("qwe");
+	//dd->addComponent<MeshRenderer>()->set(dmdm, boxMaterial);
 	editor->createEditorCamera();
+	editor->setWelcomeScene();
 
 #pragma endregion
 

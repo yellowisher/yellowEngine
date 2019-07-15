@@ -1,3 +1,4 @@
+#include "Gizmo.hpp"
 #include "Window_Scene.hpp"
 
 
@@ -9,6 +10,7 @@ namespace yellowEditor
 	static float rotateSpeedX = 0.035f;
 	static float rotateSpeedY = 0.0175f;
 	float scrollY = 0;
+
 
 	void glfwScrollCallback(GLFWwindow* window, double x, double y)
 	{
@@ -35,6 +37,23 @@ namespace yellowEditor
 				controllingCamera = true;
 				glfwGetCursorPos(Editor::getEditorWindow().handle, &x, &y);
 				prevMousePosition = Vector2((float)x, (float)y);
+			}
+
+			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered())
+			{
+				float cx = ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetCursorStartPos().x;
+				float cy = ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetCursorStartPos().y;
+				Gizmo_StartDrag(cx, cy);
+			}
+			else if (ImGui::IsMouseDown(0))
+			{
+				float cx = ImGui::GetMousePos().x - ImGui::GetWindowPos().x - ImGui::GetCursorStartPos().x;
+				float cy = ImGui::GetMousePos().y - ImGui::GetWindowPos().y - ImGui::GetCursorStartPos().y;
+				Gizmo_Drag(cx, cy);
+			}
+			else
+			{
+				Gizmo_EndDrag();
 			}
 
 			// handle mouse

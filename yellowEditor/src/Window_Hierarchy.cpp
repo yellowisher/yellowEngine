@@ -22,8 +22,9 @@ namespace yellowEditor
 
 		if (ImGui::Begin("Hierarchy", nullptr, Editor::getBaseWindowFlag()))
 		{
-			for (auto child : Transform::Root->getChildren())
+			for (int i = 0; i < Transform::Root->getChildCount(); i++)
 			{
+				auto child = Transform::Root->getChild(i);
 				if (child == Editor::getEditorCamera()->transform) continue;
 				HierarchyNode(child);
 			}
@@ -81,7 +82,8 @@ namespace yellowEditor
 
 				if (ImGui::Selectable("New GameObject"))
 				{
-					new GameObject();
+					GameObject* newObject = new GameObject();
+					Editor::selectHierarchyItem(newObject->transform);
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -115,7 +117,9 @@ namespace yellowEditor
 
 		ImGui::PushID((size_t)target);
 
-		bool nodeOpend = ImGui::TreeNodeEx("", flags);
+		auto nodeId = ImGui::GetID("##w");
+
+		bool nodeOpend = ImGui::TreeNodeEx("##w", flags);
 
 		bool selected = target == Editor::getSelectedTransform();
 		ImGui::SameLine();
@@ -134,6 +138,25 @@ namespace yellowEditor
 		{
 			ImGui::Text("Edit Menu");
 			ImGui::Separator();
+
+			if (ImGui::Selectable("Add Child"))
+			{
+				GameObject* child = new GameObject();
+				target->addChild(child->transform);
+				Editor::selectHierarchyItem(child->transform);
+				nodeOpend = true;
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Selectable("Clone"))
+			{
+				Editor::setGameContext();
+				GameObject* newObject = target->gameObject->clone();
+				Editor::selectHierarchyItem(newObject->transform);
+				Editor::setEditorContext();
+				ImGui::CloseCurrentPopup();
+			}
+
 			if (ImGui::Selectable("Delete"))
 			{
 				if (target == Editor::getSelectedTransform()) Editor::selectHierarchyItem(nullptr);
@@ -164,9 +187,10 @@ namespace yellowEditor
 
 		if (nodeOpend)
 		{
-			for (auto child : target->getChildren())
+			ImGui::GetStateStorage()->SetInt(nodeId, 1);
+			for (int i = 0; i < target->getChildCount(); i++)
 			{
-				HierarchyNode(child);
+				HierarchyNode(target->getChild(i));
 			}
 			ImGui::TreePop();
 		}

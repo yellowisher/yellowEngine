@@ -359,7 +359,7 @@ namespace yellowEditor
 								ImGui::SameLine();
 								ImGui::SetNextItemWidth(60);
 								ImGui::SetCursorPosX(ImGui::GetColumnWidth() - 80);
-								if (ImGui::DragFloat("" + i, basePtr + i, 0.05))
+								if (ImGui::DragFloat("", basePtr + i, 0.05))
 								{
 									keyTransform->onValueChanged();
 									AddKeyFrame(keyTransform, _frame, key);

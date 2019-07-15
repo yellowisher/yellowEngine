@@ -31,6 +31,7 @@ namespace yellowEngine
 		Vector2 operator-(const Vector2& vector) const;
 		Vector2 operator*(float value) const;
 		Vector2 operator/(float value) const;
+		float operator*(const Vector2& vector) const;
 
 		Vector2& operator= (const Vector2& vector);
 		Vector2& operator+= (const Vector2& vector);

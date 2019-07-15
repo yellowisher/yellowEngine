@@ -19,9 +19,11 @@ namespace yellowEngine
 
 		GameObject();
 		GameObject(const char* name);
-		GameObject(const GameObject& copy);
 		~GameObject();
+		GameObject(const GameObject& copy) = delete;
 		GameObject& operator=(const GameObject& copy) = delete;
+
+		GameObject* clone(bool first = true);
 
 		void setActive(bool active);
 		bool getActive();

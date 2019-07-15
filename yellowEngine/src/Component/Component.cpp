@@ -60,4 +60,22 @@ namespace yellowEngine
 	{
 		return _active;
 	}
+
+
+	void Component::clone(Component* target)
+	{
+		for (auto prop : getProperties()[getTypeName()])
+		{
+			if (prop.type == "Mesh" || prop.type == "Material")
+			{
+				std::string* dst = (std::string*)((size_t)target + prop.offset);
+				std::string* src = (std::string*)((size_t)this + prop.offset);
+				*dst = *src;
+			}
+			else
+			{
+				memcpy((void*)((size_t)target + prop.offset), (void*)((size_t)this + prop.offset), prop.size);
+			}
+		}
+	}
 }

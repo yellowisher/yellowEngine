@@ -76,6 +76,7 @@ namespace yellowEngine
 		std::pair<Mesh*, Material*> createMesh(aiMesh* mesh, const aiScene* scene, Node* currentNode);
 		void copyMatrix(aiMatrix4x4& aiMatrix, Matrix& matrix);
 
+		std::string _path;
 		std::string _directory;
 
 		bool _hasAnimation;

@@ -38,6 +38,7 @@ namespace yellowEditor
 
 		static void setGameContext();
 		static void setEditorContext();
+		static void setWelcomeScene();
 
 	private:
 		static Editor* __instance;

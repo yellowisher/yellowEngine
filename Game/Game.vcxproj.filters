@@ -18,6 +18,15 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scripts\Spawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Unit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts\Building.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\shadow_point.vert" />
@@ -26,5 +35,19 @@
     <None Include="res\Shader\bloom.vert" />
     <None Include="res\Shader\bloom.frag" />
     <None Include="res\Shader\bloom_blur.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scripts\Spawner.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Unit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\IDamageable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Building.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

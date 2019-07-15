@@ -7,6 +7,7 @@ using namespace std;
 
 #include "yellowEngine/Utility/Utils.hpp"
 #include "yellowEngine/System/Game.hpp"
+#include "yellowEngine/Rendering/Model.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
 
 
@@ -35,7 +36,7 @@ namespace yellowEngine
 		int indexCount, void* indexData) :
 		_vertexLayout(vertexLayout)
 	{
-		//__meshCache.insert({ path, this });
+		__meshCache.insert({ path, this });
 
 		_path = path;
 		_vertexCount = indexCount;
@@ -112,6 +113,13 @@ namespace yellowEngine
 
 	Mesh* Mesh::create(const char* path)
 	{
+		if (_strcmpi(path + strlen(path) - 3, "obj") != 0)
+		{
+			std::string mpath = path;
+			mpath = mpath.substr(0, mpath.find_last_of(':'));
+			Model::create(mpath.c_str());
+		}
+
 		auto it = __meshCache.find(path);
 		if (it != __meshCache.end())
 		{
@@ -119,9 +127,9 @@ namespace yellowEngine
 		}
 
 		Mesh* mesh = nullptr;
-
 		mesh = loadOBJ(path);
-		__meshCache.insert({ path, mesh });
+
+		//__meshCache.insert({ path, mesh });
 		return mesh;
 	}
 

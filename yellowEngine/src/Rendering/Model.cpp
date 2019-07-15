@@ -147,6 +147,7 @@ namespace yellowEngine
 		model->_hasAnimation = scene->HasAnimations();
 		int index = path.find_last_of("\\");
 		if (index == -1) index = path.find_last_of("/");
+		model->_path = path;
 		model->_directory = path.substr(0, index + 1);
 
 		model->_root = model->buildTree(scene->mRootNode, scene);
@@ -430,17 +431,17 @@ namespace yellowEngine
 			}
 		}
 
-		std::string meshPath = _directory;
-		meshPath.append(aiMesh->mName.C_Str());
+		std::string meshPath = _path;
+		meshPath.append(":");
+		meshPath.append(currentNode->name);
 
 		mesh = new Mesh(meshPath.c_str(), layout, aiMesh->mNumVertices, vertices, 3 * aiMesh->mNumFaces, indices);
 
 		// create material
-		aiString materialPath = aiString(_directory);
-		materialPath.Append(aiMesh->mName.C_Str());
-		materialPath.Append(".yem");
+		std::string materialPath = meshPath;
+		materialPath.append(".yem");
 
-		Material* material = new Material(materialPath.C_Str());
+		Material* material = new Material(materialPath.c_str());
 
 		aiMaterial* aMaterial = scene->mMaterials[aiMesh->mMaterialIndex];
 		aiString texturePath;

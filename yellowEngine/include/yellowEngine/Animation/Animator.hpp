@@ -14,6 +14,7 @@ namespace yellowEngine
 	class Animator : public Component
 	{
 		BEGIN_COMPONENT(Animator)
+			PROPERTY(Animator, float, _speed, "Speed");
 		END_COMPONENT
 
 		using Key = AnimationClip::Key;
