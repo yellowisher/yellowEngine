@@ -16,6 +16,8 @@ Material* Spawner::getMaterial(int team)
 		materials[0] = new Material("red team");
 		materials[0]->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/Units/Materials/red.tga"));
 	}
+
+	return materials[team];
 }
 
 
@@ -25,8 +27,8 @@ void Spawner::onCreate()
 	{
 		for (int i = 0; i < Unit::Num_Units; i++)
 		{
-			units[i] = GameObject::find("Unit" + i);
-			units[i]->setActive(false);
+			units[i] = GameObject::find("Unit" + std::to_string(i));
+			if (units[i]) units[i]->setActive(false);
 		}
 	}
 }

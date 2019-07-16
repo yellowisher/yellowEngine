@@ -76,7 +76,7 @@ namespace yellowEngine
 			{
 				_data[i].next = i + 1;
 			}
-			_data[_capacity - 1].next = NullObject;
+			_data[capacity - 1].next = NullObject;
 			_freeHead = _capacity;
 			_capacity = capacity;
 		}

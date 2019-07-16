@@ -52,9 +52,10 @@ namespace yellowEngine
 		_colliderManager->detect();
 		Animator::proceedAll();
 
-		for (auto updatable : _updatables)
+		// maybe delay updatable creation/deletion?
+		for (int i = 0; i < _updatables.size(); i++)
 		{
-			if (updatable) updatable->update();
+			if (_updatables[i]) _updatables[i]->update();
 		}
 
 		// update input state at the end of frame

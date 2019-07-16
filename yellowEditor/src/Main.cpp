@@ -86,7 +86,7 @@ int main()
 
 			game->update();
 			game->render(editor->getEditorCamera());
-			ColliderManager::getInstance()->renderColliders(editor->getEditorCamera());
+			//ColliderManager::getInstance()->renderColliders(editor->getEditorCamera());
 			DrawGizmo();
 
 			glfwSwapBuffers(gameWindow.handle);

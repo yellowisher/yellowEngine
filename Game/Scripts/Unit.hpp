@@ -78,8 +78,6 @@ public:
 		Num_Clips
 	};
 
-	UnitType type;
-
 	static bool isInfantry(int type) { return type < Unit_Cavalry_Start; }
 	static BaseUnitType getBaseType(UnitType type);
 	static AnimationClip* getClip(UnitType unit, ClipType clip);
@@ -87,6 +85,7 @@ public:
 	Unit(GameObject* gameObject) :Component(gameObject) {};
 	~Unit() {};
 
+	void onCreate() override;
 	void onCollisionEnter(Collider* other) override;
 	void onCollisionExit(Collider* other) override;
 	void update() override;
@@ -97,7 +96,6 @@ public:
 	void* getTransform() { return transform; }
 
 	UnitType type;
-	int hp;
 	int defense;
 	float moveSpeed;
 	int damage[Num_BaseUnits];
@@ -108,6 +106,7 @@ public:
 private:
 	enum State
 	{
+		State_NotInitialized,
 		State_Moving,
 		State_Attacking,
 		State_Dying

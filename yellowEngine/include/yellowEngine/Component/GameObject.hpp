@@ -24,9 +24,9 @@ namespace yellowEngine
 		GameObject(const GameObject& copy) = delete;
 		GameObject& operator=(const GameObject& copy) = delete;
 
-		GameObject* clone();
 		void onCollisionEnter(Collider* other);
 		void onCollisionExit(Collider* other);
+		GameObject* clone();
 
 		void setActive(bool active);
 		bool getActive();

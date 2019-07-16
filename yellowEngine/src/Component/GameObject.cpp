@@ -34,19 +34,6 @@ namespace yellowEngine
 		}
 	}
 
-	// because of SkinnedMeshRenderer, two pass cloning
-	// first, clone all child objects
-	// second, fill all components
-	GameObject* GameObject::clone()
-	{
-		GameObject* newObject = cloneObjects();
-		transform->getParent()->addChild(newObject->transform);
-
-		newObject->cloneComponents(this);
-
-		return newObject;
-	}
-
 
 	void GameObject::onCollisionEnter(Collider* other)
 	{
@@ -63,6 +50,19 @@ namespace yellowEngine
 		{
 			component->onCollisionExit(other);
 		}
+	}
+
+	// because of SkinnedMeshRenderer, two pass cloning
+	// first, clone all child objects
+	// second, fill all components
+	GameObject* GameObject::clone()
+	{
+		GameObject* newObject = cloneObjects();
+		transform->getParent()->addChild(newObject->transform);
+
+		newObject->cloneComponents(this);
+
+		return newObject;
 	}
 
 

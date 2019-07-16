@@ -64,7 +64,7 @@ namespace yellowEngine
 		{
 		case Event_TransformChanged:
 			onTransformChange();
-			ColliderManager::getInstance()->colliderUpdated(this);
+			if (getActive()) ColliderManager::getInstance()->colliderUpdated(this);
 			break;
 		}
 	}

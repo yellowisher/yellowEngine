@@ -11,23 +11,21 @@ public:
 	virtual void* getTransform() = 0;
 	void takeDamage(int damage)
 	{
-		if ((_hp -= modifyDamage(damage)) <= 0)
+		if ((hp -= modifyDamage(damage)) <= 0)
 		{
 			die();
 		}
 	}
 
-	void setHp(int hp) { _hp = hp; }
-	int getHp() { return _hp; }
+	void setHp(int hp) { this->hp = hp; }
+	int getHp() { return hp; }
 
 	int baseType;
 	int team;
+	int hp;
 
 protected:
-	virtual int modifyDamage(int damage) = 0;
-
-private:
-	int _hp;
+	virtual int modifyDamage(int damage) { return damage; }
 };
 
 #endif

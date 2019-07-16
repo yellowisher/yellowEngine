@@ -100,10 +100,10 @@ namespace yellowEngine
 					std::vector<std::pair<Transform*, Matrix>> joints;
 					std::map<std::string, int> jointIndices;
 
-					for (auto node : node->jointNodes)
+					for (auto jnode : node->jointNodes)
 					{
-						jointIndices[node->name] = joints.size();;
-						joints.push_back({ node->transform,node->offset });
+						jointIndices[jnode->name] = joints.size();;
+						joints.push_back({ jnode->transform,jnode->offset });
 					}
 					renderer->set(node->mesh, material ? material : node->material, joints, jointIndices, rootObject->transform);
 				}
@@ -116,6 +116,74 @@ namespace yellowEngine
 		}
 
 		return rootObject;
+	}
+
+
+	void Model::linkJoints(SkinnedMeshRenderer* renderer)
+	{
+		std::string targetName = renderer->gameObject->getName();
+
+		std::queue<std::pair<Node*, int>> visitQueue;
+		visitQueue.push({ _root, 0 });
+		Node* targetNode = nullptr;
+		int targetNodeLevel = 0;
+
+		while (!visitQueue.empty())
+		{
+			auto nodeLevelPair = visitQueue.front();
+			visitQueue.pop();
+
+			if (nodeLevelPair.first->name == targetName)
+			{
+				targetNode = nodeLevelPair.first;
+				targetNodeLevel = nodeLevelPair.second;
+				break;
+			}
+
+			for (auto child : nodeLevelPair.first->children)
+			{
+				visitQueue.push({ child, nodeLevelPair.second + 1 });
+			}
+		}
+
+		assert(targetNode != nullptr);
+
+		Transform* root = renderer->transform;
+		for (int i = 0; i < targetNodeLevel; i++)
+		{
+			root = root->getParent();
+		}
+
+		// after find root, construct joints structure
+		_root->transform = root;
+		std::queue<Node*> nodeQueue;
+		nodeQueue.push(_root);
+
+		while (!nodeQueue.empty())
+		{
+			auto visit = nodeQueue.front();
+			nodeQueue.pop();
+
+			for (auto childNode : visit->children)
+			{
+				Transform* childTransform = visit->transform->findChild(childNode->name);
+				if (childTransform != nullptr)
+				{
+					childNode->transform = childTransform;
+					nodeQueue.push(childNode);
+				}
+			}
+		}
+
+		std::vector<std::pair<Transform*, Matrix>> joints;
+		std::map<std::string, int> jointIndices;
+
+		for (auto jnode : targetNode->jointNodes)
+		{
+			jointIndices[jnode->name] = joints.size();;
+			joints.push_back({ jnode->transform,jnode->offset });
+		}
+		renderer->set(targetNode->mesh, targetNode->material, joints, jointIndices, root);
 	}
 
 

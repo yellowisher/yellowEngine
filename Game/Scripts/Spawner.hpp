@@ -21,11 +21,11 @@ public:
 
 	void spawn(Unit::UnitType type);
 
+	int team;
+
 private:
 	static Material* getMaterial(int team);
 	static GameObject* units[Unit::Num_Units];
-
-	int team;
 };
 
 #endif

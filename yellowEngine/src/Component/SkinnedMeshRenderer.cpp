@@ -1,6 +1,8 @@
 #include <queue>
 #include <cassert>
+#include <queue>
 
+#include "yellowEngine/Rendering/Model.hpp"
 #include "yellowEngine/Component/SkinnedMeshRenderer.hpp"
 
 namespace yellowEngine
@@ -10,11 +12,23 @@ namespace yellowEngine
 
 	SkinnedMeshRenderer::SkinnedMeshRenderer(GameObject* gameObject) :MeshRenderer(gameObject)
 	{
+		_modelRoot = nullptr;
 	}
 
 
 	SkinnedMeshRenderer::~SkinnedMeshRenderer()
 	{
+	}
+
+
+	void SkinnedMeshRenderer::onValueChanged()
+	{
+		if (_modelRoot == nullptr)
+		{
+			std::string modelPath = _meshPath.substr(0, _meshPath.find_last_of(":"));
+			Model* model = Model::create(modelPath.c_str());
+			model->linkJoints(this);
+		}
 	}
 
 

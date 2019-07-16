@@ -32,7 +32,7 @@ AnimationClip* Unit::getClip(UnitType unit, ClipType clip)
 			Model* model = isInfantry(u) ? infantryModel : cavalryModel;
 			for (int c = 0; c < Num_Clips; c++)
 			{
-				std::string name = unitNames[u] + unitNames[c];
+				std::string name = unitNames[u] + clipNames[c];
 				clips[u][c] = model->getClip(name.c_str());
 				if (c == Clip_Run || c == Clip_Walk)
 				{
@@ -43,6 +43,12 @@ AnimationClip* Unit::getClip(UnitType unit, ClipType clip)
 	}
 	
 	return clips[unit][clip];
+}
+
+
+void Unit::onCreate()
+{
+	_state = State_NotInitialized;
 }
 
 
@@ -132,7 +138,7 @@ void Unit::update()
 	switch (_state)
 	{
 		case State_Moving:
-			transform->translate(transform->getForward() * moveSpeed);
+			transform->translate(transform->getForward() * -moveSpeed);
 			break;
 		case State_Attacking:
 			if (++_frame == attackFrame)

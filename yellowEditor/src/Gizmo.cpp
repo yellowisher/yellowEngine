@@ -75,7 +75,7 @@ namespace yellowEditor
 
 				Vector4 dir = ndcTarget - ndcOrigin;
 				dir.normalize();
-				ndcTarget = ndcOrigin + dir;// *0.4f;
+				ndcTarget = ndcOrigin + dir * 0.4f;
 				ndcEnds[i] = ndcTarget;
 
 				screenEnds[i] = Vector2(

@@ -13,6 +13,7 @@
 #include "yellowEngine/Math/Quaternion.hpp"
 #include "yellowEngine/Rendering/Mesh.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
+#include "yellowEngine/Component/SkinnedMeshRenderer.hpp"
 #include "yellowEngine/Animation/AnimationClip.hpp"
 
 namespace yellowEngine
@@ -37,6 +38,7 @@ namespace yellowEngine
 			return nullptr;
 		}
 		const std::map<std::string, AnimationClip*>& getClips() { return _clips; }
+		void linkJoints(SkinnedMeshRenderer* renderer);
 
 	private:
 		struct Node

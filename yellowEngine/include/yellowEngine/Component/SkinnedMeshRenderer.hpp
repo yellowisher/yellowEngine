@@ -18,6 +18,8 @@ namespace yellowEngine
 		SkinnedMeshRenderer(GameObject* gameObject);
 		~SkinnedMeshRenderer();
 
+		virtual void onValueChanged() override;
+
 		SkinnedMeshRenderer* set(
 			Mesh* mesh, Material* material,
 			std::vector<std::pair<Transform*, Matrix>> joints,

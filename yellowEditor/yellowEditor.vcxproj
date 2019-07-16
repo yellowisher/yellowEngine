@@ -90,12 +90,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\imgui\examples;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\imgui;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\yApy\source\repos\yellowEngine\Game\Scripts;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\imgui\examples;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\vendor\imgui;C:\Users\yApy\source\repos\yellowEngine\yellowEditor\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\jsoncpp\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\stb\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\include;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\assimp\lib;C:\Users\yApy\source\repos\yellowEngine\yellowEngine\vendor\glfw\lib;C:\Users\yApy\source\repos\yellowEngine\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3d.lib;yellowEngine.lib;assimpd-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>/WHOLEARCHIVE:yellowEngine.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>glfw3d.lib;yellowEngine.lib;game.lib;assimpd-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/WHOLEARCHIVE:yellowEngine.lib /WHOLEARCHIVE:game.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
