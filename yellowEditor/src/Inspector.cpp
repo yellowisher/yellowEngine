@@ -11,6 +11,7 @@ namespace yellowEditor
 	static const float SpacingForLabel = 5.0f;
 	static std::map<std::string, bool(*)(Component*, Component::Property)> handlers = {
 		{"bool", property_bool},
+		{"int", property_int},
 		{"float", property_float},
 		{"Vector2", property_Vector2 },
 		{"Vector3", property_Vector3},
@@ -132,10 +133,15 @@ namespace yellowEditor
 	}
 
 
+	bool property_int(Component* comp, Component::Property prop)
+	{
+		return ImGui::DragInt("", (int*)(((size_t)comp) + prop.offset));
+	}
+
+
 	static bool property_float(Component* comp, Component::Property prop)
 	{
-		static const char* names[] = { "" };
-		return ImGui::DragFloatNWithLabel(names, (float*)(((size_t)comp) + prop.offset), 1, 0.05f);
+		return ImGui::DragFloat("", (float*)(((size_t)comp) + prop.offset), 1, 0.05f);
 	}
 
 

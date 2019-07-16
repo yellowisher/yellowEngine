@@ -21,6 +21,7 @@ namespace yellowEngine
 		virtual void onCreate() override;
 		virtual void onDestroy() override;
 		virtual void onValueChanged() override;
+		virtual void onActive(bool active) override { Collider::onActive(active); }
 
 		Type getType() override;
 		bool isCollideWith(Collider* other) override;

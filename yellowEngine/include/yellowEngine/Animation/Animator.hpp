@@ -33,6 +33,8 @@ namespace yellowEngine
 		void resume();
 		void stop();
 
+		bool isPlaying() { return _state != State_Stopped; }
+
 		// should be private and expose as friend for editor
 		Transform* getTransform(const std::string& target);
 		void gotoFrame(float frame);

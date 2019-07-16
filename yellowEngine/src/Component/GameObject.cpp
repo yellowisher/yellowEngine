@@ -48,6 +48,24 @@ namespace yellowEngine
 	}
 
 
+	void GameObject::onCollisionEnter(Collider* other)
+	{
+		for (auto component : _components)
+		{
+			component->onCollisionEnter(other);
+		}
+	}
+
+
+	void GameObject::onCollisionExit(Collider* other)
+	{
+		for (auto component : _components)
+		{
+			component->onCollisionExit(other);
+		}
+	}
+
+
 	GameObject* GameObject::cloneObjects()
 	{
 		GameObject* newObject = new GameObject(_name.c_str());
@@ -91,6 +109,10 @@ namespace yellowEngine
 	void GameObject::setActive(bool active)
 	{
 		_active = active;
+		for (auto component : _components)
+		{
+			component->onActive(active);
+		}
 	}
 
 

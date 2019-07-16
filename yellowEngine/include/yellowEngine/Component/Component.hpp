@@ -70,6 +70,7 @@ namespace yellowEngine
 {
 	class GameObject;
 	class Transform;
+	class Collider;
 
 	class Component
 	{
@@ -105,6 +106,9 @@ namespace yellowEngine
 		virtual void onCreate() {};
 		virtual void onDestroy() {};
 		virtual void onValueChanged() {};
+		virtual void onActive(bool active) {}
+		virtual void onCollisionEnter(Collider* other) {}
+		virtual void onCollisionExit(Collider* other) {}
 
 		virtual const char* getTypeName() { return nullptr; }
 		void setActive(bool active);

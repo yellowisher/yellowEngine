@@ -36,7 +36,7 @@ namespace yellowEngine
 	{
 		for (auto renderer : _renderers)
 		{
-			if (renderer->gameObject->getActive() && renderer->getActive())
+			if (renderer->getActive())
 			{
 				renderer->render(vsPath, fsPath);
 			}

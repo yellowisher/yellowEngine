@@ -3,15 +3,29 @@
 
 #include "yellowEngine/yellowEngine.hpp"
 
+#include "Unit.hpp"
+
 using namespace yellowEngine;
 
 class Spawner : public Component
 {
+	BEGIN_COMPONENT(Spawner)
+		PROPERTY(Spawner, int, team, "Team")
+	END_COMPONENT
+
 public:
 	Spawner(GameObject* gameObject) :Component(gameObject) {};
-	~Spawner();
+	~Spawner() {};
 
-	void Spawner();
+	virtual void onCreate() override;
+
+	void spawn(Unit::UnitType type);
+
+private:
+	static Material* getMaterial(int team);
+	static GameObject* units[Unit::Num_Units];
+
+	int team;
 };
 
 #endif

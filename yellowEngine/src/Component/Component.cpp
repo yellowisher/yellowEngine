@@ -58,7 +58,7 @@ namespace yellowEngine
 
 	bool Component::getActive()
 	{
-		return _active;
+		return gameObject->getActive() && _active;
 	}
 
 

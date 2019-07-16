@@ -168,7 +168,7 @@ namespace yellowEngine
 				AnimationClip* clip = new AnimationClip();
 				// set play speed
 				clip->_frameCount = (int)animation->mDuration;
-				clip->_isLooping = true;
+				clip->_isLooping = false;
 				for (unsigned int c = 0; c < animation->mNumChannels; c++)
 				{
 					aiNodeAnim* channel = animation->mChannels[c];

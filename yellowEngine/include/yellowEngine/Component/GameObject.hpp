@@ -9,6 +9,7 @@
 namespace yellowEngine
 {
 	class Component;
+	class Collider;
 
 	class GameObject
 	{
@@ -24,6 +25,8 @@ namespace yellowEngine
 		GameObject& operator=(const GameObject& copy) = delete;
 
 		GameObject* clone();
+		void onCollisionEnter(Collider* other);
+		void onCollisionExit(Collider* other);
 
 		void setActive(bool active);
 		bool getActive();

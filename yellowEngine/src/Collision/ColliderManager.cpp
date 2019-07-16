@@ -161,18 +161,19 @@ namespace yellowEngine
 
 	void ColliderManager::collisionEnter(const ColliderPair& pair)
 	{
-		cout << "Enter: " << pair.ca->gameObject->getName() << " and " << pair.cb->gameObject->getName() << endl;
+		pair.ca->gameObject->onCollisionEnter(pair.cb);
+		pair.cb->gameObject->onCollisionEnter(pair.ca);
 	}
 
 
 	void ColliderManager::collisionStay(const ColliderPair& pair)
 	{
-
 	}
 
 
 	void ColliderManager::collisionExit(const ColliderPair& pair)
 	{
-		cout << "Exit: " << pair.ca->gameObject->getName() << " and " << pair.cb->gameObject->getName() << endl;
+		pair.ca->gameObject->onCollisionExit(pair.cb);
+		pair.cb->gameObject->onCollisionExit(pair.ca);
 	}
 }

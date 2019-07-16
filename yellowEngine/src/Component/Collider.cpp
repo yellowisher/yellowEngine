@@ -51,6 +51,13 @@ namespace yellowEngine
 	}
 
 
+	void Collider::onActive(bool active)
+	{
+		if (active) ColliderManager::getInstance()->colliderCreated(this);
+		else ColliderManager::getInstance()->colliderDestroyed(this);
+	}
+
+
 	void Collider::notify(Event event, void* sender)
 	{
 		switch (event)

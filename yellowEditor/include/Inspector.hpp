@@ -17,6 +17,7 @@ namespace yellowEditor
 
 	static void drawPropertyBase(const char* name, float width = 0.3f);
 	static bool property_bool(Component* comp, Component::Property prop);
+	static bool property_int(Component* comp, Component::Property prop);
 	static bool	property_float(Component* comp, Component::Property prop);
 	static bool	property_Vector2(Component* comp, Component::Property prop);
 	static bool	property_Vector3(Component* comp, Component::Property prop);

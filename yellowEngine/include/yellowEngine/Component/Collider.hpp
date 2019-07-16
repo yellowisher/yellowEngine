@@ -36,6 +36,7 @@ namespace yellowEngine
 
 		virtual void onCreate() override;
 		virtual void onDestroy() override;
+		virtual void onActive(bool active) override;
 
 	protected:
 		EventListener _transformChangeListener;
