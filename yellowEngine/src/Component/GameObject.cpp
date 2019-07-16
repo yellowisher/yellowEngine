@@ -1,6 +1,7 @@
 #include <type_traits>
 #include <cassert>
 
+#include "yellowEngine/System/IUpdatable.hpp"
 #include "yellowEngine/Component/Component.hpp"
 #include "yellowEngine/Component/GameObject.hpp"
 
@@ -108,10 +109,38 @@ namespace yellowEngine
 
 	void GameObject::setActive(bool active)
 	{
-		_active = active;
+		if (_active && !active)
+		{
+			// turn off
+			_active = false;
+		}
+		else if (!_active && active)
+		{
+			// try turn on
+			Transform* cursor = transform;
+
+			// so this is why unity uses active and enabled
+			while (cursor != Transform::Root)
+			{
+				if (!cursor->gameObject->_active) return;
+				cursor = cursor->getParent();
+			}
+			_active = true;
+
+		}
+		else
+		{
+			return;
+		}
+
 		for (auto component : _components)
 		{
 			component->onActive(active);
+		}
+
+		for (auto child : transform->getChildren())
+		{
+			child->gameObject->setActive(active);
 		}
 	}
 
@@ -147,10 +176,18 @@ namespace yellowEngine
 	}
 
 
-	Component* GameObject::addComponent(const std::string& type)
+	Component* GameObject::addComponent(const std::string& type, bool noStart)
 	{
 		Component* component = Component::createComponent(type, this);
 		component->onCreate();
+		if (!noStart)
+		{
+			IUpdatable* updatable = dynamic_cast<IUpdatable*>(component);
+			if (updatable)
+			{
+				updatable->start();
+			}
+		}
 		_components.push_back(component);
 		return component;
 	}

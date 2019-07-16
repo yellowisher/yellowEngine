@@ -35,7 +35,7 @@ namespace yellowEngine
 
 		template <typename T> T* getComponent();
 		template <typename T> T* addComponent();
-		Component* addComponent(const std::string& type);
+		Component* addComponent(const std::string& type, bool noStart = true);
 		void removeComponent(Component* target);
 		const std::list<Component*>& getComponents() { return _components; }
 

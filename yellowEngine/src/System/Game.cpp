@@ -47,6 +47,15 @@ namespace yellowEngine
 	}
 
 
+	void Game::start()
+	{
+		for (int i = 0; i < _updatables.size(); i++)
+		{
+			if (_updatables[i]) _updatables[i]->start();
+		}
+	}
+
+
 	void Game::update()
 	{
 		_colliderManager->detect();

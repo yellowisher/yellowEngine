@@ -320,22 +320,25 @@ namespace yellowEngine
 
 	void Animator::apply(Key key, Value value)
 	{
+		auto tf = getTransform(key.transformPath);
+		if (tf == nullptr) return;
+
 		switch (key.prop)
 		{
 			case AnimationClip::Property_Position:
-				getTransform(key.transformPath)->setPosition(value.position);
+				tf->setPosition(value.position);
 				break;
 
 			case AnimationClip::Property_Rotation:
-				getTransform(key.transformPath)->setRotation(value.rotation);
+				tf->setRotation(value.rotation);
 				break;
 
 			case AnimationClip::Property_EulerRotation:
-				getTransform(key.transformPath)->setRotation(value.eulerRotation);
+				tf->setRotation(value.eulerRotation);
 				break;
 
 			case AnimationClip::Property_Scale:
-				getTransform(key.transformPath)->setScale(value.scale);
+				tf->setScale(value.scale);
 				break;
 		}
 	}
@@ -343,19 +346,22 @@ namespace yellowEngine
 
 	AnimationClip::Value Animator::getValue(Key key)
 	{
+		auto tf = getTransform(key.transformPath);
+		if (tf == nullptr) return Value();
+
 		switch (key.prop)
 		{
 			case AnimationClip::Property_Position:
-				return Value(getTransform(key.transformPath)->position);
+				return Value(tf->position);
 
 			case AnimationClip::Property_Rotation:
-				return Value(getTransform(key.transformPath)->rotation);
+				return Value(tf->rotation);
 
 			case AnimationClip::Property_EulerRotation:
-				return Value(getTransform(key.transformPath)->eulerRotation);
+				return Value(tf->eulerRotation);
 
 			case AnimationClip::Property_Scale:
-				return Value(getTransform(key.transformPath)->scale);
+				return Value(tf->scale);
 
 			default:
 				return Value();
@@ -382,6 +388,7 @@ namespace yellowEngine
 				else
 				{
 					cursor = cursor->findChild(word);
+					if (cursor == nullptr) break;
 				}
 				begin = end + 1;
 			}

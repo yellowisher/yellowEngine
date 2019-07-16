@@ -110,6 +110,12 @@ namespace yellowEngine
 			lightPass(light);
 		}
 
+		if (!applyBloom)
+		{
+			glDepthMask(GL_TRUE);
+			return;
+		}
+
 		_geometryBuffer.unbind();
 
 		// blurding
@@ -273,8 +279,15 @@ namespace yellowEngine
 
 	void Technique_Deferred::lightPass(Light* light)
 	{
-		_hdrBuffer.bindForDrawing();
-		_hdrBuffer.setDrawBuffer(0, 2);
+		if (applyBloom)
+		{
+			_hdrBuffer.bindForDrawing();
+			_hdrBuffer.setDrawBuffer(0, 2);
+		}
+		else
+		{
+			FrameBuffer::unbind();
+		}
 
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);

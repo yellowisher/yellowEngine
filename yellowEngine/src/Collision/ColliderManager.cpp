@@ -116,6 +116,23 @@ namespace yellowEngine
 	}
 
 
+	void ColliderManager::renderCollider(Camera* camera, Collider* collider)
+	{
+		Camera::currentCamera = camera;
+
+		// render colliders
+		_wireFrameShader->setUniform(_colorUniform, _colliderColor);
+		collider->fillRenderingPoints(_renderer.data);
+		_renderer.bufferData();
+		_renderer.render();
+
+		// render bounding boxies
+		_wireFrameShader->setUniform(_colorUniform, _boundingBoxColor);
+		_renderer.setData(collider->getBoundingBox());
+		_renderer.render();
+	}
+
+
 	void ColliderManager::detect()
 	{
 		auto& potentialPairs = _broadPhase->getPotentialPairs();

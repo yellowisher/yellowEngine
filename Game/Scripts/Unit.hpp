@@ -86,14 +86,16 @@ public:
 	~Unit() {};
 
 	void onCreate() override;
-	void onCollisionEnter(Collider* other) override;
-	void onCollisionExit(Collider* other) override;
 	void update() override;
 	void die() override;
 	int modifyDamage(int damage) override;
+
+	void enterAttackRange(Collider* other);
+	void exitAttackRange(Collider* other);
 	
 	void initialize(int team);
 	void* getTransform() { return transform; }
+	int getBaseType() override { return getBaseType(type); }
 
 	UnitType type;
 	int defense;

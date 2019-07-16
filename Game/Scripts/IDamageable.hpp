@@ -9,6 +9,7 @@ public:
 
 	virtual void die() = 0;
 	virtual void* getTransform() = 0;
+	virtual int getBaseType() = 0;
 	void takeDamage(int damage)
 	{
 		if ((hp -= modifyDamage(damage)) <= 0)
@@ -20,7 +21,6 @@ public:
 	void setHp(int hp) { this->hp = hp; }
 	int getHp() { return hp; }
 
-	int baseType;
 	int team;
 	int hp;
 

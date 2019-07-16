@@ -21,14 +21,14 @@ Material* Spawner::getMaterial(int team)
 }
 
 
-void Spawner::onCreate()
+void Spawner::start()
 {
 	if (units[0] == nullptr)
 	{
 		for (int i = 0; i < Unit::Num_Units; i++)
 		{
 			units[i] = GameObject::find("Unit" + std::to_string(i));
-			if (units[i]) units[i]->setActive(false);
+			units[i]->setActive(false);
 		}
 	}
 }
@@ -37,9 +37,10 @@ void Spawner::onCreate()
 void Spawner::spawn(Unit::UnitType type)
 {
 	GameObject* newObject = units[type]->clone();
+
+	newObject->transform->setPosition(transform->getWorldPosition());
+	newObject->transform->setRotation(transform->getWorldRotation());
+
 	Unit* unit = newObject->getComponent<Unit>();
 	unit->initialize(team);
-
-	newObject->transform->setPosition(transform->position);
-	newObject->transform->setRotation(transform->rotation);
 }

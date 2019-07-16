@@ -234,7 +234,7 @@ namespace yellowEngine
 			for (size_t t = 1; t < endPoints.size(); t++)
 			{
 				EndPoint target = endPoints[t];
-				size_t i = t - 1;
+				int i = (int)t - 1;
 				for (; i >= 0; i--)
 				{
 					if (target.value < endPoints[i].value)

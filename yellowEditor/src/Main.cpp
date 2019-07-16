@@ -57,25 +57,11 @@ int main()
 
 	InitGizmo();
 
-#pragma region Scene
-
-	//Mesh* boxMesh = Mesh::create("./res/Mesh/cube.obj");
-	//GameObject* box = new GameObject("box");
-	//Material* boxMaterial = new Material("asdasd");
-
-	//box->addComponent<MeshRenderer>()->set(boxMesh, boxMaterial);
-	//box->transform->setScale(1, 0.1, 1);
-
-	//GameObject* dirLight = new GameObject();
-	//dirLight->addComponent<Light>()->setType(Light::LightType_Dir);
-	//dirLight->transform->setRotation(-45, 45, 0);
-
-	//auto dmdm=Mesh::create("./res/Mesh/quad.obj");
-	//GameObject* dd = new GameObject("qwe");
-	//dd->addComponent<MeshRenderer>()->set(dmdm, boxMaterial);
 	editor->createEditorCamera();
 	editor->setWelcomeScene();
-#pragma endregion
+
+	glfwMakeContextCurrent(gameWindow.handle);
+	game->start();
 
 	while (!glfwWindowShouldClose(editorWindow.handle))
 	{
@@ -86,6 +72,16 @@ int main()
 
 			game->update();
 			game->render(editor->getEditorCamera());
+
+			Transform* transform = Editor::getSelectedTransform();
+			if (transform != nullptr)
+			{
+				Collider* collider = transform->gameObject->getComponent<Collider>();
+				if (collider != nullptr)
+				{
+					ColliderManager::getInstance()->renderCollider(editor->getEditorCamera(), collider);
+				}
+			}
 			//ColliderManager::getInstance()->renderColliders(editor->getEditorCamera());
 			DrawGizmo();
 

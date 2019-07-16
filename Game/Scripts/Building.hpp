@@ -3,6 +3,7 @@
 
 #include <yellowEngine/yellowEngine.hpp>
 
+#include "Unit.hpp"
 #include "IDamageable.hpp"
 
 using namespace yellowEngine;
@@ -18,8 +19,9 @@ public:
 	Building(GameObject* gameObject) : Component(gameObject) {}
 	virtual ~Building() {}
 
-	virtual void die();
-	virtual void* getTransform() { return transform; }
+	int getBaseType() override { return Unit::BaseUnit_Building; }
+	virtual void die() override;
+	virtual void* getTransform() override { return transform; }
 
 private:
 

@@ -39,7 +39,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -123,8 +123,10 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scripts\Building.cpp" />
+    <ClCompile Include="Scripts\GameManager.cpp" />
     <ClCompile Include="Scripts\Spawner.cpp" />
     <ClCompile Include="Scripts\Unit.cpp" />
+    <ClCompile Include="Scripts\UnitAttackChecker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\bloom.frag" />
@@ -136,9 +138,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\Building.hpp" />
+    <ClInclude Include="Scripts\GameManager.hpp" />
     <ClInclude Include="Scripts\IDamageable.hpp" />
     <ClInclude Include="Scripts\Spawner.hpp" />
     <ClInclude Include="Scripts\Unit.hpp" />
+    <ClInclude Include="Scripts\UnitAttackChecker.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

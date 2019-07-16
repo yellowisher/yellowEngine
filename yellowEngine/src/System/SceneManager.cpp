@@ -23,6 +23,7 @@ namespace yellowEngine
 	};
 
 	static std::map<std::string, std::vector<DataType>> dataTypes = {
+		{"int",		 {{"value", Primitive_Int}}},
 		{"float",	 {{"value", Primitive_Float}}},
 		{"Vector2",  {{"x", Primitive_Float}, {"y",Primitive_Float}}},
 		{"Vector3",  {{"x", Primitive_Float}, {"y",Primitive_Float}, {"z",Primitive_Float}}},
@@ -96,39 +97,43 @@ namespace yellowEngine
 				{
 					if (it->name == propName)
 					{
-						auto valueTypes = dataTypes[propJson["type"].asString()];
-						size_t cursor = (size_t)component + it->offset;
-
-						for (auto valueType : valueTypes)
+						auto itt = dataTypes.find(propJson["type"].asString());
+						if (itt != dataTypes.end())
 						{
-							switch (valueType.primitive)
+							auto valueTypes = itt->second;
+							size_t cursor = (size_t)component + it->offset;
+
+							for (auto valueType : valueTypes)
 							{
-								case Primitive_Int:
+								switch (valueType.primitive)
 								{
-									int value = propJson["value"][valueType.name].asInt();
-									*(int*)(cursor) = value;
-									cursor += sizeof(int);
-									break;
+									case Primitive_Int:
+									{
+										int value = propJson["value"][valueType.name].asInt();
+										*(int*)(cursor) = value;
+										cursor += sizeof(int);
+										break;
+									}
+									case Primitive_Float:
+									{
+										float value = propJson["value"][valueType.name].asFloat();
+										*(float*)(cursor) = value;
+										cursor += sizeof(float);
+										break;
+									}
+									case Primitive_String:
+									{
+										std::string value = propJson["value"][valueType.name].asString();
+										*(std::string*)(cursor) = value;
+										cursor += sizeof(std::string);
+										break;
+									}
+									default:
+										break;
 								}
-								case Primitive_Float:
-								{
-									float value = propJson["value"][valueType.name].asFloat();
-									*(float*)(cursor) = value;
-									cursor += sizeof(float);
-									break;
-								}
-								case Primitive_String:
-								{
-									std::string value = propJson["value"][valueType.name].asString();
-									*(std::string*)(cursor) = value;
-									cursor += sizeof(std::string);
-									break;
-								}
-								default:
-									break;
 							}
+							break;
 						}
-						break;
 					}
 				}
 			}
@@ -185,40 +190,61 @@ namespace yellowEngine
 
 			for (auto prop : properties)
 			{
+				auto it = dataTypes.find(prop.type);
+				std::vector<DataType>* valueTypes = nullptr;
+
 				Json::Value propJson;
-				propJson["name"] = prop.name;
-				propJson["type"] = prop.type;
 				Json::Value valueJson;
-				
-				auto valueTypes = dataTypes[prop.type];
-				size_t cursor = (size_t)component + prop.offset;
-				for (auto valueType : valueTypes)
+
+				if (it == dataTypes.end())
 				{
-					switch (valueType.primitive)
+					const auto& enums = Component::getEnums()[component->getTypeName()];
+					auto it = enums.find(prop.type);
+					if (it != enums.end())
 					{
-						case Primitive_Int:
-						{
-							valueJson[valueType.name] = Json::Value(*(int*)(cursor));
-							cursor += sizeof(int);
-							break;
-						}
-						case Primitive_Float:
-						{
-							valueJson[valueType.name] = Json::Value(*(float*)(cursor));
-							cursor += sizeof(int);
-							break;
-						}
-						case Primitive_String:
-							valueJson[valueType.name] = Json::Value(*(std::string*)(cursor));
-							cursor += sizeof(int);
-							break;
-						default:
-							break;
+						valueTypes = &dataTypes["int"];
+						propJson["type"] = "int";
 					}
 				}
+				else
+				{
+					valueTypes = &dataTypes[prop.type];
+					propJson["type"] = prop.type;
+				}
 
-				propJson["value"] = valueJson;
-				propsJson.append(propJson);
+				if (valueTypes != nullptr)
+				{
+					propJson["name"] = prop.name;
+
+					size_t cursor = (size_t)component + prop.offset;
+					for (auto valueType : *valueTypes)
+					{
+						switch (valueType.primitive)
+						{
+							case Primitive_Int:
+							{
+								valueJson[valueType.name] = Json::Value(*(int*)(cursor));
+								cursor += sizeof(int);
+								break;
+							}
+							case Primitive_Float:
+							{
+								valueJson[valueType.name] = Json::Value(*(float*)(cursor));
+								cursor += sizeof(int);
+								break;
+							}
+							case Primitive_String:
+								valueJson[valueType.name] = Json::Value(*(std::string*)(cursor));
+								cursor += sizeof(int);
+								break;
+							default:
+								break;
+						}
+					}
+
+					propJson["value"] = valueJson;
+					propsJson.append(propJson);
+				}
 			}
 			
 			compJson["properties"] = propsJson;

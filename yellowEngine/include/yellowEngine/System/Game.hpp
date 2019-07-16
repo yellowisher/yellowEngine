@@ -31,6 +31,7 @@ namespace yellowEngine
 		Game(const Game* game) = delete;
 		void init();
 
+		void start();
 		void update();
 		void render(Camera* camera);
 

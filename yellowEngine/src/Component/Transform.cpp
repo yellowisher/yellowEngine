@@ -302,19 +302,19 @@ namespace yellowEngine
 	}
 
 
-	const Vector3 Transform::getWorldPosition()
+	Vector3 Transform::getWorldPosition()
 	{
 		return getMatrix().extractTranslation();
 	}
 
 
-	const Quaternion Transform::getWorldRotation()
+	Quaternion Transform::getWorldRotation()
 	{
 		return getMatrix().extractRotation();
 	}
 
 
-	const Vector3 Transform::getUp()
+	Vector3 Transform::getUp()
 	{
 		Quaternion rotation = getMatrix().extractRotation();
 		Vector3 up = rotation * Vector3::up;
@@ -323,7 +323,7 @@ namespace yellowEngine
 	}
 
 
-	const Vector3 Transform::getRight()
+	Vector3 Transform::getRight()
 	{
 		Quaternion rotation = getMatrix().extractRotation();
 		Vector3 right = rotation * Vector3::right;
@@ -332,7 +332,7 @@ namespace yellowEngine
 	}
 
 
-	const Vector3 Transform::getForward()
+	Vector3 Transform::getForward()
 	{
 		Quaternion rotation = getMatrix().extractRotation();
 		Vector3 forward = rotation * Vector3::forward;

@@ -29,6 +29,8 @@ namespace yellowEngine
 			Model* model = Model::create(modelPath.c_str());
 			model->linkJoints(this);
 		}
+
+		MeshRenderer::onValueChanged();
 	}
 
 

@@ -31,6 +31,7 @@ namespace yellowEngine
 		void colliderDestroyed(Collider* collider);
 		void colliderUpdated(Collider* collider);
 		void renderColliders(Camera* camera);
+		void renderCollider(Camera* camera, Collider* collider);
 
 	private:
 		enum PairType

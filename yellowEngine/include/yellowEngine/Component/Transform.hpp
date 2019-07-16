@@ -67,11 +67,11 @@ namespace yellowEngine
 		Matrix getTRMatrix();
 		const Matrix& getInverseMatrix();
 
-		const Vector3 getWorldPosition();
-		const Quaternion getWorldRotation();
-		const Vector3 getUp();
-		const Vector3 getRight();
-		const Vector3 getForward();
+		Vector3 getWorldPosition();
+		Quaternion getWorldRotation();
+		Vector3 getUp();
+		Vector3 getRight();
+		Vector3 getForward();
 
 	private:
 		enum DirtyBit

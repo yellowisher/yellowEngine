@@ -15,8 +15,8 @@ Unit::BaseUnitType Unit::getBaseType(UnitType type)
 
 AnimationClip* Unit::getClip(UnitType unit, ClipType clip)
 {
-	static Model* infantryModel = Model::create("./res/Mesh/Units/infantry.fbx");
-	static Model* cavalryModel = Model::create("./res/Mesh/Units/cavalry.fbx");
+	static Model* infantryModel = Model::create("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Model\\units\\infantry.fbx");
+	static Model* cavalryModel = Model::create("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Model\\units\\cavalry.fbx");
 
 	static std::string unitNames[Num_Units] = {
 		"infantry","spear","archer", "crossbow", "infantry","cavalry", "cavalry", "cavalry_lance" };
@@ -52,7 +52,7 @@ void Unit::onCreate()
 }
 
 
-void Unit::onCollisionEnter(Collider* other)
+void Unit::enterAttackRange(Collider* other)
 {
 	IDamageable* damageable = other->gameObject->getComponent<IDamageable>();
 	if (damageable != nullptr)
@@ -71,7 +71,7 @@ void Unit::onCollisionEnter(Collider* other)
 }
 
 
-void Unit::onCollisionExit(Collider* other)
+void Unit::exitAttackRange(Collider* other)
 {
 	IDamageable* damageable = other->gameObject->getComponent<IDamageable>();
 	if (damageable != nullptr)
@@ -143,7 +143,7 @@ void Unit::update()
 		case State_Attacking:
 			if (++_frame == attackFrame)
 			{
-				_attackingTarget->takeDamage(damage[_attackingTarget->baseType]);
+				_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()]);
 			}
 			else if (_frame == (getClip(type, Clip_Attack)->_frameCount + attackDelay))
 			{
@@ -170,7 +170,8 @@ int Unit::modifyDamage(int damage)
 void Unit::initialize(int team)
 {
 	this->team = team;
-	_animator = gameObject->getComponent<Animator>();
+	_animator = gameObject->addComponent<Animator>();
+	_animator->setSpeed(0.75f);
 	_attackingTarget = nullptr;
 	move();
 }

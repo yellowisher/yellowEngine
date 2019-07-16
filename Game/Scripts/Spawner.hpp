@@ -7,7 +7,7 @@
 
 using namespace yellowEngine;
 
-class Spawner : public Component
+class Spawner : public Component, public IUpdatable
 {
 	BEGIN_COMPONENT(Spawner)
 		PROPERTY(Spawner, int, team, "Team")
@@ -17,8 +17,7 @@ public:
 	Spawner(GameObject* gameObject) :Component(gameObject) {};
 	~Spawner() {};
 
-	virtual void onCreate() override;
-
+	void start() override;
 	void spawn(Unit::UnitType type);
 
 	int team;

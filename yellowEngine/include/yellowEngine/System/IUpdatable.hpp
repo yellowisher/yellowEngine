@@ -16,7 +16,8 @@ namespace yellowEngine
 		{
 			reportDestroy(this);
 		}
-		virtual void update() = 0;
+		virtual void update() {}
+		virtual void start() {};
 
 	private:
 		static void(*reportCreate)(IUpdatable* updatable);
