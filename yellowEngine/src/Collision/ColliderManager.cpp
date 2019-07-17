@@ -129,20 +129,17 @@ namespace yellowEngine
 
 	void ColliderManager::_renderCollider(Collider* collider)
 	{
-		for (auto collider : _colliders)
+		if (collider->collidingCount > 0)
 		{
-			if (collider->collidingCount > 0)
-			{
-				_wireFrameShader->setUniform(_colorUniform, _collidingColor);
-			}
-			else
-			{
-				_wireFrameShader->setUniform(_colorUniform, _colliderColor);
-			}
-			collider->fillRenderingPoints(_renderer.data);
-			_renderer.bufferData();
-			_renderer.render();
+			_wireFrameShader->setUniform(_colorUniform, _collidingColor);
 		}
+		else
+		{
+			_wireFrameShader->setUniform(_colorUniform, _colliderColor);
+		}
+		collider->fillRenderingPoints(_renderer.data);
+		_renderer.bufferData();
+		_renderer.render();
 	}
 
 

@@ -180,7 +180,7 @@ namespace yellowEngine
 			SphereCollider* otherSphere = (SphereCollider*)other;
 			updatePoints();
 
-			Vector3 worldCenter = other->transform->getWorldPosition();
+			Vector3 worldCenter = otherSphere->getWorldCenter();
 			Vector3 center = transform->getInverseMatrix() * worldCenter;
 
 			Vector3& max = _localPoints[Right_Top_Back];

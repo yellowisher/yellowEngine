@@ -59,6 +59,8 @@ namespace yellowEditor
 			// handle mouse
 			if (controllingCamera || ImGui::IsItemHovered())
 			{
+				Camera* camera = Editor::getEditorCamera();
+
 				glfwGetCursorPos(Editor::getEditorWindow().handle, &x, &y);
 				Vector2 newMousePosition = Vector2((float)x, (float)y);
 				Vector2 delta = newMousePosition - prevMousePosition;
@@ -76,13 +78,14 @@ namespace yellowEditor
 				}
 				move.z = (float)scrollY * moveSpeedZ;
 
-				Editor::getEditorCamera()->transform->setRotation(rotation * rotateSpeedX);
+				camera->transform->setRotation(rotation * rotateSpeedX);
 
 				move = move * moveSpeed;
-				Vector3 movement = Editor::getEditorCamera()->transform->getForward() * move.z;
-				movement += Editor::getEditorCamera()->transform->getRight() * move.x;
-				movement += Editor::getEditorCamera()->transform->getUp() * move.y;
-				Editor::getEditorCamera()->transform->translate(movement);
+				Vector3 movement = camera->transform->getForward() * move.z;
+				movement += camera->transform->getRight() * move.x;
+				movement += camera->transform->getUp() * move.y;
+				camera->transform->translate(movement);
+				camera->setZoom(camera->getZoom() - move.z);
 
 				prevMousePosition = newMousePosition;
 			}

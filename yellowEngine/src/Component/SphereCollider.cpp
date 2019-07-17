@@ -12,7 +12,7 @@ namespace yellowEngine
 
 	SphereCollider::SphereCollider(GameObject* gameObject) :
 		Collider(gameObject),
-		radius(0.5f)
+		radius(1.0f)
 	{
 	}
 
@@ -31,6 +31,12 @@ namespace yellowEngine
 	void SphereCollider::onDestroy()
 	{
 		Collider::onDestroy();
+	}
+
+
+	void SphereCollider::onValueChanged()
+	{
+		_centerDirty = true;
 	}
 
 
@@ -68,14 +74,14 @@ namespace yellowEngine
 			Vector3 prevPoint;
 			prevPoint.v[x] = coss[pointsCount - 1] * radius;
 			prevPoint.v[y] = sins[pointsCount - 1] * radius;
-			prevPoint = matrix * prevPoint;
+			prevPoint = matrix * (prevPoint + _center);
 
 			for (int i = 0; i < pointsCount; i++)
 			{
 				Vector3 point;
 				point.v[x] = coss[i] * radius;
 				point.v[y] = sins[i] * radius;
-				point = matrix * point;
+				point = matrix * (point + _center);
 
 				lines.push_back(prevPoint);
 				lines.push_back(point);
@@ -94,14 +100,14 @@ namespace yellowEngine
 		Vector3 prevPoint;
 		prevPoint += x * coss[pointsCount - 1] * radius;
 		prevPoint += y * sins[pointsCount - 1] * radius;
-		prevPoint = matrix * prevPoint;
+		prevPoint = matrix * (prevPoint + _center);
 
 		for (int i = 0; i < pointsCount; i++)
 		{
 			Vector3 point;
 			point += x * coss[i] * radius;
 			point += y * sins[i] * radius;
-			point = matrix * point;
+			point = matrix * (point + _center);
 
 			lines.push_back(prevPoint);
 			lines.push_back(point);
@@ -113,12 +119,23 @@ namespace yellowEngine
 
 	AABB SphereCollider::getBoundingBox()
 	{
-		Vector3 center = transform->getWorldPosition();
+		Vector3 center = getWorldCenter();
 		Vector3 scale = transform->getWorldScale();
 		Vector3 min = center - scale * radius;
 		Vector3 max = center + scale * radius;
 
 		return AABB(min, max);
+	}
+
+
+	Vector3 SphereCollider::getWorldCenter()
+	{
+		if (_centerDirty)
+		{
+			_centerDirty = false;
+			_worldCenter = transform->getMatrix() * _center;
+		}
+		return _worldCenter;
 	}
 
 
@@ -137,7 +154,7 @@ namespace yellowEngine
 		else if (other->getType() == Type_Sphere)
 		{
 			SphereCollider* otherSphere = (SphereCollider*)other;
-			float dist = (transform->getWorldPosition() - other->transform->getWorldPosition()).magnitude();
+			float dist = (getWorldCenter() - otherSphere->getWorldCenter()).magnitude();
 			float r = otherSphere->radius * otherSphere->transform->getWorldScale().x + radius * transform->getWorldScale().x;
 			return  dist < r * r;
 		}
@@ -147,5 +164,6 @@ namespace yellowEngine
 
 	void SphereCollider::onTransformChange()
 	{
+		_centerDirty = true;
 	}
 }
