@@ -25,7 +25,7 @@ namespace yellowEditor
 			for (int i = 0; i < Transform::Root->getChildCount(); i++)
 			{
 				auto child = Transform::Root->getChild(i);
-				if (child == Editor::getEditorCamera()->transform) continue;
+				if (child == Editor::getEditorCamera()->transform && !Editor::showEditorCamera) continue;
 				HierarchyNode(child);
 			}
 

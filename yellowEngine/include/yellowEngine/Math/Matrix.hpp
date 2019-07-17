@@ -16,7 +16,7 @@ namespace yellowEngine
 
 		// should be in MatrixUtils?
 		static Matrix createPerspective(float fov, float aspectRatio, float zNear, float zFar);
-		static Matrix createOrthographic(int width, int height, float zNear, float zFar);
+		static Matrix createOrthographic(float width, float height, float zNear, float zFar);
 		static Matrix createTranslation(Vector3 translation);
 		static Matrix createRotation(Quaternion rotation);
 		static Matrix createScale(Vector3 scale);

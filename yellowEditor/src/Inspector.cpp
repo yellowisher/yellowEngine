@@ -141,7 +141,7 @@ namespace yellowEditor
 
 	static bool property_float(Component* comp, Component::Property prop)
 	{
-		return ImGui::DragFloat("", (float*)(((size_t)comp) + prop.offset), 1, 0.05f);
+		return ImGui::DragFloat("", (float*)(((size_t)comp) + prop.offset), 0.05f);
 	}
 
 

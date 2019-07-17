@@ -151,8 +151,28 @@ namespace yellowEngine
 			updatePoints();
 			otherBox->updatePoints();
 
+			// 6 face normal axis
 			if (!projectionOverlap(otherBox))return false;
 			if (!otherBox->projectionOverlap(this))return false;
+
+			// and 9 cross edge axis
+			for (int a = 0; a < 3; a++)
+			{
+				Vector3 va = _worldPoints[0] - _worldPoints[1LL << a];
+				for (int b = 0; b < 3; b++)
+				{
+					Vector3 vb = otherBox->_worldPoints[0] - otherBox->_worldPoints[1LL << b];
+
+					Vector3 axis = Vector3::cross(va, vb);
+					if (axis == Vector3::zero) continue;
+
+					Vector2 boundA = getProjectedBounds(Vector3::zero, axis);
+					Vector2 boundB = otherBox->getProjectedBounds(Vector3::zero, axis);
+
+					if (boundA.min > boundB.max || boundA.max < boundB.min) return false;
+				}
+			}
+
 			return true;
 		}
 		else if (other->getType() == Type_Sphere)
@@ -160,16 +180,8 @@ namespace yellowEngine
 			SphereCollider* otherSphere = (SphereCollider*)other;
 			updatePoints();
 
-			Vector3 center = other->transform->getWorldPosition();
-			center = transform->getInverseMatrix() * center;
-
-			// convert radius to world space scale
-			Vector3 scale = other->transform->getMatrix().extractScale();
-			float radius = Utils::max(scale.x, scale.y, scale.z) * otherSphere->radius;
-
-			// ... and go back to box space scale (assume uniform scale)
-			Vector3 boxScale = transform->getInverseMatrix().extractScale();
-			radius = Utils::max(boxScale.x, boxScale.y, boxScale.z) * radius;
+			Vector3 worldCenter = other->transform->getWorldPosition();
+			Vector3 center = transform->getInverseMatrix() * worldCenter;
 
 			Vector3& max = _localPoints[Right_Top_Back];
 			Vector3& min = _localPoints[Left_Bottom_Front];
@@ -187,8 +199,12 @@ namespace yellowEngine
 			else if (center.z > max.z)closestPoint.z = max.z;
 			else closestPoint.z = center.z;
 
-			Vector3 v = (center - closestPoint);
-			return (center - closestPoint).magnitude() < radius * radius;
+			Vector3 worldClosestPoint = transform->getMatrix() * closestPoint;
+
+			Vector3 scale = other->transform->getMatrix().extractScale();
+			float radius = Utils::max(scale.x, scale.y, scale.z) * otherSphere->radius;
+
+			return (worldCenter - worldClosestPoint).magnitude() < radius * radius;
 		}
 		return false;
 	}
@@ -207,13 +223,13 @@ namespace yellowEngine
 			float max = ab.magnitude();
 
 			Vector2 bounds = other->getProjectedBounds(a, ab);
-			if (bounds.min > max || bounds.max < min)return false;
+			if (bounds.min > max || bounds.max < min) return false;
 		}
 		return true;
 	}
 
 
-	Vector2 BoxCollider::getProjectedBounds(Vector3& a, Vector3& ab)
+	Vector2 BoxCollider::getProjectedBounds(const Vector3& a, const Vector3& ab)
 	{
 		Vector2 bounds = Vector2(Utils::inf, -Utils::inf);
 
@@ -221,8 +237,8 @@ namespace yellowEngine
 		{
 			Vector3 ap = _worldPoints[i] - a;
 			float value = ab * ap;
-			if (value > bounds.max)bounds.max = value;
-			if (value < bounds.min)bounds.min = value;
+			if (value > bounds.max) bounds.max = value;
+			if (value < bounds.min) bounds.min = value;
 		}
 
 		return bounds;

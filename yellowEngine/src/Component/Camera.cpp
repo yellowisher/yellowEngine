@@ -23,6 +23,7 @@ namespace yellowEngine
 	{
 		setPerspective(60.0f, 0.01f, 1000.0f);
 		__mainCamera = false;
+		_zoom = 100.0f;
 	}
 
 
@@ -106,6 +107,19 @@ namespace yellowEngine
 	}
 
 
+	float Camera::getZoom()
+	{
+		return _zoom;
+	}
+
+
+	void Camera::setZoom(float zoom)
+	{
+		_zoom = zoom;
+		dirty(Dirty_Projection);
+	}
+
+
 	float Camera::getFov()
 	{
 		return _fov;
@@ -123,7 +137,9 @@ namespace yellowEngine
 			}
 			else
 			{
-				_pMatrix = Matrix::createOrthographic(Display::width, Display::height, _zNear, _zFar);
+				_pMatrix = Matrix::createOrthographic(
+					(float)Display::width / _zoom, 
+					(float)Display::height / _zoom, _zNear, _zFar);
 			}
 		}
 		return _pMatrix;

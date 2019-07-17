@@ -19,6 +19,7 @@ namespace yellowEngine
 			PROPERTY(Camera, float, _zNear, "Near")
 			PROPERTY(Camera, float, _zFar, "Far")
 			PROPERTY(Camera, float, _fov, "Field of View")
+			PROPERTY(Camera, float, _zoom, "Zoom")
 
 			BEGIN_ENUM(Camera, CameraType)
 				ENUM("Perspective")
@@ -52,11 +53,15 @@ namespace yellowEngine
 		void setZNear(float zNear);
 		void setZFar(float zFar);
 		void setFov(float fov);
+		float getZoom();
+		void setZoom(float zoom);
 		float getZNear();
 		float getZFar();
 		float getFov();
 
 		const Matrix& getMatrix();
+		const Matrix& getPMatrix();
+		const Matrix& getVMatrix();
 		void notify(Event event, void* sender) override;
 
 	private:
@@ -76,14 +81,13 @@ namespace yellowEngine
 		float _zNear;
 		float _zFar;
 		float _fov;
+		float _zoom;
 
 		Matrix _pMatrix;
 		Matrix _vMatrix;
 		Matrix _pvMatrix;
 
 		void dirty(char dirtyBits);
-		const Matrix& getPMatrix();
-		const Matrix& getVMatrix();
 	};
 }
 

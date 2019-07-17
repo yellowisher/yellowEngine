@@ -47,7 +47,7 @@ namespace yellowEngine
 		void initSize(const AABB& bounds) override;
 		bool projectionOverlap(BoxCollider* other);
 		void updatePoints();
-		Vector2 getProjectedBounds(Vector3& a, Vector3& ab);
+		Vector2 getProjectedBounds(const Vector3& a, const Vector3& ab);
 		void onTransformChange() override;
 
 		bool _pointsChanged;

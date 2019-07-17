@@ -69,6 +69,7 @@ namespace yellowEngine
 
 		Vector3 getWorldPosition();
 		Quaternion getWorldRotation();
+		Vector3 getWorldScale();
 		Vector3 getUp();
 		Vector3 getRight();
 		Vector3 getForward();

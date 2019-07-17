@@ -29,6 +29,7 @@ public:
 		if (InputManager::getKey(GLFW_KEY_S)) move.z -= 1.0f;
 		if (InputManager::getKey(GLFW_KEY_SPACE)) move.y += 1.0f;
 		if (InputManager::getKey(GLFW_KEY_LEFT_CONTROL)) move.y -= 1.0f;
+		if (InputManager::getKeyDown(GLFW_KEY_P)) gameObject->getComponent<Camera>()->setOrthographic(0.01, 100.0f);
 
 		Transform* transform = Camera::getMainCamera()->transform;
 		Vector3 forward = transform->getForward();

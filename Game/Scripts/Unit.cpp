@@ -6,7 +6,7 @@ using namespace yellowEngine;
 
 COMPONENT_IMPL(Unit)
 
-static const int DYING_FRAME = 40;
+static const int DYING_FRAME = 30;
 static const Vector3 INITIAL_SCALE = Vector3(0.01f, 0.01f, 0.01f);
 
 Unit::BaseUnitType Unit::getBaseType(UnitType type)
@@ -144,7 +144,7 @@ void Unit::update()
 			transform->translate(transform->getForward() * -moveSpeed);
 			break;
 		case State_Attacking:
-			// (_frame == 0) means didn't attack in this chance
+			// (_frame == 0) means didn't attack in this attack animation
 			if (_frame == 0)
 			{
 				if (_animator->getFrame() >= attackFrame)
@@ -180,7 +180,7 @@ void Unit::update()
 	}
 
 	// to ensure same units die same time
-	// units do all update and die
+	// units die after last update
 	if (_dead)
 	{
 		dieSelf();

@@ -30,5 +30,19 @@ namespace yellowEngine
 				}
 			}
 		}
+
+		for (auto it = _collidingPairs.begin(); it != _collidingPairs.end();)
+		{
+			if (it->second == ColliderManager::PairType_Delete)
+			{
+				manager->collisionExit(it->first);
+				it = _collidingPairs.erase(it);
+			}
+			else
+			{
+				it->second = ColliderManager::PairType_Delete;
+				++it;
+			}
+		}
 	}
 }

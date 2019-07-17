@@ -62,7 +62,7 @@ int main()
 	glfwHideWindow(gameWindow.handle);
 
 	Game* game = new Game(gameWindow.width, gameWindow.height);
-	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
+	game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 	game->init();
 
 	gameData        = new GLubyte[gameWindow.width * gameWindow.height * 3];

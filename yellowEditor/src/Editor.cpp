@@ -17,6 +17,7 @@ namespace yellowEditor
 	bool Editor::drawGizmo = true;
 	bool Editor::drawAllColliders = false;
 	bool Editor::drawGBuffer = false;
+	bool Editor::showEditorCamera = false;
 
 	const char* Editor::editorCameraName = "__EDITOR_CAMERA__";
 	Editor* Editor::__instance = nullptr;
@@ -46,6 +47,7 @@ namespace yellowEditor
 		// setting ImGui style
 		ImGui::StyleColorsDark();
 		ImGui::GetStyle().WindowRounding = 0.0f;
+		_baseWindowFlag = ImGuiWindowFlags_NoMove;
 		//_baseWindowFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 		_baseWindowFlag = 0;
 
@@ -265,6 +267,9 @@ namespace yellowEditor
 				{
 				}
 				if (ImGui::Checkbox("Draw G Buffer", &Editor::drawGBuffer))
+				{
+				}
+				if (ImGui::Checkbox("Show editor Camera", &Editor::showEditorCamera))
 				{
 				}
 				ImGui::EndMenu();

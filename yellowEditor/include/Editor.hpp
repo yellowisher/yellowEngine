@@ -43,6 +43,7 @@ namespace yellowEditor
 		static bool drawGizmo;
 		static bool drawAllColliders;
 		static bool drawGBuffer;
+		static bool showEditorCamera;
 
 	private:
 		static Editor* __instance;

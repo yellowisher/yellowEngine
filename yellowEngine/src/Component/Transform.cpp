@@ -309,6 +309,12 @@ namespace yellowEngine
 	}
 
 
+	Vector3 Transform::getWorldScale()
+	{
+		return getMatrix().extractScale();
+	}
+
+
 	Vector3 Transform::getUp()
 	{
 		Quaternion rotation = getMatrix().extractRotation();

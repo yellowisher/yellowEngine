@@ -11,6 +11,10 @@ using namespace std;
 
 namespace yellowEngine
 {
+	static const Vector3 _colliderColor = Vector3(0, 0.8f, 0);
+	static const Vector3 _collidingColor = Vector3(0.8, 0, 0);
+	static const Vector3 _boundingBoxColor = Vector3(0.8f, 0.8f, 0);
+
 	ColliderManager* ColliderManager::_instance = nullptr;
 
 
@@ -95,13 +99,11 @@ namespace yellowEngine
 		Camera::currentCamera = camera;
 
 		// render colliders
-		_wireFrameShader->setUniform(_colorUniform, _colliderColor);
 		for (auto collider : _colliders)
 		{
-			collider->fillRenderingPoints(_renderer.data);
-			_renderer.bufferData();
-			_renderer.render();
+			_renderCollider(collider);
 		}
+
 
 		// render bounding boxies
 		_wireFrameShader->setUniform(_colorUniform, _boundingBoxColor);
@@ -121,15 +123,26 @@ namespace yellowEngine
 		Camera::currentCamera = camera;
 
 		// render colliders
-		_wireFrameShader->setUniform(_colorUniform, _colliderColor);
-		collider->fillRenderingPoints(_renderer.data);
-		_renderer.bufferData();
-		_renderer.render();
+		_renderCollider(collider);
+	}
 
-		// render bounding boxies
-		_wireFrameShader->setUniform(_colorUniform, _boundingBoxColor);
-		_renderer.setData(collider->getBoundingBox());
-		_renderer.render();
+
+	void ColliderManager::_renderCollider(Collider* collider)
+	{
+		for (auto collider : _colliders)
+		{
+			if (collider->collidingCount > 0)
+			{
+				_wireFrameShader->setUniform(_colorUniform, _collidingColor);
+			}
+			else
+			{
+				_wireFrameShader->setUniform(_colorUniform, _colliderColor);
+			}
+			collider->fillRenderingPoints(_renderer.data);
+			_renderer.bufferData();
+			_renderer.render();
+		}
 	}
 
 
@@ -180,6 +193,8 @@ namespace yellowEngine
 	{
 		pair.ca->gameObject->onCollisionEnter(pair.cb);
 		pair.cb->gameObject->onCollisionEnter(pair.ca);
+		pair.ca->collidingCount++;
+		pair.cb->collidingCount++;
 	}
 
 
@@ -192,5 +207,7 @@ namespace yellowEngine
 	{
 		pair.ca->gameObject->onCollisionExit(pair.cb);
 		pair.cb->gameObject->onCollisionExit(pair.ca);
+		pair.ca->collidingCount--;
+		pair.cb->collidingCount--;
 	}
 }

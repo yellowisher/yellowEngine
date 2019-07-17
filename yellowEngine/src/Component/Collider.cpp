@@ -12,6 +12,7 @@ namespace yellowEngine
 	{
 		_transformChangeListener.setParent(this);
 		transform->transformChangeNotifier.addListener(&_transformChangeListener);
+		collidingCount = 0;
 	}
 
 

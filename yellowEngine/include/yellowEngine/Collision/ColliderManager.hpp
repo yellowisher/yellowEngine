@@ -47,6 +47,7 @@ namespace yellowEngine
 		void collisionEnter(const ColliderPair& pair);
 		void collisionStay(const ColliderPair& pair);
 		void collisionExit(const ColliderPair& pair);
+		void _renderCollider(Collider* collider);
 
 		static ColliderManager* _instance;
 
@@ -59,9 +60,6 @@ namespace yellowEngine
 		Shader* _wireFrameShader;
 		const Uniform* _colorUniform;
 		Renderer _renderer;
-
-		const Vector3 _colliderColor = Vector3(0, 0.8f, 0);
-		const Vector3 _boundingBoxColor = Vector3(0.8f, 0.8f, 0);
 	};
 }
 #endif

@@ -38,6 +38,8 @@ namespace yellowEngine
 		virtual void onDestroy() override;
 		virtual void onActive(bool active) override;
 
+		int collidingCount;
+
 	protected:
 		EventListener _transformChangeListener;
 
