@@ -22,7 +22,7 @@ namespace yellowEngine
 
 	static constexpr int BloomBlurCount = 10;
 
-	bool Technique_Deferred::applyBloom = true;
+	bool Technique_Deferred::applyBloom = false;
 	float Technique_Deferred::exposure = 1.0;
 
 	Technique_Deferred::Technique_Deferred()

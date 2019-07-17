@@ -135,6 +135,7 @@ namespace yellowEngine
 		setProperty("u_Material.specularColor", Vector3(1.0f, 1.0f, 1.0f));
 		setProperty("u_Material.diffuse", Texture::create("./res/Texture/default_diffuse.png"));
 		setProperty("u_Material.specular", Texture::create("./res/Texture/default_specular.png"));
+		setProperty("u_Material.normal", Texture::create("./res/Texture/default_normal.png"));
 	}
 
 

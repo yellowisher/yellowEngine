@@ -21,6 +21,8 @@ namespace yellowEngine
 		Attr_TexCoord3,
 		Attr_Joints,
 		Attr_Weights,
+		Attr_Tangent,
+		Attr_Bitangent,
 		Num_Usage
 	};
 
@@ -67,6 +69,9 @@ namespace yellowEngine
 				__attributeInfo[Attr_TexCoord3	] = Attribute("a_TexCoord3"	, GL_FLOAT, Attr_TexCoord3 , 2);
 				__attributeInfo[Attr_Joints		] = Attribute("a_Joints"	, GL_FLOAT, Attr_Joints    , MaxJointCount);
 				__attributeInfo[Attr_Weights	] = Attribute("a_Weights"	, GL_FLOAT, Attr_Weights   , MaxJointCount);
+				__attributeInfo[Attr_Tangent	] = Attribute("a_Tangent"	, GL_FLOAT, Attr_Tangent   , 3);
+				__attributeInfo[Attr_Bitangent	] = Attribute("a_Bitangent"	, GL_FLOAT, Attr_Bitangent , 3);
+
 			}
 		};
 

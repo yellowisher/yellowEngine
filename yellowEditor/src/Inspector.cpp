@@ -190,7 +190,7 @@ namespace yellowEditor
 						if (Mesh::create(path) != nullptr)
 						{
 							*meshPath = path;
-								changed = true;
+							changed = true;
 						}
 					}
 				}

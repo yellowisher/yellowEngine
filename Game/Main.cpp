@@ -101,10 +101,29 @@ int main()
 
 	////////// Scene
 
-	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\Scene0.yes");
-	Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
+	//SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\Scene0.yes");
+	//Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
+	//new GameManager();
 
-	new GameManager();
+	GameObject* g = new GameObject();
+	g->addComponent<Camera>();
+	g->transform->setPosition(0, 0, 3);
+	g->addComponent<CameraScript>();
+
+	GameObject* l = new GameObject();
+	l->addComponent<Light>()->diffuseIntensity = 0.7f;
+	l->transform->setRotation(-30, -30, 0);
+	l->transform->setPosition(0, 1, 1);
+
+	Model* m = Model::create("./res/Mesh/sphere.obj");
+	m->instantiate("1");
+
+	//Material* mt = new Material("w");
+	//mt->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/diffuse.jpg"));
+	//mt->setProperty("u_Material.normal", Texture::create("./res/Mesh/normal.jpg"));
+	//Model* m = Model::create("./res/Mesh/cube.obj");
+	//m->instantiate("qwe", mt);
+
 	////////// Scene end
 
 	game->start();

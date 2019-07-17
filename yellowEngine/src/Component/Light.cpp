@@ -29,8 +29,8 @@ namespace yellowEngine
 		setCutoff(12.5f, 17.5f);
 
 		constant = 1.0f;
-		linear = 0.14f;
-		quadratic = 0.07f;
+		linear = 0.07f;
+		quadratic = 0.035f;
 
 		_type = LightType_Dir;
 		__lights[LightType_Dir].push_back(this);

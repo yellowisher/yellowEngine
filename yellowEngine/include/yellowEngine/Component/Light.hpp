@@ -21,6 +21,10 @@ namespace yellowEngine
 			PROPERTY(Light, float, diffuseIntensity, "Diffuse Intensity")
 			PROPERTY(Light, float, _cutoffDegree, "Cutoff Degree")
 			PROPERTY(Light, float, _outerCutoffDegree, "Outer Cutoff Degree")
+			PROPERTY(Light, float, constant, "Constant")
+			PROPERTY(Light, float, linear, "linear")
+			PROPERTY(Light, float, quadratic, "quadratic")
+
 
 			BEGIN_ENUM(Light, LightType)
 				ENUM("Directional")

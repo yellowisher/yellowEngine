@@ -204,7 +204,7 @@ namespace yellowEngine
 	Model* Model::loadFBX(std::string path)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
@@ -407,6 +407,11 @@ namespace yellowEngine
 			attributes.push_back(Attr_Joints);
 			attributes.push_back(Attr_Weights);
 		}
+		if (aiMesh->HasTangentsAndBitangents())
+		{
+			attributes.push_back(Attr_Tangent);
+			attributes.push_back(Attr_Bitangent);
+		}
 
 		VertexLayout layout(attributes);
 		int stride = layout.getVertexSize() / sizeof(float);
@@ -460,6 +465,29 @@ namespace yellowEngine
 						{
 							vertices[cursor + j] = NullWeight;
 						}
+					}
+				}
+				break;
+
+				case Attr_Tangent:
+				{
+					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+					{
+						vertices[cursor    ] = aiMesh->mTangents[i].x;
+						vertices[cursor + 1] = aiMesh->mTangents[i].y;
+						vertices[cursor + 2] = aiMesh->mTangents[i].z;
+
+					}
+				}
+				break;
+
+				case Attr_Bitangent:
+				{
+					for (int i = 0; i < aiMesh->mNumVertices; i++, cursor += stride)
+					{
+						vertices[cursor	   ] = aiMesh->mBitangents[i].x;
+						vertices[cursor + 1] = aiMesh->mBitangents[i].y;
+						vertices[cursor + 2] = aiMesh->mBitangents[i].z;
 					}
 				}
 				break;
@@ -537,6 +565,18 @@ namespace yellowEngine
 			if (texture)
 			{
 				material->setProperty("u_Material.specular", texture);
+			}
+		}
+
+		if (aMaterial->GetTextureCount(aiTextureType_NORMALS) > 0)
+		{
+			aMaterial->GetTexture(aiTextureType_NORMALS, 0, &texturePath);
+			texturePath = _directory + texturePath.C_Str();
+
+			auto texture = Texture::create(texturePath.C_Str());
+			if (texture)
+			{
+				material->setProperty("u_Material.normal", texture);
 			}
 		}
 		return { mesh, material };
