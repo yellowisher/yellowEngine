@@ -21,11 +21,8 @@ namespace yellowEngine
 	Camera::Camera(GameObject* gameObject) :
 		Component(gameObject), _dirtyBits(Dirty_Matrix)
 	{
-		if (__mainCamera == nullptr)
-		{
-			__mainCamera = this;
-		}
 		setPerspective(60.0f, 0.01f, 1000.0f);
+		__mainCamera = false;
 	}
 
 
@@ -44,6 +41,10 @@ namespace yellowEngine
 
 	void Camera::onValueChanged()
 	{
+		if (_isMainCamera)
+		{
+			__mainCamera = this;
+		}
 		dirty(Dirty_Matrix);
 	}
 

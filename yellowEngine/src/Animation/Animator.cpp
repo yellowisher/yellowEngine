@@ -82,7 +82,7 @@ namespace yellowEngine
 			}
 			else
 			{
-				stop();
+				stop(true);
 			}
 		}
 
@@ -259,18 +259,18 @@ namespace yellowEngine
 	}
 
 
-	void Animator::stop()
+	void Animator::stop(bool freeze)
 	{
 		_state = State_Stopped;
-		if (_currentClip != nullptr)
+		if (!freeze && _currentClip != nullptr)
 		{
 			for (auto channel : _initialValues)
 			{
 				apply(channel.first, channel.second);
 			}
-			_currentClip = nullptr;
-			//_initialValues.clear();
 		}
+		_currentClip = nullptr;
+		//_initialValues.clear();
 	}
 
 

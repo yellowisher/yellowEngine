@@ -93,7 +93,7 @@ namespace yellowEngine
 		{
 			Json::Value propJson;
 			propJson["name"] = nameTexturePair.first;
-			propJson["type"] = "string";
+			propJson["type"] = "texture";
 			propJson["value"] = nameTexturePair.second->getName();
 			json["properties"].append(propJson);
 		}

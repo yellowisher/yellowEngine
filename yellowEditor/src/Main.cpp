@@ -14,6 +14,19 @@ GLubyte* gameData;
 GLubyte* gameDataFlipped;
 GLuint sceneTexture;
 
+class Test : public Component, public IUpdatable
+{
+public:
+	Test(GameObject* gameObject) :Component(gameObject) {}
+
+	Animator* animator;
+
+	void onCreate()
+	{
+		animator = gameObject->getComponent<Animator>();
+	}
+};
+
 int main()
 {
 	if (!glfwInit()) return 1;
@@ -82,8 +95,8 @@ int main()
 					ColliderManager::getInstance()->renderCollider(editor->getEditorCamera(), collider);
 				}
 			}
-			//ColliderManager::getInstance()->renderColliders(editor->getEditorCamera());
-			DrawGizmo();
+			if (Editor::drawAllColliders) ColliderManager::getInstance()->renderColliders(editor->getEditorCamera());
+			if (Editor::drawGizmo) DrawGizmo();
 
 			glfwSwapBuffers(gameWindow.handle);
 		}

@@ -6,6 +6,9 @@ using namespace yellowEngine;
 
 COMPONENT_IMPL(Unit)
 
+static const int DYING_FRAME = 40;
+static const Vector3 INITIAL_SCALE = Vector3(0.01f, 0.01f, 0.01f);
+
 Unit::BaseUnitType Unit::getBaseType(UnitType type)
 {
 	if (type < Unit_Cavalry_Start) return BaseUnit_Infantry;
@@ -125,7 +128,7 @@ void Unit::exitAttackRange(Collider* other)
 		{
 			// there was possible attack target but was not attacking;
 			// should not reach here
-			assert(false);
+			assert(_state == State_Dying || _state == State_NotInitialized);
 		}
 	}
 }
@@ -133,7 +136,7 @@ void Unit::exitAttackRange(Collider* other)
 
 void Unit::update()
 {
-	static const int attackFrame = 16;
+	static const int attackFrame = 14;
 
 	switch (_state)
 	{
@@ -141,22 +144,46 @@ void Unit::update()
 			transform->translate(transform->getForward() * -moveSpeed);
 			break;
 		case State_Attacking:
-			if (++_frame == attackFrame)
+			// (_frame == 0) means didn't attack in this chance
+			if (_frame == 0)
 			{
-				_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()]);
+				if (_animator->getFrame() >= attackFrame)
+				{
+					_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()]);
+					_frame++;
+				}
 			}
-			else if (_frame == (getClip(type, Clip_Attack)->_frameCount + attackDelay))
+			else
 			{
-				_frame = 0;
-				_animator->play(getClip(type, Clip_Attack));
+				if (++_frame == attackDelay)
+				{
+					_frame = 0;
+					_animator->play(getClip(type, Clip_Attack));
+				}
 			}
 			break;
 		case State_Dying:
 			if (!_animator->isPlaying())
 			{
-				delete(gameObject);
+				if (--_frame == 0)
+				{
+					delete(gameObject);
+					return;
+				}
+				else
+				{
+					float factor = (float)_frame / DYING_FRAME;
+					transform->setScale(INITIAL_SCALE * factor);
+				}
 			}
 			break;
+	}
+
+	// to ensure same units die same time
+	// units do all update and die
+	if (_dead)
+	{
+		dieSelf();
 	}
 }
 
@@ -171,7 +198,8 @@ void Unit::initialize(int team)
 {
 	this->team = team;
 	_animator = gameObject->addComponent<Animator>();
-	_animator->setSpeed(0.75f);
+	_animator->setSpeed(0.5f);
+	_dead = false;
 	_attackingTarget = nullptr;
 	move();
 }
@@ -195,7 +223,15 @@ void Unit::attack(IDamageable* target)
 
 void Unit::die()
 {
+	_dead = true;
+}
+
+
+void Unit::dieSelf()
+{
+	_dead = false;
 	_state = State_Dying;
+	_frame = DYING_FRAME;
 	_animator->play(getClip(type, deathClip));
 	Collider* collider = gameObject->getComponent<Collider>();
 	gameObject->removeComponent(collider);

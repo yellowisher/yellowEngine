@@ -11,6 +11,7 @@ namespace yellowEngine
 {
 	enum Primitive
 	{
+		Primitive_Bool,
 		Primitive_Int,
 		Primitive_Float,
 		Primitive_String
@@ -23,6 +24,7 @@ namespace yellowEngine
 	};
 
 	static std::map<std::string, std::vector<DataType>> dataTypes = {
+		{"bool",	 {{"value", Primitive_Bool}}},
 		{"int",		 {{"value", Primitive_Int}}},
 		{"float",	 {{"value", Primitive_Float}}},
 		{"Vector2",  {{"x", Primitive_Float}, {"y",Primitive_Float}}},
@@ -107,6 +109,13 @@ namespace yellowEngine
 							{
 								switch (valueType.primitive)
 								{
+									case Primitive_Bool:
+									{
+										bool value = propJson["value"][valueType.name].asBool();
+										*(bool*)(cursor) = value;
+										cursor += sizeof(bool);
+										break;
+									}
 									case Primitive_Int:
 									{
 										int value = propJson["value"][valueType.name].asInt();
@@ -156,12 +165,14 @@ namespace yellowEngine
 	}
 
 
-	void SceneManager::saveScene(const char* path)
+	void SceneManager::saveScene(const char* path, Transform* ignore)
 	{
 		Json::Value gosJson;
 
 		for (auto transform : Transform::Root->getChildren())
 		{
+			if (transform == ignore) continue;
+
 			Json::Value goJson;
 			goJson["name"] = transform->gameObject->getName();
 			fillComponents(transform->gameObject, goJson);
@@ -221,6 +232,12 @@ namespace yellowEngine
 					{
 						switch (valueType.primitive)
 						{
+							case Primitive_Bool:
+							{
+								valueJson[valueType.name] = Json::Value(*(bool*)(cursor));
+								cursor += sizeof(bool);
+								break;
+							}
 							case Primitive_Int:
 							{
 								valueJson[valueType.name] = Json::Value(*(int*)(cursor));

@@ -85,8 +85,8 @@ int main()
 
 	// init game
 	Game* game = new Game(width, height);
-	//game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
-	game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
+	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
+	//game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 	//game->broadPhaseType = ColliderManager::BroadPhaseType_NUL;
 
 	game->init();
@@ -100,13 +100,8 @@ int main()
 
 	////////// Scene
 
-	SceneManager::loadScene("./res/Scene/Scene0.yes");
-
-	GameObject* cameraGo = new GameObject();
-	Camera* camera = cameraGo->addComponent<Camera>();
-	camera->setPerspective(60.0f, 0.01f, 1000.0f);
-	camera->transform->setPosition(0, 0, 3);
-	cameraGo->addComponent<CameraScript>();
+	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\Scene0.yes");
+	Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
 
 	new GameManager();
 	////////// Scene end

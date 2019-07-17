@@ -40,6 +40,10 @@ namespace yellowEditor
 		static void setEditorContext();
 		static void setWelcomeScene();
 
+		static bool drawGizmo;
+		static bool drawAllColliders;
+		static bool drawGBuffer;
+
 	private:
 		static Editor* __instance;
 

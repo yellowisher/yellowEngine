@@ -14,6 +14,7 @@ namespace yellowEngine
 	class Camera : public Component, public INotifiable
 	{
 		BEGIN_COMPONENT(Camera)
+			PROPERTY(Camera, bool, _isMainCamera, "Main Camera")
 			PROPERTY(Camera, CameraType, _type, "Type")
 			PROPERTY(Camera, float, _zNear, "Near")
 			PROPERTY(Camera, float, _zFar, "Far")
@@ -70,6 +71,7 @@ namespace yellowEngine
 
 		EventListener _transformChangeListener;
 
+		bool _isMainCamera;
 		CameraType _type;
 		float _zNear;
 		float _zFar;

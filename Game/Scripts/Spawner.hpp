@@ -25,6 +25,8 @@ public:
 private:
 	static Material* getMaterial(int team);
 	static GameObject* units[Unit::Num_Units];
+
+	void setMaterial(Transform* target);
 };
 
 #endif

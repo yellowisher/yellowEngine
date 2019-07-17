@@ -28,10 +28,33 @@ namespace yellowEngine
 
 	GameObject::~GameObject()
 	{
-		for (auto it = _components.rbegin(); it != _components.rend(); ++it)
+		deleteSelf(false);
+	}
+
+
+	void GameObject::deleteSelf(bool silent)
+	{
+		for (auto child : transform->getChildren())
 		{
-			(*it)->onDestroy();
-			delete(*it);
+			child->gameObject->deleteSelf(true);
+		}
+
+		if (!silent)
+		{
+			if (transform->getParent())
+			{
+				transform->getParent()->removeChild(transform);
+			}
+		}
+
+		for (auto component : _components)
+		{
+			component->onDestroy();
+		}
+
+		for (auto component : _components)
+		{
+			delete(component);
 		}
 	}
 

@@ -14,6 +14,10 @@ namespace yellowEditor
 {
 	extern float scrollY;
 
+	bool Editor::drawGizmo = true;
+	bool Editor::drawAllColliders = false;
+	bool Editor::drawGBuffer = false;
+
 	const char* Editor::editorCameraName = "__EDITOR_CAMERA__";
 	Editor* Editor::__instance = nullptr;
 
@@ -50,7 +54,6 @@ namespace yellowEditor
 
 		// init other
 		glfwSetScrollCallback(editorWindow.handle, glfwScrollCallback);
-		//Init_AssetWindow();
 	}
 
 
@@ -186,7 +189,7 @@ namespace yellowEditor
 	{
 		if (ImGui::BeginMainMenuBar())
 		{
-			if (ImGui::BeginMenu("File"))
+			if (ImGui::BeginMenu("Project", "Ctrl+P"))
 			{
 				if (ImGui::MenuItem("New"))
 				{
@@ -206,7 +209,7 @@ namespace yellowEditor
 
 					LoadAsset(true);
 				}
-				if (ImGui::MenuItem("Open", "Ctrl+O"))
+				if (ImGui::MenuItem("Open", "Ctrl+E"))
 				{
 					std::string path = fileDialog({ { "yep","Yellow Engine Project" } }, false);
 					Editor::getProjectRoot() = path.substr(0, path.find_last_of("\\"));
@@ -214,13 +217,12 @@ namespace yellowEditor
 					
 					LoadAsset(true);
 				}
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
-				{
-				}
-				if (ImGui::MenuItem("Save As..")) {}
-				ImGui::Separator();
+				ImGui::EndMenu();
+			}
 
-				if (ImGui::MenuItem("New Scene"))
+			if (ImGui::BeginMenu("Scene"))
+			{
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
 				{
 					Editor::setGameContext();
 
@@ -232,7 +234,7 @@ namespace yellowEditor
 					Editor::setEditorContext();
 
 				}
-				if (ImGui::MenuItem("Open Scene"))
+				if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
 				{
 					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, false);
 					Editor::setGameContext();
@@ -242,11 +244,28 @@ namespace yellowEditor
 
 					Editor::setEditorContext();
 				}
-				if (ImGui::MenuItem("Save Scene"))
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 				{
 					std::string path = fileDialog({ { "yes","Yellow Engine Scene" } }, true);
-					SceneManager::saveScene(path.append(".yes").c_str());
+					if (_strcmpi(path.c_str() + path.size() - 3, "yes") != 0)
+					{
+						SceneManager::saveScene(path.append(".yes").c_str(), Editor::getEditorCamera()->transform);
+					}
 					LoadAsset();
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Display"))
+			{
+				if (ImGui::Checkbox("Draw Gizmo", &Editor::drawGizmo))
+				{
+				}
+				if (ImGui::Checkbox("Draw Colliders", &Editor::drawAllColliders))
+				{
+				}
+				if (ImGui::Checkbox("Draw G Buffer", &Editor::drawGBuffer))
+				{
 				}
 				ImGui::EndMenu();
 			}

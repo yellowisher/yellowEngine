@@ -41,7 +41,7 @@ namespace yellowEngine
 
 		Transform* getParent();
 		void addChild(Transform* child);
-		void removeChild(Transform* child);
+		void removeChild(Transform* child, bool deletion = false);
 		Transform* findChild(const std::string& name);
 		Transform* getChild(int index);
 		const std::vector<Transform*>& getChildren();

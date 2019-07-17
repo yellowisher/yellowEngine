@@ -94,6 +94,7 @@ public:
 	void exitAttackRange(Collider* other);
 	
 	void initialize(int team);
+	void dieSelf();
 	void* getTransform() { return transform; }
 	int getBaseType() override { return getBaseType(type); }
 
@@ -117,6 +118,7 @@ private:
 	void move();
 	void attack(IDamageable* target);
 
+	bool _dead;
 	State _state;
 	Animator* _animator;
 	IDamageable* _attackingTarget;

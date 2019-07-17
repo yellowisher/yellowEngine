@@ -28,12 +28,13 @@ namespace yellowEngine
 		Animator(GameObject* gameObject);
 		~Animator();
 
-		void play(AnimationClip* clip, int delay = 20);
+		void play(AnimationClip* clip, int delay = 12);
 		void pause();
 		void resume();
-		void stop();
+		void stop(bool freeze = false);
 
 		bool isPlaying() { return _state != State_Stopped; }
+		float getFrame() { return _frame; }
 
 		// should be private and expose as friend for editor
 		Transform* getTransform(const std::string& target);

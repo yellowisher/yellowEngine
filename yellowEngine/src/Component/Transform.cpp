@@ -47,14 +47,6 @@ namespace yellowEngine
 
 	Transform::~Transform()
 	{
-		while (!_children.empty())
-		{
-			Transform* last = _children.back();
-			_children.pop_back();
-			delete(last->gameObject);
-		}
-		if (_parent)_parent->removeChild(this);
-
 		if (Root == this) Root = nullptr;
 	}
 
@@ -83,7 +75,7 @@ namespace yellowEngine
 	}
 
 
-	void Transform::removeChild(Transform* child)
+	void Transform::removeChild(Transform* child, bool deletion)
 	{
 		for (auto it = _children.begin(); it != _children.end(); ++it)
 		{
@@ -91,9 +83,12 @@ namespace yellowEngine
 			{
 				Matrix childToParent = child->getMatrix();
 
-				child->setPosition(childToParent.extractTranslation());
-				child->setRotation(childToParent.extractRotation());
-				child->setScale(childToParent.extractScale());
+				if (!deletion)
+				{
+					child->setPosition(childToParent.extractTranslation());
+					child->setRotation(childToParent.extractRotation());
+					child->setScale(childToParent.extractScale());
+				}
 
 				_children.erase(it);
 				child->_parent = Root;

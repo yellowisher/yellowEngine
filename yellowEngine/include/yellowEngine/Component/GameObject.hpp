@@ -43,6 +43,9 @@ namespace yellowEngine
 		GameObject* cloneObjects();
 		void cloneComponents(GameObject* original);
 
+		// delete without remove request to parent
+		void deleteSelf(bool silent);
+
 		std::list<Component*> _components;
 		std::string _name;
 		bool _active;
