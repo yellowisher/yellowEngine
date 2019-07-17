@@ -76,6 +76,12 @@ int main()
 	glfwMakeContextCurrent(gameWindow.handle);
 	game->start();
 
+	Material* mt = new Material("w");
+	mt->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/test/Texrures/BASML_Base_Albedo.png"));
+	mt->setProperty("u_Material.specular", Texture::create("./res/Mesh/test/Texrures/BASML_Base_Spec.png"));
+	Model* m = Model::create("./res/Mesh/test/BASML_Base_Corridor_Transition_Wall.FBX");
+	m->instantiate("qwe", mt);
+
 	while (!glfwWindowShouldClose(editorWindow.handle))
 	{
 		// update game window first

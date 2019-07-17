@@ -175,6 +175,8 @@
     <None Include="res\Shader\gizmo.vert" />
     <None Include="res\Shader\shadow.frag" />
     <None Include="res\Shader\shadow.vert" />
+    <None Include="res\Shader\ui.frag" />
+    <None Include="res\Shader\ui.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -193,6 +193,14 @@ int Unit::modifyDamage(int damage)
 	return Utils::max(damage - defense, 0);
 }
 
+void Unit::enterTraceRange(Collider * other)
+{
+}
+
+void Unit::exitTraceRange(Collider * other)
+{
+}
+
 
 void Unit::initialize(int team)
 {

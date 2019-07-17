@@ -90,6 +90,9 @@ public:
 	void die() override;
 	int modifyDamage(int damage) override;
 
+	void enterTraceRange(Collider* other);
+	void exitTraceRange(Collider* other);
+
 	void enterAttackRange(Collider* other);
 	void exitAttackRange(Collider* other);
 	

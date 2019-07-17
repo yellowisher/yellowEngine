@@ -75,6 +75,7 @@ namespace yellowEngine
 	void Game::render(Camera* camera)
 	{
 		Technique::renderScene(camera);
+		UIRenderer::render();
 	}
 
 

@@ -22,7 +22,7 @@ namespace yellowEngine
 
 	static constexpr int BloomBlurCount = 10;
 
-	bool Technique_Deferred::applyBloom = false;
+	bool Technique_Deferred::applyBloom = true;
 	float Technique_Deferred::exposure = 1.0;
 
 	Technique_Deferred::Technique_Deferred()
@@ -159,9 +159,6 @@ namespace yellowEngine
 
 		FrameBuffer::unbind();
 		renderQuad(_bloomShader);
-
-		//glBlitFramebuffer(0, 0, Display::width, Display::height,
-		//				  0, 0, Display::width, Display::height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		glDepthMask(GL_TRUE);
 	}

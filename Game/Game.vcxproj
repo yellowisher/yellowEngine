@@ -125,6 +125,7 @@
     <ClCompile Include="Scripts\Building.cpp" />
     <ClCompile Include="Scripts\GameManager.cpp" />
     <ClCompile Include="Scripts\Spawner.cpp" />
+    <ClCompile Include="Scripts\TraceRangeChecker.cpp" />
     <ClCompile Include="Scripts\Unit.cpp" />
     <ClCompile Include="Scripts\UnitAttackChecker.cpp" />
   </ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="Scripts\GameManager.hpp" />
     <ClInclude Include="Scripts\IDamageable.hpp" />
     <ClInclude Include="Scripts\Spawner.hpp" />
+    <ClInclude Include="Scripts\TraceRangeChecker.hpp" />
     <ClInclude Include="Scripts\Unit.hpp" />
     <ClInclude Include="Scripts\UnitAttackChecker.hpp" />
   </ItemGroup>

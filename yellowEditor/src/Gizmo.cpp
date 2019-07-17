@@ -71,12 +71,13 @@ namespace yellowEditor
 			for (int i = 0; i < 3; i++)
 			{
 				Vector4 ndcTarget = pvm * Vector4(dirs[i], 1.0f);
+				float w = ndcTarget.w;
 				ndcTarget = ndcTarget / ndcTarget.w;
 
 				Vector4 dir = ndcTarget - ndcOrigin;
 				dir.normalize();
 				ndcTarget = ndcOrigin + dir * 0.4f;
-				ndcEnds[i] = ndcTarget;
+				ndcEnds[i] = ndcTarget * w;
 
 				screenEnds[i] = Vector2(
 					Editor::getGameWindow().width * 0.5f * (ndcTarget.x + 1.0f),
@@ -121,12 +122,11 @@ namespace yellowEditor
 			BtoE = screenEnds[index] - screenBegin;
 			BtoEMagnitude = BtoE.magnitude();
 
-			auto inv = Editor::getEditorCamera()->getMatrix() * Editor::getSelectedTransform()->getMatrix();
-			inv = ~inv;
-			auto modelBegin = inv * ndcBegin;
-			auto modelEnd = inv * ndcEnds[index];
+			auto inv = ~(Editor::getEditorCamera()->getMatrix());
+			auto worldBegin = inv * ndcBegin;
+			auto worldEnd = inv * ndcEnds[index];
 
-			modelLength = sqrtf((modelEnd - modelBegin).magnitude());
+			modelLength = sqrtf((worldEnd - worldBegin).magnitude());
 		}
 	}
 
@@ -138,33 +138,14 @@ namespace yellowEditor
 			Vector2 p0 = lastCursorPos;
 			Vector2 p1 = Vector2(x, y);
 
+			float ratio = (BtoE * (p1 - p0)) / BtoEMagnitude;
 
+			ratio *= (dragging == 2 ? -1.0f : 1.0f);
+			ratio *= modelLength;
+			Vector3 move;
+			move.v[dragging] = ratio;
 
-
-			float lineMag = BtoEMagnitude;
-			auto inv = Editor::getEditorCamera()->getMatrix() * Editor::getSelectedTransform()->getMatrix();
-			inv = ~inv;
-
-			float t = Utils::max(0.0f, Utils::min(1.0f, ((p0 - screenBegin)*(screenEnds[dragging] - screenBegin)) / lineMag));
-			Vector3 projection = ndcBegin + (ndcEnds[dragging] - ndcBegin) * t;
-			Vector4 world0 = inv * Vector4(projection, 1.0f);
-
-			t = Utils::max(0.0f, Utils::min(1.0f, ((p1 - screenBegin)*(screenEnds[dragging] - screenBegin)) / lineMag));
-			projection = ndcBegin + (ndcEnds[dragging] - ndcBegin) * t;
-			Vector4 world1 = inv * Vector4(projection, 1.0f);
-
-			Editor::getSelectedTransform()->translate(world1 - world0);
-
-
-			
-			//float ratio = (BtoE * (p1 - p0)) / BtoEMagnitude;
-
-			//ratio *= (dragging == 2 ? -1.0f : 1.0f);
-			////amount = amount / Editor::getGameWindow().width * 0.5f;
-			//ratio *= modelLength;
-			//Vector3 move;
-			//move.v[dragging] = ratio;
-			//Editor::getSelectedTransform()->translate(move);
+			Editor::getSelectedTransform()->translate(move);
 
 			lastCursorPos = Vector2(x, y);
 		}
