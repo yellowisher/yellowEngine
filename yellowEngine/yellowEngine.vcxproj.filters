@@ -165,10 +165,13 @@
     <ClCompile Include="src\System\IUpdatable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering\UIRenderer.cpp">
+    <ClCompile Include="src\Collision\Ray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Collision\Ray.cpp">
+    <ClCompile Include="src\Rendering\UI\UIRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering\UI\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -344,10 +347,13 @@
     <ClInclude Include="include\yellowEngine\Rendering\CubeMap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Rendering\UIRenderer.hpp">
+    <ClInclude Include="include\yellowEngine\Collision\Ray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\yellowEngine\Collision\Ray.hpp">
+    <ClInclude Include="include\yellowEngine\Rendering\UI\Image.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yellowEngine\Rendering\UI\UIRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

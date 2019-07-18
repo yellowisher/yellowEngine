@@ -78,6 +78,12 @@ namespace yellowEngine
 	}
 
 
+	float InputManager::getMouseScroll()
+	{
+		return __instance->_mouseScroll;
+	}
+
+
 	void InputManager::keyCallback(int keyCode, bool pressed)
 	{
 		_keys[keyCode] = pressed ? State_Down : State_Up;
@@ -98,6 +104,12 @@ namespace yellowEngine
 	}
 
 
+	void InputManager::mouseScrollCallback(float y)
+	{
+		_mouseScroll = y;
+	}
+
+
 	void InputManager::initMousePosition(float x, float y)
 	{
 		_prevMousePosition.x = x;
@@ -110,6 +122,7 @@ namespace yellowEngine
 
 	void InputManager::update()
 	{
+		_mouseScroll = 0;
 		for (int keyCode : _changedKeys)
 		{
 			if (_keys[keyCode] == State_Up)

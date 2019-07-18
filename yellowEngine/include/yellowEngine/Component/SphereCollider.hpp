@@ -8,7 +8,7 @@ namespace yellowEngine
 {
 	class SphereCollider : public Collider
 	{
-		BEGIN_COMPONENT(SphereCollider)
+		BEGIN_COMPONENT_NO_CTOR(SphereCollider)
 			PROPERTY(SphereCollider, float, _radius, "Radius")
 			PROPERTY(SphereCollider, Vector3, _center, "Center")
 		END_COMPONENT

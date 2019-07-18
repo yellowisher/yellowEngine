@@ -84,9 +84,6 @@ public:
 	static BaseUnitType getBaseType(UnitType type);
 	static AnimationClip* getClip(UnitType unit, ClipType clip);
 	
-	Unit(GameObject* gameObject) :Component(gameObject) {};
-	~Unit() {};
-
 	void onCreate() override;
 	void update() override;
 	void die() override;

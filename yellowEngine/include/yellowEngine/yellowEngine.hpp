@@ -46,7 +46,8 @@
 #include "Rendering/UniformUpdater.hpp"
 #include "Rendering/VertexLayout.hpp"
 #include "Rendering/VertexLayoutBinding.hpp"
-#include "Rendering/UIRenderer.hpp"
+#include "Rendering/UI/UIRenderer.hpp"
+#include "Rendering/UI/Image.hpp"
 
 // system
 #include "System/Event.hpp"

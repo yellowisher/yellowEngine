@@ -6,73 +6,9 @@
 #include "Scripts/Unit.hpp"
 #include "Scripts/Spawner.hpp"
 #include "Scripts/GameManager.hpp"
+#include "Scripts/CameraScript.hpp"
 
 using namespace yellowEngine;
-
-class CameraScript : public Component, public IUpdatable
-{
-public:
-	CameraScript(GameObject* gameObject) : Component(gameObject) {}
-
-	void update() override
-	{
-		static const float moveSpeed = 0.06f;
-		static const float rotateSpeedX = 0.032f;
-		static const float rotateSpeedY = 0.016f;
-		static Vector3 rotation = Vector3(0, 0, 0);
-
-		if (InputManager::getMouseButtonDown(0))
-		{
-			Camera* camera = Camera::getMainCamera();
-			Vector2 pos = InputManager::getMousePosition();
-
-
-
-			//auto m = Model::create("./res/Mesh/cube.obj");
-			//auto g = m->instantiate("we");
-			//g->transform->setPosition(point);
-			//g->transform->setScale(0.1f, 0.1f, 0.1f);
-		}
-
-		// translate
-		Vector3 move = Vector3::zero;
-		if (InputManager::getKey(GLFW_KEY_A)) move.x -= 1.0f;
-		if (InputManager::getKey(GLFW_KEY_D)) move.x += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_W)) move.z += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_S)) move.z -= 1.0f;
-		if (InputManager::getKey(GLFW_KEY_SPACE)) move.y += 1.0f;
-		if (InputManager::getKey(GLFW_KEY_LEFT_CONTROL)) move.y -= 1.0f;
-		if (InputManager::getKeyDown(GLFW_KEY_P)) gameObject->getComponent<Camera>()->setOrthographic(0.01, 100.0f);
-
-		Transform* transform = Camera::getMainCamera()->transform;
-		Vector3 forward = transform->getForward();
-		forward.y = 0; forward.normalize();
-
-		Vector3 right = transform->getRight();
-		right.y = 0; right.normalize();
-
-		Vector3 up = Vector3::up;
-
-		Vector3 movement = Vector3::zero;
-		movement += forward * move.z;
-		movement += right * move.x;
-		movement += up * move.y;
-
-		transform->translate(movement * moveSpeed);
-
-		// rotate
-		Vector2 rotate = InputManager::getDeltaMousePosition();
-		rotation.x += rotate.y * rotateSpeedX;
-		rotation.y += -rotate.x * rotateSpeedY;
-
-		transform->setRotation(rotation);
-	}
-};
-
-class Up : public IUpdatable
-{
-	void update() {}
-};
 
 int main()
 {
@@ -94,7 +30,7 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -113,16 +49,17 @@ int main()
 	glfwSetKeyCallback(window, game->glfwKeyCallback);
 	glfwSetMouseButtonCallback(window, game->glfwMouseButtonCallback);
 	glfwSetCursorPosCallback(window, game->glfwCursorCallback);
+	glfwSetScrollCallback(window, game->glfwScrollCallback);
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
 	game->_inputManager->initMousePosition((float)x, (float)y);
 
 	////////// Scene
 
-	//SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\newScene.yes");
-	//Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
-	//new GameManager();
-	std::vector<Up*> ups;
+	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\Scene_Ortho.yes");
+	new GameManager();
+
+	Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
 
 	////////// Scene end
 

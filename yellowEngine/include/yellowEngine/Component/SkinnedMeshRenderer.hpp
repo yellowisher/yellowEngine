@@ -9,7 +9,7 @@ namespace yellowEngine
 {
 	class SkinnedMeshRenderer : public MeshRenderer
 	{
-		BEGIN_COMPONENT(SkinnedMeshRenderer)
+		BEGIN_COMPONENT_NO_CTOR(SkinnedMeshRenderer)
 			PROPERTY(SkinnedMeshRenderer, Mesh, _meshPath, "Mesh")
 			PROPERTY(SkinnedMeshRenderer, Material, _materialPath, "Material")
 		END_COMPONENT

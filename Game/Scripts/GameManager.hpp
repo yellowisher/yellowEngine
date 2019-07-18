@@ -19,7 +19,12 @@ public:
 	void start() override;
 	void update() override;
 
+	int gold;
+	
 private:
+	int selected;
+	Transform* placing;
+	Image* _images[Unit::Num_Units];
 	std::vector<Spawner*> _spawners[2];
 };
 

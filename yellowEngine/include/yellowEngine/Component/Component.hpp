@@ -11,7 +11,7 @@
 // there is big problem; memory of properties changed directly
 // TODO: change direct access memory to use getter and setter
 
-#define BEGIN_COMPONENT(cls) \
+#define BEGIN_COMPONENT_BASE \
 friend class Component;\
 	private:\
 		static const char* __typeName;\
@@ -28,7 +28,9 @@ friend class Component;\
 				}\
 			}\
 			return {"NULL", "NULL", (size_t)0};\
-		}\
+		}
+
+#define BEGIN_COMPONENT_PROPERTY(cls) \
 	private:\
 		struct _StaticConstructor\
 		{\
@@ -38,6 +40,15 @@ friend class Component;\
 				Component::getComponents().push_back(#cls);\
 				Component::getProperties().insert({ #cls, {} });\
 				auto& offsets = Component::getProperties()[#cls];
+
+#define BEGIN_COMPONENT_NO_CTOR(cls) \
+BEGIN_COMPONENT_BASE \
+BEGIN_COMPONENT_PROPERTY(cls)
+
+#define BEGIN_COMPONENT(cls) \
+BEGIN_COMPONENT_BASE \
+cls(GameObject* gameObject):Component(gameObject){}\
+BEGIN_COMPONENT_PROPERTY(cls)
 
 #define PROPERTY(cls, type, field, name) \
 				offsets.push_back({ #type, name, offsetof(cls, field), sizeof(type) });

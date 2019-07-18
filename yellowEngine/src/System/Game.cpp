@@ -80,7 +80,9 @@ namespace yellowEngine
 	void Game::render(Camera* camera)
 	{
 		Technique::renderScene(camera);
-		UIRenderer::render();
+		UIRenderer::renderAll();
+
+		// render skybox
 	}
 
 
@@ -102,6 +104,12 @@ namespace yellowEngine
 	void Game::glfwCursorCallback(GLFWwindow* window, double xpos, double ypos)
 	{
 		__instance->_inputManager->mouseCursorCallback((float)xpos, (float)ypos);
+	}
+
+
+	void Game::glfwScrollCallback(GLFWwindow* window, double x, double y)
+	{
+		__instance->_inputManager->mouseScrollCallback((float)y);
 	}
 
 

@@ -14,7 +14,7 @@ namespace yellowEngine
 {
 	class MeshRenderer : public ObjectRenderer
 	{
-		BEGIN_COMPONENT(MeshRenderer)
+		BEGIN_COMPONENT_NO_CTOR(MeshRenderer)
 			PROPERTY(MeshRenderer, Mesh, _meshPath, "Mesh")
 			PROPERTY(MeshRenderer, Material, _materialPath, "Material")
 		END_COMPONENT

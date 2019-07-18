@@ -13,9 +13,6 @@ class TraceRangeChecker : public Component
 	END_COMPONENT
 
 public:
-	TraceRangeChecker(GameObject* gameObject) : Component(gameObject) {}
-	~TraceRangeChecker() {};
-
 	void onCreate() override;
 	void onCollisionEnter(Collider* other) override;
 	void onCollisionExit(Collider* other) override;

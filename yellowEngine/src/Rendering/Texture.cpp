@@ -27,6 +27,9 @@ namespace yellowEngine
 
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
 
+		this->width = width;
+		this->height = height;
+
 		// lazy initialization?
 		if (generateMipMap) glGenerateMipmap(GL_TEXTURE_2D);
 		Utils::printGLError("Texture creating end");
@@ -39,7 +42,7 @@ namespace yellowEngine
 	}
 
 
-	Texture* Texture::create(const char* path, int wrap, int filter)
+	Texture* Texture::create(const char* path, int wrap, int filter, bool noFlip)
 	{
 		auto it = __textureCache.find(path);
 		if (it != __textureCache.end())
@@ -50,7 +53,7 @@ namespace yellowEngine
 		int width, height, channels;
 		const char* ext = path + strlen(path) - 3;
 
-		if (_strcmpi(ext, "tga") == 0)
+		if (noFlip || _strcmpi(ext, "tga") == 0)
 		{
 			stbi_set_flip_vertically_on_load(false);
 		}

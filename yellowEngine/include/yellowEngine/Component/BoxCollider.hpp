@@ -10,7 +10,7 @@ namespace yellowEngine
 {
 	class BoxCollider : public Collider
 	{
-		BEGIN_COMPONENT(BoxCollider)
+		BEGIN_COMPONENT_NO_CTOR(BoxCollider)
 			PROPERTY(BoxCollider, Vector3, _min, "Min")
 			PROPERTY(BoxCollider, Vector3, _max, "Max")
 		END_COMPONENT

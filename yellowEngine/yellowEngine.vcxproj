@@ -167,7 +167,8 @@
     <ClCompile Include="src\Rendering\Technique.cpp" />
     <ClCompile Include="src\Rendering\Technique\Technique_Deferred.cpp" />
     <ClCompile Include="src\Rendering\Texture.cpp" />
-    <ClCompile Include="src\Rendering\UIRenderer.cpp" />
+    <ClCompile Include="src\Rendering\UI\Image.cpp" />
+    <ClCompile Include="src\Rendering\UI\UIRenderer.cpp" />
     <ClCompile Include="src\Rendering\UniformUpdater.cpp" />
     <ClCompile Include="src\Rendering\VertexLayout.cpp" />
     <ClCompile Include="src\Rendering\VertexLayoutBinding.cpp" />
@@ -221,7 +222,8 @@
     <ClInclude Include="include\yellowEngine\Rendering\Technique.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Technique\Technique_Deferred.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\Texture.hpp" />
-    <ClInclude Include="include\yellowEngine\Rendering\UIRenderer.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\UI\UIRenderer.hpp" />
+    <ClInclude Include="include\yellowEngine\Rendering\UI\Image.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\UniformUpdater.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\VertexLayout.hpp" />
     <ClInclude Include="include\yellowEngine\Rendering\VertexLayoutBinding.hpp" />

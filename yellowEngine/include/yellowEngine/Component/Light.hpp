@@ -13,7 +13,7 @@ namespace yellowEngine
 {
 	class Light : public Component
 	{
-		BEGIN_COMPONENT(Light)
+		BEGIN_COMPONENT_NO_CTOR(Light)
 			PROPERTY(Light, LightType, _type, "Type")
 			PROPERTY(Light, Vector3, color, "Color")
 			PROPERTY(Light, bool, castShadow, "Cast Shadow");

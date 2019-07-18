@@ -125,6 +125,7 @@
     <ClCompile Include="Scripts\Arrow.cpp" />
     <ClCompile Include="Scripts\ArrowShooter.cpp" />
     <ClCompile Include="Scripts\Building.cpp" />
+    <ClCompile Include="Scripts\CameraScript.cpp" />
     <ClCompile Include="Scripts\GameManager.cpp" />
     <ClCompile Include="Scripts\Spawner.cpp" />
     <ClCompile Include="Scripts\TraceRangeChecker.cpp" />
@@ -138,11 +139,14 @@
     <None Include="res\Shader\bloom_blur.vert" />
     <None Include="res\Shader\shadow_point.frag" />
     <None Include="res\Shader\shadow_point.vert" />
+    <None Include="res\Shader\skybox.frag" />
+    <None Include="res\Shader\skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\Arrow.hpp" />
     <ClInclude Include="Scripts\ArrowShooter.hpp" />
     <ClInclude Include="Scripts\Building.hpp" />
+    <ClInclude Include="Scripts\CameraScript.hpp" />
     <ClInclude Include="Scripts\GameManager.hpp" />
     <ClInclude Include="Scripts\IDamageable.hpp" />
     <ClInclude Include="Scripts\Spawner.hpp" />

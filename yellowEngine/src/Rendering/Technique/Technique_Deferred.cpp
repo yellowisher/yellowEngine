@@ -166,6 +166,7 @@ namespace yellowEngine
 		_blurBuffer.getColorTexture(Blur_Result)->bind();
 
 		FrameBuffer::unbind();
+
 		renderQuad(_bloomShader);
 
 		glDepthMask(GL_TRUE);

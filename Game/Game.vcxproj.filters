@@ -42,6 +42,9 @@
     <ClCompile Include="Scripts\Arrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scripts\CameraScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\shadow_point.vert" />
@@ -50,6 +53,8 @@
     <None Include="res\Shader\bloom.vert" />
     <None Include="res\Shader\bloom.frag" />
     <None Include="res\Shader\bloom_blur.frag" />
+    <None Include="res\Shader\skybox.vert" />
+    <None Include="res\Shader\skybox.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\Spawner.hpp">
@@ -77,6 +82,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\Arrow.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\CameraScript.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

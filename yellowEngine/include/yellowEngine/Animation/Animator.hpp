@@ -13,7 +13,7 @@ namespace yellowEngine
 {
 	class Animator : public Component
 	{
-		BEGIN_COMPONENT(Animator)
+		BEGIN_COMPONENT_NO_CTOR(Animator)
 			PROPERTY(Animator, float, _speed, "Speed");
 		END_COMPONENT
 

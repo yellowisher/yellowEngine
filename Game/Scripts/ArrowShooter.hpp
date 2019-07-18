@@ -13,9 +13,6 @@ class ArrowShooter : public Component
 	END_COMPONENT
 
 public:
-	ArrowShooter(GameObject* gameObject) : Component(gameObject) {}
-	~ArrowShooter() {}
-
 	void initialize(Unit* unit);
 	void fireArrow(Transform* target);
 

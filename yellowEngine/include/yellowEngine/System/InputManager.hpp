@@ -168,6 +168,7 @@ namespace yellowEngine
 		static bool getMouseButtonUp(int button);
 		static Vector2 getMousePosition();
 		static Vector2 getDeltaMousePosition();
+		static float getMouseScroll();
 
 	private:
 		static constexpr int Num_Keys = KEY_LAST;
@@ -190,6 +191,7 @@ namespace yellowEngine
 		void keyCallback(int keyCode, bool pressed);
 		void mouseButtonCallback(int buttonCode, bool pressed);
 		void mouseCursorCallback(float x, float y);
+		void mouseScrollCallback(float y);
 
 		State _keys[Num_Keys];
 		State _mouseButtons[Num_MouseButtons];
@@ -198,6 +200,7 @@ namespace yellowEngine
 		std::set<int> _changedMouseButtons;
 		Vector2 _prevMousePosition;
 		Vector2 _newMousePosition;
+		float _mouseScroll;
 	};
 }
 

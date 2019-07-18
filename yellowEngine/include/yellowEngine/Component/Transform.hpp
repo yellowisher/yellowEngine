@@ -16,7 +16,7 @@ namespace yellowEngine
 {
 	class Transform : public Component
 	{
-		BEGIN_COMPONENT(Transform)
+		BEGIN_COMPONENT_NO_CTOR(Transform)
 			PROPERTY(Transform, Vector3, _position, "Position")
 			PROPERTY(Transform, Vector3, _scale, "Scale")
 			PROPERTY(Transform, Vector3, _eulerRotation, "Rotation")

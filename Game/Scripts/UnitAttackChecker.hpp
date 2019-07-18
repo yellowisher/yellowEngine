@@ -13,9 +13,6 @@ class UnitAttackChecker : public Component
 	END_COMPONENT
 
 public:
-	UnitAttackChecker(GameObject* gameObject) : Component(gameObject) {}
-	~UnitAttackChecker() {}
-
 	void onCreate() override;
 	void onCollisionEnter(Collider* other) override;
 	void onCollisionExit(Collider* other) override;

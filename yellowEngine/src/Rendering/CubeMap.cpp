@@ -3,7 +3,12 @@
 
 namespace yellowEngine
 {
-	CubeMap::CubeMap(int internalFormat, int width, int format, int type)
+	CubeMap::CubeMap(int internalFormat, int width, int format, int type):
+		CubeMap(internalFormat, width, format, type, { nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr })
+	{
+	}
+
+	CubeMap::CubeMap(int internalFormat, int width, int format, int type, std::vector<Texture*> textures)
 	{
 		Utils::printGLError("Cube map creation begin");
 
@@ -18,7 +23,7 @@ namespace yellowEngine
 
 		for (unsigned int i = 0; i < 6; i++)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, width, 0, format, type, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, width, 0, format, type, textures[i]);
 		}
 
 		Utils::printGLError("Cube map creation end");

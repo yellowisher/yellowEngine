@@ -16,9 +16,6 @@ class Building : public Component, public IDamageable
 	END_COMPONENT
 
 public:
-	Building(GameObject* gameObject) : Component(gameObject) {}
-	virtual ~Building() {}
-
 	int getBaseType() override { return Unit::BaseUnit_Building; }
 	virtual void die() override;
 	virtual void* getTransform() override { return transform; }

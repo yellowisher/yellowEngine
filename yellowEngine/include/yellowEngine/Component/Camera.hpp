@@ -13,7 +13,7 @@ namespace yellowEngine
 {
 	class Camera : public Component, public INotifiable
 	{
-		BEGIN_COMPONENT(Camera)
+		BEGIN_COMPONENT_NO_CTOR(Camera)
 			PROPERTY(Camera, bool, _isMainCamera, "Main Camera")
 			PROPERTY(Camera, CameraType, _type, "Type")
 			PROPERTY(Camera, float, _zNear, "Near")

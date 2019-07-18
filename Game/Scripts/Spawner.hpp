@@ -14,9 +14,6 @@ class Spawner : public Component, public IUpdatable
 	END_COMPONENT
 
 public:
-	Spawner(GameObject* gameObject) :Component(gameObject) {};
-	~Spawner() {};
-
 	void start() override;
 	void spawn(Unit::UnitType type);
 
