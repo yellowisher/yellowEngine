@@ -21,6 +21,19 @@ public:
 		static const float rotateSpeedY = 0.016f;
 		static Vector3 rotation = Vector3(0, 0, 0);
 
+		if (InputManager::getMouseButtonDown(0))
+		{
+			Camera* camera = Camera::getMainCamera();
+			Vector2 pos = InputManager::getMousePosition();
+
+
+
+			//auto m = Model::create("./res/Mesh/cube.obj");
+			//auto g = m->instantiate("we");
+			//g->transform->setPosition(point);
+			//g->transform->setScale(0.1f, 0.1f, 0.1f);
+		}
+
 		// translate
 		Vector3 move = Vector3::zero;
 		if (InputManager::getKey(GLFW_KEY_A)) move.x -= 1.0f;
@@ -49,11 +62,16 @@ public:
 
 		// rotate
 		Vector2 rotate = InputManager::getDeltaMousePosition();
-		rotation.x += -rotate.y * rotateSpeedX;
-		rotation.y += -rotate.x *rotateSpeedY;
+		rotation.x += rotate.y * rotateSpeedX;
+		rotation.y += -rotate.x * rotateSpeedY;
 
 		transform->setRotation(rotation);
 	}
+};
+
+class Up : public IUpdatable
+{
+	void update() {}
 };
 
 int main()
@@ -101,28 +119,10 @@ int main()
 
 	////////// Scene
 
-	//SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\Scene0.yes");
+	//SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\newScene.yes");
 	//Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
 	//new GameManager();
-
-	GameObject* g = new GameObject();
-	g->addComponent<Camera>();
-	g->transform->setPosition(0, 0, 3);
-	g->addComponent<CameraScript>();
-
-	GameObject* l = new GameObject();
-	l->addComponent<Light>()->diffuseIntensity = 0.7f;
-	l->transform->setRotation(-30, -30, 0);
-	l->transform->setPosition(0, 1, 1);
-
-	Model* m = Model::create("./res/Mesh/sphere.obj");
-	m->instantiate("1");
-
-	//Material* mt = new Material("w");
-	//mt->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/diffuse.jpg"));
-	//mt->setProperty("u_Material.normal", Texture::create("./res/Mesh/normal.jpg"));
-	//Model* m = Model::create("./res/Mesh/cube.obj");
-	//m->instantiate("qwe", mt);
+	std::vector<Up*> ups;
 
 	////////// Scene end
 

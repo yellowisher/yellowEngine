@@ -8,6 +8,7 @@
 #include "Window_Scene.hpp"
 #include "EditorUtils.hpp"
 #include "Editor.hpp"
+#include "yellowEngine/Rendering/Technique/Technique_Deferred.hpp"
 
 
 namespace yellowEditor
@@ -275,6 +276,21 @@ namespace yellowEditor
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Rendering"))
+			{
+				if (ImGui::Checkbox("Apply Bloom", &Technique_Deferred::applyBloom))
+				{
+				}
+
+				if (ImGui::BeginMenu("Tone mapping"))
+				{
+					if (ImGui::DragFloat("Exposure", &Technique_Deferred::exposure, 0.05f));
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Edit"))
 			{
 				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
@@ -298,6 +314,6 @@ namespace yellowEditor
 		light->transform->setRotation(-45, -45, 0);
 
 		GameObject* cube = new GameObject("Cube");
-		cube->addComponent<MeshRenderer>()->set(Mesh::create("./res/Mesh/cube.obj"));
+		cube->addComponent<MeshRenderer>()->set(Mesh::create("./res/Mesh/cube.obj:cube"));
 	}
 }

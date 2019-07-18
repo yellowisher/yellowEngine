@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="src\Animation\AnimationClip.cpp" />
     <ClCompile Include="src\Animation\Animator.cpp" />
+    <ClCompile Include="src\Collision\Ray.cpp" />
     <ClCompile Include="src\Component\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="src\Collision\BroadPhase.cpp" />
     <ClCompile Include="src\Collision\BroadPhase_BVH.cpp" />
@@ -185,6 +186,7 @@
   <ItemGroup>
     <ClInclude Include="include\yellowEngine\Animation\AnimationClip.hpp" />
     <ClInclude Include="include\yellowEngine\Animation\Animator.hpp" />
+    <ClInclude Include="include\yellowEngine\Collision\Ray.hpp" />
     <ClInclude Include="include\yellowEngine\Component\SkinnedMeshRenderer.hpp" />
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase.hpp" />
     <ClInclude Include="include\yellowEngine\Collision\BroadPhase_BVH.hpp" />

@@ -33,6 +33,8 @@ namespace yellowEngine
 		void renderColliders(Camera* camera);
 		void renderCollider(Camera* camera, Collider* collider);
 
+		std::vector<Collider*>& getColliders() { return _colliders; }
+
 	private:
 		enum PairType
 		{

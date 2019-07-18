@@ -1,4 +1,5 @@
 #include "yellowEngine/Utility/Utils.hpp"
+#include "yellowEngine/System/Display.hpp"
 #include "yellowEngine/System/InputManager.hpp"
 
 
@@ -93,17 +94,17 @@ namespace yellowEngine
 	void InputManager::mouseCursorCallback(float x, float y)
 	{
 		_newMousePosition.x = x;
-		_newMousePosition.y = y;
+		_newMousePosition.y = Display::height - y;
 	}
 
 
 	void InputManager::initMousePosition(float x, float y)
 	{
 		_prevMousePosition.x = x;
-		_prevMousePosition.y = y;
+		_prevMousePosition.y = Display::height - y;
 
 		_newMousePosition.x = x;
-		_newMousePosition.y = y;
+		_newMousePosition.y = Display::height - y;
 	}
 
 

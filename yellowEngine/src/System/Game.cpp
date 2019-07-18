@@ -36,7 +36,6 @@ namespace yellowEngine
 
 	void Game::init()
 	{
-
 		_inputManager = new InputManager();
 		_colliderManager = ColliderManager::create(broadPhaseType);
 
@@ -44,6 +43,12 @@ namespace yellowEngine
 		glEnable(GL_DEPTH_TEST);
 		glCullFace(GL_BACK);
 		glViewport(0, 0, Display::width, Display::height);
+
+		// pre load primitives
+		Model::create("./res/Mesh/cube.obj");
+		Model::create("./res/Mesh/quad.obj");
+		Model::create("./res/Mesh/sphere.obj");
+		Model::create("./res/Mesh/cone.obj");
 	}
 
 
@@ -111,8 +116,12 @@ namespace yellowEngine
 	// we cannot simply change target with last element because changing excution order is not desirable
 	void Game::removeUpdatable(IUpdatable* target)
 	{
+		int count = __instance->_updatables.size();
+		int i = 0;
+
 		for (auto it = __instance->_updatables.begin();; ++it)
 		{
+			i++;
 			if (*it == target)
 			{
 				*it = nullptr;
@@ -136,10 +145,17 @@ namespace yellowEngine
 		{
 			while (updatables[i + trimed] == nullptr)
 			{
-				if (++trimed == removeCount)break;
+				if (++trimed == removeCount) break;
 			}
 
-			updatables[i] = updatables[i + trimed];
+			if (i + trimed == updatables.size())
+			{
+				updatables[i] = updatables[i + trimed - 1];
+			}
+			else
+			{
+				updatables[i] = updatables[i + trimed];
+			}
 		}
 		updatables.resize(updatables.size() - removeCount);
 		removeCount = 0;

@@ -14,10 +14,10 @@ namespace yellowEditor
 	void DrawWindow_Hierarchy()
 	{
 		static Shape shapes[] = {
-			{Mesh::create("./res/Mesh/cube.obj"), "Cube"},
-			{Mesh::create("./res/Mesh/quad.obj"), "Quad"},
-			{Mesh::create("./res/Mesh/sphere.obj"), "Sphere"},
-			{Mesh::create("./res/Mesh/cone.obj"), "Cone"}
+			{Mesh::create("./res/Mesh/cube.obj:cube"), "Cube"},
+			{Mesh::create("./res/Mesh/quad.obj:Cube_Cube.001"), "Quad"},
+			{Mesh::create("./res/Mesh/sphere.obj:Sphere"), "Sphere"},
+			{Mesh::create("./res/Mesh/cone.obj:Cone"), "Cone"}
 		};
 
 		if (ImGui::Begin("Hierarchy", nullptr, Editor::getBaseWindowFlag()))

@@ -201,9 +201,7 @@ namespace yellowEngine
 
 			Vector3 worldClosestPoint = transform->getMatrix() * closestPoint;
 
-			Vector3 scale = other->transform->getMatrix().extractScale();
-			float radius = Utils::max(scale.x, scale.y, scale.z) * otherSphere->radius;
-
+			float radius = otherSphere->getWorldRadius();
 			return (worldCenter - worldClosestPoint).magnitude() < radius * radius;
 		}
 		return false;

@@ -9,6 +9,8 @@
 
 using namespace yellowEngine;
 
+class ArrowShooter;
+
 class Unit : public Component, public IDamageable, public IUpdatable
 {
 	BEGIN_COMPONENT(Unit)
@@ -100,6 +102,7 @@ public:
 	void dieSelf();
 	void* getTransform() { return transform; }
 	int getBaseType() override { return getBaseType(type); }
+	bool isDying() { return _state == State_Dying; }
 
 	UnitType type;
 	int defense;
@@ -127,6 +130,7 @@ private:
 	IDamageable* _attackingTarget;
 	int _frame;
 	std::vector<IDamageable*> _targets;
+	ArrowShooter* _arrowShooter;
 };
 
 #endif

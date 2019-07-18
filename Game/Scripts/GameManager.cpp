@@ -36,5 +36,5 @@ void GameManager::update()
 		}
 	}
 
-	UIRenderer::drawImage(Texture::create("./res/Texture/folder.png"), Vector2(100, 100), Vector2(300, 300));
+	//UIRenderer::drawImage(Texture::create("./res/Texture/folder.png"), Vector2(100, 100), Vector2(300, 300));
 }

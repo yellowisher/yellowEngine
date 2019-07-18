@@ -1,5 +1,6 @@
 #include <vector>
 
+#include "ArrowShooter.hpp"
 #include "Unit.hpp"
 
 using namespace yellowEngine;
@@ -149,7 +150,14 @@ void Unit::update()
 			{
 				if (_animator->getFrame() >= attackFrame)
 				{
-					_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()]);
+					if (_arrowShooter != nullptr)
+					{
+						_arrowShooter->fireArrow((Transform*)_attackingTarget->getTransform());
+					}
+					else
+					{
+						_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()]);
+					}
 					_frame++;
 				}
 			}
@@ -193,9 +201,11 @@ int Unit::modifyDamage(int damage)
 	return Utils::max(damage - defense, 0);
 }
 
+
 void Unit::enterTraceRange(Collider * other)
 {
 }
+
 
 void Unit::exitTraceRange(Collider * other)
 {
@@ -209,6 +219,19 @@ void Unit::initialize(int team)
 	_animator->setSpeed(0.5f);
 	_dead = false;
 	_attackingTarget = nullptr;
+
+	_arrowShooter = nullptr;
+	for (auto child : transform->getChildren())
+	{
+		ArrowShooter* shooter = child->gameObject->getComponent<ArrowShooter>();
+		if (shooter != nullptr)
+		{
+			_arrowShooter = shooter;
+			_arrowShooter->initialize(this);
+			break;
+		}
+	}
+
 	move();
 }
 

@@ -11,6 +11,7 @@
 #include "Collision/BroadPhase_NUL.hpp"
 #include "Collision/BroadPhase_SAP.hpp"
 #include "Collision/ColliderManager.hpp"
+#include "Collision/Ray.hpp"
 
 // component
 #include "Component/BoxCollider.hpp"

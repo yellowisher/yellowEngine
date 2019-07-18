@@ -12,7 +12,7 @@ namespace yellowEngine
 
 	SphereCollider::SphereCollider(GameObject* gameObject) :
 		Collider(gameObject),
-		radius(1.0f)
+		_radius(1.0f)
 	{
 	}
 
@@ -72,15 +72,15 @@ namespace yellowEngine
 			int x = (v + 1) % 3;
 			int y = (v + 2) % 3;
 			Vector3 prevPoint;
-			prevPoint.v[x] = coss[pointsCount - 1] * radius;
-			prevPoint.v[y] = sins[pointsCount - 1] * radius;
+			prevPoint.v[x] = coss[pointsCount - 1] * _radius;
+			prevPoint.v[y] = sins[pointsCount - 1] * _radius;
 			prevPoint = matrix * (prevPoint + _center);
 
 			for (int i = 0; i < pointsCount; i++)
 			{
 				Vector3 point;
-				point.v[x] = coss[i] * radius;
-				point.v[y] = sins[i] * radius;
+				point.v[x] = coss[i] * _radius;
+				point.v[y] = sins[i] * _radius;
 				point = matrix * (point + _center);
 
 				lines.push_back(prevPoint);
@@ -98,15 +98,15 @@ namespace yellowEngine
 		y.normalize();
 
 		Vector3 prevPoint;
-		prevPoint += x * coss[pointsCount - 1] * radius;
-		prevPoint += y * sins[pointsCount - 1] * radius;
+		prevPoint += x * coss[pointsCount - 1] * _radius;
+		prevPoint += y * sins[pointsCount - 1] * _radius;
 		prevPoint = matrix * (prevPoint + _center);
 
 		for (int i = 0; i < pointsCount; i++)
 		{
 			Vector3 point;
-			point += x * coss[i] * radius;
-			point += y * sins[i] * radius;
+			point += x * coss[i] * _radius;
+			point += y * sins[i] * _radius;
 			point = matrix * (point + _center);
 
 			lines.push_back(prevPoint);
@@ -121,8 +121,8 @@ namespace yellowEngine
 	{
 		Vector3 center = getWorldCenter();
 		Vector3 scale = transform->getWorldScale();
-		Vector3 min = center - scale * radius;
-		Vector3 max = center + scale * radius;
+		Vector3 min = center - scale * _radius;
+		Vector3 max = center + scale * _radius;
 
 		return AABB(min, max);
 	}
@@ -136,6 +136,14 @@ namespace yellowEngine
 			_worldCenter = transform->getMatrix() * _center;
 		}
 		return _worldCenter;
+	}
+
+
+	float SphereCollider::getWorldRadius()
+	{
+		Vector3 worldScale = transform->getWorldScale();
+		float maxScale = Utils::max(worldScale.x, worldScale.y, worldScale.z);
+		return _radius * maxScale;
 	}
 
 
@@ -155,7 +163,7 @@ namespace yellowEngine
 		{
 			SphereCollider* otherSphere = (SphereCollider*)other;
 			float dist = (getWorldCenter() - otherSphere->getWorldCenter()).magnitude();
-			float r = otherSphere->radius * otherSphere->transform->getWorldScale().x + radius * transform->getWorldScale().x;
+			float r = otherSphere->getWorldRadius() + getWorldRadius();
 			return  dist < r * r;
 		}
 		return false;

@@ -9,7 +9,7 @@ namespace yellowEngine
 	class SphereCollider : public Collider
 	{
 		BEGIN_COMPONENT(SphereCollider)
-			PROPERTY(SphereCollider, float, radius, "Radius")
+			PROPERTY(SphereCollider, float, _radius, "Radius")
 			PROPERTY(SphereCollider, Vector3, _center, "Center")
 		END_COMPONENT
 
@@ -28,8 +28,8 @@ namespace yellowEngine
 		AABB getBoundingBox() override;
 
 		Vector3 getWorldCenter();
+		float getWorldRadius();
 
-		float radius;
 
 	private:
 		void initSize(const AABB& bounds) override;
@@ -38,6 +38,7 @@ namespace yellowEngine
 		Vector3 _center;
 		Vector3 _worldCenter;
 		bool _centerDirty;
+		float _radius;
 	};
 }
 
