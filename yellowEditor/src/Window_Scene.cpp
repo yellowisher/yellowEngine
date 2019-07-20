@@ -10,6 +10,7 @@ namespace yellowEditor
 	static float rotateSpeedX = 0.035f;
 	static float rotateSpeedY = 0.0175f;
 	float scrollY = 0;
+	static float scrollDelta = 0;
 
 
 	void glfwScrollCallback(GLFWwindow* window, double x, double y)
@@ -76,7 +77,23 @@ namespace yellowEditor
 					move.x = -delta.x;
 					move.y = delta.y;
 				}
-				move.z = (float)scrollY * moveSpeedZ;
+
+				if (scrollY != 0)
+				{
+					scrollDelta = scrollY;
+				}
+				else
+				{
+					if (abs(scrollDelta) < 0.01f)
+					{
+						scrollDelta = 0;
+					}
+					else
+					{
+						scrollDelta *= 0.9f;
+					}
+				}
+				move.z = (float)scrollDelta * moveSpeedZ;
 
 				camera->transform->setRotation(rotation * rotateSpeedX);
 

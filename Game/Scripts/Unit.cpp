@@ -45,7 +45,7 @@ AnimationClip* Unit::getClip(UnitType unit, ClipType clip)
 			}
 		}
 	}
-	
+
 	return clips[unit][clip];
 }
 
@@ -124,12 +124,6 @@ void Unit::exitAttackRange(Collider* other)
 					}
 				}
 			}
-		}
-		else
-		{
-			// there was possible attack target but was not attacking;
-			// should not reach here
-			assert(_state == State_Dying || _state == State_NotInitialized);
 		}
 	}
 }
@@ -219,6 +213,7 @@ void Unit::initialize(int team)
 	_animator->setSpeed(0.5f);
 	_dead = false;
 	_attackingTarget = nullptr;
+	forwardRotation = transform->rotation;
 
 	_arrowShooter = nullptr;
 	for (auto child : transform->getChildren())

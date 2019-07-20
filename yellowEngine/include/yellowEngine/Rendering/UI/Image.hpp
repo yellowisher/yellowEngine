@@ -11,14 +11,16 @@ namespace yellowEngine
 	class Image : public UIRenderer
 	{
 	public:
+		Image(Texture* texture, Vector2 origin);
 		Image(Vector2 position, Vector2 size, Texture* texture);
 		virtual ~Image();
 
 		void setPosition(Vector2 position);
 		Vector2 getPosition() { return _position; };
-
 		void setSize(Vector2 size);
 		Vector2 getSize() { return _size; }
+		void setBound(Vector2 origin);
+		void setBound(Vector2 min, Vector2 max);
 
 		Vector3 color;
 
@@ -26,6 +28,8 @@ namespace yellowEngine
 		virtual void render() override;
 
 	private:
+		void calculateWeightBias(Vector2 screenMin, Vector2 screenMax);
+
 		Texture* _texture;
 		Vector2 _position;
 		Vector2 _size;

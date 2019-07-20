@@ -12,11 +12,11 @@ void TraceRangeChecker::onCreate()
 
 void TraceRangeChecker::onCollisionEnter(Collider* other)
 {
-	_unit->enterTraceRange(other);
+	if (_unit)_unit->enterTraceRange(other);
 }
 
 
 void TraceRangeChecker::onCollisionExit(Collider* other)
 {
-	_unit->exitTraceRange(other);
+	if (_unit)_unit->exitTraceRange(other);
 }

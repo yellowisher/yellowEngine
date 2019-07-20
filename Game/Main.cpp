@@ -22,6 +22,14 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	//GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, name, monitor, NULL);
 	GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
 	if (window == NULL)
 	{
@@ -30,7 +38,7 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -40,9 +48,8 @@ int main()
 
 	// init game
 	Game* game = new Game(width, height);
-	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
-	//game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
-	//game->broadPhaseType = ColliderManager::BroadPhaseType_NUL;
+	//game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
+	game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 
 	game->init();
 
@@ -56,9 +63,8 @@ int main()
 
 	////////// Scene
 
-	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\Scene_Ortho.yes");
+	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\FinalScene.yes");
 	new GameManager();
-
 	Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
 
 	////////// Scene end

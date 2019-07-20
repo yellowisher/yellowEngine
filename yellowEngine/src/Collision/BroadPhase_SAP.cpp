@@ -1,8 +1,7 @@
+#include <iostream>
+
 #include "yellowEngine/Component/GameObject.hpp"
 #include "yellowEngine/Collision/BroadPhase_SAP.hpp"
-
-#include <iostream>
-using namespace std;
 
 
 namespace yellowEngine
@@ -85,7 +84,7 @@ namespace yellowEngine
 		int bi = (int)(proxy->points[X][Min] - &_endPoints[X][0]);
 		int ei = (int)(proxy->points[X][Max] - &_endPoints[X][0]);
 
-		vector<bool> opens = vector<bool>(ei, false);
+		std::vector<bool> opens = std::vector<bool>(ei, false);
 		for (int i = 0; i < bi; i++)
 		{
 			if (_endPoints[X][i].type == Min)opens[i] = true;
@@ -200,8 +199,6 @@ namespace yellowEngine
 
 	void BroadPhase_SAP::addPair(Proxy* pa, Proxy* pb)
 	{
-		cout << "New Potential " << pa->owner->gameObject->getName() << " and " <<
-			pb->owner->gameObject->getName() << endl;
 		_pairs.insert(ColliderPair(pa->owner, pb->owner));
 	}
 
@@ -213,9 +210,6 @@ namespace yellowEngine
 			auto it = _pairs.find(ColliderPair(pa->owner, pb->owner));
 			if (it != _pairs.end())
 			{
-				cout << "Remove Potential " << pa->owner->gameObject->getName() << " and " <<
-					pb->owner->gameObject->getName() << endl;
-
 				_pairs.erase(it);
 			}
 		}
@@ -241,7 +235,6 @@ namespace yellowEngine
 					{
 						if (target.type == Min && endPoints[i].type == Max)
 						{
-							cout << "One Axis isOverlapped" << endl;
 							if (isOverlap(target.proxy, endPoints[i].proxy))
 							{
 								// new potential collision detected

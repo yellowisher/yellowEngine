@@ -7,6 +7,15 @@
 
 namespace yellowEngine
 {
+	Image::Image(Texture* texture, Vector2 origin):
+		_texture(texture)
+	{
+		color = Vector3(1.0f, 1.0f, 1.0f);
+		_dirty = false;
+		setBound(origin);
+	}
+
+
 	Image::Image(Vector2 position, Vector2 size, Texture* texture) :
 		_position(position),
 		_size(size),
@@ -36,6 +45,36 @@ namespace yellowEngine
 	}
 
 
+	void Image::setBound(Vector2 origin)
+	{
+		setBound(origin, origin + Vector2(_texture->width, _texture->height));
+	}
+
+
+	void Image::setBound(Vector2 min, Vector2 max)
+	{
+		_dirty = false;
+		calculateWeightBias(min, max);
+	}
+
+
+	void Image::calculateWeightBias(Vector2 screenMin, Vector2 screenMax)
+	{
+		Vector2 ndcMin = Vector2(
+			2.0f * screenMin.x / Display::width - 1.0f,
+			2.0f * screenMin.y / Display::height - 1.0f);
+
+		Vector2 ndcMax = Vector2(
+			2.0f * screenMax.x / Display::width - 1.0f,
+			2.0f * screenMax.y / Display::height - 1.0f);
+
+		Vector2 ndcDif = ndcMax - ndcMin;
+
+		_weight = (ndcMax - ndcMin) * 0.5f;
+		_bias = (ndcMax + ndcMin) * 0.5f;
+	}
+
+
 	void Image::render()
 	{
 		static Mesh* quad = Mesh::create("./res/Mesh/quad.obj");
@@ -45,22 +84,7 @@ namespace yellowEngine
 		if (_dirty)
 		{
 			_dirty = false;
-
-			Vector2 screenMin = _position - _size / 2.0f;
-			Vector2 screenMax = _position + _size / 2.0f;
-
-			Vector2 ndcMin = Vector2(
-				2.0f * screenMin.x / Display::width - 1.0f,
-				2.0f * screenMin.y / Display::height - 1.0f);
-
-			Vector2 ndcMax = Vector2(
-				2.0f * screenMax.x / Display::width - 1.0f,
-				2.0f * screenMax.y / Display::height - 1.0f);
-
-			Vector2 ndcDif = ndcMax - ndcMin;
-
-			_weight = (ndcMax - ndcMin) * 0.5f;
-			_bias = (ndcMax + ndcMin) * 0.5f;
+			calculateWeightBias(_position - _size / 2.0f, _position + _size / 2.0f);
 		}
 
 		shader->bind();

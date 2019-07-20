@@ -22,9 +22,12 @@ public:
 	int gold;
 	
 private:
-	int selected;
+	Unit::UnitType selectedType;
 	Transform* placing;
 	Image* _images[Unit::Num_Units];
+	Image* goldBar;
+	Vector2 barOrigin;
+	Texture* barTexture;
 	std::vector<Spawner*> _spawners[2];
 };
 

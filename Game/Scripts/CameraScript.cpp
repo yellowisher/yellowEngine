@@ -54,8 +54,7 @@ void CameraScript::update()
 		scrollDelta *= 0.92f;
 		if (Utils::abs(scrollDelta) < minScroll) scrollDelta = 0;
 	}
-	_camera->setZoom(_camera->getZoom() + scrollDelta * scrollSpeed * 500);
-	//movement += transform->getForward() * scrollDelta * scrollSpeed;
+	_camera->setZoom(_camera->getZoom() + scrollDelta * scrollSpeed * 10);
 
 	transform->translate(movement);
 }

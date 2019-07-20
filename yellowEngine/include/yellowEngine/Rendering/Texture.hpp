@@ -13,6 +13,7 @@ namespace yellowEngine
 	{
 		friend class FrameBuffer;
 	public:
+		static Texture* create(const char* path, bool noFlip);
 		static Texture* create(const char* path, int wrap = GL_REPEAT, int filter = GL_NEAREST, bool noFlip = false);
 
 		void bind();

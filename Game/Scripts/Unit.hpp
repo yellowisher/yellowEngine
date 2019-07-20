@@ -14,35 +14,35 @@ class ArrowShooter;
 class Unit : public Component, public IDamageable, public IUpdatable
 {
 	BEGIN_COMPONENT(Unit)
-		PROPERTY(Unit, UnitType, type,						"Type")
-		PROPERTY(Unit, int,		 hp,						"HP")
-		PROPERTY(Unit, int,		 defense,					"Defense")
-		PROPERTY(Unit, float,	 moveSpeed,					"Move Speed")
-		PROPERTY(Unit, int,		 damage[BaseUnit_Infantry],	"Infantry Damage")
-		PROPERTY(Unit, int,		 damage[BaseUnit_Cavalry],	"Cavalry Damage")
-		PROPERTY(Unit, int,		 damage[BaseUnit_Building],	"Building Damage")
-		PROPERTY(Unit, int,		 attackDelay,				"Attack Delay")
-		PROPERTY(Unit, ClipType, moveClip,					"Move Clip")
-		PROPERTY(Unit, ClipType, deathClip,					"Death Clip")
+		PROPERTY(Unit, UnitType, type, "Type")
+		PROPERTY(Unit, int, hp, "HP")
+		PROPERTY(Unit, int, defense, "Defense")
+		PROPERTY(Unit, float, moveSpeed, "Move Speed")
+		PROPERTY(Unit, int, damage[BaseUnit_Infantry], "Infantry Damage")
+		PROPERTY(Unit, int, damage[BaseUnit_Cavalry], "Cavalry Damage")
+		PROPERTY(Unit, int, damage[BaseUnit_Building], "Building Damage")
+		PROPERTY(Unit, int, attackDelay, "Attack Delay")
+		PROPERTY(Unit, ClipType, moveClip, "Move Clip")
+		PROPERTY(Unit, ClipType, deathClip, "Death Clip")
 
 		BEGIN_ENUM(Unit, UnitType)
-			ENUM("Sword")
-			ENUM("Separ")
-			ENUM("Bow")
-			ENUM("Crossbow")
-			ENUM("Armor")
-			ENUM("Cavalry_Hammer")
-			ENUM("Cavalry_Sword")
-			ENUM("Cavalry_Lance")
+		ENUM("Sword")
+		ENUM("Separ")
+		ENUM("Bow")
+		ENUM("Crossbow")
+		ENUM("Armor")
+		ENUM("Cavalry_Hammer")
+		ENUM("Cavalry_Sword")
+		ENUM("Cavalry_Lance")
 		END_ENUM
 
 		BEGIN_ENUM(Unit, ClipType)
-			ENUM("Idle")
-			ENUM("Walk")
-			ENUM("Run")
-			ENUM("Attack")
-			ENUM("Death_A")
-			ENUM("Death_B")
+		ENUM("Idle")
+		ENUM("Walk")
+		ENUM("Run")
+		ENUM("Attack")
+		ENUM("Death_A")
+		ENUM("Death_B")
 		END_ENUM
 	END_COMPONENT
 
@@ -83,7 +83,7 @@ public:
 	static bool isInfantry(int type) { return type < Unit_Cavalry_Start; }
 	static BaseUnitType getBaseType(UnitType type);
 	static AnimationClip* getClip(UnitType unit, ClipType clip);
-	
+
 	void onCreate() override;
 	void update() override;
 	void die() override;
@@ -94,7 +94,7 @@ public:
 
 	void enterAttackRange(Collider* other);
 	void exitAttackRange(Collider* other);
-	
+
 	void initialize(int team);
 	void dieSelf();
 	void* getTransform() { return transform; }
@@ -126,6 +126,7 @@ private:
 	Animator* _animator;
 	IDamageable* _attackingTarget;
 	int _frame;
+	Quaternion forwardRotation;
 	std::vector<IDamageable*> _targets;
 	ArrowShooter* _arrowShooter;
 };

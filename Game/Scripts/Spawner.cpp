@@ -5,9 +5,32 @@ COMPONENT_IMPL(Spawner)
 
 GameObject* Spawner::units[Unit::Num_Units] = { nullptr, };
 
+
+GameObject* Spawner::spawn(Unit::UnitType type, Vector3 position, Quaternion rotation, int team)
+{
+	GameObject* newObject = units[type]->clone();
+	newObject->transform->setRotation(rotation);
+
+	if (team != 2)
+	{
+		Unit* unit = newObject->getComponent<Unit>();
+		unit->initialize(team);
+	}
+	else
+	{
+		newObject->removeComponent(newObject->getComponent<Unit>());
+		delete(newObject->transform->findChild("Attack Range")->gameObject);
+	}
+	setMaterial(newObject->transform, team);
+
+	newObject->transform->setPosition(position);
+	return newObject;
+}
+
+
 Material* Spawner::getMaterial(int team)
 {
-	static Material* materials[2] = { nullptr };
+	static Material* materials[3] = { nullptr };
 	if (materials[0] == nullptr)
 	{
 		materials[0] = new Material("blue team");
@@ -15,6 +38,9 @@ Material* Spawner::getMaterial(int team)
 		
 		materials[1] = new Material("red team");
 		materials[1]->setProperty("u_Material.diffuse", Texture::create("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Model\\units\\materials\\TT_RTS_Units_red.tga"));
+
+		materials[2] = new Material("placing material");
+		materials[2]->setProperty("u_Material.diffuseColor", Vector3(0.2f, 1.0f, 1.0f));
 	}
 
 	return materials[team];
@@ -36,18 +62,11 @@ void Spawner::start()
 
 void Spawner::spawn(Unit::UnitType type)
 {
-	GameObject* newObject = units[type]->clone();
-
-	Unit* unit = newObject->getComponent<Unit>();
-	unit->initialize(team);
-
-	newObject->transform->setPosition(transform->getWorldPosition());
-	newObject->transform->setRotation(transform->getWorldRotation());
-	setMaterial(unit->transform);
+	spawn(type, transform->getWorldPosition(), transform->getWorldRotation(), team);
 }
 
 
-void Spawner::setMaterial(Transform* target)
+void Spawner::setMaterial(Transform* target, int team)
 {
 	auto meshRenderer = target->gameObject->getComponent<MeshRenderer>();
 	if (meshRenderer != nullptr)
@@ -57,6 +76,6 @@ void Spawner::setMaterial(Transform* target)
 
 	for (auto child : target->getChildren())
 	{
-		setMaterial(child);
+		setMaterial(child, team);
 	}
 }

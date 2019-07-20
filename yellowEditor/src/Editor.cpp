@@ -48,9 +48,8 @@ namespace yellowEditor
 		// setting ImGui style
 		ImGui::StyleColorsDark();
 		ImGui::GetStyle().WindowRounding = 0.0f;
-		_baseWindowFlag = ImGuiWindowFlags_NoMove;
-		//_baseWindowFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-		_baseWindowFlag = 0;
+		//_baseWindowFlag = ImGuiWindowFlags_NoMove;
+		_baseWindowFlag = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 
 		ImGui_ImplGlfw_InitForOpenGL(editorWindow.handle, true);
 		ImGui_ImplOpenGL3_Init(glsl_version);
@@ -141,7 +140,7 @@ namespace yellowEditor
 		{
 			gameObject = new GameObject(editorCameraName);
 			__instance->_editorCamera = gameObject->addComponent<Camera>();
-			__instance->_editorCamera->transform->setPosition(0, 0, 5);
+			__instance->_editorCamera->transform->setPosition(0, 2, 5);
 		}
 		else
 		{
@@ -267,7 +266,7 @@ namespace yellowEditor
 				if (ImGui::Checkbox("Draw Colliders", &Editor::drawAllColliders))
 				{
 				}
-				if (ImGui::Checkbox("Draw G Buffer", &Editor::drawGBuffer))
+				if (ImGui::Checkbox("Draw G Buffer", &Technique_Deferred::drawGBuffer))
 				{
 				}
 				if (ImGui::Checkbox("Show editor Camera", &Editor::showEditorCamera))
@@ -310,10 +309,11 @@ namespace yellowEditor
 	{
 		GameObject* light = new GameObject("Light");
 		light->addComponent<Light>();
-		light->transform->setPosition(0, 3, 3);
+		light->transform->setPosition(0, 10, 3);
 		light->transform->setRotation(-45, -45, 0);
 
 		GameObject* cube = new GameObject("Cube");
 		cube->addComponent<MeshRenderer>()->set(Mesh::create("./res/Mesh/cube.obj:cube"));
+		cube->transform->setScale(100.0f, 1.0f, 100.0f);
 	}
 }

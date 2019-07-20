@@ -42,6 +42,12 @@ namespace yellowEngine
 	}
 
 
+	Texture* Texture::create(const char* path, bool noFlip)
+	{
+		return create(path, GL_REPEAT, GL_NEAREST, noFlip);
+	}
+
+
 	Texture* Texture::create(const char* path, int wrap, int filter, bool noFlip)
 	{
 		auto it = __textureCache.find(path);

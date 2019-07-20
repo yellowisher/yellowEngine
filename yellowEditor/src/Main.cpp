@@ -14,19 +14,6 @@ GLubyte* gameData;
 GLubyte* gameDataFlipped;
 GLuint sceneTexture;
 
-class Test : public Component, public IUpdatable
-{
-public:
-	Test(GameObject* gameObject) :Component(gameObject) {}
-
-	Animator* animator;
-
-	void onCreate()
-	{
-		animator = gameObject->getComponent<Animator>();
-	}
-};
-
 int main()
 {
 	if (!glfwInit()) return 1;
@@ -62,7 +49,7 @@ int main()
 	glfwHideWindow(gameWindow.handle);
 
 	Game* game = new Game(gameWindow.width, gameWindow.height);
-	game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
+	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
 	game->init();
 
 	gameData        = new GLubyte[gameWindow.width * gameWindow.height * 3];
@@ -75,13 +62,6 @@ int main()
 
 	glfwMakeContextCurrent(gameWindow.handle);
 	game->start();
-
-	Material* mt = new Material("w");
-	mt->setProperty("u_Material.diffuse", Texture::create("./res/Mesh/test/Texrures/BASML_Base_Albedo.png"));
-	mt->setProperty("u_Material.specular", Texture::create("./res/Mesh/test/Texrures/BASML_Base_Spec.png"));
-	mt->setProperty("u_Material.normal", Texture::create("./res/Mesh/test/Texrures/Untitled-1.png"));
-	Model* m = Model::create("./res/Mesh/test/BASML_Base_Corridor_Transition_Wall.FBX");
-	m->instantiate("qwe", mt);
 
 	while (!glfwWindowShouldClose(editorWindow.handle))
 	{

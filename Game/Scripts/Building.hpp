@@ -8,7 +8,7 @@
 
 using namespace yellowEngine;
 
-class Building : public Component, public IDamageable
+class Building : public Component, public IDamageable, public IUpdatable
 {
 	BEGIN_COMPONENT(Building)
 		PROPERTY(Building, int, hp, "HP")
@@ -19,9 +19,12 @@ public:
 	int getBaseType() override { return Unit::BaseUnit_Building; }
 	virtual void die() override;
 	virtual void* getTransform() override { return transform; }
+	void start() override;
 
 private:
-
+	bool _dead;
+	Transform* _castle;
+	Transform* _ruin;
 };
 
 #endif

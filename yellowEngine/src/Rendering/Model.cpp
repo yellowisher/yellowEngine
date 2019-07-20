@@ -548,6 +548,7 @@ namespace yellowEngine
 		{
 			aMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
 			texturePath = _directory + texturePath.C_Str();
+			//texturePath = texturePath.C_Str();
 
 			auto texture = Texture::create(texturePath.C_Str());
 			if (texture)
@@ -560,6 +561,7 @@ namespace yellowEngine
 		{
 			aMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texturePath);
 			texturePath = _directory + texturePath.C_Str();
+			//texturePath = texturePath.C_Str();
 
 			auto texture = Texture::create(texturePath.C_Str());
 			if (texture)
@@ -572,6 +574,7 @@ namespace yellowEngine
 		{
 			aMaterial->GetTexture(aiTextureType_NORMALS, 0, &texturePath);
 			texturePath = _directory + texturePath.C_Str();
+			//texturePath = texturePath.C_Str();
 
 			auto texture = Texture::create(texturePath.C_Str());
 			if (texture)

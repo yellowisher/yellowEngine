@@ -16,6 +16,7 @@ namespace yellowEngine
 	public:
 		static bool applyBloom;
 		static float exposure;
+		static bool drawGBuffer;
 
 		Technique_Deferred();
 		~Technique_Deferred();

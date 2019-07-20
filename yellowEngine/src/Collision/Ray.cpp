@@ -11,6 +11,23 @@ namespace yellowEngine
 {
 	Ray Ray::screenPointToRay(Camera* camera, int sx, int sy)
 	{
+		// perspective
+		//Vector4 ndc = Vector4(
+		//	2.0f * (float)sx / (float)Display::width - 1.0f,
+		//	2.0f * (float)sy / (float)Display::height - 1.0f,
+		//	-1.0f,
+		//	1.0f
+		//);
+
+		//Vector4 view = ~camera->getPMatrix() * ndc;
+		//view.z = -1.0f;
+		//view.w = 0.0f;
+
+		//Vector3 dir = ~camera->getVMatrix() * view;
+		//dir.normalize();
+
+		//return Ray(camera->transform->getWorldPosition(), dir);
+
 		Vector4 ndc = Vector4(
 			2.0f * (float)sx / (float)Display::width - 1.0f,
 			2.0f * (float)sy / (float)Display::height - 1.0f,
@@ -19,13 +36,10 @@ namespace yellowEngine
 		);
 
 		Vector4 view = ~camera->getPMatrix() * ndc;
-		view.z = -1.0f;
-		view.w = 0.0f;
 
-		Vector3 dir = ~camera->getVMatrix() * view;
-		dir.normalize();
+		Vector3 world = ~camera->getVMatrix() * view;
 
-		return Ray(camera->transform->getWorldPosition(), dir);
+		return Ray(world, camera->transform->getForward());
 	}
 
 

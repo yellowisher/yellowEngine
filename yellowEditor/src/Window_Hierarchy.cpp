@@ -54,6 +54,8 @@ namespace yellowEditor
 					if (
 						_strcmpi(ext, "obj") == 0 ||
 						_strcmpi(ext, "fbx") == 0 ||
+						_strcmpi(ext, "3ds") == 0 ||
+						_strcmpi(ext, "max") == 0 ||
 						_strcmpi(ext, "blend") == 0
 						)
 					{

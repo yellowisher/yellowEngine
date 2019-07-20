@@ -530,20 +530,28 @@ namespace yellowEditor
 
 	static void AddKeyFrame(std::vector< AnimationClip::KeyFrame>& keyFrames, AnimationClip::KeyFrame keyFrame)
 	{
-		auto it = keyFrames.begin();
-		for (; it != keyFrames.end(); ++it)
+		int i = 0;
+		for (; i < keyFrames.size(); i++)
 		{
-			if (it->frame == keyFrame.frame)
+			if (keyFrames[i].frame == keyFrame.frame)
 			{
-				it->value.vector3 = keyFrame.value.vector3;
+				keyFrames[i].value = keyFrame.value;
+				if (i == keyFrames.size() - 2)
+				{
+					keyFrames[keyFrames.size() - 1].value = keyFrame.value;
+				}
 				return;
 			}
-			if (it->frame > keyFrame.frame)
+			if (keyFrames[i].frame > keyFrame.frame)
 			{
 				break;
 			}
 		}
-		keyFrames.insert(it, keyFrame);
+		if (i == keyFrames.size() - 1)
+		{
+			keyFrames[keyFrames.size() - 1].value = keyFrame.value;
+		}
+		keyFrames.insert(keyFrames.begin() + i, keyFrame);
 	}
 
 

@@ -24,6 +24,7 @@ namespace yellowEngine
 
 	bool Technique_Deferred::applyBloom = false;
 	float Technique_Deferred::exposure = 1.0;
+	bool Technique_Deferred::drawGBuffer = false;
 
 	Technique_Deferred::Technique_Deferred()
 	{
@@ -111,6 +112,32 @@ namespace yellowEngine
 		}
 
 		_geometryBuffer.unbind();
+
+		if (drawGBuffer)
+		{
+			_geometryBuffer.bindForReading();
+			_geometryBuffer.setReadBuffer(0);
+			glBlitFramebuffer(0, 0, Display::width, Display::height,
+							  0, 0, Display::width / 2, Display::height / 2, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+			_geometryBuffer.setReadBuffer(1);
+			glBlitFramebuffer(0, 0, Display::width, Display::height,
+							  Display::width / 2, 0, Display::width, Display::height / 2, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+			_geometryBuffer.setReadBuffer(2);
+			glBlitFramebuffer(0, 0, Display::width, Display::height,
+							  0, Display::height / 2, Display::width / 2, Display::height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+			_hdrBuffer.bindForReading();
+			_hdrBuffer.setReadBuffer(HDR_Scene);
+			glBlitFramebuffer(0, 0, Display::width, Display::height,
+							  Display::width / 2, Display::height / 2, Display::width, Display::height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			
+			FrameBuffer::unbind();
+
+			glDepthMask(GL_TRUE);
+			return;
+		}
 
 		//if (!applyBloom)
 		//{
