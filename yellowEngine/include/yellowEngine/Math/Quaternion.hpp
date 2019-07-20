@@ -14,6 +14,7 @@ namespace yellowEngine
 		static const Quaternion zero;
 
 		static Quaternion lerp(Quaternion q0, Quaternion q1, float delta);
+		static Quaternion axisAngle(Vector3 axis, float rad);
 
 		float x;
 		float y;

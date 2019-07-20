@@ -12,8 +12,10 @@ using namespace yellowEngine;
 
 int main()
 {
-	int width = 1440;
-	int height = 900;
+	//int width = 1440;
+	//int height = 900;
+	int width = 1920;
+	int height = 1080;
 	const char* name = "yellowEngine";
 
 	// init glfw, glad
@@ -29,8 +31,8 @@ int main()
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	//GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, name, monitor, NULL);
-	GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, name, monitor, NULL);
+	//GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -38,7 +40,7 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -63,7 +65,7 @@ int main()
 
 	////////// Scene
 
-	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\FinalScene.yes");
+	SceneManager::loadScene("C:\\Users\\yApy\\Desktop\\Game\\Asset\\Scene\\TraceScene.yes");
 	new GameManager();
 	Camera::getMainCamera()->gameObject->addComponent<CameraScript>();
 

@@ -136,12 +136,38 @@ void Unit::update()
 	switch (_state)
 	{
 		case State_Moving:
+		{
+			transform->setRotation(Quaternion::lerp(transform->getWorldRotation(), forwardRotation, 0.3));
 			transform->translate(transform->getForward() * -moveSpeed);
 			break;
+		}
 		case State_Attacking:
+		{
+			Transform* targetTransform = (Transform*)_attackingTarget->getTransform();
+			Vector3 dir = targetTransform->getWorldPosition() - transform->getWorldPosition();
+
+			float angle = atan2f(dir.x, dir.z);
+
+			Quaternion targetRotation = Quaternion::axisAngle(Vector3::up, angle);
+			transform->setRotation(Quaternion::lerp(transform->rotation, targetRotation, 0.3));
+
+			//Vector3 fwd = transform->getForward();
+			//Transform* targetTransform = (Transform*)_attackingTarget->getTransform();
+			//Vector3 dir = targetTransform->getWorldPosition() - transform->getWorldPosition();
+			//dir.normalize();
+			//Vector3 a = Vector3::cross(fwd, dir);
+
+			//Quaternion targetRotation = Quaternion(a.x, a.y, a.z, fwd * dir);
+			//targetRotation = Quaternion::lerp(Quaternion::identity, targetRotation, 0.3f);
+			//targetRotation.normalize();
+			//transform->rotate(targetRotation);
+		}
+
+
 			// (_frame == 0) means didn't attack in this attack animation
 			if (_frame == 0)
 			{
+
 				if (_animator->getFrame() >= attackFrame)
 				{
 					if (_arrowShooter != nullptr)

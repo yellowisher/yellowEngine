@@ -221,4 +221,16 @@ namespace yellowEngine
 		result.w = delta_ * q0.w + delta * q1.w;
 		return result;
 	}
+
+
+	Quaternion Quaternion::axisAngle(Vector3 axis, float rad)
+	{
+		float factor = sinf(rad / 2.0f);
+		axis = axis * factor;
+		float w = cosf(rad / 2.0f);
+
+		Quaternion result = Quaternion(axis.x, axis.y, axis.z, w);;
+		result.normalize();
+		return result;
+	}
 }

@@ -11,7 +11,7 @@ GameObject* Spawner::spawn(Unit::UnitType type, Vector3 position, Quaternion rot
 	GameObject* newObject = units[type]->clone();
 	newObject->transform->setRotation(rotation);
 
-	if (team != 2)
+	if (team < 2)
 	{
 		Unit* unit = newObject->getComponent<Unit>();
 		unit->initialize(team);
@@ -30,7 +30,7 @@ GameObject* Spawner::spawn(Unit::UnitType type, Vector3 position, Quaternion rot
 
 Material* Spawner::getMaterial(int team)
 {
-	static Material* materials[3] = { nullptr };
+	static Material* materials[4] = { nullptr };
 	if (materials[0] == nullptr)
 	{
 		materials[0] = new Material("blue team");
@@ -41,6 +41,9 @@ Material* Spawner::getMaterial(int team)
 
 		materials[2] = new Material("placing material");
 		materials[2]->setProperty("u_Material.diffuseColor", Vector3(0.2f, 1.0f, 1.0f));
+
+		materials[3] = new Material("not placing material");
+		materials[3]->setProperty("u_Material.diffuseColor", Vector3(1.0f, 0.2f, 0.2f));
 	}
 
 	return materials[team];

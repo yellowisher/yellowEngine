@@ -71,6 +71,7 @@ static Vector3 getPlacePosition()
 
 void GameManager::update()
 {
+	static int poss = 2;
 	static int maxGold = 1000;
 
 	static int costs[Unit::Num_Units] = {
@@ -143,6 +144,16 @@ void GameManager::update()
 			gold -= costs[selectedType];
 			Spawner::spawn(selectedType, point, Quaternion(Vector3(0, 90.0f, 0)), 0);
 		}
+		else
+		{
+			int possible = (point.x > -4 && point.x <= 3) ? 2 : 3;
+			if (possible != poss)
+			{
+				delete(placing->gameObject);
+				poss = possible;
+				placing = Spawner::spawn(selectedType, getPlacePosition(), Quaternion(Vector3(0, 90.0f, 0)), possible)->transform;
+			}
+		}
 
 	}
 
@@ -188,8 +199,9 @@ void GameManager::update()
 
 		if (!same)
 		{
+			Vector3 point = getPlacePosition();
 			selectedType = (Unit::UnitType)pressed;
-			placing = Spawner::spawn(selectedType, getPlacePosition(), Quaternion(Vector3(0, 90.0f, 0)))->transform;
+			placing = Spawner::spawn(selectedType, getPlacePosition(), Quaternion(Vector3(0, 90.0f, 0)), poss)->transform;
 		}
 	}
 }
