@@ -58,6 +58,8 @@ void Unit::onCreate()
 
 void Unit::enterAttackRange(Collider* other)
 {
+	if (_state == State_NotInitialized) return;
+
 	IDamageable* damageable = other->gameObject->getComponent<IDamageable>();
 	if (damageable != nullptr)
 	{
@@ -67,7 +69,7 @@ void Unit::enterAttackRange(Collider* other)
 		{
 			_targets.push_back(damageable);
 		}
-		else if (_state == State_Moving)
+		else if (_state == State_Moving || _state == State_Tracking)
 		{
 			attack(damageable);
 		}
@@ -77,6 +79,8 @@ void Unit::enterAttackRange(Collider* other)
 
 void Unit::exitAttackRange(Collider* other)
 {
+	if (_state == State_NotInitialized) return;
+
 	IDamageable* damageable = other->gameObject->getComponent<IDamageable>();
 	if (damageable != nullptr)
 	{
@@ -89,7 +93,7 @@ void Unit::exitAttackRange(Collider* other)
 				// if attacking target is gone -> find new target
 				if (_targets.empty())
 				{
-					move();
+					findTrack();
 				}
 				else
 				{
@@ -112,19 +116,86 @@ void Unit::exitAttackRange(Collider* other)
 					_targets.erase(targetIt);
 				}
 			}
-			else
+			// if attacking other -> erase from target list
+			for (auto it = _targets.begin(); it != _targets.end(); ++it)
 			{
-				// if attacking other -> erase from target list
-				for (auto it = _targets.begin(); it != _targets.end(); ++it)
+				if (*it == damageable)
 				{
-					if (*it == damageable)
-					{
-						_targets.erase(it);
-						return;
-					}
+					_targets.erase(it);
+					return;
 				}
 			}
+
+			auto it = _trackings.find(damageable);
+			if (it != _trackings.end())
+			{
+				_trackings.erase(it);
+			}
 		}
+	}
+}
+
+
+void Unit::enterTraceRange(Collider* other)
+{
+	if (_state == State_NotInitialized) return;
+
+	IDamageable* damageable = other->gameObject->getComponent<IDamageable>();
+	if (damageable != nullptr)
+	{
+		if (damageable->team == team) return;
+
+		if (_state == State_Moving)
+		{
+			track(damageable);
+		}
+		else if (_state != State_Dying)
+		{
+			_trackings.insert(damageable);
+		}
+	}
+}
+
+
+void Unit::exitTraceRange(Collider* other)
+{
+	if (_state == State_NotInitialized) return;
+
+	IDamageable* damageable = other->gameObject->getComponent<IDamageable>();
+	if (damageable != nullptr)
+	{
+		if (damageable->team == team) return;
+
+		if (_state == State_Tracking)
+		{
+			if (_trackingTarget == damageable)
+			{
+				findTrack();
+			}
+
+			auto it = _trackings.find(damageable);
+			if (it != _trackings.end())
+			{
+				_trackings.erase(it);
+			}
+		}
+		else if (_state == State_Attacking)
+		{
+			auto it = _trackings.find(damageable);
+			if (it != _trackings.end())
+			{
+				_trackings.erase(it);
+			}
+		}
+	}
+}
+
+
+void Unit::onAttacked(IDamageable* attacker)
+{
+	if (_state == State_Moving && attacker)
+	{
+		track(attacker);
 	}
 }
 
@@ -141,6 +212,20 @@ void Unit::update()
 			transform->translate(transform->getForward() * -moveSpeed);
 			break;
 		}
+		case State_Tracking:
+		{
+			Transform* targetTransform = (Transform*)_trackingTarget->getTransform();
+			Vector3 dir = targetTransform->getWorldPosition() - transform->getWorldPosition();
+
+			float angle = atan2f(dir.x, dir.z);
+
+			Quaternion targetRotation = Quaternion::axisAngle(Vector3::up, angle);
+			transform->setRotation(Quaternion::lerp(transform->rotation, targetRotation, 0.3));
+
+			transform->translate(transform->getForward() * -moveSpeed);
+		}
+		break;
+
 		case State_Attacking:
 		{
 			Transform* targetTransform = (Transform*)_attackingTarget->getTransform();
@@ -150,17 +235,6 @@ void Unit::update()
 
 			Quaternion targetRotation = Quaternion::axisAngle(Vector3::up, angle);
 			transform->setRotation(Quaternion::lerp(transform->rotation, targetRotation, 0.3));
-
-			//Vector3 fwd = transform->getForward();
-			//Transform* targetTransform = (Transform*)_attackingTarget->getTransform();
-			//Vector3 dir = targetTransform->getWorldPosition() - transform->getWorldPosition();
-			//dir.normalize();
-			//Vector3 a = Vector3::cross(fwd, dir);
-
-			//Quaternion targetRotation = Quaternion(a.x, a.y, a.z, fwd * dir);
-			//targetRotation = Quaternion::lerp(Quaternion::identity, targetRotation, 0.3f);
-			//targetRotation.normalize();
-			//transform->rotate(targetRotation);
 		}
 
 
@@ -176,7 +250,7 @@ void Unit::update()
 					}
 					else
 					{
-						_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()]);
+						_attackingTarget->takeDamage(damage[_attackingTarget->getBaseType()], this);
 					}
 					_frame++;
 				}
@@ -222,16 +296,6 @@ int Unit::modifyDamage(int damage)
 }
 
 
-void Unit::enterTraceRange(Collider * other)
-{
-}
-
-
-void Unit::exitTraceRange(Collider * other)
-{
-}
-
-
 void Unit::initialize(int team)
 {
 	this->team = team;
@@ -270,6 +334,43 @@ void Unit::attack(IDamageable* target)
 	_animator->play(getClip(type, Clip_Attack));
 	_attackingTarget = target;
 	_frame = 0;
+}
+
+
+void Unit::track(IDamageable* target)
+{
+	if (_state != State_Moving || _state != State_Tracking)
+	{
+		_animator->play(getClip(type, moveClip));
+	}
+	_state = State_Tracking;
+	_trackingTarget = target;
+}
+
+
+void Unit::findTrack()
+{
+	if (_trackings.empty())
+	{
+		move();
+	}
+	else
+	{
+		IDamageable* t = nullptr;
+		float mag = 1000000.0f;
+
+		for (auto tracking : _trackings)
+		{
+			float m = (((Transform*)tracking->getTransform())->position - transform->position).magnitude();
+			if (m < mag)
+			{
+				mag = m;
+				t = tracking;
+			}
+		}
+
+		track(t);
+	}
 }
 
 

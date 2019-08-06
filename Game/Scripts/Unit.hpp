@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <yellowEngine/yellowEngine.hpp>
 
 #include "IDamageable.hpp"
@@ -94,6 +95,7 @@ public:
 
 	void enterAttackRange(Collider* other);
 	void exitAttackRange(Collider* other);
+	virtual void onAttacked(IDamageable	* attacker) override;
 
 	void initialize(int team);
 	void dieSelf();
@@ -114,20 +116,25 @@ private:
 	{
 		State_NotInitialized,
 		State_Moving,
+		State_Tracking,
 		State_Attacking,
 		State_Dying
 	};
 
 	void move();
 	void attack(IDamageable* target);
+	void track(IDamageable* target);
+	void findTrack();
 
 	bool _dead;
 	State _state;
 	Animator* _animator;
 	IDamageable* _attackingTarget;
+	IDamageable* _trackingTarget;
 	int _frame;
 	Quaternion forwardRotation;
 	std::vector<IDamageable*> _targets;
+	std::set<IDamageable*> _trackings;
 	ArrowShooter* _arrowShooter;
 };
 

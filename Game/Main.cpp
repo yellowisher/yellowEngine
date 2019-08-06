@@ -50,8 +50,8 @@ int main()
 
 	// init game
 	Game* game = new Game(width, height);
-	//game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
-	game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
+	game->broadPhaseType = ColliderManager::BroadPhaseType_BVH;
+	//game->broadPhaseType = ColliderManager::BroadPhaseType_SAP;
 
 	game->init();
 

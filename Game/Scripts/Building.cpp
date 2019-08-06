@@ -1,3 +1,4 @@
+#include "CameraScript.hpp"
 #include "Building.hpp"
 
 using namespace yellowEngine;
@@ -22,7 +23,14 @@ void Building::die()
 	if (!_dead)
 	{
 		_dead = true;
-		delete(_castle->gameObject);
-		_ruin->gameObject->setActive(true);
+		if (_castle)
+		{
+			CameraScript::win();
+			delete(_castle->gameObject);
+		}
+		if (_ruin)
+		{
+			_ruin->gameObject->setActive(true);
+		}
 	}
 }

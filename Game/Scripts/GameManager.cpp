@@ -136,7 +136,16 @@ void GameManager::update()
 	{
 		Vector3 point = getPlacePosition();
 		placing->setPosition(point);
-		if (InputManager::getMouseButtonDown(0))
+
+		int possible = (point.x > -4 && point.x <= 5) ? 2 : 3;
+		if (possible != poss)
+		{
+			delete(placing->gameObject);
+			poss = possible;
+			placing = Spawner::spawn(selectedType, getPlacePosition(), Quaternion(Vector3(0, 90.0f, 0)), possible)->transform;
+		}
+
+		if (InputManager::getMouseButtonDown(0) && poss == 2)
 		{
 			// place real unit
 			delete(placing->gameObject);
@@ -144,21 +153,15 @@ void GameManager::update()
 			gold -= costs[selectedType];
 			Spawner::spawn(selectedType, point, Quaternion(Vector3(0, 90.0f, 0)), 0);
 		}
-		else
-		{
-			int possible = (point.x > -4 && point.x <= 3) ? 2 : 3;
-			if (possible != poss)
-			{
-				delete(placing->gameObject);
-				poss = possible;
-				placing = Spawner::spawn(selectedType, getPlacePosition(), Quaternion(Vector3(0, 90.0f, 0)), possible)->transform;
-			}
-		}
-
 	}
 
 	int pressed = -1;
-	if (++gold > maxGold) gold = maxGold;
+	static int goldAdd = 1;
+	static int fff = 0;
+
+	if (++fff == 1800)goldAdd++;
+
+	if ((gold += goldAdd) > maxGold) gold = maxGold;
 	for (auto i = 0; i < Unit::Num_Units; i++)
 	{
 		if (placing && i == selectedType)

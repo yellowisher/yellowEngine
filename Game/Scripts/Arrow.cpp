@@ -1,9 +1,10 @@
 #include "Arrow.hpp"
 
 
-void Arrow::initialize(Transform* target, int* damages)
+void Arrow::initialize(Transform* target, int* damages, Unit* owner)
 {
 	_target = target;
+	_owner = owner;
 	_targetUnit = target->gameObject->getComponent<Unit>();
 	for (int i = 0; i < Unit::Num_BaseUnits; i++)
 	{
@@ -51,6 +52,10 @@ void Arrow::update()
 {
 	static float moveSpeed = 0.24f;
 
+	if (_owner != nullptr && _owner->isDying())
+	{
+		_owner = nullptr;
+	}
 	Vector3 worldPosition = getArrowPosition();
 
 	Vector3 direction = _lastTarget - worldPosition;
@@ -65,7 +70,7 @@ void Arrow::update()
 		if (_target != nullptr)
 		{
 			auto dmgbl = _target->gameObject->getComponent<IDamageable>();
-			dmgbl->takeDamage(_damages[dmgbl->getBaseType()]);
+			dmgbl->takeDamage(_damages[dmgbl->getBaseType()], _owner);
 		}
 		delete(gameObject);
 		return;

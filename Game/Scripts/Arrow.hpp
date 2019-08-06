@@ -15,7 +15,7 @@ public:
 
 	void update() override;
 
-	void initialize(Transform* target, int* damages);
+	void initialize(Transform* target, int* damages, Unit* owner);
 
 private:
 	void updateTarget();
@@ -23,6 +23,7 @@ private:
 
 	int _damages[Unit::Num_Units];
 
+	Unit* _owner;
 	Transform* _target;
 	Unit* _targetUnit;
 	Vector3 _lastTarget;

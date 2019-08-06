@@ -111,6 +111,28 @@ namespace yellowEditor
 			ImGui::PushID(nameTexturePair.first.c_str());
 			drawPropertyBase(prettyName.c_str());
 			ImGui::Button(nameTexturePair.second->getName().c_str());
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				auto payload = ImGui::AcceptDragDropPayload("Asset");
+				{
+					if (payload != nullptr)
+					{
+						char* path = (char*)payload->Data;
+						if (strstr(path, ".png") != nullptr)
+						{
+							Texture* texture = Texture::create(path);
+							if (texture != nullptr)
+							{
+								material->setProperty(nameTexturePair.first.c_str(), texture);
+								valueChanged = true;
+							}
+						}
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			ImGui::PopID();
 		}
 

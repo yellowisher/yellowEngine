@@ -20,5 +20,5 @@ void ArrowShooter::fireArrow(Transform* target)
 	arrow->transform->setPosition(transform->getWorldPosition());
 	//arrow->transform->setRotation(transform->getWorldRotation());
 	arrow->transform->setScale(0.03f, 0.03f, 0.03f);
-	arrow->initialize(target, _unit->damage);
+	arrow->initialize(target, _unit->damage, _unit);
 }

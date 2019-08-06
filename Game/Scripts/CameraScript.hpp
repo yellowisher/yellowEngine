@@ -11,6 +11,7 @@ class CameraScript : public Component, public IUpdatable
 	END_COMPONENT
 
 public:
+	static void win();
 	static bool lockCamera;
 
 	void start() override;

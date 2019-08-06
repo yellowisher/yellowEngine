@@ -20,6 +20,7 @@ GameObject* Spawner::spawn(Unit::UnitType type, Vector3 position, Quaternion rot
 	{
 		newObject->removeComponent(newObject->getComponent<Unit>());
 		delete(newObject->transform->findChild("Attack Range")->gameObject);
+		delete(newObject->transform->findChild("Trace Range")->gameObject);
 	}
 	setMaterial(newObject->transform, team);
 
